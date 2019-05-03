@@ -1,0 +1,338 @@
+{
+  "battles": 1,
+  "pokemon": {
+    "Darmanitan": {
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9962,
+      "viability": [1, 88, 88, 88],
+      "abilities": {"Zen Mode": 1},
+      "items": {"Assault Vest": 1},
+      "stats": {"397/284/146/174/147/226": 1},
+      "moves": {"Fire Blast": 1, "Flamethrower": 1, "Psychic": 1, "U-turn": 1},
+      "teammates": {
+        "Dugtrio": 0.1374,
+        "Gastrodon": 0.1374,
+        "Mimikyu": 0.1374,
+        "Shaymin-Sky": 0.1374,
+        "Zygarde": 0.1374
+      },
+      "counters": {"Rayquaza-Mega": [0.1587, 1, 0]}
+    },
+    "Dugtrio": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9962,
+      "viability": [1, 88, 88, 88],
+      "abilities": {"Arena Trap": 1},
+      "items": {"Choice Band": 1},
+      "stats": {"211/298/122/136/176/372": 1},
+      "moves": {
+        "Earthquake": 1,
+        "Hidden Power Grass": 1,
+        "Stone Edge": 1,
+        "Sucker Punch": 1
+      },
+      "teammates": {
+        "Darmanitan": 0.1374,
+        "Gastrodon": 0.1374,
+        "Mimikyu": 0.1374,
+        "Shaymin-Sky": 0.1374,
+        "Zygarde": 0.1374
+      },
+      "counters": {"Greninja-Ash": [0.1587, 1, 0]}
+    },
+    "Gastrodon": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9962,
+      "viability": [1, 88, 88, 88],
+      "abilities": {"Storm Drain": 1},
+      "items": {"Eject Button": 1},
+      "stats": {"426/203/172/220/289/102": 1},
+      "moves": {"Earthquake": 1, "Ice Beam": 1, "Recover": 1, "Surf": 1},
+      "teammates": {
+        "Darmanitan": 0.1374,
+        "Dugtrio": 0.1374,
+        "Mimikyu": 0.1374,
+        "Shaymin-Sky": 0.1374,
+        "Zygarde": 0.1374
+      },
+      "counters": {"Ditto": [0.1587, 1, 0], "Greninja-Ash": [0.1587, 0, 1]}
+    },
+    "Mimikyu": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9962,
+      "viability": [1, 88, 88, 88],
+      "abilities": {"Disguise": 1},
+      "items": {"Life Orb": 1},
+      "stats": {"251/279/196/122/247/320": 1},
+      "moves": {
+        "Destiny Bond": 1,
+        "Play Rough": 1,
+        "Shadow Sneak": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {
+        "Darmanitan": 0.1374,
+        "Dugtrio": 0.1374,
+        "Gastrodon": 0.1374,
+        "Shaymin-Sky": 0.1374,
+        "Zygarde": 0.1374
+      },
+      "counters": {"Ditto": [0.1587, 1, 0], "Greninja-Ash": [0.1587, 0, 0]}
+    },
+    "Shaymin-Sky": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9962,
+      "viability": [1, 88, 88, 88],
+      "abilities": {"Serene Grace": 1},
+      "items": {"Nothing": 1},
+      "stats": {"341/189/186/339/187/388": 1},
+      "moves": {
+        "Air Slash": 1,
+        "Dazzling Gleam": 1,
+        "Grass Knot": 1,
+        "Hidden Power Electric": 1
+      },
+      "teammates": {
+        "Darmanitan": 0.1374,
+        "Dugtrio": 0.1374,
+        "Gastrodon": 0.1374,
+        "Mimikyu": 0.1374,
+        "Zygarde": 0.1374
+      },
+      "counters": {"Ditto": [0.1587, 1, 0], "Greninja-Ash": [0.3173, 0, 1]}
+    },
+    "Zygarde": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9962,
+      "viability": [1, 88, 88, 88],
+      "abilities": {"Power Construct": 1},
+      "items": {"Assault Vest": 1},
+      "stats": {"420/237/278/178/317/226": 1},
+      "moves": {
+        "Brick Break": 1,
+        "Dragon Tail": 1,
+        "Glare": 1,
+        "Thousand Arrows": 1
+      },
+      "teammates": {
+        "Darmanitan": 0.1374,
+        "Dugtrio": 0.1374,
+        "Gastrodon": 0.1374,
+        "Mimikyu": 0.1374,
+        "Shaymin-Sky": 0.1374
+      },
+      "counters": {"Ditto": [0.1587, 1, 0], "Greninja-Ash": [0.1587, 0, 1]}
+    },
+    "Ditto": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
+      "win": {"raw": 0.1667, "real": 0.3333, "weighted": 0.1667},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Imposter": 1},
+      "items": {"Nothing": 1},
+      "stats": {"299/103/214/118/132/132": 1},
+      "moves": {"Nothing": 3, "Transform": 1},
+      "teammates": {
+        "Greninja-Ash": 0.8626,
+        "Meloetta": 0.8626,
+        "Rayquaza-Mega": 0.8626,
+        "Shedinja": 0.8626,
+        "Zoroark": 0.8626
+      },
+      "counters": {
+        "Gastrodon": [0.1587, 0, 0],
+        "Mimikyu": [0.1587, 0, 0],
+        "Shaymin-Sky": [0.1587, 0, 0],
+        "Zygarde": [0.1587, 0, 0]
+      }
+    },
+    "Greninja-Ash": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
+      "win": {"raw": 0.1667, "real": 0.3333, "weighted": 0.1667},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Battle Bond": 1},
+      "items": {"Life Orb": 1},
+      "stats": {"285/293/159/405/168/399": 1},
+      "moves": {
+        "Hidden Power Ghost": 1,
+        "Spikes": 1,
+        "U-turn": 1,
+        "Water Shuriken": 1
+      },
+      "teammates": {
+        "Ditto": 0.8626,
+        "Meloetta": 0.8626,
+        "Rayquaza-Mega": 0.8626,
+        "Shedinja": 0.8626,
+        "Zoroark": 0.8626
+      },
+      "counters": {
+        "Mimikyu": [0.1587, 1, 0],
+        "Dugtrio": [0.1587, 0, 0],
+        "Gastrodon": [0.1587, 0, 0],
+        "Shaymin-Sky": [0.3173, 0, 0],
+        "Zygarde": [0.1587, 0, 0]
+      }
+    },
+    "Meloetta": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.1374},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1374},
+      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Serene Grace": 1},
+      "items": {"Red Card": 1},
+      "stats": {"341/143/190/355/293/306": 1},
+      "moves": {
+        "Focus Blast": 1,
+        "Perish Song": 1,
+        "Relic Song": 1,
+        "Signal Beam": 1
+      },
+      "teammates": {
+        "Ditto": 0.8626,
+        "Greninja-Ash": 0.8626,
+        "Rayquaza-Mega": 0.8626,
+        "Shedinja": 0.8626,
+        "Zoroark": 0.8626
+      },
+      "counters": {}
+    },
+    "Rayquaza-Mega": {
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
+      "win": {"raw": 0.1667, "real": 0.3333, "weighted": 0.1667},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Delta Stream": 1},
+      "items": {"Eject Button": 1},
+      "stats": {"351/504/236/356/237/329": 1},
+      "moves": {
+        "Dragon Ascent": 1,
+        "Dragon Dance": 1,
+        "Extreme Speed": 1,
+        "Roar": 1
+      },
+      "teammates": {
+        "Ditto": 0.8626,
+        "Greninja-Ash": 0.8626,
+        "Meloetta": 0.8626,
+        "Shedinja": 0.8626,
+        "Zoroark": 0.8626
+      },
+      "counters": {"Darmanitan": [0.1587, 0, 0]}
+    },
+    "Shedinja": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.1374},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1374},
+      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Wonder Guard": 1},
+      "items": {"Focus Sash": 1},
+      "stats": {"1/265/126/97/86/191": 1},
+      "moves": {
+        "Facade": 1,
+        "Hidden Power Dark": 1,
+        "Nothing": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {
+        "Ditto": 0.8626,
+        "Greninja-Ash": 0.8626,
+        "Meloetta": 0.8626,
+        "Rayquaza-Mega": 0.8626,
+        "Zoroark": 0.8626
+      },
+      "counters": {}
+    },
+    "Zoroark": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.1374},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1374},
+      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Illusion": 1},
+      "items": {"Life Orb": 1},
+      "stats": {"261/309/156/248/157/339": 1},
+      "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
+      "teammates": {
+        "Ditto": 0.8626,
+        "Greninja-Ash": 0.8626,
+        "Meloetta": 0.8626,
+        "Rayquaza-Mega": 0.8626,
+        "Shedinja": 0.8626
+      },
+      "counters": {}
+    }
+  },
+  "metagame": {
+    "tags": {
+      "weatherless": 1,
+      "offense": 0.8626,
+      "hyperoffense": 0.1374,
+      "voltturn": 0.1374
+    },
+    "stalliness": {
+      "histogram": [
+        [-1.5, 0.9519],
+        [-1.4, 0],
+        [-1.3, 0],
+        [-1.2, 0],
+        [-1.1, 0],
+        [-1, 0],
+        [-0.9, 0],
+        [-0.8, 0],
+        [-0.7, 0],
+        [-0.6, 0],
+        [-0.5, 5.977],
+        [-0.4, 0],
+        [-0.3, 0],
+        [-0.2, 0],
+        [-0.1, 0],
+        [0, 0]
+      ],
+      "mean": -0.6747,
+      "total": 6.9289
+    }
+  }
+}

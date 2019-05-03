@@ -1,0 +1,1379 @@
+{
+  "battles": 4,
+  "pokemon": {
+    "Nidoqueen": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.1054},
+      "usage": {"raw": 0.2, "real": 0.75, "weighted": 0.2533},
+      "unique": {"raw": 1, "real": 0.5, "weighted": 0.7469},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 2,
+      "weight": 0.9938,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Rivalry": 1},
+      "items": {"Pikanium Z": 0.6653, "Tyranitarite": 0.3347},
+      "stats": {
+        "265/172/140/148/133/134": 0.6653,
+        "227/189/140/110/143/202": 0.3347
+      },
+      "moves": {
+        "Captivate": 0.6653,
+        "Focus Punch": 0.6653,
+        "Giga Impact": 0.6653,
+        "Submission": 0.6653,
+        "Aerial Ace": 0.3347,
+        "Avalanche": 0.3347,
+        "Curse": 0.3347,
+        "Horn Drill": 0.3347
+      },
+      "teammates": {
+        "Beedrill": 0.4967,
+        "Eevee": 0.4967,
+        "Lilligant": 0.4967,
+        "Linoone": 0.4967,
+        "Pangoro": 0.4967,
+        "Bagon": 0.2499,
+        "Lanturn": 0.2499,
+        "Scolipede": 0.2499,
+        "Unown": 0.2499,
+        "Wishiwashi": 0.2499
+      },
+      "counters": {"Naganadel": [0.5, 0, 0]}
+    },
+    "Cloyster": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.2, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 1, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0376},
+      "count": 2,
+      "weight": null,
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Shell Armor": 0.5, "Skill Link": 0.5},
+      "items": {"Bug Memory": 0.5, "Quick Claw": 0.5},
+      "stats": {"181/186/248/131/144/128": 0.5, "214/168/320/153/80/119": 0.5},
+      "moves": {
+        "Toxic": 1,
+        "Confide": 0.5,
+        "Double Team": 0.5,
+        "Ice Beam": 0.5,
+        "Rock Blast": 0.5,
+        "Substitute": 0.5,
+        "Teleport": 0.5
+      },
+      "teammates": {
+        "Aegislash": 0.5216,
+        "Bayleef": 0.5216,
+        "Combusken": 0.5216,
+        "Honchkrow": 0.5216,
+        "Misdreavus": 0.5216,
+        "Furret": 0.3088,
+        "Koffing": 0.3088,
+        "Magcargo": 0.3088,
+        "Ribombee": 0.3088,
+        "Togepi": 0.3088
+      },
+      "counters": {}
+    },
+    "Arceus": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Multitype": 1},
+      "items": {"Normalium Z": 1},
+      "stats": {"238/168/189/176/175/211": 1},
+      "moves": {"Flash": 1, "Hyper Voice": 1, "Quash": 1, "Shadow Ball": 1},
+      "teammates": {
+        "Castform": 0.8304,
+        "Kartana": 0.8304,
+        "Kricketot": 0.8304,
+        "Machop": 0.8304,
+        "Pyukumuku": 0.8304
+      },
+      "counters": {}
+    },
+    "Castform": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Forecast": 1},
+      "items": {"Metal Powder": 1},
+      "stats": {"210/140/181/125/138/189": 1},
+      "moves": {"Defense Curl": 1, "Psych Up": 1, "Snore": 1, "Thunder": 1},
+      "teammates": {
+        "Arceus": 0.8304,
+        "Kartana": 0.8304,
+        "Kricketot": 0.8304,
+        "Machop": 0.8304,
+        "Pyukumuku": 0.8304
+      },
+      "counters": {}
+    },
+    "Kartana": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.2108},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0.3333, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Beast Boost": 1},
+      "items": {"Rocky Helmet": 1},
+      "stats": {"183/306/171/154/92/176": 1},
+      "moves": {
+        "Confide": 1,
+        "Sleep Talk": 1,
+        "Smart Strike": 1,
+        "Synthesis": 1
+      },
+      "teammates": {
+        "Arceus": 0.8304,
+        "Castform": 0.8304,
+        "Kricketot": 0.8304,
+        "Machop": 0.8304,
+        "Pyukumuku": 0.8304
+      },
+      "counters": {"Ribombee": [0.3719, 0, 0]}
+    },
+    "Kricketot": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Run Away": 1},
+      "items": {"Apicot Berry": 1},
+      "stats": {"214/68/169/126/94/74": 1},
+      "moves": {"Growl": 1, "String Shot": 1, "Struggle Bug": 1, "Uproar": 1},
+      "teammates": {
+        "Arceus": 0.8304,
+        "Castform": 0.8304,
+        "Kartana": 0.8304,
+        "Machop": 0.8304,
+        "Pyukumuku": 0.8304
+      },
+      "counters": {}
+    },
+    "Machop": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"No Guard": 1},
+      "items": {"Charizardite X": 1},
+      "stats": {"245/204/137/97/94/80": 1},
+      "moves": {"Captivate": 1, "Leer": 1, "Meditate": 1, "Power-Up Punch": 1},
+      "teammates": {
+        "Arceus": 0.8304,
+        "Castform": 0.8304,
+        "Kartana": 0.8304,
+        "Kricketot": 0.8304,
+        "Pyukumuku": 0.8304
+      },
+      "counters": {}
+    },
+    "Pyukumuku": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Unaware": 1},
+      "items": {"Pikanium Z": 1},
+      "stats": {"178/130/289/86/234/20": 1},
+      "moves": {"Confide": 1, "Gastro Acid": 1, "Safeguard": 1, "Tickle": 1},
+      "teammates": {
+        "Arceus": 0.8304,
+        "Castform": 0.8304,
+        "Kartana": 0.8304,
+        "Kricketot": 0.8304,
+        "Machop": 0.8304
+      },
+      "counters": {}
+    },
+    "Carracosta": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 79, 79, 79],
+      "abilities": {"Sturdy": 1},
+      "items": {"Starf Berry": 1},
+      "stats": {"223/192/204/134/134/113": 1},
+      "moves": {"Aqua Jet": 1, "Bite": 1, "Facade": 1, "Liquidation": 1},
+      "teammates": {
+        "Deino": 0.8304,
+        "Electabuzz": 0.8304,
+        "Gastly": 0.8304,
+        "Raichu-Alola": 0.8304,
+        "Swanna": 0.8304
+      },
+      "counters": {}
+    },
+    "Deino": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 79, 79, 79],
+      "abilities": {"Hustle": 1},
+      "items": {"Blastoisinite": 1},
+      "stats": {"197/141/150/90/152/79": 1},
+      "moves": {"Hyper Voice": 1, "Substitute": 1, "Superpower": 1, "Toxic": 1},
+      "teammates": {
+        "Carracosta": 0.8304,
+        "Electabuzz": 0.8304,
+        "Gastly": 0.8304,
+        "Raichu-Alola": 0.8304,
+        "Swanna": 0.8304
+      },
+      "counters": {}
+    },
+    "Electabuzz": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 79, 79, 79],
+      "abilities": {"Vital Spirit": 1},
+      "items": {"Yache Berry": 1},
+      "stats": {"197/191/107/179/155/162": 1},
+      "moves": {
+        "Electro Ball": 1,
+        "Flash": 1,
+        "Natural Gift": 1,
+        "Quick Attack": 1
+      },
+      "teammates": {
+        "Carracosta": 0.8304,
+        "Deino": 0.8304,
+        "Gastly": 0.8304,
+        "Raichu-Alola": 0.8304,
+        "Swanna": 0.8304
+      },
+      "counters": {}
+    },
+    "Gastly": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.2108},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0.3333, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 79, 79, 79],
+      "abilities": {"Levitate": 1},
+      "items": {"Bottle Cap": 1},
+      "stats": {"192/77/74/209/118/166": 1},
+      "moves": {
+        "Dazzling Gleam": 1,
+        "Dream Eater": 1,
+        "Thunder Punch": 1,
+        "Zap Cannon": 1
+      },
+      "teammates": {
+        "Carracosta": 0.8304,
+        "Deino": 0.8304,
+        "Electabuzz": 0.8304,
+        "Raichu-Alola": 0.8304,
+        "Swanna": 0.8304
+      },
+      "counters": {}
+    },
+    "Raichu-Alola": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 79, 79, 79],
+      "abilities": {"Surge Surfer": 1},
+      "items": {"Absorb Bulb": 1},
+      "stats": {"231/133/106/185/170/199": 1},
+      "moves": {"Grass Knot": 1, "Laser Focus": 1, "Magic Coat": 1, "Thief": 1},
+      "teammates": {
+        "Carracosta": 0.8304,
+        "Deino": 0.8304,
+        "Electabuzz": 0.8304,
+        "Gastly": 0.8304,
+        "Swanna": 0.8304
+      },
+      "counters": {}
+    },
+    "Swanna": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1696},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0598},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 79, 79, 79],
+      "abilities": {"Big Pecks": 1},
+      "items": {"Fire Stone": 1},
+      "stats": {"260/145/119/169/128/159": 1},
+      "moves": {
+        "Double Team": 1,
+        "Ice Beam": 1,
+        "Sky Attack": 1,
+        "Water Pulse": 1
+      },
+      "teammates": {
+        "Carracosta": 0.8304,
+        "Deino": 0.8304,
+        "Electabuzz": 0.8304,
+        "Gastly": 0.8304,
+        "Raichu-Alola": 0.8304
+      },
+      "counters": {}
+    },
+    "Beedrill": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1685},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.4969},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9938,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Swarm": 1},
+      "items": {"Moon Ball": 1},
+      "stats": {"201/164/124/127/156/145": 1},
+      "moves": {"Acrobatics": 1, "Brutal Swing": 1, "Cut": 1, "Throat Chop": 1},
+      "teammates": {
+        "Eevee": 0.8315,
+        "Lilligant": 0.8315,
+        "Linoone": 0.8315,
+        "Pangoro": 0.8315,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Eevee": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1685},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.4969},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9938,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Run Away": 1},
+      "items": {"Big Root": 1},
+      "stats": {"213/124/113/157/129/140": 1},
+      "moves": {"Captivate": 1, "Return": 1, "Swift": 1, "Tail Whip": 1},
+      "teammates": {
+        "Beedrill": 0.8315,
+        "Lilligant": 0.8315,
+        "Linoone": 0.8315,
+        "Pangoro": 0.8315,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Lilligant": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1685},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.4969},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9938,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Own Tempo": 1},
+      "items": {"Mind Plate": 1},
+      "stats": {"205/99/161/209/161/155": 1},
+      "moves": {"Flash": 1, "Frustration": 1, "Protect": 1, "Teeter Dance": 1},
+      "teammates": {
+        "Beedrill": 0.8315,
+        "Eevee": 0.8315,
+        "Linoone": 0.8315,
+        "Pangoro": 0.8315,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Linoone": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1685},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.4969},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9938,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Gluttony": 1},
+      "items": {"Mewtwonite Y": 1},
+      "stats": {"237/163/136/95/155/168": 1},
+      "moves": {"Mud Sport": 1, "Mud-Slap": 1, "Odor Sleuth": 1, "Toxic": 1},
+      "teammates": {
+        "Beedrill": 0.8315,
+        "Eevee": 0.8315,
+        "Lilligant": 0.8315,
+        "Pangoro": 0.8315,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Pangoro": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1685},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.4969},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9938,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Iron Fist": 1},
+      "items": {"Fairium Z": 1},
+      "stats": {"235/224/142/181/136/94": 1},
+      "moves": {
+        "Hidden Power Bug": 1,
+        "Power-Up Punch": 1,
+        "Round": 1,
+        "Swagger": 1
+      },
+      "teammates": {
+        "Beedrill": 0.8315,
+        "Eevee": 0.8315,
+        "Lilligant": 0.8315,
+        "Linoone": 0.8315,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Aegislash": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1065},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3141},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0376},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Stance Change": 1},
+      "items": {"Berry Juice": 1},
+      "stats": {"193/76/219/108/271/92": 1},
+      "moves": {"False Swipe": 1, "Iron Defense": 1, "Rest": 1, "Sunny Day": 1},
+      "teammates": {
+        "Bayleef": 1.1497,
+        "Combusken": 1.1497,
+        "Honchkrow": 1.1497,
+        "Misdreavus": 1.1497,
+        "Cloyster": 1.0866
+      },
+      "counters": {}
+    },
+    "Bayleef": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1065},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3141},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0376},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Leaf Guard": 1},
+      "items": {"Chill Drive": 1},
+      "stats": {"214/142/161/115/191/121": 1},
+      "moves": {"Flash": 1, "Mud-Slap": 1, "Reflect": 1, "Round": 1},
+      "teammates": {
+        "Aegislash": 1.1497,
+        "Combusken": 1.1497,
+        "Honchkrow": 1.1497,
+        "Misdreavus": 1.1497,
+        "Cloyster": 1.0866
+      },
+      "counters": {}
+    },
+    "Combusken": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.1324},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.1065},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.3141},
+      "win": {"raw": 0.0417, "real": 0.3333, "weighted": 0.0376},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Speed Boost": 1},
+      "items": {"Level Ball": 1},
+      "stats": {"213/201/117/166/149/98": 1},
+      "moves": {"Confide": 1, "Flame Charge": 1, "Fling": 1, "Rock Smash": 1},
+      "teammates": {
+        "Aegislash": 1.1497,
+        "Bayleef": 1.1497,
+        "Honchkrow": 1.1497,
+        "Misdreavus": 1.1497,
+        "Cloyster": 1.0866
+      },
+      "counters": {}
+    },
+    "Honchkrow": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1065},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3141},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0376},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Insomnia": 1},
+      "items": {"Safari Ball": 1},
+      "stats": {"300/195/119/171/150/106": 1},
+      "moves": {"Attract": 1, "Confide": 1, "Quash": 1, "Torment": 1},
+      "teammates": {
+        "Aegislash": 1.1497,
+        "Bayleef": 1.1497,
+        "Combusken": 1.1497,
+        "Misdreavus": 1.1497,
+        "Cloyster": 1.0866
+      },
+      "counters": {}
+    },
+    "Misdreavus": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.1065},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3141},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0376},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Levitate": 1},
+      "items": {"Steel Gem": 1},
+      "stats": {"194/113/127/186/192/126": 1},
+      "moves": {
+        "Dream Eater": 1,
+        "Echoed Voice": 1,
+        "Nightmare": 1,
+        "Shock Wave": 1
+      },
+      "teammates": {
+        "Aegislash": 1.1497,
+        "Bayleef": 1.1497,
+        "Combusken": 1.1497,
+        "Honchkrow": 1.1497,
+        "Cloyster": 1.0866
+      },
+      "counters": {}
+    },
+    "Bagon": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Sheer Force": 1},
+      "items": {"Net Ball": 1},
+      "stats": {"223/159/151/75/111/118": 1},
+      "moves": {"Headbutt": 1, "Rock Smash": 1, "Scary Face": 1, "Swagger": 1},
+      "teammates": {
+        "Lanturn": 0.9152,
+        "Scolipede": 0.9152,
+        "Unown": 0.9152,
+        "Wishiwashi": 0.9152,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Chikorita": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Overgrow": 1},
+      "items": {"Air Balloon": 1},
+      "stats": {"177/100/172/124/139/145": 1},
+      "moves": {"Double-Edge": 1, "Giga Drain": 1, "Seed Bomb": 1, "Toxic": 1},
+      "teammates": {
+        "Ditto": 0.9152,
+        "Naganadel": 0.9152,
+        "Salamence": 0.9152,
+        "Shelgon": 0.9152,
+        "Taillow": 0.9152
+      },
+      "counters": {}
+    },
+    "Ditto": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Limber": 1},
+      "items": {"Persim Berry": 1},
+      "stats": {"190/161/130/119/115/92": 1},
+      "moves": {"Nothing": 3, "Transform": 1},
+      "teammates": {
+        "Chikorita": 0.9152,
+        "Naganadel": 0.9152,
+        "Salamence": 0.9152,
+        "Shelgon": 0.9152,
+        "Taillow": 0.9152
+      },
+      "counters": {}
+    },
+    "Lanturn": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Volt Absorb": 1},
+      "items": {"Smooth Rock": 1},
+      "stats": {"276/109/114/145/193/121": 1},
+      "moves": {
+        "Aqua Ring": 1,
+        "Bubble Beam": 1,
+        "Discharge": 1,
+        "Giga Impact": 1
+      },
+      "teammates": {
+        "Bagon": 0.9152,
+        "Scolipede": 0.9152,
+        "Unown": 0.9152,
+        "Wishiwashi": 0.9152,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Naganadel": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.1054},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Beast Boost": 1},
+      "items": {"Energy Powder": 1},
+      "stats": {"208/132/175/250/119/172": 1},
+      "moves": {
+        "Acrobatics": 1,
+        "Echoed Voice": 1,
+        "Laser Focus": 1,
+        "Toxic": 1
+      },
+      "teammates": {
+        "Chikorita": 0.9152,
+        "Ditto": 0.9152,
+        "Salamence": 0.9152,
+        "Shelgon": 0.9152,
+        "Taillow": 0.9152
+      },
+      "counters": {"Nidoqueen": [0.5, 1, 0]}
+    },
+    "Salamence": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Intimidate": 1},
+      "items": {"Berry Juice": 1},
+      "stats": {"210/194/175/199/116/173": 1},
+      "moves": {
+        "Fire Fang": 1,
+        "Laser Focus": 1,
+        "Natural Gift": 1,
+        "Rock Slide": 1
+      },
+      "teammates": {
+        "Chikorita": 0.9152,
+        "Ditto": 0.9152,
+        "Naganadel": 0.9152,
+        "Shelgon": 0.9152,
+        "Taillow": 0.9152
+      },
+      "counters": {}
+    },
+    "Scolipede": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Speed Boost": 1},
+      "items": {"Gengarite": 1},
+      "stats": {"213/181/171/103/158/180": 1},
+      "moves": {
+        "Defense Curl": 1,
+        "Hidden Power Ghost": 1,
+        "Throat Chop": 1,
+        "Toxic Spikes": 1
+      },
+      "teammates": {
+        "Bagon": 0.9152,
+        "Lanturn": 0.9152,
+        "Unown": 0.9152,
+        "Wishiwashi": 0.9152,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Shelgon": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Rock Head": 1},
+      "items": {"Gyaradosite": 1},
+      "stats": {"235/172/183/144/117/100": 1},
+      "moves": {"Mimic": 1, "Rock Slide": 1, "Rock Smash": 1, "Swagger": 1},
+      "teammates": {
+        "Chikorita": 0.9152,
+        "Ditto": 0.9152,
+        "Naganadel": 0.9152,
+        "Salamence": 0.9152,
+        "Taillow": 0.9152
+      },
+      "counters": {}
+    },
+    "Taillow": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Scrappy": 1},
+      "items": {"Banettite": 1},
+      "stats": {"230/118/88/65/90/218": 1},
+      "moves": {"Agility": 1, "Hurricane": 1, "Protect": 1, "Rage": 1},
+      "teammates": {
+        "Chikorita": 0.9152,
+        "Ditto": 0.9152,
+        "Naganadel": 0.9152,
+        "Salamence": 0.9152,
+        "Shelgon": 0.9152
+      },
+      "counters": {}
+    },
+    "Unown": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Levitate": 1},
+      "items": {"Cover Fossil": 1},
+      "stats": {"181/176/107/146/144/104": 1},
+      "moves": {"Nothing": 3, "Hidden Power Ghost": 1},
+      "teammates": {
+        "Bagon": 0.9152,
+        "Lanturn": 0.9152,
+        "Scolipede": 0.9152,
+        "Wishiwashi": 0.9152,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Wishiwashi": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0848},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.25},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Schooling": 1},
+      "items": {"Leaf Stone": 1},
+      "stats": {"148/67/49/73/60/107": 1},
+      "moves": {
+        "Double-Edge": 1,
+        "Hidden Power Bug": 1,
+        "Protect": 1,
+        "Snore": 1
+      },
+      "teammates": {
+        "Bagon": 0.9152,
+        "Lanturn": 0.9152,
+        "Scolipede": 0.9152,
+        "Unown": 0.9152,
+        "Nidoqueen": 0.7467
+      },
+      "counters": {}
+    },
+    "Carnivine": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Levitate": 1},
+      "items": {"Psychium Z": 1},
+      "stats": {"254/163/129/180/124/94": 1},
+      "moves": {"Acid Spray": 1, "Defog": 1, "Magical Leaf": 1, "Toxic": 1},
+      "teammates": {
+        "Cosmog": 0.6807,
+        "Hitmonlee": 0.6807,
+        "Kingler": 0.6807,
+        "Seadra": 0.6807,
+        "Whismur": 0.6807
+      },
+      "counters": {}
+    },
+    "Cosmog": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.0784},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Unaware": 1},
+      "items": {"Gold Bottle Cap": 1},
+      "stats": {"205/137/79/124/78/79": 1},
+      "moves": {"Nothing": 2, "Splash": 1, "Teleport": 1},
+      "teammates": {
+        "Carnivine": 0.6807,
+        "Hitmonlee": 0.6807,
+        "Kingler": 0.6807,
+        "Seadra": 0.6807,
+        "Whismur": 0.6807
+      },
+      "counters": {}
+    },
+    "Florges": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Symbiosis": 1},
+      "items": {"Tyranitarite": 1},
+      "stats": {"231/98/122/197/243/156": 1},
+      "moves": {
+        "Dazzling Gleam": 1,
+        "Grass Knot": 1,
+        "Petal Dance": 1,
+        "Swagger": 1
+      },
+      "teammates": {
+        "Loudred": 0.6807,
+        "Magikarp": 0.6807,
+        "Tentacruel": 0.6807,
+        "Wimpod": 0.6807,
+        "Wooper": 0.6807
+      },
+      "counters": {}
+    },
+    "Furret": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Run Away": 1},
+      "items": {"Cherish Ball": 1},
+      "stats": {"258/161/116/87/124/198": 1},
+      "moves": {
+        "Flamethrower": 1,
+        "Iron Tail": 1,
+        "Shock Wave": 1,
+        "Substitute": 1
+      },
+      "teammates": {
+        "Koffing": 0.6807,
+        "Magcargo": 0.6807,
+        "Ribombee": 0.6807,
+        "Togepi": 0.6807,
+        "Cloyster": 0.5742
+      },
+      "counters": {}
+    },
+    "Hitmonlee": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Reckless": 1},
+      "items": {"Plume Fossil": 1},
+      "stats": {"181/198/144/92/192/143": 1},
+      "moves": {"Body Slam": 1, "Detect": 1, "Foresight": 1, "Swagger": 1},
+      "teammates": {
+        "Carnivine": 0.6807,
+        "Cosmog": 0.6807,
+        "Kingler": 0.6807,
+        "Seadra": 0.6807,
+        "Whismur": 0.6807
+      },
+      "counters": {}
+    },
+    "Kingler": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Hyper Cutter": 1},
+      "items": {"Luminous Moss": 1},
+      "stats": {"169/237/186/101/147/139": 1},
+      "moves": {
+        "Fury Cutter": 1,
+        "Mud Shot": 1,
+        "Mud-Slap": 1,
+        "Rock Slide": 1
+      },
+      "teammates": {
+        "Carnivine": 0.6807,
+        "Cosmog": 0.6807,
+        "Hitmonlee": 0.6807,
+        "Seadra": 0.6807,
+        "Whismur": 0.6807
+      },
+      "counters": {}
+    },
+    "Koffing": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Levitate": 1},
+      "items": {"Zap Plate": 1},
+      "stats": {"170/132/169/152/101/125": 1},
+      "moves": {
+        "Double Team": 1,
+        "Infestation": 1,
+        "Sludge Wave": 1,
+        "Snore": 1
+      },
+      "teammates": {
+        "Furret": 0.6807,
+        "Magcargo": 0.6807,
+        "Ribombee": 0.6807,
+        "Togepi": 0.6807,
+        "Cloyster": 0.5742
+      },
+      "counters": {}
+    },
+    "Loudred": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Scrappy": 1},
+      "items": {"Hard Stone": 1},
+      "stats": {"244/171/114/188/86/100": 1},
+      "moves": {"Body Slam": 1, "Howl": 1, "Torment": 1, "Uproar": 1},
+      "teammates": {
+        "Florges": 0.6807,
+        "Magikarp": 0.6807,
+        "Tentacruel": 0.6807,
+        "Wimpod": 0.6807,
+        "Wooper": 0.6807
+      },
+      "counters": {}
+    },
+    "Magcargo": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Magma Armor": 1},
+      "items": {"Power Weight": 1},
+      "stats": {"222/120/209/170/138/100": 1},
+      "moves": {
+        "Flame Burst": 1,
+        "Rock Polish": 1,
+        "Rock Smash": 1,
+        "Rock Throw": 1
+      },
+      "teammates": {
+        "Furret": 0.6807,
+        "Koffing": 0.6807,
+        "Ribombee": 0.6807,
+        "Togepi": 0.6807,
+        "Cloyster": 0.5742
+      },
+      "counters": {}
+    },
+    "Magikarp": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Rattled": 1},
+      "items": {"Aspear Berry": 1},
+      "stats": {"168/97/113/95/68/190": 1},
+      "moves": {"Bounce": 1, "Celebrate": 1, "Hydro Pump": 1, "Tackle": 1},
+      "teammates": {
+        "Florges": 0.6807,
+        "Loudred": 0.6807,
+        "Tentacruel": 0.6807,
+        "Wimpod": 0.6807,
+        "Wooper": 0.6807
+      },
+      "counters": {}
+    },
+    "Ribombee": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.0784},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Honey Gather": 1},
+      "items": {"Dubious Disc": 1},
+      "stats": {"222/108/115/191/126/226": 1},
+      "moves": {
+        "Dream Eater": 1,
+        "Last Resort": 1,
+        "Quiver Dance": 1,
+        "Tailwind": 1
+      },
+      "teammates": {
+        "Furret": 0.6807,
+        "Koffing": 0.6807,
+        "Magcargo": 0.6807,
+        "Togepi": 0.6807,
+        "Cloyster": 0.5742
+      },
+      "counters": {"Kartana": [0.3719, 1, 0]}
+    },
+    "Seadra": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Poison Point": 1},
+      "items": {"Absolite": 1},
+      "stats": {"180/153/173/198/95/167": 1},
+      "moves": {"Blizzard": 1, "Bubble": 1, "Curse": 1, "Surf": 1},
+      "teammates": {
+        "Carnivine": 0.6807,
+        "Cosmog": 0.6807,
+        "Hitmonlee": 0.6807,
+        "Kingler": 0.6807,
+        "Whismur": 0.6807
+      },
+      "counters": {}
+    },
+    "Tentacruel": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Liquid Ooze": 1},
+      "items": {"Grassy Seed": 1},
+      "stats": {"216/161/154/145/191/156": 1},
+      "moves": {"Brine": 1, "Knock Off": 1, "Magic Coat": 1, "Swords Dance": 1},
+      "teammates": {
+        "Florges": 0.6807,
+        "Loudred": 0.6807,
+        "Magikarp": 0.6807,
+        "Wimpod": 0.6807,
+        "Wooper": 0.6807
+      },
+      "counters": {}
+    },
+    "Togepi": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Super Luck": 1},
+      "items": {"Moon Ball": 1},
+      "stats": {"200/93/167/107/117/84": 1},
+      "moves": {
+        "Body Slam": 1,
+        "Hyper Voice": 1,
+        "Psycho Shift": 1,
+        "Psyshock": 1
+      },
+      "teammates": {
+        "Furret": 0.6807,
+        "Koffing": 0.6807,
+        "Magcargo": 0.6807,
+        "Ribombee": 0.6807,
+        "Cloyster": 0.5742
+      },
+      "counters": {}
+    },
+    "Whismur": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Soundproof": 1},
+      "items": {"Power Band": 1},
+      "stats": {"252/128/93/107/91/129": 1},
+      "moves": {"Astonish": 1, "Mega Kick": 1, "Rain Dance": 1, "Return": 1},
+      "teammates": {
+        "Carnivine": 0.6807,
+        "Cosmog": 0.6807,
+        "Hitmonlee": 0.6807,
+        "Kingler": 0.6807,
+        "Seadra": 0.6807
+      },
+      "counters": {}
+    },
+    "Wimpod": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Wimp Out": 1},
+      "items": {"Magnet": 1},
+      "stats": {"179/74/136/125/83/163": 1},
+      "moves": {"Frustration": 1, "Hail": 1, "Protect": 1, "Surf": 1},
+      "teammates": {
+        "Florges": 0.6807,
+        "Loudred": 0.6807,
+        "Magikarp": 0.6807,
+        "Tentacruel": 0.6807,
+        "Wooper": 0.6807
+      },
+      "counters": {}
+    },
+    "Wooper": {
+      "lead": {"raw": 0.125, "real": 0.125, "weighted": 0.0784},
+      "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.0631},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1859},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Unaware": 1},
+      "items": {"Iapapa Berry": 1},
+      "stats": {"254/136/125/111/76/56": 1},
+      "moves": {"Slam": 1, "Snore": 1, "Tail Whip": 1, "Toxic": 1},
+      "teammates": {
+        "Florges": 0.6807,
+        "Loudred": 0.6807,
+        "Magikarp": 0.6807,
+        "Tentacruel": 0.6807,
+        "Wimpod": 0.6807
+      },
+      "counters": {}
+    },
+    "Heliolisk": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0269},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.0793},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0095},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Sand Veil": 1},
+      "items": {"Coba Berry": 1},
+      "stats": {"189/99/95/217/150/244": 1},
+      "moves": {"Attract": 1, "Electroweb": 1, "Secret Power": 1, "Surf": 1},
+      "teammates": {
+        "Honedge": 0.9731,
+        "Latios": 0.9731,
+        "Nidorino": 0.9731,
+        "Suicune": 0.9731,
+        "Swoobat": 0.9731
+      },
+      "counters": {}
+    },
+    "Honedge": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0269},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.0793},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0095},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"No Guard": 1},
+      "items": {"Terrain Extender": 1},
+      "stats": {"173/186/219/65/109/66": 1},
+      "moves": {
+        "Destiny Bond": 1,
+        "Protect": 1,
+        "Rock Slide": 1,
+        "Shock Wave": 1
+      },
+      "teammates": {
+        "Heliolisk": 0.9731,
+        "Latios": 0.9731,
+        "Nidorino": 0.9731,
+        "Suicune": 0.9731,
+        "Swoobat": 0.9731
+      },
+      "counters": {}
+    },
+    "Latios": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0269},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.0793},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0095},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Levitate": 1},
+      "items": {"Iron Ball": 1},
+      "stats": {"204/131/165/176/172/233": 1},
+      "moves": {
+        "Dragon Dance": 1,
+        "Magic Coat": 1,
+        "Mimic": 1,
+        "Thunder Wave": 1
+      },
+      "teammates": {
+        "Heliolisk": 0.9731,
+        "Honedge": 0.9731,
+        "Nidorino": 0.9731,
+        "Suicune": 0.9731,
+        "Swoobat": 0.9731
+      },
+      "counters": {}
+    },
+    "Nidorino": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0269},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.0793},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0095},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Rivalry": 1},
+      "items": {"Moon Stone": 1},
+      "stats": {"216/117/154/127/99/168": 1},
+      "moves": {"Rage": 1, "Rain Dance": 1, "Shadow Claw": 1, "Sleep Talk": 1},
+      "teammates": {
+        "Heliolisk": 0.9731,
+        "Honedge": 0.9731,
+        "Latios": 0.9731,
+        "Suicune": 0.9731,
+        "Swoobat": 0.9731
+      },
+      "counters": {}
+    },
+    "Suicune": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0269},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.0793},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0095},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Inner Focus": 1},
+      "items": {"Moon Ball": 1},
+      "stats": {"226/145/171/154/220/124": 1},
+      "moves": {"Brine": 1, "Detect": 1, "Snore": 1, "Toxic": 1},
+      "teammates": {
+        "Heliolisk": 0.9731,
+        "Honedge": 0.9731,
+        "Latios": 0.9731,
+        "Nidorino": 0.9731,
+        "Swoobat": 0.9731
+      },
+      "counters": {}
+    },
+    "Swoobat": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1, "real": 0, "weighted": 0.0269},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.0793},
+      "win": {"raw": 0.0417, "real": 0, "weighted": 0.0095},
+      "count": 1,
+      "weight": 0.1587,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Unaware": 1},
+      "items": {"Heavy Ball": 1},
+      "stats": {"207/163/104/136/160/191": 1},
+      "moves": {"Embargo": 1, "Giga Impact": 1, "Shock Wave": 1, "Swagger": 1},
+      "teammates": {
+        "Heliolisk": 0.9731,
+        "Honedge": 0.9731,
+        "Latios": 0.9731,
+        "Nidorino": 0.9731,
+        "Suicune": 0.9731
+      },
+      "counters": {}
+    }
+  },
+  "metagame": {
+    "tags": {"weatherless": 1, "offense": 0.7187, "balance": 0.2813},
+    "stalliness": {
+      "histogram": [
+        [-0.6, 6],
+        [-0.55, 0],
+        [-0.5, 0],
+        [-0.45, 0],
+        [-0.4, 0],
+        [-0.35, 2.2313],
+        [-0.3, 2.2313],
+        [-0.25, 0],
+        [-0.2, 2.2313],
+        [-0.15, 6.7687],
+        [-0.1, 0],
+        [-0.05, 0],
+        [0, 5.9627],
+        [0.05, 0],
+        [0.1, 0],
+        [0.15, 9],
+        [0.2, 0]
+      ],
+      "mean": -0.1544,
+      "total": 35.3772
+    }
+  }
+}

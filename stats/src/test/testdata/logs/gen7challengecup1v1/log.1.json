@@ -1,0 +1,478 @@
+{
+    "winner": "test-player-b",
+    "seed": [
+        29672,
+        11125,
+        4954,
+        35166
+    ],
+    "turns": 2,
+    "p1": "test-player-a",
+    "p2": "test-player-b",
+    "p1team": [
+        {
+            "name": "Magikarp",
+            "species": "Magikarp",
+            "gender": "",
+            "item": "aspearberry",
+            "ability": "Rattled",
+            "moves": [
+                "celebrate",
+                "bounce",
+                "hydropump",
+                "tackle"
+            ],
+            "evs": {
+                "hp": 25,
+                "atk": 243,
+                "def": 7,
+                "spa": 148,
+                "spd": 86,
+                "spe": 1
+            },
+            "ivs": {
+                "hp": 16,
+                "atk": 14,
+                "def": 0,
+                "spa": 17,
+                "spd": 12,
+                "spe": 29
+            },
+            "nature": "rash",
+            "level": 98,
+            "happiness": 151,
+            "shiny": false
+        },
+        {
+            "name": "Tentacruel",
+            "species": "Tentacruel",
+            "gender": "",
+            "item": "grassyseed",
+            "ability": "Liquid Ooze",
+            "moves": [
+                "knockoff",
+                "magiccoat",
+                "brine",
+                "swordsdance"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 214,
+                "def": 183,
+                "spa": 63,
+                "spd": 44,
+                "spe": 6
+            },
+            "ivs": {
+                "hp": 23,
+                "atk": 22,
+                "def": 30,
+                "spa": 18,
+                "spd": 5,
+                "spe": 7
+            },
+            "nature": "hardy",
+            "level": 73,
+            "happiness": 5,
+            "shiny": false
+        },
+        {
+            "name": "Florges",
+            "species": "Florges",
+            "gender": "F",
+            "item": "tyranitarite",
+            "ability": "Symbiosis",
+            "moves": [
+                "petaldance",
+                "dazzlinggleam",
+                "grassknot",
+                "swagger"
+            ],
+            "evs": {
+                "hp": 117,
+                "atk": 0,
+                "def": 0,
+                "spa": 160,
+                "spd": 0,
+                "spe": 233
+            },
+            "ivs": {
+                "hp": 27,
+                "atk": 2,
+                "def": 30,
+                "spa": 7,
+                "spd": 28,
+                "spe": 5
+            },
+            "nature": "serious",
+            "level": 71,
+            "happiness": 249,
+            "shiny": false
+        },
+        {
+            "name": "Wooper",
+            "species": "Wooper",
+            "gender": "",
+            "item": "iapapaberry",
+            "ability": "Unaware",
+            "moves": [
+                "tailwhip",
+                "snore",
+                "slam",
+                "toxic"
+            ],
+            "evs": {
+                "hp": 114,
+                "atk": 105,
+                "def": 82,
+                "spa": 192,
+                "spd": 6,
+                "spe": 11
+            },
+            "ivs": {
+                "hp": 14,
+                "atk": 20,
+                "def": 29,
+                "spa": 1,
+                "spd": 23,
+                "spe": 21
+            },
+            "nature": "mild",
+            "level": 97,
+            "happiness": 15,
+            "shiny": false
+        },
+        {
+            "name": "Wimpod",
+            "species": "Wimpod",
+            "gender": "",
+            "item": "magnet",
+            "ability": "Wimp Out",
+            "moves": [
+                "frustration",
+                "protect",
+                "surf",
+                "hail"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 249,
+                "spa": 253,
+                "spd": 8,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 28,
+                "atk": 3,
+                "def": 13,
+                "spa": 12,
+                "spd": 21,
+                "spe": 7
+            },
+            "nature": "mild",
+            "level": 95,
+            "happiness": 242,
+            "shiny": false
+        },
+        {
+            "name": "Loudred",
+            "species": "Loudred",
+            "gender": "",
+            "item": "hardstone",
+            "ability": "Scrappy",
+            "moves": [
+                "howl",
+                "uproar",
+                "torment",
+                "bodyslam"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 145,
+                "def": 130,
+                "spa": 230,
+                "spd": 5,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 11,
+                "atk": 20,
+                "def": 28,
+                "spa": 20,
+                "spd": 10,
+                "spe": 7
+            },
+            "nature": "hasty",
+            "level": 84,
+            "happiness": 208,
+            "shiny": false
+        }
+    ],
+    "p2team": [
+        {
+            "name": "Cloyster",
+            "species": "Cloyster",
+            "gender": "",
+            "item": "quickclaw",
+            "ability": "Shell Armor",
+            "moves": [
+                "toxic",
+                "substitute",
+                "rockblast",
+                "doubleteam"
+            ],
+            "evs": {
+                "hp": 255,
+                "atk": 0,
+                "def": 190,
+                "spa": 28,
+                "spd": 37,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 21,
+                "atk": 16,
+                "def": 31,
+                "spa": 29,
+                "spd": 19,
+                "spe": 19
+            },
+            "nature": "naughty",
+            "level": 72,
+            "happiness": 89,
+            "shiny": false
+        },
+        {
+            "name": "Bayleef",
+            "species": "Bayleef",
+            "gender": "",
+            "item": "chilldrive",
+            "ability": "Leaf Guard",
+            "moves": [
+                "round",
+                "mudslap",
+                "reflect",
+                "flash"
+            ],
+            "evs": {
+                "hp": 31,
+                "atk": 194,
+                "def": 34,
+                "spa": 1,
+                "spd": 115,
+                "spe": 135
+            },
+            "ivs": {
+                "hp": 28,
+                "atk": 0,
+                "def": 27,
+                "spa": 12,
+                "spd": 24,
+                "spe": 10
+            },
+            "nature": "sassy",
+            "level": 80,
+            "happiness": 16,
+            "shiny": false
+        },
+        {
+            "name": "Honchkrow",
+            "species": "Honchkrow",
+            "gender": "",
+            "item": "safariball",
+            "ability": "Insomnia",
+            "moves": [
+                "quash",
+                "confide",
+                "torment",
+                "attract"
+            ],
+            "evs": {
+                "hp": 224,
+                "atk": 0,
+                "def": 98,
+                "spa": 24,
+                "spd": 164,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 4,
+                "def": 25,
+                "spa": 6,
+                "spd": 31,
+                "spe": 9
+            },
+            "nature": "sassy",
+            "level": 75,
+            "happiness": 190,
+            "shiny": false
+        },
+        {
+            "name": "Combusken",
+            "species": "Combusken",
+            "gender": "",
+            "item": "levelball",
+            "ability": "Speed Boost",
+            "moves": [
+                "flamecharge",
+                "rocksmash",
+                "confide",
+                "fling"
+            ],
+            "evs": {
+                "hp": 62,
+                "atk": 248,
+                "def": 36,
+                "spa": 0,
+                "spd": 163,
+                "spe": 1
+            },
+            "ivs": {
+                "hp": 16,
+                "atk": 11,
+                "def": 26,
+                "spa": 11,
+                "spd": 19,
+                "spe": 6
+            },
+            "nature": "mild",
+            "level": 81,
+            "happiness": 251,
+            "shiny": false
+        },
+        {
+            "name": "Misdreavus",
+            "species": "Misdreavus",
+            "gender": "",
+            "item": "steelgem",
+            "ability": "Levitate",
+            "moves": [
+                "nightmare",
+                "echoedvoice",
+                "dreameater",
+                "shockwave"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 21,
+                "def": 96,
+                "spa": 158,
+                "spd": 231,
+                "spe": 4
+            },
+            "ivs": {
+                "hp": 16,
+                "atk": 1,
+                "def": 13,
+                "spa": 24,
+                "spd": 14,
+                "spe": 4
+            },
+            "nature": "brave",
+            "level": 78,
+            "happiness": 241,
+            "shiny": false
+        },
+        {
+            "name": "Aegislash",
+            "species": "Aegislash",
+            "gender": "",
+            "item": "berryjuice",
+            "ability": "Stance Change",
+            "moves": [
+                "sunnyday",
+                "irondefense",
+                "falseswipe",
+                "rest"
+            ],
+            "evs": {
+                "hp": 141,
+                "atk": 0,
+                "def": 8,
+                "spa": 73,
+                "spd": 246,
+                "spe": 42
+            },
+            "ivs": {
+                "hp": 3,
+                "atk": 1,
+                "def": 20,
+                "spa": 28,
+                "spd": 1,
+                "spe": 9
+            },
+            "nature": "sassy",
+            "level": 71,
+            "happiness": 76,
+            "shiny": false
+        }
+    ],
+    "score": [
+        1,
+        1
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7challengecup1v1\",\"seed\":[29672,11125,4954,35166]}",
+        ">player p1 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"\",\"seed\":[27598,459,13770,17499]}",
+        ">player p2 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"\",\"seed\":[31918,11866,21168,1794]}",
+        ">p1 team 4",
+        ">p2 team 4",
+        ">p1 move snore",
+        ">p2 move confide"
+    ],
+    "log": [
+        "|j|\u2606test-player-a",
+        "|j|\u2606test-player-b",
+        "|player|p1|test-player-a|170",
+        "|player|p2|test-player-b|265",
+        "|teamsize|p1|6",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Challenge Cup 1v1",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Magikarp, L98, F|item",
+        "|poke|p1|Tentacruel, L73, F|item",
+        "|poke|p1|Florges, L71, F|item",
+        "|poke|p1|Wooper, L97, M|item",
+        "|poke|p1|Wimpod, L95, F|item",
+        "|poke|p1|Loudred, L84, M|item",
+        "|poke|p2|Cloyster, L72, M|item",
+        "|poke|p2|Bayleef, L80, M|item",
+        "|poke|p2|Honchkrow, L75, M|item",
+        "|poke|p2|Combusken, L81, M|item",
+        "|poke|p2|Misdreavus, L78, M|item",
+        "|poke|p2|Aegislash, L71, M|item",
+        "|teampreview|1",
+        "|",
+        "|start",
+        "|switch|p1a: Wooper|Wooper, L97, M|100/100",
+        "|switch|p2a: Combusken|Combusken, L81, M|100/100",
+        "|turn|1",
+        "|",
+        "|move|p2a: Combusken|Confide|p1a: Wooper",
+        "|-unboost|p1a: Wooper|spa|1",
+        "|move|p1a: Wooper|Snore||[still]",
+        "|-fail|p1a: Wooper",
+        "|",
+        "|-ability|p2a: Combusken|Speed Boost|boost",
+        "|-boost|p2a: Combusken|spe|1",
+        "|upkeep",
+        "|turn|2",
+        "|-message|test-player-a forfeited.",
+        "|",
+        "|win|test-player-b",
+        ""
+    ],
+    "p1rating": null,
+    "p2rating": {"rpr": 1600, "rprd": 0},
+    "endType": "forfeit",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:17:40 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7challengecup1v1-9",
+    "format": "gen7challengecup1v1"
+}

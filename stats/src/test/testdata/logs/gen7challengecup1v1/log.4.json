@@ -1,0 +1,546 @@
+{
+    "winner": "test-player-b",
+    "seed": [
+        22218,
+        37592,
+        45314,
+        28113
+    ],
+    "turns": 7,
+    "p1": "test-player-b",
+    "p2": "test-player-a",
+    "p1team": [
+        {
+            "name": "Pyukumuku",
+            "species": "Pyukumuku",
+            "gender": "",
+            "item": "pikaniumz",
+            "ability": "Unaware",
+            "moves": [
+                "gastroacid",
+                "tickle",
+                "confide",
+                "safeguard"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 137,
+                "def": 173,
+                "spa": 136,
+                "spd": 59,
+                "spe": 5
+            },
+            "ivs": {
+                "hp": 3,
+                "atk": 5,
+                "def": 24,
+                "spa": 9,
+                "spd": 16,
+                "spe": 12
+            },
+            "nature": "relaxed",
+            "level": 79,
+            "happiness": 135,
+            "shiny": false
+        },
+        {
+            "name": "Kricketot",
+            "species": "Kricketot",
+            "gender": "",
+            "item": "apicotberry",
+            "ability": "Run Away",
+            "moves": [
+                "stringshot",
+                "growl",
+                "strugglebug",
+                "uproar"
+            ],
+            "evs": {
+                "hp": 64,
+                "atk": 5,
+                "def": 246,
+                "spa": 172,
+                "spd": 0,
+                "spe": 23
+            },
+            "ivs": {
+                "hp": 17,
+                "atk": 13,
+                "def": 23,
+                "spa": 30,
+                "spd": 20,
+                "spe": 9
+            },
+            "nature": "naive",
+            "level": 99,
+            "happiness": 131,
+            "shiny": false
+        },
+        {
+            "name": "Kartana",
+            "species": "Kartana",
+            "gender": "N",
+            "item": "rockyhelmet",
+            "ability": "Beast Boost",
+            "moves": [
+                "sleeptalk",
+                "confide",
+                "smartstrike",
+                "synthesis"
+            ],
+            "evs": {
+                "hp": 56,
+                "atk": 0,
+                "def": 0,
+                "spa": 249,
+                "spd": 205,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 13,
+                "atk": 25,
+                "def": 1,
+                "spa": 31,
+                "spd": 10,
+                "spe": 23
+            },
+            "nature": "lonely",
+            "level": 71,
+            "happiness": 118,
+            "shiny": false
+        },
+        {
+            "name": "Castform",
+            "species": "Castform",
+            "gender": "",
+            "item": "metalpowder",
+            "ability": "Forecast",
+            "moves": [
+                "psychup",
+                "snore",
+                "defensecurl",
+                "thunder"
+            ],
+            "evs": {
+                "hp": 40,
+                "atk": 0,
+                "def": 219,
+                "spa": 3,
+                "spd": 0,
+                "spe": 248
+            },
+            "ivs": {
+                "hp": 4,
+                "atk": 31,
+                "def": 30,
+                "spa": 13,
+                "spd": 29,
+                "spe": 31
+            },
+            "nature": "bashful",
+            "level": 79,
+            "happiness": 201,
+            "shiny": false
+        },
+        {
+            "name": "Machop",
+            "species": "Machop",
+            "gender": "",
+            "item": "charizarditex",
+            "ability": "No Guard",
+            "moves": [
+                "leer",
+                "meditate",
+                "poweruppunch",
+                "captivate"
+            ],
+            "evs": {
+                "hp": 1,
+                "atk": 254,
+                "def": 110,
+                "spa": 95,
+                "spd": 47,
+                "spe": 3
+            },
+            "ivs": {
+                "hp": 28,
+                "atk": 4,
+                "def": 23,
+                "spa": 12,
+                "spd": 21,
+                "spe": 16
+            },
+            "nature": "docile",
+            "level": 88,
+            "happiness": 103,
+            "shiny": false
+        },
+        {
+            "name": "Arceus",
+            "species": "Arceus",
+            "gender": "N",
+            "item": "normaliumz",
+            "ability": "Multitype",
+            "moves": [
+                "shadowball",
+                "hypervoice",
+                "flash",
+                "quash"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 105,
+                "spa": 46,
+                "spd": 224,
+                "spe": 135
+            },
+            "ivs": {
+                "hp": 23,
+                "atk": 19,
+                "def": 27,
+                "spa": 21,
+                "spd": 6,
+                "spe": 25
+            },
+            "nature": "naive",
+            "level": 63,
+            "happiness": 25,
+            "shiny": false
+        }
+    ],
+    "p2team": [
+        {
+            "name": "Magcargo",
+            "species": "Magcargo",
+            "gender": "",
+            "item": "powerweight",
+            "ability": "Magma Armor",
+            "moves": [
+                "flameburst",
+                "rockthrow",
+                "rockpolish",
+                "rocksmash"
+            ],
+            "evs": {
+                "hp": 131,
+                "atk": 147,
+                "def": 0,
+                "spa": 13,
+                "spd": 2,
+                "spe": 217
+            },
+            "ivs": {
+                "hp": 21,
+                "atk": 12,
+                "def": 22,
+                "spa": 29,
+                "spd": 11,
+                "spe": 9
+            },
+            "nature": "hardy",
+            "level": 78,
+            "happiness": 223,
+            "shiny": false
+        },
+        {
+            "name": "Togepi",
+            "species": "Togepi",
+            "gender": "",
+            "item": "moonball",
+            "ability": "Super Luck",
+            "moves": [
+                "psyshock",
+                "bodyslam",
+                "hypervoice",
+                "psychoshift"
+            ],
+            "evs": {
+                "hp": 20,
+                "atk": 192,
+                "def": 81,
+                "spa": 40,
+                "spd": 0,
+                "spe": 177
+            },
+            "ivs": {
+                "hp": 30,
+                "atk": 7,
+                "def": 25,
+                "spa": 10,
+                "spd": 5,
+                "spe": 2
+            },
+            "nature": "rash",
+            "level": 93,
+            "happiness": 66,
+            "shiny": false
+        },
+        {
+            "name": "Cloyster",
+            "species": "Cloyster",
+            "gender": "",
+            "item": "bugmemory",
+            "ability": "Skill Link",
+            "moves": [
+                "confide",
+                "teleport",
+                "icebeam",
+                "toxic"
+            ],
+            "evs": {
+                "hp": 78,
+                "atk": 134,
+                "def": 48,
+                "spa": 0,
+                "spd": 222,
+                "spe": 28
+            },
+            "ivs": {
+                "hp": 19,
+                "atk": 29,
+                "def": 5,
+                "spa": 5,
+                "spd": 31,
+                "spe": 25
+            },
+            "nature": "gentle",
+            "level": 72,
+            "happiness": 13,
+            "shiny": false
+        },
+        {
+            "name": "Koffing",
+            "species": "Koffing",
+            "gender": "",
+            "item": "zapplate",
+            "ability": "Levitate",
+            "moves": [
+                "snore",
+                "sludgewave",
+                "doubleteam",
+                "infestation"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 80,
+                "def": 66,
+                "spa": 170,
+                "spd": 2,
+                "spe": 192
+            },
+            "ivs": {
+                "hp": 9,
+                "atk": 0,
+                "def": 10,
+                "spa": 11,
+                "spd": 13,
+                "spe": 24
+            },
+            "nature": "gentle",
+            "level": 85,
+            "happiness": 70,
+            "shiny": false
+        },
+        {
+            "name": "Ribombee",
+            "species": "Ribombee",
+            "gender": "",
+            "item": "dubiousdisc",
+            "ability": "Honey Gather",
+            "moves": [
+                "dreameater",
+                "tailwind",
+                "quiverdance",
+                "lastresort"
+            ],
+            "evs": {
+                "hp": 151,
+                "atk": 1,
+                "def": 10,
+                "spa": 225,
+                "spd": 29,
+                "spe": 94
+            },
+            "ivs": {
+                "hp": 22,
+                "atk": 26,
+                "def": 24,
+                "spa": 0,
+                "spd": 13,
+                "spe": 21
+            },
+            "nature": "bashful",
+            "level": 76,
+            "happiness": 58,
+            "shiny": false
+        },
+        {
+            "name": "Furret",
+            "species": "Furret",
+            "gender": "",
+            "item": "cherishball",
+            "ability": "Run Away",
+            "moves": [
+                "irontail",
+                "flamethrower",
+                "shockwave",
+                "substitute"
+            ],
+            "evs": {
+                "hp": 124,
+                "atk": 17,
+                "def": 72,
+                "spa": 0,
+                "spd": 79,
+                "spe": 218
+            },
+            "ivs": {
+                "hp": 14,
+                "atk": 24,
+                "def": 12,
+                "spa": 15,
+                "spd": 22,
+                "spe": 11
+            },
+            "nature": "lonely",
+            "level": 79,
+            "happiness": 244,
+            "shiny": false
+        }
+    ],
+    "score": [
+        1,
+        0
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7challengecup1v1\",\"seed\":[22218,37592,45314,28113]}",
+        ">player p1 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"\",\"seed\":[3169,53697,59582,58975]}",
+        ">player p2 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"\",\"seed\":[42441,62983,39917,13333]}",
+        ">p1 team 3",
+        ">p2 team 5",
+        ">p1 move sleeptalk",
+        ">p2 move quiverdance",
+        ">p1 move sleeptalk",
+        ">p2 move quiverdance",
+        ">p1 move sleeptalk",
+        ">p2 move quiverdance",
+        ">p1 move sleeptalk",
+        ">p2 move quiverdance",
+        ">p1 move sleeptalk",
+        ">p2 move quiverdance",
+        ">p1 move sleeptalk",
+        ">p2 move quiverdance",
+        ">p1 move smartstrike",
+        ">p2 move lastresort"
+    ],
+    "log": [
+        "|j|\u2606test-player-b",
+        "|j|\u2606test-player-a",
+        "|player|p1|test-player-b|265",
+        "|player|p2|test-player-a|170",
+        "|teamsize|p1|6",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Challenge Cup 1v1",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Pyukumuku, L79, F|item",
+        "|poke|p1|Kricketot, L99, F|item",
+        "|poke|p1|Kartana, L71|item",
+        "|poke|p1|Castform, L79, M|item",
+        "|poke|p1|Machop, L88, M|item",
+        "|poke|p1|Arceus-*, L63|item",
+        "|poke|p2|Magcargo, L78, F|item",
+        "|poke|p2|Togepi, L93, M|item",
+        "|poke|p2|Cloyster, L72, F|item",
+        "|poke|p2|Koffing, L85, M|item",
+        "|poke|p2|Ribombee, L76, M|item",
+        "|poke|p2|Furret, L79, M|item",
+        "|teampreview|1",
+        "|",
+        "|start",
+        "|switch|p1a: Kartana|Kartana, L71|100/100",
+        "|switch|p2a: Ribombee|Ribombee, L76, M|100/100",
+        "|turn|1",
+        "|",
+        "|move|p2a: Ribombee|Quiver Dance|p2a: Ribombee",
+        "|-boost|p2a: Ribombee|spa|1",
+        "|-boost|p2a: Ribombee|spd|1",
+        "|-boost|p2a: Ribombee|spe|1",
+        "|move|p1a: Kartana|Sleep Talk||[still]",
+        "|-fail|p1a: Kartana",
+        "|",
+        "|upkeep",
+        "|turn|2",
+        "|",
+        "|move|p2a: Ribombee|Quiver Dance|p2a: Ribombee",
+        "|-boost|p2a: Ribombee|spa|1",
+        "|-boost|p2a: Ribombee|spd|1",
+        "|-boost|p2a: Ribombee|spe|1",
+        "|move|p1a: Kartana|Sleep Talk||[still]",
+        "|-fail|p1a: Kartana",
+        "|",
+        "|upkeep",
+        "|turn|3",
+        "|",
+        "|move|p2a: Ribombee|Quiver Dance|p2a: Ribombee",
+        "|-boost|p2a: Ribombee|spa|1",
+        "|-boost|p2a: Ribombee|spd|1",
+        "|-boost|p2a: Ribombee|spe|1",
+        "|move|p1a: Kartana|Sleep Talk||[still]",
+        "|-fail|p1a: Kartana",
+        "|",
+        "|upkeep",
+        "|turn|4",
+        "|",
+        "|move|p2a: Ribombee|Quiver Dance|p2a: Ribombee",
+        "|-boost|p2a: Ribombee|spa|1",
+        "|-boost|p2a: Ribombee|spd|1",
+        "|-boost|p2a: Ribombee|spe|1",
+        "|move|p1a: Kartana|Sleep Talk||[still]",
+        "|-fail|p1a: Kartana",
+        "|",
+        "|upkeep",
+        "|turn|5",
+        "|",
+        "|move|p2a: Ribombee|Quiver Dance|p2a: Ribombee",
+        "|-boost|p2a: Ribombee|spa|1",
+        "|-boost|p2a: Ribombee|spd|1",
+        "|-boost|p2a: Ribombee|spe|1",
+        "|move|p1a: Kartana|Sleep Talk||[still]",
+        "|-fail|p1a: Kartana",
+        "|",
+        "|upkeep",
+        "|turn|6",
+        "|",
+        "|move|p2a: Ribombee|Quiver Dance|p2a: Ribombee",
+        "|-boost|p2a: Ribombee|spa|1",
+        "|-boost|p2a: Ribombee|spd|1",
+        "|-boost|p2a: Ribombee|spe|1",
+        "|move|p1a: Kartana|Sleep Talk||[still]",
+        "|-fail|p1a: Kartana",
+        "|",
+        "|upkeep",
+        "|turn|7",
+        "|",
+        "|move|p2a: Ribombee|Last Resort||[still]",
+        "|-fail|p2a: Ribombee",
+        "|move|p1a: Kartana|Smart Strike|p2a: Ribombee",
+        "|-supereffective|p2a: Ribombee",
+        "|-damage|p2a: Ribombee|0 fnt",
+        "|faint|p2a: Ribombee",
+        "|",
+        "|win|test-player-b",
+        ""
+    ],
+    "p1rating": {"rpr": 1900, "rprd": 50},
+    "p2rating": {"rpr": 1900, "rprd": 0},
+    "endType": "normal",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:19:27 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7challengecup1v1-12",
+    "format": "gen7challengecup1v1"
+}

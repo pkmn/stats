@@ -1,0 +1,43 @@
+{
+  "private": true,
+  "repository": "github:pkmn/stats",
+  "license": "MIT",
+   "dependencies": {
+    "logs": "file:logs",
+    "minimist": "^1.2.5",
+    "source-map-support": "^0.5.19",
+    "subpkg": "^3.0.3"
+  },
+  "optionalDependencies": {
+    "anon": "file:anon",
+    "stats": "file:stats"
+  },
+   "devDependencies": {
+    "@pkmn/eslint-config": "^0.6.1",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.1",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^24.0.2",
+    "eslint": "^7.9.0",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.4.0",
+    "typescript": "^4.0.3"
+  },
+  "subPackages": [
+    "anon",
+    "stats",
+    "logs",
+    "ui"
+  ],
+  "scripts": {
+    "lint": "eslint --cache workflows --ext ts && subpkg run lint",
+    "fix": "eslint --fix workflows --ext ts && subpkg run fix",
+    "compile": "tsc -p . && subpkg run compile",
+    "test": "subpkg run test",
+    "postinstall": "subpkg install",
+    "pretest": "tsc -p .",
+    "posttest": "eslint --cache workflows --ext ts"
+  }
+}
