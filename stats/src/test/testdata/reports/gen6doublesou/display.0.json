@@ -1,0 +1,325 @@
+{
+  "battles": 1,
+  "pokemon": {
+    "Aegislash": {
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.1667, "real": 0.25, "weighted": 0.1667},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Stance Change": 1},
+      "items": {"Life Orb": 1},
+      "stats": {"319/136/284/218/316/162": 1},
+      "moves": {
+        "Flash Cannon": 1,
+        "King's Shield": 1,
+        "Shadow Ball": 1,
+        "Shadow Sneak": 1
+      },
+      "teammates": {
+        "Charizard-Mega-Y": 0.5,
+        "Keldeo": 0.5,
+        "Kyurem-Black": 0.5,
+        "Rhyperior": 0.5,
+        "Shaymin": 0.5
+      },
+      "counters": {"Amoonguss": [1, 0, 0], "Cresselia": [1, 0, 0]}
+    },
+    "Amoonguss": {
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Regenerator": 1},
+      "items": {"Rocky Helmet": 1},
+      "stats": {"432/175/197/206/262/58": 1},
+      "moves": {"Giga Drain": 1, "Protect": 1, "Rage Powder": 1, "Spore": 1},
+      "teammates": {
+        "Camerupt-Mega": 0.5,
+        "Cresselia": 0.5,
+        "Diancie": 0.5,
+        "Rotom-Wash": 0.5,
+        "Scrafty": 0.5
+      },
+      "counters": {"Aegislash": [1, 0, 1]}
+    },
+    "Camerupt-Mega": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Sheer Force": 1},
+      "items": {"Cameruptite": 1},
+      "stats": {"344/246/236/427/247/40": 1},
+      "moves": {
+        "Ancient Power": 1,
+        "Earth Power": 1,
+        "Heat Wave": 1,
+        "Protect": 1
+      },
+      "teammates": {
+        "Amoonguss": 0.5,
+        "Cresselia": 0.5,
+        "Diancie": 0.5,
+        "Rotom-Wash": 0.5,
+        "Scrafty": 0.5
+      },
+      "counters": {"Charizard-Mega-Y": [1, 1, 0]}
+    },
+    "Charizard-Mega-Y": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.1667, "real": 0.25, "weighted": 0.1667},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Drought": 1},
+      "items": {"Charizardite Y": 1},
+      "stats": {"297/191/193/458/266/299": 1},
+      "moves": {"Heat Wave": 1, "Overheat": 1, "Protect": 1, "Solar Beam": 1},
+      "teammates": {
+        "Aegislash": 0.5,
+        "Keldeo": 0.5,
+        "Kyurem-Black": 0.5,
+        "Rhyperior": 0.5,
+        "Shaymin": 0.5
+      },
+      "counters": {"Camerupt-Mega": [1, 0, 0], "Rotom-Wash": [1, 0, 0]}
+    },
+    "Cresselia": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Levitate": 1},
+      "items": {"Safety Goggles": 1},
+      "stats": {"444/145/360/186/308/157": 1},
+      "moves": {"Calm Mind": 1, "Moonlight": 1, "Psychic": 1, "Trick Room": 1},
+      "teammates": {
+        "Amoonguss": 0.5,
+        "Camerupt-Mega": 0.5,
+        "Diancie": 0.5,
+        "Rotom-Wash": 0.5,
+        "Scrafty": 0.5
+      },
+      "counters": {"Aegislash": [1, 0, 0]}
+    },
+    "Diancie": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Clear Body": 1},
+      "items": {"Weakness Policy": 1},
+      "stats": {"289/263/336/316/336/94": 1},
+      "moves": {
+        "Diamond Storm": 1,
+        "Moonblast": 1,
+        "Protect": 1,
+        "Trick Room": 1
+      },
+      "teammates": {
+        "Amoonguss": 0.5,
+        "Camerupt-Mega": 0.5,
+        "Cresselia": 0.5,
+        "Rotom-Wash": 0.5,
+        "Scrafty": 0.5
+      },
+      "counters": {"Rhyperior": [1, 1, 0]}
+    },
+    "Keldeo": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Justified": 1},
+      "items": {"Life Orb": 1},
+      "stats": {"323/134/216/357/217/346": 1},
+      "moves": {"Icy Wind": 1, "Protect": 1, "Scald": 1, "Secret Sword": 1},
+      "teammates": {
+        "Aegislash": 0.5,
+        "Charizard-Mega-Y": 0.5,
+        "Kyurem-Black": 0.5,
+        "Rhyperior": 0.5,
+        "Shaymin": 0.5
+      },
+      "counters": {}
+    },
+    "Kyurem-Black": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.1667, "real": 0.25, "weighted": 0.1667},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Teravolt": 1},
+      "items": {"Choice Scarf": 1},
+      "stats": {"391/470/212/288/216/289": 1},
+      "moves": {
+        "Dragon Claw": 1,
+        "Earth Power": 1,
+        "Fusion Bolt": 1,
+        "Ice Beam": 1
+      },
+      "teammates": {
+        "Aegislash": 0.5,
+        "Charizard-Mega-Y": 0.5,
+        "Keldeo": 0.5,
+        "Rhyperior": 0.5,
+        "Shaymin": 0.5
+      },
+      "counters": {"Scrafty": [1, 0, 0]}
+    },
+    "Rhyperior": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.1667, "real": 0.25, "weighted": 0.1667},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Lightning Rod": 1},
+      "items": {"Assault Vest": 1},
+      "stats": {"389/398/296/131/209/116": 1},
+      "moves": {
+        "Drill Run": 1,
+        "Earthquake": 1,
+        "Ice Punch": 1,
+        "Rock Slide": 1
+      },
+      "teammates": {
+        "Aegislash": 0.5,
+        "Charizard-Mega-Y": 0.5,
+        "Keldeo": 0.5,
+        "Kyurem-Black": 0.5,
+        "Shaymin": 0.5
+      },
+      "counters": {"Scrafty": [1, 0, 1], "Diancie": [1, 0, 0]}
+    },
+    "Rotom-Wash": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Levitate": 1},
+      "items": {"Choice Specs": 1},
+      "stats": {"304/135/250/339/251/159": 1},
+      "moves": {
+        "Hydro Pump": 1,
+        "Thunderbolt": 1,
+        "Trick": 1,
+        "Volt Switch": 1
+      },
+      "teammates": {
+        "Amoonguss": 0.5,
+        "Camerupt-Mega": 0.5,
+        "Cresselia": 0.5,
+        "Diancie": 0.5,
+        "Scrafty": 0.5
+      },
+      "counters": {"Charizard-Mega-Y": [1, 0, 0]}
+    },
+    "Scrafty": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": null,
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Intimidate": 1},
+      "items": {"Life Orb": 1},
+      "stats": {"334/306/266/126/267/108": 1},
+      "moves": {
+        "Drain Punch": 1,
+        "Fake Out": 1,
+        "Knock Off": 1,
+        "Poison Jab": 1
+      },
+      "teammates": {
+        "Amoonguss": 0.5,
+        "Camerupt-Mega": 0.5,
+        "Cresselia": 0.5,
+        "Diancie": 0.5,
+        "Rotom-Wash": 0.5
+      },
+      "counters": {"Kyurem-Black": [1, 0, 0], "Rhyperior": [1, 0, 0]}
+    },
+    "Shaymin": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "count": 1,
+      "weight": null,
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Natural Cure": 1},
+      "items": {"Assault Vest": 1},
+      "stats": {"404/184/236/328/237/236": 1},
+      "moves": {
+        "Air Slash": 1,
+        "Dazzling Gleam": 1,
+        "Energy Ball": 1,
+        "Giga Drain": 1
+      },
+      "teammates": {
+        "Aegislash": 0.5,
+        "Charizard-Mega-Y": 0.5,
+        "Keldeo": 0.5,
+        "Kyurem-Black": 0.5,
+        "Rhyperior": 0.5
+      },
+      "counters": {}
+    }
+  },
+  "metagame": {
+    "tags": {
+      "balance": 0.5,
+      "offense": 0.5,
+      "sun": 0.5,
+      "trickroom": 0.5,
+      "weatherless": 0.5
+    },
+    "stalliness": {
+      "histogram": [
+        [-0.05, 6],
+        [0, 0],
+        [0.05, 0],
+        [0.1, 0],
+        [0.15, 0],
+        [0.2, 0],
+        [0.25, 0],
+        [0.3, 0],
+        [0.35, 0],
+        [0.4, 0],
+        [0.45, 0],
+        [0.5, 0],
+        [0.55, 0]
+      ],
+      "mean": 0.2691,
+      "total": 12
+    }
+  }
+}

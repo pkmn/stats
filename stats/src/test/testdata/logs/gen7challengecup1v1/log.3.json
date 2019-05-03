@@ -1,0 +1,486 @@
+{
+    "winner": "test-player-a",
+    "seed": [
+        17165,
+        44925,
+        10215,
+        34002
+    ],
+    "turns": 3,
+    "p1": "test-player-a",
+    "p2": "test-player-b",
+    "p1team": [
+        {
+            "name": "Unown",
+            "species": "Unown",
+            "gender": "N",
+            "item": "coverfossil",
+            "ability": "Levitate",
+            "moves": [
+                "hiddenpower"
+            ],
+            "evs": {
+                "hp": 8,
+                "atk": 220,
+                "def": 0,
+                "spa": 76,
+                "spd": 168,
+                "spe": 38
+            },
+            "ivs": {
+                "hp": 1,
+                "atk": 0,
+                "def": 23,
+                "spa": 1,
+                "spd": 24,
+                "spe": 11
+            },
+            "nature": "bashful",
+            "level": 86,
+            "happiness": 43,
+            "shiny": false
+        },
+        {
+            "name": "Nidoqueen",
+            "species": "Nidoqueen",
+            "gender": "F",
+            "item": "tyranitarite",
+            "ability": "Rivalry",
+            "moves": [
+                "aerialace",
+                "horndrill",
+                "curse",
+                "avalanche"
+            ],
+            "evs": {
+                "hp": 1,
+                "atk": 238,
+                "def": 0,
+                "spa": 0,
+                "spd": 30,
+                "spe": 241
+            },
+            "ivs": {
+                "hp": 14,
+                "atk": 6,
+                "def": 9,
+                "spa": 10,
+                "spd": 10,
+                "spe": 31
+            },
+            "nature": "jolly",
+            "level": 74,
+            "happiness": 152,
+            "shiny": false
+        },
+        {
+            "name": "Scolipede",
+            "species": "Scolipede",
+            "gender": "",
+            "item": "gengarite",
+            "ability": "Speed Boost",
+            "moves": [
+                "throatchop",
+                "hiddenpower",
+                "defensecurl",
+                "toxicspikes"
+            ],
+            "evs": {
+                "hp": 149,
+                "atk": 0,
+                "def": 95,
+                "spa": 0,
+                "spd": 232,
+                "spe": 34
+            },
+            "ivs": {
+                "hp": 14,
+                "atk": 14,
+                "def": 21,
+                "spa": 21,
+                "spd": 8,
+                "spe": 29
+            },
+            "nature": "brave",
+            "level": 75,
+            "happiness": 24,
+            "shiny": false
+        },
+        {
+            "name": "Bagon",
+            "species": "Bagon",
+            "gender": "",
+            "item": "netball",
+            "ability": "Sheer Force",
+            "moves": [
+                "headbutt",
+                "rocksmash",
+                "scaryface",
+                "swagger"
+            ],
+            "evs": {
+                "hp": 92,
+                "atk": 2,
+                "def": 174,
+                "spa": 3,
+                "spd": 239,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 27,
+                "atk": 8,
+                "def": 2,
+                "spa": 9,
+                "spd": 1,
+                "spe": 28
+            },
+            "nature": "adamant",
+            "level": 89,
+            "happiness": 247,
+            "shiny": false
+        },
+        {
+            "name": "Wishiwashi",
+            "species": "Wishiwashi",
+            "gender": "",
+            "item": "leafstone",
+            "ability": "Schooling",
+            "moves": [
+                "hiddenpower",
+                "snore",
+                "protect",
+                "doubleedge"
+            ],
+            "evs": {
+                "hp": 2,
+                "atk": 195,
+                "def": 0,
+                "spa": 113,
+                "spd": 2,
+                "spe": 198
+            },
+            "ivs": {
+                "hp": 11,
+                "atk": 14,
+                "def": 25,
+                "spa": 13,
+                "spd": 30,
+                "spe": 20
+            },
+            "nature": "modest",
+            "level": 69,
+            "happiness": 144,
+            "shiny": false
+        },
+        {
+            "name": "Lanturn",
+            "species": "Lanturn",
+            "gender": "",
+            "item": "smoothrock",
+            "ability": "Volt Absorb",
+            "moves": [
+                "bubblebeam",
+                "aquaring",
+                "discharge",
+                "gigaimpact"
+            ],
+            "evs": {
+                "hp": 1,
+                "atk": 11,
+                "def": 114,
+                "spa": 130,
+                "spd": 240,
+                "spe": 14
+            },
+            "ivs": {
+                "hp": 0,
+                "atk": 20,
+                "def": 0,
+                "spa": 23,
+                "spd": 14,
+                "spe": 16
+            },
+            "nature": "careful",
+            "level": 76,
+            "happiness": 176,
+            "shiny": false
+        }
+    ],
+    "p2team": [
+        {
+            "name": "Taillow",
+            "species": "Taillow",
+            "gender": "",
+            "item": "banettite",
+            "ability": "Scrappy",
+            "moves": [
+                "rage",
+                "protect",
+                "agility",
+                "hurricane"
+            ],
+            "evs": {
+                "hp": 183,
+                "atk": 0,
+                "def": 0,
+                "spa": 4,
+                "spd": 68,
+                "spe": 255
+            },
+            "ivs": {
+                "hp": 17,
+                "atk": 15,
+                "def": 23,
+                "spa": 6,
+                "spd": 17,
+                "spe": 29
+            },
+            "nature": "relaxed",
+            "level": 91,
+            "happiness": 71,
+            "shiny": false
+        },
+        {
+            "name": "Naganadel",
+            "species": "Naganadel",
+            "gender": "N",
+            "item": "energypowder",
+            "ability": "Beast Boost",
+            "moves": [
+                "toxic",
+                "acrobatics",
+                "echoedvoice",
+                "laserfocus"
+            ],
+            "evs": {
+                "hp": 46,
+                "atk": 41,
+                "def": 255,
+                "spa": 136,
+                "spd": 24,
+                "spe": 8
+            },
+            "ivs": {
+                "hp": 18,
+                "atk": 21,
+                "def": 28,
+                "spa": 22,
+                "spd": 7,
+                "spe": 16
+            },
+            "nature": "quiet",
+            "level": 72,
+            "happiness": 249,
+            "shiny": false
+        },
+        {
+            "name": "Ditto",
+            "species": "Ditto",
+            "gender": "N",
+            "item": "persimberry",
+            "ability": "Limber",
+            "moves": [
+                "transform"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 216,
+                "def": 165,
+                "spa": 119,
+                "spd": 10,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 5,
+                "atk": 8,
+                "def": 2,
+                "spa": 2,
+                "spd": 25,
+                "spe": 13
+            },
+            "nature": "brave",
+            "level": 90,
+            "happiness": 88,
+            "shiny": false
+        },
+        {
+            "name": "Chikorita",
+            "species": "Chikorita",
+            "gender": "",
+            "item": "airballoon",
+            "ability": "Overgrow",
+            "moves": [
+                "toxic",
+                "seedbomb",
+                "gigadrain",
+                "doubleedge"
+            ],
+            "evs": {
+                "hp": 7,
+                "atk": 0,
+                "def": 168,
+                "spa": 141,
+                "spd": 15,
+                "spe": 179
+            },
+            "ivs": {
+                "hp": 1,
+                "atk": 12,
+                "def": 20,
+                "spa": 4,
+                "spd": 22,
+                "spe": 27
+            },
+            "nature": "docile",
+            "level": 87,
+            "happiness": 239,
+            "shiny": false
+        },
+        {
+            "name": "Shelgon",
+            "species": "Shelgon",
+            "gender": "",
+            "item": "gyaradosite",
+            "ability": "Rock Head",
+            "moves": [
+                "mimic",
+                "rocksmash",
+                "swagger",
+                "rockslide"
+            ],
+            "evs": {
+                "hp": 125,
+                "atk": 147,
+                "def": 0,
+                "spa": 222,
+                "spd": 14,
+                "spe": 2
+            },
+            "ivs": {
+                "hp": 24,
+                "atk": 11,
+                "def": 26,
+                "spa": 1,
+                "spd": 27,
+                "spe": 21
+            },
+            "nature": "calm",
+            "level": 79,
+            "happiness": 83,
+            "shiny": false
+        },
+        {
+            "name": "Salamence",
+            "species": "Salamence",
+            "gender": "",
+            "item": "berryjuice",
+            "ability": "Intimidate",
+            "moves": [
+                "laserfocus",
+                "naturalgift",
+                "rockslide",
+                "firefang"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 226,
+                "spa": 114,
+                "spd": 1,
+                "spe": 169
+            },
+            "ivs": {
+                "hp": 1,
+                "atk": 4,
+                "def": 31,
+                "spa": 8,
+                "spd": 21,
+                "spe": 2
+            },
+            "nature": "rash",
+            "level": 69,
+            "happiness": 9,
+            "shiny": false
+        }
+    ],
+    "score": [
+        1,
+        0
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7challengecup1v1\",\"seed\":[17165,44925,10215,34002]}",
+        ">player p1 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"\",\"seed\":[33209,12355,12630,39569]}",
+        ">player p2 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"\",\"seed\":[796,15769,40659,58882]}",
+        ">p1 team 2",
+        ">p2 team 2",
+        ">p1 move horndrill",
+        ">p2 move toxic",
+        ">p1 move horndrill",
+        ">p2 move toxic",
+        ">p1 move horndrill",
+        ">p2 move toxic"
+    ],
+    "log": [
+        "|j|\u2606test-player-a",
+        "|j|\u2606test-player-b",
+        "|player|p1|test-player-a|170",
+        "|player|p2|test-player-b|265",
+        "|teamsize|p1|6",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Challenge Cup 1v1",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Unown, L86|item",
+        "|poke|p1|Nidoqueen, L74, F|item",
+        "|poke|p1|Scolipede, L75, F|item",
+        "|poke|p1|Bagon, L89, M|item",
+        "|poke|p1|Wishiwashi, L69, F|item",
+        "|poke|p1|Lanturn, L76, F|item",
+        "|poke|p2|Taillow, L91, M|item",
+        "|poke|p2|Naganadel, L72|item",
+        "|poke|p2|Ditto, L90|item",
+        "|poke|p2|Chikorita, L87, F|item",
+        "|poke|p2|Shelgon, L79, F|item",
+        "|poke|p2|Salamence, L69, F|item",
+        "|teampreview|1",
+        "|",
+        "|start",
+        "|switch|p1a: Nidoqueen|Nidoqueen, L74, F|100/100",
+        "|switch|p2a: Naganadel|Naganadel, L72|100/100",
+        "|turn|1",
+        "|",
+        "|move|p1a: Nidoqueen|Horn Drill|p2a: Naganadel|[miss]",
+        "|-miss|p1a: Nidoqueen|p2a: Naganadel",
+        "|move|p2a: Naganadel|Toxic|p1a: Nidoqueen",
+        "|-immune|p1a: Nidoqueen",
+        "|",
+        "|upkeep",
+        "|turn|2",
+        "|",
+        "|move|p1a: Nidoqueen|Horn Drill|p2a: Naganadel|[miss]",
+        "|-miss|p1a: Nidoqueen|p2a: Naganadel",
+        "|move|p2a: Naganadel|Toxic|p1a: Nidoqueen",
+        "|-immune|p1a: Nidoqueen",
+        "|",
+        "|upkeep",
+        "|turn|3",
+        "|",
+        "|move|p1a: Nidoqueen|Horn Drill|p2a: Naganadel",
+        "|-damage|p2a: Naganadel|0 fnt",
+        "|-ohko",
+        "|faint|p2a: Naganadel",
+        "|",
+        "|tie",
+        ""
+    ],
+    "p1rating": null,
+    "p2rating": null,
+    "endType": "normal",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:18:48 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7challengecup1v1-11",
+    "format": "gen7challengecup1v1"
+}

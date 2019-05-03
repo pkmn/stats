@@ -1,0 +1,469 @@
+{
+    "winner": "test-player-b",
+    "seed": [
+        10014,
+        13049,
+        46604,
+        64090
+    ],
+    "turns": 3,
+    "p1": "test-player-a",
+    "p2": "test-player-b",
+    "p1team": [
+        {
+            "name": "aaaaaaaaaa",
+            "species": "rayquaza",
+            "item": "ejectbutton",
+            "ability": "Air Lock",
+            "moves": [
+                "dragonascent",
+                "roar",
+                "extremespeed",
+                "dragondance"
+            ],
+            "nature": "Adamant",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "aaaaaaaaa",
+            "species": "greninja",
+            "item": "lifeorb",
+            "ability": "battlebond",
+            "moves": [
+                "hiddenpowerghost",
+                "watershuriken",
+                "uturn",
+                "spikes"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "gender": "M",
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 20,
+                "spa": 31,
+                "spd": 20,
+                "spe": 31
+            },
+            "happiness": 255,
+            "hpType": "Ghost",
+            "pokeball": "",
+            "level": 100
+        },
+        {
+            "name": "b",
+            "species": "meloetta",
+            "item": "redcard",
+            "ability": "Serene Grace",
+            "moves": [
+                "relicsong",
+                "focusblast",
+                "perishsong",
+                "signalbeam"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "c",
+            "species": "zoroark",
+            "item": "lifeorb",
+            "ability": "Illusion",
+            "moves": [
+                "pursuit",
+                "uturn",
+                "knockoff",
+                "frustration"
+            ],
+            "nature": "Jolly",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "happiness": 0,
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "d",
+            "species": "ditto",
+            "item": "",
+            "ability": "Imposter",
+            "moves": [
+                "transform"
+            ],
+            "nature": "Impish",
+            "evs": {
+                "hp": 248,
+                "atk": 8,
+                "def": 252,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "e",
+            "species": "shedinja",
+            "item": "focussash",
+            "ability": "Wonder Guard",
+            "moves": [
+                "facade",
+                "swordsdance",
+                "hiddenpower"
+            ],
+            "nature": "Naive",
+            "evs": {
+                "hp": 0,
+                "atk": 196,
+                "def": 0,
+                "spa": 4,
+                "spd": 0,
+                "spe": 232
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        }
+    ],
+    "p2team": [
+        {
+            "name": "zen",
+            "species": "darmanitan",
+            "item": "assaultvest",
+            "ability": "Zen Mode",
+            "moves": [
+                "psychic",
+                "fireblast",
+                "flamethrower",
+                "uturn"
+            ],
+            "nature": "Modest",
+            "evs": {
+                "hp": 251,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 15,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "gas",
+            "species": "gastrodoneast",
+            "item": "ejectbutton",
+            "ability": "Storm Drain",
+            "moves": [
+                "icebeam",
+                "recover",
+                "surf",
+                "earthquake"
+            ],
+            "nature": "Sassy",
+            "evs": {
+                "hp": 252,
+                "atk": 4,
+                "def": 0,
+                "spa": 0,
+                "spd": 252,
+                "spe": 0
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "zyg",
+            "species": "zygarde",
+            "item": "assaultvest",
+            "ability": "powerconstruct",
+            "moves": [
+                "thousandarrows",
+                "brickbreak",
+                "dragontail",
+                "glare"
+            ],
+            "nature": "Careful",
+            "evs": {
+                "hp": 252,
+                "atk": 4,
+                "def": 0,
+                "spa": 0,
+                "spd": 252,
+                "spe": 0
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "shay",
+            "species": "shayminsky",
+            "item": "",
+            "ability": "Serene Grace",
+            "moves": [
+                "airslash",
+                "grassknot",
+                "hiddenpowerelectric",
+                "dazzlinggleam"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "happiness": 255,
+            "hpType": "Electric",
+            "pokeball": "",
+            "level": 100
+        },
+        {
+            "name": "mimi",
+            "species": "mimikyu",
+            "item": "lifeorb",
+            "ability": "Disguise",
+            "moves": [
+                "swordsdance",
+                "shadowsneak",
+                "playrough",
+                "destinybond"
+            ],
+            "nature": "Jolly",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "dug",
+            "species": "dugtrio",
+            "item": "choiceband",
+            "ability": "Arena Trap",
+            "moves": [
+                "earthquake",
+                "hiddenpower",
+                "suckerpunch",
+                "stoneedge"
+            ],
+            "nature": "Hasty",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 4,
+                "spd": 0,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 30,
+                "def": 31,
+                "spa": 30,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        }
+    ],
+    "score": [
+        6,
+        6
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7ubers\",\"seed\":[10014,13049,46604,64090]}",
+        ">player p1 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"aaaaaaaaaa|rayquaza|ejectbutton||dragonascent,roar,extremespeed,dragondance|Adamant|,252,,,4,252|||||]aaaaaaaaa|greninja|lifeorb|battlebond|hiddenpowerghost,watershuriken,uturn,spikes|Timid|,,,252,4,252|M|,,20,,20,|||,Ghost,]b|meloetta|redcard||relicsong,focusblast,perishsong,signalbeam|Timid|,,,252,4,252||,0,,,,|||]c|zoroark|lifeorb||pursuit,uturn,knockoff,frustration|Jolly|,252,,,4,252|||||0]d|ditto||H|transform|Impish|248,8,252,,,||,0,,,,|||]e|shedinja|focussash||facade,swordsdance,hiddenpower|Naive|,196,,4,,232|||||\"}",
+        ">player p2 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"zen|darmanitan|assaultvest|H|psychic,fireblast,flamethrower,uturn|Modest|251,,,252,4,||15,,,,,|||]gas|gastrodoneast|ejectbutton|1|icebeam,recover,surf,earthquake|Sassy|252,4,,,252,|||||]zyg|zygarde|assaultvest|powerconstruct|thousandarrows,brickbreak,dragontail,glare|Careful|252,4,,,252,|||||]shay|shayminsky|||airslash,grassknot,hiddenpowerelectric,dazzlinggleam|Timid|,,,252,4,252||,0,,,,|||,Electric,]mimi|mimikyu|lifeorb||swordsdance,shadowsneak,playrough,destinybond|Jolly|,252,,,4,252|||||]dug|dugtrio|choiceband|1|earthquake,hiddenpower,suckerpunch,stoneedge|Hasty|,252,,4,,252||,30,,30,,|||\"}",
+        ">p1 team 1, 2, 3, 4, 5, 6",
+        ">p2 team 2, 1, 3, 4, 5, 6",
+        ">p1 move dragonascent",
+        ">p2 move surf",
+        ">p2 switch 3",
+        ">p1 move roar",
+        ">p2 move thousandarrows",
+        ">p1 switch 2"
+    ],
+    "log": [
+        "|j|\u2606test-player-a",
+        "|j|\u2606test-player-b",
+        "|player|p1|test-player-a|170",
+        "|player|p2|test-player-b|265",
+        "|teamsize|p1|6",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Ubers",
+        "|rule|Sleep Clause Mod: Limit one foe put to sleep",
+        "|rule|Species Clause: Limit one of each Pok\u00e9mon",
+        "|rule|OHKO Clause: OHKO moves are banned",
+        "|rule|Moody Clause: Moody is banned",
+        "|rule|Evasion Moves Clause: Evasion moves are banned",
+        "|rule|Endless Battle Clause: Forcing endless battles is banned",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Rayquaza|item",
+        "|poke|p1|Greninja, M|item",
+        "|poke|p1|Meloetta|item",
+        "|poke|p1|Zoroark, F|item",
+        "|poke|p1|Ditto|",
+        "|poke|p1|Shedinja|item",
+        "|poke|p2|Darmanitan, M|item",
+        "|poke|p2|Gastrodon-East, M|item",
+        "|poke|p2|Zygarde|item",
+        "|poke|p2|Shaymin-Sky|",
+        "|poke|p2|Mimikyu, F|item",
+        "|poke|p2|Dugtrio, M|item",
+        "|rule|Mega Rayquaza Clause: You cannot mega evolve Rayquaza",
+        "|teampreview",
+        "|",
+        "|start",
+        "|switch|p1a: aaaaaaaaaa|Rayquaza|100/100",
+        "|switch|p2a: gas|Gastrodon-East, M|100/100",
+        "|-ability|p1a: aaaaaaaaaa|Air Lock",
+        "|turn|1",
+        "|",
+        "|move|p1a: aaaaaaaaaa|Dragon Ascent|p2a: gas",
+        "|-damage|p2a: gas|24/100",
+        "|-unboost|p1a: aaaaaaaaaa|def|1",
+        "|-unboost|p1a: aaaaaaaaaa|spd|1",
+        "|-enditem|p2a: gas|Eject Button",
+        "|",
+        "|switch|p2a: zyg|Zygarde|100/100",
+        "|",
+        "|upkeep",
+        "|turn|2",
+        "|",
+        "|move|p2a: zyg|Thousand Arrows|p1a: aaaaaaaaaa",
+        "|-damage|p1a: aaaaaaaaaa|54/100",
+        "|-start|p1a: aaaaaaaaaa|Smack Down",
+        "|-enditem|p1a: aaaaaaaaaa|Eject Button",
+        "|",
+        "|switch|p1a: aaaaaaaaa|Greninja, M|100/100",
+        "|",
+        "|upkeep",
+        "|turn|3",
+        "|-message|test-player-a forfeited.",
+        "|",
+        "|win|test-player-b",
+        ""
+    ],
+    "p1rating": {"rpr": 1450, "rprd": 50},
+    "p2rating": {"rpr": 1450, "rprd": 50},
+    "endType": "forfeit",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:06:48 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7ubers-3",
+    "format": "gen7ubers"
+}

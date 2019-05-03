@@ -1,0 +1,33 @@
+{
+  "name": "@pkmn/stats",
+  "version": "0.0.1",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "bin": {
+    "convert": "./convert"
+  },
+  "description": "Logic for processing usage stats from Pokémon Showdown battle simulator logs",
+  "repository": "github:pkmn/stats",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@pkmn/data": "^0.2.3"
+  },
+  "devDependencies": {
+    "@pkmn/dex": "^0.2.3",
+    "json-stringify-pretty-compact": "^2.0.0"
+  },
+  "optionalDependencies": {
+    "source-map-support": "^0.5.19"
+  },
+  "scripts": {
+    "lint": "eslint --cache src --ext ts",
+    "fix": "eslint --fix src --ext ts",
+    "compile": "tsc -p .",
+    "test": "jest",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  }
+}

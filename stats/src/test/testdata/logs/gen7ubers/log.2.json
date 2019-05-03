@@ -1,0 +1,424 @@
+{
+    "winner": "test-player-a",
+    "seed": [
+        25922,
+        34830,
+        41201,
+        17779
+    ],
+    "turns": 2,
+    "p1": "test-player-a",
+    "p2": "test-player-b",
+    "p1team": [
+        {
+            "name": "aaaaaaaaaa",
+            "species": "rayquaza",
+            "item": "ejectbutton",
+            "ability": "Air Lock",
+            "moves": [
+                "dragonascent",
+                "roar",
+                "extremespeed",
+                "dragondance"
+            ],
+            "nature": "Adamant",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "aaaaaaaaa",
+            "species": "greninja",
+            "item": "lifeorb",
+            "ability": "battlebond",
+            "moves": [
+                "hiddenpowerghost",
+                "watershuriken",
+                "uturn",
+                "spikes"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "gender": "M",
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 20,
+                "spa": 31,
+                "spd": 20,
+                "spe": 31
+            },
+            "happiness": 255,
+            "hpType": "Ghost",
+            "pokeball": "",
+            "level": 100
+        },
+        {
+            "name": "b",
+            "species": "meloetta",
+            "item": "redcard",
+            "ability": "Serene Grace",
+            "moves": [
+                "relicsong",
+                "focusblast",
+                "perishsong",
+                "signalbeam"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "c",
+            "species": "zoroark",
+            "item": "lifeorb",
+            "ability": "Illusion",
+            "moves": [
+                "pursuit",
+                "uturn",
+                "knockoff",
+                "frustration"
+            ],
+            "nature": "Jolly",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "happiness": 0,
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "d",
+            "species": "ditto",
+            "item": "",
+            "ability": "Imposter",
+            "moves": [
+                "transform"
+            ],
+            "nature": "Impish",
+            "evs": {
+                "hp": 248,
+                "atk": 8,
+                "def": 252,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "e",
+            "species": "shedinja",
+            "item": "focussash",
+            "ability": "Wonder Guard",
+            "moves": [
+                "facade",
+                "swordsdance",
+                "hiddenpower"
+            ],
+            "nature": "Naive",
+            "evs": {
+                "hp": 0,
+                "atk": 196,
+                "def": 0,
+                "spa": 4,
+                "spd": 0,
+                "spe": 232
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        }
+    ],
+    "p2team": [
+        {
+            "name": "Kyogre",
+            "species": "Kyogre",
+            "item": "blueorb",
+            "ability": "Drizzle",
+            "moves": [
+                "calmmind",
+                "icebeam",
+                "originpulse",
+                "thunder"
+            ],
+            "nature": "Modest",
+            "evs": {
+                "hp": 252,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "Swampert",
+            "species": "Swampert",
+            "item": "swampertite",
+            "ability": "Torrent",
+            "moves": [
+                "earthquake",
+                "waterfall",
+                "superpower",
+                "stealthrock"
+            ],
+            "nature": "Adamant",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Pelipper",
+            "species": "Pelipper",
+            "item": "redcard",
+            "ability": "Drizzle",
+            "moves": [
+                "scald",
+                "roost",
+                "tailwind",
+                "uturn"
+            ],
+            "nature": "Bold",
+            "evs": {
+                "hp": 248,
+                "atk": 0,
+                "def": 252,
+                "spa": 0,
+                "spd": 8,
+                "spe": 0
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Ludicolo",
+            "species": "Ludicolo",
+            "item": "wateriumz",
+            "ability": "Swift Swim",
+            "moves": [
+                "surf",
+                "grassknot",
+                "fakeout",
+                "icebeam"
+            ],
+            "nature": "Serious",
+            "evs": {
+                "hp": 0,
+                "atk": 4,
+                "def": 0,
+                "spa": 252,
+                "spd": 0,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Tentacruel",
+            "species": "Tentacruel",
+            "item": "blacksludge",
+            "ability": "Rain Dish",
+            "moves": [
+                "toxicspikes",
+                "hex",
+                "hydropump",
+                "rapidspin"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        }
+    ],
+    "score": [
+        6,
+        5
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7ubers\",\"seed\":[25922,34830,41201,17779]}",
+        ">player p1 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"aaaaaaaaaa|rayquaza|ejectbutton||dragonascent,roar,extremespeed,dragondance|Adamant|,252,,,4,252|||||]aaaaaaaaa|greninja|lifeorb|battlebond|hiddenpowerghost,watershuriken,uturn,spikes|Timid|,,,252,4,252|M|,,20,,20,|||,Ghost,]b|meloetta|redcard||relicsong,focusblast,perishsong,signalbeam|Timid|,,,252,4,252||,0,,,,|||]c|zoroark|lifeorb||pursuit,uturn,knockoff,frustration|Jolly|,252,,,4,252|||||0]d|ditto||H|transform|Impish|248,8,252,,,||,0,,,,|||]e|shedinja|focussash||facade,swordsdance,hiddenpower|Naive|,196,,4,,232|||||\"}",
+        ">player p2 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"Kyogre||blueorb||calmmind,icebeam,originpulse,thunder|Modest|252,,,252,4,||,0,,,,|||]Swampert||swampertite||earthquake,waterfall,superpower,stealthrock|Adamant|,252,,,4,252|||||]Pelipper||redcard|1|scald,roost,tailwind,uturn|Bold|248,,252,,8,|||||]Ludicolo||wateriumz||surf,grassknot,fakeout,icebeam|Serious|,4,,252,,252|||||]Tentacruel||blacksludge|H|toxicspikes,hex,hydropump,rapidspin|Timid|,,,252,4,252||,0,,,,|||\"}",
+        ">p1 team 1, 2, 3, 4, 5, 6",
+        ">p2 team 1, 2, 3, 4, 5",
+        ">p1 move roar",
+        ">p2 move thunder",
+        ">p1 switch 4"
+    ],
+    "log": [
+        "|j|\u2606test-player-a",
+        "|j|\u2606test-player-b",
+        "|player|p1|test-player-a|170",
+        "|player|p2|test-player-b|265",
+        "|teamsize|p1|6",
+        "|teamsize|p2|5",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Ubers",
+        "|rule|Sleep Clause Mod: Limit one foe put to sleep",
+        "|rule|Species Clause: Limit one of each Pok\u00e9mon",
+        "|rule|OHKO Clause: OHKO moves are banned",
+        "|rule|Moody Clause: Moody is banned",
+        "|rule|Evasion Moves Clause: Evasion moves are banned",
+        "|rule|Endless Battle Clause: Forcing endless battles is banned",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Rayquaza|item",
+        "|poke|p1|Greninja, M|item",
+        "|poke|p1|Meloetta|item",
+        "|poke|p1|Zoroark, F|item",
+        "|poke|p1|Ditto|",
+        "|poke|p1|Shedinja|item",
+        "|poke|p2|Kyogre|item",
+        "|poke|p2|Swampert, M|item",
+        "|poke|p2|Pelipper, M|item",
+        "|poke|p2|Ludicolo, F|item",
+        "|poke|p2|Tentacruel, M|item",
+        "|rule|Mega Rayquaza Clause: You cannot mega evolve Rayquaza",
+        "|teampreview",
+        "|",
+        "|start",
+        "|switch|p1a: aaaaaaaaaa|Rayquaza|100/100",
+        "|switch|p2a: Kyogre|Kyogre|100/100",
+        "|-ability|p1a: aaaaaaaaaa|Air Lock",
+        "|detailschange|p2a: Kyogre|Kyogre-Primal",
+        "|-primal|p2a: Kyogre",
+        "|-weather|PrimordialSea|[from] ability: Primordial Sea|[of] p2a: Kyogre",
+        "|turn|1",
+        "|",
+        "|move|p2a: Kyogre|Thunder|p1a: aaaaaaaaaa",
+        "|-damage|p1a: aaaaaaaaaa|39/100",
+        "|-enditem|p1a: aaaaaaaaaa|Eject Button",
+        "|",
+        "|switch|p1a: e|Shedinja|100/100",
+        "|",
+        "|-weather|PrimordialSea|[upkeep]",
+        "|upkeep",
+        "|turn|2",
+        "|-message|test-player-b forfeited.",
+        "|",
+        "|win|test-player-a",
+        ""
+    ],
+    "p1rating": null,
+    "p2rating": {"rpr": 1750, "rprd": 100},
+    "endType": "forfeit",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:05:51 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7ubers-2",
+    "format": "gen7ubers"
+}

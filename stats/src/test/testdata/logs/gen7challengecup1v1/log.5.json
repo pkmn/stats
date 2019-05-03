@@ -1,0 +1,459 @@
+{
+    "winner": "test-player-a",
+    "seed": [
+        51590,
+        7640,
+        38334,
+        1010
+    ],
+    "turns": 0,
+    "p1": "test-player-a",
+    "p2": "test-player-b",
+    "p1team": [
+        {
+            "name": "Latios",
+            "species": "Latios",
+            "gender": "M",
+            "item": "ironball",
+            "ability": "Levitate",
+            "moves": [
+                "mimic",
+                "dragondance",
+                "magiccoat",
+                "thunderwave"
+            ],
+            "evs": {
+                "hp": 34,
+                "atk": 16,
+                "def": 254,
+                "spa": 4,
+                "spd": 1,
+                "spe": 201
+            },
+            "ivs": {
+                "hp": 14,
+                "atk": 0,
+                "def": 9,
+                "spa": 16,
+                "spd": 23,
+                "spe": 31
+            },
+            "nature": "jolly",
+            "level": 69,
+            "happiness": 141,
+            "shiny": false
+        },
+        {
+            "name": "Swoobat",
+            "species": "Swoobat",
+            "gender": "",
+            "item": "heavyball",
+            "ability": "Unaware",
+            "moves": [
+                "swagger",
+                "embargo",
+                "gigaimpact",
+                "shockwave"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 239,
+                "def": 11,
+                "spa": 10,
+                "spd": 248,
+                "spe": 2
+            },
+            "ivs": {
+                "hp": 19,
+                "atk": 30,
+                "def": 15,
+                "spa": 13,
+                "spd": 27,
+                "spe": 11
+            },
+            "nature": "quirky",
+            "level": 78,
+            "happiness": 40,
+            "shiny": false
+        },
+        {
+            "name": "Honedge",
+            "species": "Honedge",
+            "gender": "",
+            "item": "terrainextender",
+            "ability": "No Guard",
+            "moves": [
+                "rockslide",
+                "shockwave",
+                "destinybond",
+                "protect"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 167,
+                "def": 187,
+                "spa": 25,
+                "spd": 127,
+                "spe": 4
+            },
+            "ivs": {
+                "hp": 0,
+                "atk": 10,
+                "def": 3,
+                "spa": 4,
+                "spd": 16,
+                "spe": 7
+            },
+            "nature": "jolly",
+            "level": 86,
+            "happiness": 176,
+            "shiny": false
+        },
+        {
+            "name": "Heliolisk",
+            "species": "Heliolisk",
+            "gender": "",
+            "item": "cobaberry",
+            "ability": "Sand Veil",
+            "moves": [
+                "secretpower",
+                "attract",
+                "electroweb",
+                "surf"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 14,
+                "def": 88,
+                "spa": 188,
+                "spd": 0,
+                "spe": 220
+            },
+            "ivs": {
+                "hp": 15,
+                "atk": 13,
+                "def": 9,
+                "spa": 18,
+                "spd": 6,
+                "spe": 17
+            },
+            "nature": "hasty",
+            "level": 75,
+            "happiness": 223,
+            "shiny": false
+        },
+        {
+            "name": "Nidorino",
+            "species": "Nidorino",
+            "gender": "M",
+            "item": "moonstone",
+            "ability": "Rivalry",
+            "moves": [
+                "shadowclaw",
+                "rage",
+                "sleeptalk",
+                "raindance"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 16,
+                "def": 250,
+                "spa": 2,
+                "spd": 0,
+                "spe": 242
+            },
+            "ivs": {
+                "hp": 27,
+                "atk": 3,
+                "def": 4,
+                "spa": 24,
+                "spd": 4,
+                "spe": 7
+            },
+            "nature": "modest",
+            "level": 83,
+            "happiness": 14,
+            "shiny": false
+        },
+        {
+            "name": "Suicune",
+            "species": "Suicune",
+            "gender": "N",
+            "item": "moonball",
+            "ability": "Inner Focus",
+            "moves": [
+                "detect",
+                "toxic",
+                "snore",
+                "brine"
+            ],
+            "evs": {
+                "hp": 53,
+                "atk": 240,
+                "def": 0,
+                "spa": 98,
+                "spd": 119,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 1,
+                "atk": 18,
+                "def": 12,
+                "spa": 13,
+                "spd": 24,
+                "spe": 3
+            },
+            "nature": "calm",
+            "level": 69,
+            "happiness": 171,
+            "shiny": false
+        }
+    ],
+    "p2team": [
+        {
+            "name": "Nidoqueen",
+            "species": "Nidoqueen",
+            "gender": "F",
+            "item": "pikaniumz",
+            "ability": "Rivalry",
+            "moves": [
+                "focuspunch",
+                "submission",
+                "gigaimpact",
+                "captivate"
+            ],
+            "evs": {
+                "hp": 239,
+                "atk": 81,
+                "def": 95,
+                "spa": 55,
+                "spd": 5,
+                "spe": 35
+            },
+            "ivs": {
+                "hp": 6,
+                "atk": 2,
+                "def": 8,
+                "spa": 31,
+                "spd": 2,
+                "spe": 15
+            },
+            "nature": "lonely",
+            "level": 74,
+            "happiness": 118,
+            "shiny": false
+        },
+        {
+            "name": "Beedrill",
+            "species": "Beedrill",
+            "gender": "",
+            "item": "moonball",
+            "ability": "Swarm",
+            "moves": [
+                "acrobatics",
+                "throatchop",
+                "brutalswing",
+                "cut"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 238,
+                "spa": 200,
+                "spd": 0,
+                "spe": 72
+            },
+            "ivs": {
+                "hp": 6,
+                "atk": 17,
+                "def": 8,
+                "spa": 11,
+                "spd": 27,
+                "spe": 6
+            },
+            "nature": "docile",
+            "level": 81,
+            "happiness": 30,
+            "shiny": false
+        },
+        {
+            "name": "Eevee",
+            "species": "Eevee",
+            "gender": "",
+            "item": "bigroot",
+            "ability": "Run Away",
+            "moves": [
+                "swift",
+                "captivate",
+                "tailwhip",
+                "return"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 255,
+                "spd": 14,
+                "spe": 241
+            },
+            "ivs": {
+                "hp": 27,
+                "atk": 29,
+                "def": 26,
+                "spa": 8,
+                "spd": 12,
+                "spe": 6
+            },
+            "nature": "quiet",
+            "level": 86,
+            "happiness": 108,
+            "shiny": false
+        },
+        {
+            "name": "Linoone",
+            "species": "Linoone",
+            "gender": "",
+            "item": "mewtwonitey",
+            "ability": "Gluttony",
+            "moves": [
+                "odorsleuth",
+                "mudslap",
+                "toxic",
+                "mudsport"
+            ],
+            "evs": {
+                "hp": 5,
+                "atk": 155,
+                "def": 63,
+                "spa": 30,
+                "spd": 255,
+                "spe": 2
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 5,
+                "def": 29,
+                "spa": 7,
+                "spd": 28,
+                "spe": 7
+            },
+            "nature": "naughty",
+            "level": 79,
+            "happiness": 196,
+            "shiny": false
+        },
+        {
+            "name": "Lilligant",
+            "species": "Lilligant",
+            "gender": "F",
+            "item": "mindplate",
+            "ability": "Own Tempo",
+            "moves": [
+                "protect",
+                "teeterdance",
+                "flash",
+                "frustration"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 5,
+                "def": 177,
+                "spa": 120,
+                "spd": 208,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 21,
+                "atk": 5,
+                "def": 14,
+                "spa": 22,
+                "spd": 6,
+                "spe": 20
+            },
+            "nature": "hardy",
+            "level": 75,
+            "happiness": 150,
+            "shiny": false
+        },
+        {
+            "name": "Pangoro",
+            "species": "Pangoro",
+            "gender": "",
+            "item": "fairiumz",
+            "ability": "Iron Fist",
+            "moves": [
+                "round",
+                "hiddenpower",
+                "poweruppunch",
+                "swagger"
+            ],
+            "evs": {
+                "hp": 3,
+                "atk": 133,
+                "def": 0,
+                "spa": 246,
+                "spd": 122,
+                "spe": 6
+            },
+            "ivs": {
+                "hp": 11,
+                "atk": 11,
+                "def": 27,
+                "spa": 15,
+                "spd": 24,
+                "spe": 2
+            },
+            "nature": "rash",
+            "level": 75,
+            "happiness": 78,
+            "shiny": false
+        }
+    ],
+    "score": [
+        6,
+        6
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7challengecup1v1\",\"seed\":[51590,7640,38334,1010]}",
+        ">player p1 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"\",\"seed\":[54074,21353,17645,47180]}",
+        ">player p2 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"\",\"seed\":[7598,50377,43846,8246]}"
+    ],
+    "log": [
+        "|j|\u2606test-player-a",
+        "|j|\u2606test-player-b",
+        "|player|p1|test-player-a|170",
+        "|player|p2|test-player-b|265",
+        "|teamsize|p1|6",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Challenge Cup 1v1",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Latios, L69, M|item",
+        "|poke|p1|Swoobat, L78, F|item",
+        "|poke|p1|Honedge, L86, F|item",
+        "|poke|p1|Heliolisk, L75, M|item",
+        "|poke|p1|Nidorino, L83, M|item",
+        "|poke|p1|Suicune, L69|item",
+        "|poke|p2|Nidoqueen, L74, F|item",
+        "|poke|p2|Beedrill, L81, F|item",
+        "|poke|p2|Eevee, L86, F|item",
+        "|poke|p2|Linoone, L79, M|item",
+        "|poke|p2|Lilligant, L75, F|item",
+        "|poke|p2|Pangoro, L75, M|item",
+        "|teampreview|1",
+        "|-message|test-player-b forfeited.",
+        "|",
+        "|win|test-player-a",
+        ""
+    ],
+    "p1rating": {"rpr": 1450, "rprd": 50},
+    "p2rating": {"rpr": 1750, "rprd": 100},
+    "endType": "forfeit",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:17:09 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7challengecup1v1-8",
+    "format": "gen7challengecup1v1"
+}

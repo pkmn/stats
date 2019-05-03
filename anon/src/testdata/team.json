@@ -1,0 +1,183 @@
+[
+  {
+    "name": "aaaaaaaaaa",
+    "species": "rayquaza",
+    "item": "ejectbutton",
+    "ability": "Air Lock",
+    "moves": [
+      "dragonascent",
+      "roar",
+      "extremespeed",
+      "dragondance"
+    ],
+    "nature": "Adamant",
+    "evs": {
+      "hp": 0,
+      "atk": 252,
+      "def": 0,
+      "spa": 0,
+      "spd": 4,
+      "spe": 252
+    },
+    "level": 100,
+    "ivs": {
+      "hp": 31,
+      "atk": 31,
+      "def": 31,
+      "spa": 31,
+      "spd": 31,
+      "spe": 31
+    }
+  },
+  {
+    "name": "aaaaaaaaa",
+    "species": "greninja",
+    "item": "lifeorb",
+    "ability": "battlebond",
+    "moves": [
+      "hiddenpowerghost",
+      "watershuriken",
+      "uturn",
+      "spikes"
+    ],
+    "nature": "Timid",
+    "evs": {
+      "hp": 0,
+      "atk": 0,
+      "def": 0,
+      "spa": 252,
+      "spd": 4,
+      "spe": 252
+    },
+    "gender": "M",
+    "ivs": {
+      "hp": 31,
+      "atk": 31,
+      "def": 20,
+      "spa": 31,
+      "spd": 20,
+      "spe": 31
+    },
+    "happiness": 255,
+    "hpType": "Ghost",
+    "pokeball": "",
+    "level": 100
+  },
+  {
+    "name": "b",
+    "species": "meloetta",
+    "item": "redcard",
+    "ability": "Serene Grace",
+    "moves": [
+      "relicsong",
+      "focusblast",
+      "perishsong",
+      "signalbeam"
+    ],
+    "nature": "Timid",
+    "evs": {
+      "hp": 0,
+      "atk": 0,
+      "def": 0,
+      "spa": 252,
+      "spd": 4,
+      "spe": 252
+    },
+    "ivs": {
+      "hp": 31,
+      "atk": 0,
+      "def": 31,
+      "spa": 31,
+      "spd": 31,
+      "spe": 31
+    },
+    "level": 100
+  },
+  {
+    "name": "c",
+    "species": "zoroark",
+    "item": "lifeorb",
+    "ability": "Illusion",
+    "moves": [
+      "pursuit",
+      "uturn",
+      "knockoff",
+      "frustration"
+    ],
+    "nature": "Jolly",
+    "evs": {
+      "hp": 0,
+      "atk": 252,
+      "def": 0,
+      "spa": 0,
+      "spd": 4,
+      "spe": 252
+    },
+    "happiness": 0,
+    "level": 100,
+    "ivs": {
+      "hp": 31,
+      "atk": 31,
+      "def": 31,
+      "spa": 31,
+      "spd": 31,
+      "spe": 31
+    }
+  },
+  {
+    "name": "d",
+    "species": "ditto",
+    "item": "",
+    "ability": "Imposter",
+    "moves": [
+      "transform"
+    ],
+    "nature": "Impish",
+    "evs": {
+      "hp": 248,
+      "atk": 8,
+      "def": 252,
+      "spa": 0,
+      "spd": 0,
+      "spe": 0
+    },
+    "ivs": {
+      "hp": 31,
+      "atk": 0,
+      "def": 31,
+      "spa": 31,
+      "spd": 31,
+      "spe": 31
+    },
+    "level": 100
+  },
+  {
+    "name": "e",
+    "species": "shedinja",
+    "item": "focussash",
+    "ability": "Wonder Guard",
+    "moves": [
+      "facade",
+      "swordsdance",
+      "hiddenpower"
+    ],
+    "nature": "Naive",
+    "evs": {
+      "hp": 0,
+      "atk": 196,
+      "def": 0,
+      "spa": 4,
+      "spd": 0,
+      "spe": 232
+    },
+    "level": 100,
+    "ivs": {
+      "hp": 31,
+      "atk": 31,
+      "def": 31,
+      "spa": 31,
+      "spd": 31,
+      "spe": 31
+    }
+  }
+]

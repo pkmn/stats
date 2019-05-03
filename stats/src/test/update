@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
+
+const integration = require('../../build/test/integration');
+(async () => integration.update(await integration.process()))(); // Update golden files

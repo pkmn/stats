@@ -1,0 +1,460 @@
+{
+    "winner": "test-player-b",
+    "seed": [
+        47094,
+        52981,
+        16935,
+        60494
+    ],
+    "turns": 5,
+    "p1": "test-player-b",
+    "p2": "test-player-a",
+    "p1team": [
+        {
+            "name": "Magnezone",
+            "species": "Magnezone",
+            "item": "assaultvest",
+            "ability": "Magnet Pull",
+            "moves": [
+                "explosion",
+                "voltswitch",
+                "flashcannon",
+                "sunnyday"
+            ],
+            "nature": "Quiet",
+            "evs": {
+                "hp": 248,
+                "atk": 8,
+                "def": 0,
+                "spa": 252,
+                "spd": 0,
+                "spe": 0
+            },
+            "happiness": 240,
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Necrozma",
+            "species": "necrozmaduskmane",
+            "item": "ultranecroziumz",
+            "ability": "Prism Armor",
+            "moves": [
+                "brickbreak",
+                "earthquake",
+                "ironhead",
+                "photongeyser"
+            ],
+            "nature": "Brave",
+            "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 0,
+                "spa": 4,
+                "spd": 0,
+                "spe": 0
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Aegislash",
+            "species": "Aegislash",
+            "item": "leftovers",
+            "ability": "Stance Change",
+            "moves": [
+                "ironhead",
+                "kingsshield",
+                "sacredsword",
+                "shadowsneak"
+            ],
+            "nature": "Adamant",
+            "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 0
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Metagross",
+            "species": "Metagross",
+            "item": "metagrossite",
+            "ability": "Clear Body",
+            "moves": [
+                "earthquake",
+                "explosion"
+            ],
+            "nature": "",
+            "evs": {
+                "hp": 0,
+                "atk": 250,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 250
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "Genesect",
+            "species": "genesectburn",
+            "item": "burndrive",
+            "ability": "Download",
+            "moves": [
+                "explosion",
+                "flashcannon",
+                "flamethrower",
+                "icebeam"
+            ],
+            "nature": "Hasty",
+            "evs": {
+                "hp": 0,
+                "atk": 4,
+                "def": 0,
+                "spa": 252,
+                "spd": 0,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        }
+    ],
+    "p2team": [
+        {
+            "name": "aaaaaaaaaa",
+            "species": "rayquaza",
+            "item": "ejectbutton",
+            "ability": "Air Lock",
+            "moves": [
+                "dragonascent",
+                "roar",
+                "extremespeed",
+                "dragondance"
+            ],
+            "nature": "Adamant",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "aaaaaaaaa",
+            "species": "greninja",
+            "item": "lifeorb",
+            "ability": "battlebond",
+            "moves": [
+                "hiddenpowerghost",
+                "watershuriken",
+                "uturn",
+                "spikes"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "gender": "M",
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 20,
+                "spa": 31,
+                "spd": 20,
+                "spe": 31
+            },
+            "happiness": 255,
+            "hpType": "Ghost",
+            "pokeball": "",
+            "level": 100
+        },
+        {
+            "name": "b",
+            "species": "meloetta",
+            "item": "redcard",
+            "ability": "Serene Grace",
+            "moves": [
+                "relicsong",
+                "focusblast",
+                "perishsong",
+                "signalbeam"
+            ],
+            "nature": "Timid",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 252,
+                "spd": 4,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "c",
+            "species": "zoroark",
+            "item": "lifeorb",
+            "ability": "Illusion",
+            "moves": [
+                "pursuit",
+                "uturn",
+                "knockoff",
+                "frustration"
+            ],
+            "nature": "Jolly",
+            "evs": {
+                "hp": 0,
+                "atk": 252,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 252
+            },
+            "happiness": 0,
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        },
+        {
+            "name": "d",
+            "species": "ditto",
+            "item": "",
+            "ability": "Imposter",
+            "moves": [
+                "transform"
+            ],
+            "nature": "Impish",
+            "evs": {
+                "hp": 248,
+                "atk": 8,
+                "def": 252,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 31,
+                "atk": 0,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            },
+            "level": 100
+        },
+        {
+            "name": "e",
+            "species": "shedinja",
+            "item": "focussash",
+            "ability": "Wonder Guard",
+            "moves": [
+                "facade",
+                "swordsdance",
+                "hiddenpower"
+            ],
+            "nature": "Naive",
+            "evs": {
+                "hp": 0,
+                "atk": 196,
+                "def": 0,
+                "spa": 4,
+                "spd": 0,
+                "spe": 232
+            },
+            "level": 100,
+            "ivs": {
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
+            }
+        }
+    ],
+    "score": [
+        3,
+        6
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7ubers\",\"seed\":[47094,52981,16935,60494]}",
+        ">player p1 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"Magnezone||assaultvest||explosion,voltswitch,flashcannon,sunnyday|Quiet|248,8,,252,,|||||240]Necrozma|necrozmaduskmane|ultranecroziumz||brickbreak,earthquake,ironhead,photongeyser|Brave|252,252,,4,,|||||]Aegislash||leftovers||ironhead,kingsshield,sacredsword,shadowsneak|Adamant|252,252,,,4,|||||]Metagross||metagrossite||earthquake,explosion||,250,,,,250|||||]Genesect|genesectburn|burndrive||explosion,flashcannon,flamethrower,icebeam|Hasty|,4,,252,,252|||||\"}",
+        ">player p2 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"aaaaaaaaaa|rayquaza|ejectbutton||dragonascent,roar,extremespeed,dragondance|Adamant|,252,,,4,252|||||]aaaaaaaaa|greninja|lifeorb|battlebond|hiddenpowerghost,watershuriken,uturn,spikes|Timid|,,,252,4,252|M|,,20,,20,|||,Ghost,]b|meloetta|redcard||relicsong,focusblast,perishsong,signalbeam|Timid|,,,252,4,252||,0,,,,|||]c|zoroark|lifeorb||pursuit,uturn,knockoff,frustration|Jolly|,252,,,4,252|||||0]d|ditto||H|transform|Impish|248,8,252,,,||,0,,,,|||]e|shedinja|focussash||facade,swordsdance,hiddenpower|Naive|,196,,4,,232|||||\"}",
+        ">p1 team 2, 1, 3, 4, 5",
+        ">p2 team 5, 6, 4, 3, 1, 2",
+        ">p1 move photongeyser ultra",
+        ">p2 move photongeyser",
+        ">p1 move photongeyser zmove",
+        ">p2 move ironhead",
+        ">p1 move brickbreak",
+        ">p2 move ironhead",
+        ">p1 switch 2",
+        ">p1 move voltswitch",
+        ">p2 move earthquake",
+        ">p1 switch 3"
+    ],
+    "log": [
+        "|j|\u2606test-player-b",
+        "|j|\u2606test-player-a",
+        "|player|p1|test-player-b|265",
+        "|player|p2|test-player-a|170",
+        "|teamsize|p1|5",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Ubers",
+        "|rule|Sleep Clause Mod: Limit one foe put to sleep",
+        "|rule|Species Clause: Limit one of each Pok\u00e9mon",
+        "|rule|OHKO Clause: OHKO moves are banned",
+        "|rule|Moody Clause: Moody is banned",
+        "|rule|Evasion Moves Clause: Evasion moves are banned",
+        "|rule|Endless Battle Clause: Forcing endless battles is banned",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Magnezone|item",
+        "|poke|p1|Necrozma-Dusk-Mane|item",
+        "|poke|p1|Aegislash, M|item",
+        "|poke|p1|Metagross|item",
+        "|poke|p1|Genesect-*|item",
+        "|poke|p2|Rayquaza|item",
+        "|poke|p2|Greninja, M|item",
+        "|poke|p2|Meloetta|item",
+        "|poke|p2|Zoroark, M|item",
+        "|poke|p2|Ditto|",
+        "|poke|p2|Shedinja|item",
+        "|rule|Mega Rayquaza Clause: You cannot mega evolve Rayquaza",
+        "|teampreview",
+        "|",
+        "|start",
+        "|switch|p1a: Necrozma|Necrozma-Dusk-Mane|100/100",
+        "|switch|p2a: d|Ditto|100/100",
+        "|-transform|p2a: d|p1a: Necrozma|[from] ability: Imposter",
+        "|turn|1",
+        "|",
+        "|detailschange|p1a: Necrozma|Necrozma-Ultra",
+        "|-burst|p1a: Necrozma|Necrozma|Ultranecrozium Z",
+        "|move|p1a: Necrozma|Photon Geyser|p2a: d",
+        "|-resisted|p2a: d",
+        "|-damage|p2a: d|84/100",
+        "|move|p2a: d|Photon Geyser|p1a: Necrozma",
+        "|-resisted|p1a: Necrozma",
+        "|-damage|p1a: Necrozma|73/100",
+        "|",
+        "|upkeep",
+        "|turn|2",
+        "|",
+        "|-zpower|p1a: Necrozma",
+        "|move|p1a: Necrozma|Light That Burns the Sky|p2a: d|[zeffect]",
+        "|-resisted|p2a: d",
+        "|-damage|p2a: d|54/100",
+        "|move|p2a: d|Iron Head|p1a: Necrozma",
+        "|-damage|p1a: Necrozma|23/100",
+        "|",
+        "|upkeep",
+        "|turn|3",
+        "|",
+        "|move|p1a: Necrozma|Brick Break|p2a: d",
+        "|-damage|p2a: d|21/100",
+        "|move|p2a: d|Iron Head|p1a: Necrozma",
+        "|-damage|p1a: Necrozma|0 fnt",
+        "|faint|p1a: Necrozma",
+        "|",
+        "|upkeep",
+        "|",
+        "|switch|p1a: Magnezone|Magnezone|100/100",
+        "|turn|4",
+        "|",
+        "|move|p2a: d|Earthquake|p1a: Magnezone",
+        "|-supereffective|p1a: Magnezone",
+        "|-damage|p1a: Magnezone|0 fnt",
+        "|faint|p1a: Magnezone",
+        "|",
+        "|upkeep",
+        "|",
+        "|switch|p1a: Aegislash|Aegislash, M|100/100",
+        "|turn|5",
+        "|-message|test-player-a forfeited.",
+        "|",
+        "|win|test-player-b",
+        ""
+    ],
+    "p1rating": {"rpr": 1900, "rprd": 50},
+    "p2rating": null,
+    "endType": "forfeit",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:07:56 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7ubers-4",
+    "format": "gen7ubers"
+}

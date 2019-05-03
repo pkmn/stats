@@ -1,0 +1,484 @@
+{
+    "winner": "test-player-a",
+    "seed": [
+        39580,
+        28388,
+        21248,
+        26734
+    ],
+    "turns": 3,
+    "p1": "test-player-b",
+    "p2": "test-player-a",
+    "p1team": [
+        {
+            "name": "Kingler",
+            "species": "Kingler",
+            "gender": "",
+            "item": "luminousmoss",
+            "ability": "Hyper Cutter",
+            "moves": [
+                "rockslide",
+                "mudslap",
+                "furycutter",
+                "mudshot"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 218,
+                "def": 0,
+                "spa": 57,
+                "spd": 233,
+                "spe": 2
+            },
+            "ivs": {
+                "hp": 0,
+                "atk": 27,
+                "def": 9,
+                "spa": 1,
+                "spd": 29,
+                "spe": 27
+            },
+            "nature": "modest",
+            "level": 76,
+            "happiness": 221,
+            "shiny": false
+        },
+        {
+            "name": "Cosmog",
+            "species": "Cosmog",
+            "gender": "N",
+            "item": "goldbottlecap",
+            "ability": "Unaware",
+            "moves": [
+                "splash",
+                "teleport"
+            ],
+            "evs": {
+                "hp": 38,
+                "atk": 216,
+                "def": 0,
+                "spa": 250,
+                "spd": 6,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 4,
+                "atk": 23,
+                "def": 14,
+                "spa": 2,
+                "spd": 12,
+                "spe": 2
+            },
+            "nature": "bashful",
+            "level": 98,
+            "happiness": 224,
+            "shiny": false
+        },
+        {
+            "name": "Carnivine",
+            "species": "Carnivine",
+            "gender": "",
+            "item": "psychiumz",
+            "ability": "Levitate",
+            "moves": [
+                "defog",
+                "magicalleaf",
+                "acidspray",
+                "toxic"
+            ],
+            "evs": {
+                "hp": 170,
+                "atk": 0,
+                "def": 64,
+                "spa": 255,
+                "spd": 1,
+                "spe": 20
+            },
+            "ivs": {
+                "hp": 28,
+                "atk": 6,
+                "def": 2,
+                "spa": 11,
+                "spd": 11,
+                "spe": 9
+            },
+            "nature": "jolly",
+            "level": 77,
+            "happiness": 57,
+            "shiny": false
+        },
+        {
+            "name": "Seadra",
+            "species": "Seadra",
+            "gender": "",
+            "item": "absolite",
+            "ability": "Poison Point",
+            "moves": [
+                "surf",
+                "curse",
+                "bubble",
+                "blizzard"
+            ],
+            "evs": {
+                "hp": 1,
+                "atk": 201,
+                "def": 21,
+                "spa": 250,
+                "spd": 0,
+                "spe": 37
+            },
+            "ivs": {
+                "hp": 8,
+                "atk": 11,
+                "def": 21,
+                "spa": 26,
+                "spd": 26,
+                "spe": 10
+            },
+            "nature": "jolly",
+            "level": 78,
+            "happiness": 225,
+            "shiny": false
+        },
+        {
+            "name": "Hitmonlee",
+            "species": "Hitmonlee",
+            "gender": "M",
+            "item": "plumefossil",
+            "ability": "Reckless",
+            "moves": [
+                "swagger",
+                "foresight",
+                "bodyslam",
+                "detect"
+            ],
+            "evs": {
+                "hp": 75,
+                "atk": 8,
+                "def": 210,
+                "spa": 74,
+                "spd": 32,
+                "spe": 111
+            },
+            "ivs": {
+                "hp": 5,
+                "atk": 9,
+                "def": 23,
+                "spa": 15,
+                "spd": 16,
+                "spe": 0
+            },
+            "nature": "quiet",
+            "level": 77,
+            "happiness": 242,
+            "shiny": false
+        },
+        {
+            "name": "Whismur",
+            "species": "Whismur",
+            "gender": "",
+            "item": "powerband",
+            "ability": "Soundproof",
+            "moves": [
+                "astonish",
+                "return",
+                "megakick",
+                "raindance"
+            ],
+            "evs": {
+                "hp": 21,
+                "atk": 0,
+                "def": 78,
+                "spa": 3,
+                "spd": 153,
+                "spe": 255
+            },
+            "ivs": {
+                "hp": 25,
+                "atk": 29,
+                "def": 29,
+                "spa": 7,
+                "spd": 8,
+                "spe": 13
+            },
+            "nature": "docile",
+            "level": 94,
+            "happiness": 22,
+            "shiny": false
+        }
+    ],
+    "p2team": [
+        {
+            "name": "Raichu",
+            "species": "Raichu-Alola",
+            "gender": "",
+            "item": "absorbbulb",
+            "ability": "Surge Surfer",
+            "moves": [
+                "grassknot",
+                "thief",
+                "laserfocus",
+                "magiccoat"
+            ],
+            "evs": {
+                "hp": 189,
+                "atk": 20,
+                "def": 42,
+                "spa": 127,
+                "spd": 0,
+                "spe": 132
+            },
+            "ivs": {
+                "hp": 28,
+                "atk": 16,
+                "def": 25,
+                "spa": 20,
+                "spd": 31,
+                "spe": 6
+            },
+            "nature": "calm",
+            "level": 75,
+            "happiness": 233,
+            "shiny": false
+        },
+        {
+            "name": "Carracosta",
+            "species": "Carracosta",
+            "gender": "",
+            "item": "starfberry",
+            "ability": "Sturdy",
+            "moves": [
+                "facade",
+                "aquajet",
+                "bite",
+                "liquidation"
+            ],
+            "evs": {
+                "hp": 34,
+                "atk": 130,
+                "def": 0,
+                "spa": 0,
+                "spd": 94,
+                "spe": 252
+            },
+            "ivs": {
+                "hp": 28,
+                "atk": 2,
+                "def": 30,
+                "spa": 6,
+                "spd": 19,
+                "spe": 4
+            },
+            "nature": "hasty",
+            "level": 75,
+            "happiness": 225,
+            "shiny": false
+        },
+        {
+            "name": "Gastly",
+            "species": "Gastly",
+            "gender": "",
+            "item": "bottlecap",
+            "ability": "Levitate",
+            "moves": [
+                "dreameater",
+                "thunderpunch",
+                "zapcannon",
+                "dazzlinggleam"
+            ],
+            "evs": {
+                "hp": 101,
+                "atk": 7,
+                "def": 0,
+                "spa": 116,
+                "spd": 149,
+                "spe": 137
+            },
+            "ivs": {
+                "hp": 22,
+                "atk": 11,
+                "def": 12,
+                "spa": 3,
+                "spd": 22,
+                "spe": 11
+            },
+            "nature": "relaxed",
+            "level": 88,
+            "happiness": 9,
+            "shiny": false
+        },
+        {
+            "name": "Deino",
+            "species": "Deino",
+            "gender": "",
+            "item": "blastoisinite",
+            "ability": "Hustle",
+            "moves": [
+                "superpower",
+                "hypervoice",
+                "toxic",
+                "substitute"
+            ],
+            "evs": {
+                "hp": 0,
+                "atk": 55,
+                "def": 250,
+                "spa": 0,
+                "spd": 202,
+                "spe": 3
+            },
+            "ivs": {
+                "hp": 7,
+                "atk": 10,
+                "def": 2,
+                "spa": 17,
+                "spd": 16,
+                "spe": 0
+            },
+            "nature": "jolly",
+            "level": 89,
+            "happiness": 140,
+            "shiny": false
+        },
+        {
+            "name": "Swanna",
+            "species": "Swanna",
+            "gender": "",
+            "item": "firestone",
+            "ability": "Big Pecks",
+            "moves": [
+                "doubleteam",
+                "waterpulse",
+                "icebeam",
+                "skyattack"
+            ],
+            "evs": {
+                "hp": 251,
+                "atk": 45,
+                "def": 8,
+                "spa": 64,
+                "spd": 142,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 17,
+                "atk": 0,
+                "def": 10,
+                "spa": 27,
+                "spd": 21,
+                "spe": 7
+            },
+            "nature": "lax",
+            "level": 76,
+            "happiness": 240,
+            "shiny": false
+        },
+        {
+            "name": "Electabuzz",
+            "species": "Electabuzz",
+            "gender": "",
+            "item": "yacheberry",
+            "ability": "Vital Spirit",
+            "moves": [
+                "flash",
+                "electroball",
+                "naturalgift",
+                "quickattack"
+            ],
+            "evs": {
+                "hp": 62,
+                "atk": 219,
+                "def": 115,
+                "spa": 114,
+                "spd": 0,
+                "spe": 0
+            },
+            "ivs": {
+                "hp": 5,
+                "atk": 29,
+                "def": 10,
+                "spa": 14,
+                "spd": 12,
+                "spe": 0
+            },
+            "nature": "gentle",
+            "level": 75,
+            "happiness": 249,
+            "shiny": false
+        }
+    ],
+    "score": [
+        1,
+        1
+    ],
+    "inputLog": [
+        ">version 2915094c559caa35704af71b6186fd85149f0685",
+        ">start {\"formatid\":\"gen7challengecup1v1\",\"seed\":[39580,28388,21248,26734]}",
+        ">player p1 {\"name\":\"test-player-b\",\"avatar\":\"265\",\"team\":\"\",\"seed\":[28078,16135,63117,61845]}",
+        ">player p2 {\"name\":\"test-player-a\",\"avatar\":\"170\",\"team\":\"\",\"seed\":[8316,50770,25534,42187]}",
+        ">p1 team 2",
+        ">p2 team 3",
+        ">p1 move splash",
+        ">p2 move dreameater",
+        ">p1 move splash",
+        ">p2 move dreameater"
+    ],
+    "log": [
+        "|j|\u2606test-player-b",
+        "|j|\u2606test-player-a",
+        "|player|p1|test-player-b|265",
+        "|player|p2|test-player-a|170",
+        "|teamsize|p1|6",
+        "|teamsize|p2|6",
+        "|gametype|singles",
+        "|gen|7",
+        "|tier|[Gen 7] Challenge Cup 1v1",
+        "|rule|HP Percentage Mod: HP is shown in percentages",
+        "|clearpoke",
+        "|poke|p1|Kingler, L76, F|item",
+        "|poke|p1|Cosmog, L98|item",
+        "|poke|p1|Carnivine, L77, F|item",
+        "|poke|p1|Seadra, L78, M|item",
+        "|poke|p1|Hitmonlee, L77, M|item",
+        "|poke|p1|Whismur, L94, M|item",
+        "|poke|p2|Raichu-Alola, L75, F|item",
+        "|poke|p2|Carracosta, L75, M|item",
+        "|poke|p2|Gastly, L88, F|item",
+        "|poke|p2|Deino, L89, F|item",
+        "|poke|p2|Swanna, L76, M|item",
+        "|poke|p2|Electabuzz, L75, F|item",
+        "|teampreview|1",
+        "|",
+        "|start",
+        "|switch|p1a: Cosmog|Cosmog, L98|100/100",
+        "|switch|p2a: Gastly|Gastly, L88, F|100/100",
+        "|turn|1",
+        "|",
+        "|move|p2a: Gastly|Dream Eater|p1a: Cosmog",
+        "|-immune|p1a: Cosmog",
+        "|move|p1a: Cosmog|Splash|p1a: Cosmog",
+        "|-nothing",
+        "|",
+        "|upkeep",
+        "|turn|2",
+        "|",
+        "|move|p2a: Gastly|Dream Eater|p1a: Cosmog",
+        "|-immune|p1a: Cosmog",
+        "|move|p1a: Cosmog|Splash|p1a: Cosmog",
+        "|-nothing",
+        "|",
+        "|upkeep",
+        "|turn|3",
+        "|-message|test-player-b forfeited.",
+        "|",
+        "|win|test-player-a",
+        ""
+    ],
+    "p1rating": null,
+    "p2rating": {"rpr": 1750, "rprd": 50},
+    "endType": "forfeit",
+    "ladderError": true,
+    "timestamp": "Wed May 15 2019 20:18:22 GMT-0700 (Pacific Daylight Time)",
+    "id": "battle-gen7challengecup1v1-10",
+    "format": "gen7challengecup1v1"
+}
