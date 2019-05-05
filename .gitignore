@@ -1,7 +1,4 @@
-/node_modules
+node_modules
 /build
-/data
-/*_
-/coverage
 package-lock.json
 .tsbuildinfo
