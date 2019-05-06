@@ -1,3 +1,74 @@
+import {Data, Species} from 'ps';
+
+export function getSpecies(name: string) {
+  const species = Data.getSpecies(name);
+  if (!species) throw new Error(`Unknown species '${name}'`);
+  return species;
+}
+
+export function baseSpecies(name: string): Species {
+  const species = getSpecies(name);
+  return species.baseSpecies ? baseSpecies(species.baseSpecies) : species;
+}
+
+export const NON_SINGLES_FORMATS = new Set([
+  'battlespotdoubles',
+  'battlespotspecial7',
+  'battlespottriples',
+  'doublesou',
+  'doublesubers',
+  'doublesuu',
+  'gen5doublesou',
+  'gen5smogondoubles',
+  'gen7battlespotdoubles',
+  'gen7doublesanythinggoes',
+  'gen7doublesanythinggoesbeta',
+  'gen7doublesou',
+  'gen7doublesoubeta',
+  'gen7pokebankdoubleaanythinggoes',
+  'gen7pokebankdoublesag',
+  'gen7pokebankdoublesanythinggoes',
+  'gen7pokebankdoublesou',
+  'gen7pokebankdoublesoubeta',
+  'gen7randomdoublesbattle',
+  'gen7vgc2017',
+  'gen7vgc2017beta',
+  'orassmogondoubles',
+  'randomdoublesbattle',
+  'randomtriplesbattle',
+  'smogondoubles',
+  'smogondoublessuspecttest',
+  'smogondoublesubers',
+  'smogondoublesuu',
+  'smogontriples',
+  'smogontriples',
+  'vgc2014',
+  'vgc2015',
+  'vgc2016',
+  'vgc2017',
+]);
+
+export const NON_6V6_FORMATS = new Set([
+  '1v1',
+  'battlespotdoubles',
+  'battlespotsingles',
+  'battlespotspecial7',
+  'challengecup1v1',
+  'gen5gbusingles',
+  'gen71v1',
+  'gen7alolafriendly',
+  'gen7battlespotdoubles',
+  'gen7battlespotsingles',
+  'gen7challengecup1v1',
+  'gen7vgc2017',
+  'gen7vgc2017beta',
+  'pgllittlecup',
+  'vgc2014',
+  'vgc2015',
+  'vgc2016',
+  'vgc2017',
+]);
+
 export function victoryChance(r1: number, d1: number, r2: number, d2: number) {
   const C = 3.0 * Math.pow(Math.log(10.0), 2.0) / Math.pow(400.0 * Math.PI, 2);
   return 1.0 /
@@ -51,10 +122,10 @@ const Q = [
  * Compute the erf function of a value using a rational Chebyshev
  * approximations for different intervals of x.
  *
- * This is a translation of W. J. Cody's Fortran implementation from 1987
- * (https://www.netlib.org/specfun/erf). See the AMS publication
- * "Rational Chebyshev Approximations for the Error Function" by W. J. Cody
- * for an explanation of this process.
+ * This is a translation of W. J. Cody's Fortran implementation from
+ * 1987 (https://www.netlib.org/specfun/erf). See the AMS publication
+ * "Rational Chebyshev Approximations for the Error Function" by W. J.
+ * Cody for an explanation of this process.
  */
 function erf(x: number) {
   const y = Math.abs(x);
@@ -65,7 +136,8 @@ function erf(x: number) {
 }
 
 /**
- * Approximates the error function erf() for x <= 0.46875 using this function:
+ * Approximates the error function erf() for x <= 0.46875 using this
+ * function:
  *               n
  * erf(x) = x * sum (p_j * x^(2j)) / (q_j * x^(2j))
  *              j=0
@@ -105,8 +177,8 @@ function erfc2(y: number) {
 }
 
 /**
- * Approximates the complement of the error function erfc() for x > 4.0 using
- * this function:
+ * Approximates the complement of the error function erfc() for x > 4.0
+ * using this function:
  *
  * erfc(x) = (e^(-x^2) / x) * [ 1/sqrt(pi) +
  *               n

@@ -1,3 +1,4 @@
+import {getSpecies, getBaseSpecies} from './common';
 import {calcStat, Data, PokemonSet, Species, StatsTable, toID} from 'ps';
 
 // TODO: Where does this constant come from? (ie. rename!)
@@ -231,7 +232,7 @@ function tag(team: PokemonSet[]) {
 
   let possibleTypes: string[]|undefined;
   for (const pokemon of team) {
-    const species = baseSpecies(pokemon.species);
+    const species = getBaseSpecies(pokemon.species);
     possibleTypes = possibleTypes ?
         possibleTypes.filter(t => species.types.includes(t)) :
         species.types.slice();
@@ -572,17 +573,6 @@ function movesStallinessModifier(pokemon: PokemonSet) {
   }
 
   return mod;
-}
-
-function getSpecies(name: string) {
-  const species = Data.getSpecies(name);
-  if (!species) throw new Error(`Unknown species '${name}'`);
-  return species;
-}
-
-function baseSpecies(name: string): Species {
-  const species = getSpecies(name);
-  return species.baseSpecies ? baseSpecies(species.baseSpecies) : species;
 }
 
 function calcStats(pokemon: PokemonSet) {
