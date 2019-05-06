@@ -3,6 +3,11 @@
   "rules": {
     "forin": false,
     "variable-name": false,
-    "new-parens": false
+    "new-parens": false,
+    "prefer-const": {
+      "options": {
+        "destructuring": "all"
+      }
+    }
   }
 }

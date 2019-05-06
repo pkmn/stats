@@ -197,7 +197,7 @@ declare module 'ps' {
         Natures: DexTable<Nature>
         Types: DexTable<Type>
 
-        forFormat(format: string): Data;
+        forFormat(format: string): typeof Data;
 
         getAbility(name: string): Ability | undefined;
         getItem(name: string): Item | undefined;
