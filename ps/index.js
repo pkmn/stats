@@ -2,44 +2,50 @@
 const Dex = require('pokemon-showdown/.sim-dist').Dex;
 
 const Data = new class {
-    constructor() {
-        this.Abilities = Dex.data.Abilities;
-        this.Items = Dex.data.Items;
-        this.Moves = Dex.data.Moves;
-        this.Species = Dex.data.Templates;
+    constructor(dex) {
+        this.dex = dex;
+        this.Abilities = dex.data.Abilities;
+        this.Items = dex.data.Items;
+        this.Moves = dex.data.Moves;
+        this.Species = dex.data.Templates;
 
-        this.Aliases = Dex.data.Aliases;
-        this.Types = Dex.data.TypeChart;
-        this.Natures = Dex.data.Natures;
+        this.Aliases = dex.data.Aliases;
+        this.Types = dex.data.TypeChart;
+        this.Natures = dex.data.Natures;
+    }
+
+    forFormat(format) {
+        this.dex = dex.forFormat(format);
+        return this;
     }
 
 	getAbility(name) {
-        const a = Dex.getAbility(name);
+        const a = this.dex.getAbility(name);
         return a.exists ? a : undefined;
     }
     
     getItem(name) {
-        const i = Dex.getItem(name);
+        const i = this.dex.getItem(name);
         return i.exists ? i : undefined;
     }
     
     getMove(name) {
-        const m = Dex.getMove(name);
+        const m = this.dex.getMove(name);
         return m.exists ? m : undefined;
     }
     
     getSpecies(name) {
-        const s = Dex.getTemplate(name);
+        const s = this.dex.getTemplate(name);
         return s.exists ? s : undefined;
     }
     
     getType(name) {
-        const t = Dex.getType(name);
+        const t = this.dex.getType(name);
         return t.exists ? t : undefined;
     }
 
     getNature(name) {
-        const n = Dex.getNature(name);
+        const n = this.dex.getNature(name);
         return n.exists ? n : undefined;
     }
 };
@@ -53,8 +59,13 @@ function calcStat(stat, base, iv, ev, level, nature) {
   }
 }
 
+function unpackTeam(buf) {
+    return Dex.fastUnpackTeam(buf) || undefined;
+}
+
 module.exports = {
     Data,
     toID: Dex.Data.Tools.getId,
     calcStat,
+    unpackTeam,
 };

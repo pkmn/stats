@@ -197,6 +197,8 @@ declare module 'ps' {
         Natures: DexTable<Nature>
         Types: DexTable<Type>
 
+        forFormat(format: string): Data;
+
         getAbility(name: string): Ability | undefined;
         getItem(name: string): Item | undefined;
         getMove(name: string): Move | undefined;
@@ -207,4 +209,5 @@ declare module 'ps' {
     }
     function toID(text: any): ID
     function calcStat(stat: StatName, base: number, iv: number, ev: number, level: number, nature?: Nature): number
+    function unpackTeam(buf: string): PokemonSet[] | undefined;
 }
