@@ -12,6 +12,7 @@
   ],
   "exclude": [
     "ps",
-    "build"
+    "build",
+    "wip"
   ]
 }

@@ -6,9 +6,9 @@ export function getSpecies(name: string) {
   return species;
 }
 
-export function baseSpecies(name: string): Species {
+export function getBaseSpecies(name: string): Species {
   const species = getSpecies(name);
-  return species.baseSpecies ? baseSpecies(species.baseSpecies) : species;
+  return species.baseSpecies ? getBaseSpecies(species.baseSpecies) : species;
 }
 
 export const NON_SINGLES_FORMATS = new Set([
