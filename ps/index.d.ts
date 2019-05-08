@@ -79,4 +79,5 @@ declare module 'ps' {
     function toID(text: any): ID
     function calcStat(stat: StatName, base: number, iv: number, ev: number, level: number, nature?: Nature): number
     function unpackTeam(buf: string): PokemonSet[] | undefined
+    function hiddenPower(ivs: StatsTable, gen?: number): {type: string, basePower: number} | undefined;
 }
