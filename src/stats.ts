@@ -1,4 +1,4 @@
-import {Battle, Player, Team, Pokemon, Outcome} from './parser';
+import {Battle, Outcome, Player, Pokemon, Team} from './parser';
 // TODO WEIGHTED PAIRS!!!
 
 // TODO: toJSON serialization
@@ -34,7 +34,7 @@ export interface SetStatistics {
   abilities: Map<ID, number>;
   items: Map<ID, number>;
   happinesses: Map<number, number>;
-  spreads: Map<string, number>; // Nature + EVs
+  spreads: Map<string, number>;  // Nature + EVs
   moves: Map<ID, number>;
 
   cutoff: number;
@@ -66,11 +66,8 @@ export const Stats = new class {
 function newStatistics() {
   return {
     leads: new Map(),
-    pokemon: new Map(), 
-    total: { raw: 0, real: 0, weighted: 0 }
-    metagame: {
-      tags: new Map(),
-      stalliness: [];
-    },
+    pokemon: new Map(),
+    total: {raw: 0, real: 0, weighted: 0}
+    metagame: {tags: new Map(), stalliness: [];},
   };
 }

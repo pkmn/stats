@@ -1,10 +1,85 @@
-import {PokemonUsage, UsageCounts, MetagameStatistics} from './stats';
+import {MetagameStatistics, PokemonUsage, UsageCounts} from './stats';
 
 
 export const Reporter = new class {
-  usageReport(pokemon: PokemonUsage, total: UsageCounts, battles: number) {
-    // StatCounter.py
-    // Need 'turnsOut' to determine real %
+  usageReport(
+      format: ID, pokemon: PokemonUsage, total: UsageCounts, battles: number) {
+    // TODO: sorted!
+    // if (['challengecup1v1','1v1'].includes(format)) {
+    //} else {
+    //}
+
+    let s = ` Total battles: ${battles}\n`;
+    const avg = battles ? Math.round(total.weighted / battles / 12) : 0;
+    s += ` Avg. weight/team: ${avg}\n`;
+    s +=
+        ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    s +=
+        ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
+    s +=
+        ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+
+    const t = {
+      weighted: Math.max(1.0, total.weighted) * 6.0,
+      raw: Math.max(1.0, total.raw) * 6.0,
+      real: Math.max(1.0, total.real) * 6.0,
+    };
+
+    for (const [i, entry] of sorted) {
+      const species = entry[0];
+      const usage = entry[1];
+      if (species === 'empty') continue;
+      if (usage.raw === 0) break;
+
+      const raw = (i + 1).toFixed().padEnd(4);
+      const poke = species.padEnd(18);
+      const use = (100 * usage.weighted / t.weighted).toFixed(5).padStart(8);
+      const raw = usage.raw.toFixed().padEnd(6);
+      const rawp = (100 * usage.raw / t.raw).toFixed(3).padStart(6);
+      const real = usage.real.toFixed().padEnd(6);
+      const realp = (100 * usage.real / t.real).toFixed(3).padStart(6);
+      s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${rawp}% | ${real} | ${
+          realp}% | \n`;
+    }
+    s +=
+        ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    return s;
+  }
+
+  leadsReport(leads: LeadUsage, battles: number) {
+    let s = ` Total leads: ${battles * 2}\n`;
+    s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
+    s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
+    s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
+
+    // TODO store lead totals instead of computing?
+    const total = { raw: 0; weighted: 0 };
+    for (const [lead, usage] of leads.entries()) {
+      total.raw += usage.raw;
+      weighted.raw += weighted.raw;
+    }
+    total.raw = Math.max(1.0, total.raw);
+    total.weighted = Math.max(1.0, total.weighted);
+
+    const sorted = leads.entries().sort(
+        (a, b) => b[0].weighted - a[0].weighted);  // TODO: verify
+    for (const [i, entry] of sorted) {
+      const species = entry[0];
+      const usage = entry[1];
+      if (species === 'empty') continue;
+      if (usage.raw === 0) break;
+
+      const raw = (i + 1).toFixed().padEnd(4);
+      const poke = species.padEnd(18);
+      const use =
+          (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
+      const raw = usage.raw.toFixed().padEnd(6);
+      const pct = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
+      s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${pct}% | \n`;
+    }
+
+    s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
+    return s;
   }
 
   movesetReport() {
@@ -20,8 +95,8 @@ export const Reporter = new class {
   metagameReport(metagame: MetagameStatistics, totalWeight: number) {
     const W = Math.max(1.0, totalWeight);
 
-    const tags =
-        Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);  // TODO: verify
+    const tags = Object.entries(metagame.tags)
+                     .sort((a, b) => b[1] - a[1]);  // TODO: verify
     let s = '';
     for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(30, '.');
@@ -30,7 +105,8 @@ export const Reporter = new class {
     s += '\n';
 
     if (!metagame.stalliness.length) return s;
-    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
+    const stalliness =
+        metagame.stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
 
     // Figure out a good bin range by looking at .1% and 99.9% points
     const index = Math.floor(stalliness.length / 1000);
@@ -103,9 +179,21 @@ export const Reporter = new class {
     return s;
   }
 
-  leadsReport(leads: LeadUsage, battles: number) {
-    // looks at matchups array and grabs first pair
-  }
-
   risesAndDropsReport() {}
 };
+
+function parseUsageReport(report: string) {
+  const usage: Map<ID, number> = new Map();
+  const lines = report.split('\n');
+  const battles = Number(lines[0].slice(16));
+
+  for (let i = 5; i < lines.length; i++) {
+    const line = lines[i].split('|');
+    if (line.length < 3) break;
+    const name = line[2].slice(1).trim();
+    const pct = Number(line[3].slice(1, line[3].index('%'))) / 100;
+    usage[toID(name)] = pct;
+  }
+
+  return {usage, battles};
+}

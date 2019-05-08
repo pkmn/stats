@@ -1,40 +1,40 @@
 import {ID, PokemonSet} from 'ps';
 
 export interface Log {
-	id: string; // gen1randombattle-12345
-	format: string; // gen1randombattle;
-	timestamp: string; // Date.toString();
-	winner: string; // Name
-  endType?: 'normal' | 'forced' | 'forfeit';
-	seed: [number, number, number, number];
-	turns: number;
+  id: string;         // gen1randombattle-12345
+  format: string;     // gen1randombattle;
+  timestamp: string;  // Date.toString();
+  winner: string;     // Name
+  endType?: 'normal'|'forced'|'forfeit';
+  seed: [number, number, number, number];
+  turns: number;
   score: [number, number];
 
-	p1: string; // Name
-	p2: string; // Name
+  p1: string;  // Name
+  p2: string;  // Name
 
-	p1team: PokemonSet[];
-	p2team: PokemonSet[];
+  p1team: PokemonSet[];
+  p2team: PokemonSet[];
 
-	p1rating: {};
-	p2rating: {};
+  p1rating: {};
+  p2rating: {};
 
-	log: string[];
-	inputLog: string[];
+  log: string[];
+  inputLog: string[];
 }
 
 export interface Battle {
   p1: Player;
   p2: Player;
-  matchups: Array<[ID, ID, Outcome]>; // [ID, ID, Outcome] ?
+  matchups: Array<[ID, ID, Outcome]>;  // [ID, ID, Outcome] ?
   turns: number;
-  endType?: 'normal' | 'forced' | 'forfeit';
+  endType?: 'normal'|'forced'|'forfeit';
 }
 
 export interface Player {
-  name: string; // ID?
+  name: string;  // ID?
   rating: Rating;
-  outcome?: 'win' | 'loss';
+  outcome?: 'win'|'loss';
   team: Team;
 }
 
@@ -49,7 +49,7 @@ export interface Team {
 }
 
 export interface Pokemon {
-  species: string; // ID?
+  species: string;  // ID?
   set: PokemonSet;
   turnsOut: number;
   KOs: number;

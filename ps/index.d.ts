@@ -40,6 +40,7 @@ declare module 'ps' {
         zMoveUser?: string[]
     }
     interface Move extends Effect {}
+    type Nonstandard = 'Glitch' | 'Past' | 'Future' | 'CAP' | 'LGPE' | 'Pokestar' | 'Custom'
     interface Species extends Effect {
         abilities: {0: string, 1?: string, H?: string, S?: string}
         baseStats: StatsTable
@@ -47,7 +48,11 @@ declare module 'ps' {
         types: string[]
         baseSpecies?: string
         forme?: string
+
+        isNonstandard?: Nonstandard | null
+        tier?: string
     }
+    // TODO: add format banlists
     interface Type {
         damageTaken: {[attackingTypeNameOrEffectid: string]: number}
         HPdvs?: Partial<StatsTable>
