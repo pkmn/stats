@@ -15,15 +15,13 @@ export const Classifier = new class {
       teamStalliness.push(stalliness / LN3LN2);
     }
 
-    const stalliness =
-        teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
+    const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
     const tags = tag(team);
 
     if (stalliness <= -1) {
       tags.add('hyperoffense');
 
-      if (!tags.has('multiweather') && !tags.has('allweather') &&
-          !tags.has('weatherless')) {
+      if (!tags.has('multiweather') && !tags.has('allweather') && !tags.has('weatherless')) {
         if (tags.has('rain')) {
           tags.add('rainoffense');
         } else if (tags.has('sun')) {
@@ -43,8 +41,7 @@ export const Classifier = new class {
     } else {
       tags.add('stall');
 
-      if (!tags.has('multiweather') && !tags.has('allweather') &&
-          !tags.has('weatherless')) {
+      if (!tags.has('multiweather') && !tags.has('allweather') && !tags.has('weatherless')) {
         if (tags.has('rain')) {
           tags.add('rainstall');
         } else if (tags.has('sun')) {
@@ -104,8 +101,7 @@ export const Classifier = new class {
 
 function isMega(species: Species) {
   // FIXME: Ultra Burst?
-  return species.forme &&
-      (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
+  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
 }
 
 function checkMega(pokemon: PokemonSet) {
@@ -123,8 +119,7 @@ function checkMega(pokemon: PokemonSet) {
   // FIXME: Ultra Burst?
   if (!item.megaEvolves) return undefined;
   const mega = getSpecies(item.megaEvolves);
-  if (species.species !== mega.species ||
-      species.species !== mega.baseSpecies) {
+  if (species.species !== mega.species || species.species !== mega.baseSpecies) {
     return undefined;
   }
   return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
@@ -153,8 +148,8 @@ function classifyForme(pokemon: PokemonSet) {
     stalliness += 0.5;
   }
 
-  const bias = pokemon.evs.atk + pokemon.evs.spa - pokemon.evs.hp -
-      pokemon.evs.def - pokemon.evs.spd;
+  const bias =
+      pokemon.evs.atk + pokemon.evs.spa - pokemon.evs.hp - pokemon.evs.def - pokemon.evs.spd;
 
   return {bias, stalliness};
 }
@@ -166,10 +161,8 @@ function baseStalliness(pokemon: PokemonSet) {
   const stats = calcStats(pokemon);
   return -Math.log(
              (2.0 * pokemon.level + 10) / 250 *
-             Math.max(
-                 stats.atk,
-                 stats.spa / Math.max(stats.def, stats.spd) * 120 + 2) *
-             0.925 / stats.hp) /
+             Math.max(stats.atk, stats.spa / Math.max(stats.def, stats.spd) * 120 + 2) * 0.925 /
+             stats.hp) /
       Math.log(2);
 }
 
@@ -193,50 +186,42 @@ function calcFormeStats(pokemon: PokemonSet) {
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: keyof StatsTable;
   for (stat in stats) {
-    stats[stat] = calcStat(
-        stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat],
-        100, nature);
+    stats[stat] =
+        calcStat(stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], 100, nature);
   }
   return stats;
 }
 
 const SETUP_MOVES = new Set([
-  'acupressure', 'bellydrum',   'bulkup',      'coil',        'curse',
-  'dragondance', 'growth',      'honeclaws',   'howl',        'meditate',
-  'sharpen',     'shellsmash',  'shiftgear',   'swordsdance', 'workup',
-  'calmmind',    'chargebeam',  'fierydance',  'nastyplot',   'tailglow',
-  'quiverdance', 'agility',     'autotomize',  'flamecharge', 'rockpolish',
-  'doubleteam',  'minimize',    'substitute',  'acidarmor',   'barrier',
-  'cosmicpower', 'cottonguard', 'defendorder', 'defensecurl', 'harden',
-  'irondefense', 'stockpile',   'withdraw',    'amnesia',     'charge',
-  'ingrain'
+  'acupressure', 'bellydrum',   'bulkup',      'coil',        'curse',      'dragondance',
+  'growth',      'honeclaws',   'howl',        'meditate',    'sharpen',    'shellsmash',
+  'shiftgear',   'swordsdance', 'workup',      'calmmind',    'chargebeam', 'fierydance',
+  'nastyplot',   'tailglow',    'quiverdance', 'agility',     'autotomize', 'flamecharge',
+  'rockpolish',  'doubleteam',  'minimize',    'substitute',  'acidarmor',  'barrier',
+  'cosmicpower', 'cottonguard', 'defendorder', 'defensecurl', 'harden',     'irondefense',
+  'stockpile',   'withdraw',    'amnesia',     'charge',      'ingrain'
 ]);
 
-const SETUP_ABILITIES =
-    new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost']);
+const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost']);
 
 const DRAGONS = new Set([
-  'dratini',     'dragonair',   'bagon',     'shelgon',        'axew',
-  'fraxure',     'haxorus',     'druddigon', 'dragonite',      'altaria',
-  'salamence',   'latias',      'latios',    'rayquaza',       'gible',
-  'gabite',      'garchomp',    'reshiram',  'zekrom',         'kyurem',
-  'kyuremwhite', 'kyuremblack', 'kingdra',   'vibrava',        'flygon',
-  'dialga',      'palkia',      'giratina',  'giratinaorigin', 'deino',
-  'zweilous',    'hydreigon'
+  'dratini',        'dragonair', 'bagon',    'shelgon',   'axew',   'fraxure', 'haxorus',
+  'druddigon',      'dragonite', 'altaria',  'salamence', 'latias', 'latios',  'rayquaza',
+  'gible',          'gabite',    'garchomp', 'reshiram',  'zekrom', 'kyurem',  'kyuremwhite',
+  'kyuremblack',    'kingdra',   'vibrava',  'flygon',    'dialga', 'palkia',  'giratina',
+  'giratinaorigin', 'deino',     'zweilous', 'hydreigon'
 ]);
 
 const LOW_ACCURACY_MOVES = new Set([
-  'guillotine',  'fissure',      'sheercold',  'dynamicpunch', 'inferno',
-  'zapcannon',   'grasswhistle', 'sing',       'supersonic',   'hypnosis',
-  'blizzard',    'focusblast',   'gunkshot',   'hurricane',    'smog',
-  'thunder',     'clamp',        'dragonrush', 'eggbomb',      'irontail',
-  'lovelykiss',  'magmastorm',   'megakick',   'poisonpowder', 'slam',
-  'sleeppowder', 'stunspore',    'sweetkiss',  'willowisp',    'crosschop',
-  'darkvoid',    'furyswipes',   'headsmash',  'hydropump',    'kinesis',
-  'psywave',     'rocktomb',     'stoneedge',  'submission',   'boneclub',
-  'bonerush',    'bonemerang',   'bulldoze',   'dig',          'drillrun',
-  'earthpower',  'earthquake',   'magnitude',  'mudbomb',      'mudshot',
-  'mudslap',     'sandattack',   'spikes',     'toxicspikes'
+  'guillotine',   'fissure',     'sheercold',  'dynamicpunch', 'inferno',    'zapcannon',
+  'grasswhistle', 'sing',        'supersonic', 'hypnosis',     'blizzard',   'focusblast',
+  'gunkshot',     'hurricane',   'smog',       'thunder',      'clamp',      'dragonrush',
+  'eggbomb',      'irontail',    'lovelykiss', 'magmastorm',   'megakick',   'poisonpowder',
+  'slam',         'sleeppowder', 'stunspore',  'sweetkiss',    'willowisp',  'crosschop',
+  'darkvoid',     'furyswipes',  'headsmash',  'hydropump',    'kinesis',    'psywave',
+  'rocktomb',     'stoneedge',   'submission', 'boneclub',     'bonerush',   'bonemerang',
+  'bulldoze',     'dig',         'drillrun',   'earthpower',   'earthquake', 'magnitude',
+  'mudbomb',      'mudshot',     'mudslap',    'sandattack',   'spikes',     'toxicspikes'
 ]);
 
 function tag(team: PokemonSet[]) {
@@ -261,9 +246,8 @@ function tag(team: PokemonSet[]) {
   let possibleTypes: string[]|undefined;
   for (const pokemon of team) {
     const species = getBaseSpecies(pokemon.species);
-    possibleTypes = possibleTypes ?
-        possibleTypes.filter(t => species.types.includes(t)) :
-        species.types.slice();
+    possibleTypes = possibleTypes ? possibleTypes.filter(t => species.types.includes(t)) :
+                                    species.types.slice();
 
     if (['drizzle', 'primordialsea'].includes(pokemon.ability)) {
       weather.rain += 2;
@@ -275,8 +259,7 @@ function tag(team: PokemonSet[]) {
       weather.hail += 2;
     }
 
-    if (weather.sun < 2 && pokemon.species === 'charizard' &&
-        pokemon.item === 'charizarditey') {
+    if (weather.sun < 2 && pokemon.species === 'charizard' && pokemon.item === 'charizarditey') {
       weather.sun += 2;
     }
 
@@ -294,15 +277,13 @@ function tag(team: PokemonSet[]) {
     }
 
     if (style.batonpass < 2 && pokemon.moves.includes('batonpass') &&
-        (SETUP_ABILITIES.has(pokemon.ability) ||
-         pokemon.moves.some(m => SETUP_MOVES.has(m)))) {
+        (SETUP_ABILITIES.has(pokemon.ability) || pokemon.moves.some(m => SETUP_MOVES.has(m)))) {
       style.batonpass++;
     }
     if (style.tailwind < 2 && pokemon.moves.includes('tailwind')) {
       style.tailwind++;
     }
-    if (pokemon.moves.includes('trickroom') &&
-        !pokemon.moves.includes('imprison')) {
+    if (pokemon.moves.includes('trickroom') && !pokemon.moves.includes('imprison')) {
       style.trickroom++;
     }
     // TODO: use actual stats and speed factor...
@@ -318,14 +299,11 @@ function tag(team: PokemonSet[]) {
       style.lowacc++;
     }
     if (style.voltturn < 3 && pokemon.item === 'ejectbutton' ||
-        pokemon.moves.some(
-            m => ['voltswitch', 'uturn', 'batonpass'].includes(m))) {
+        pokemon.moves.some(m => ['voltswitch', 'uturn', 'batonpass'].includes(m))) {
       style.voltturn++;
     }
-    if (style.trappers < 3 &&
-            ['magnetpull', 'arentrap', 'shadowtag'].includes(pokemon.ability) ||
-        pokemon.moves.some(
-            m => ['block', 'meanlook', 'spiderweb'].includes(m))) {
+    if (style.trappers < 3 && ['magnetpull', 'arentrap', 'shadowtag'].includes(pokemon.ability) ||
+        pokemon.moves.some(m => ['block', 'meanlook', 'spiderweb'].includes(m))) {
       style.trappers++;
     }
     if (style.dragons < 2 && DRAGONS.has(pokemon.species)) {
@@ -335,8 +313,7 @@ function tag(team: PokemonSet[]) {
         pokemon.moves.includes('rapidspin')) {
       style.clearance++;
     }
-    if (style.fear < 3 &&
-        (pokemon.ability === 'sturdy' || pokemon.item === 'focussash') &&
+    if (style.fear < 3 && (pokemon.ability === 'sturdy' || pokemon.item === 'focussash') &&
         pokemon.moves.includes('endeavor')) {
       style.fear++;
     }
@@ -345,8 +322,7 @@ function tag(team: PokemonSet[]) {
       style.choice++;
     }
     if (style.swagplay < 2 &&
-        pokemon.moves.filter(m => m === 'foulplay' || m === 'swagger').length >
-            1) {
+        pokemon.moves.filter(m => m === 'foulplay' || m === 'swagger').length > 1) {
       style.swagplay++;
     }
   }
@@ -368,8 +344,7 @@ function tag(team: PokemonSet[]) {
 
   if (style.batonpass > 1) tags.push('batonpass');
   if (style.tailwind > 1) tags.push('tailwind');
-  const trickroom =
-      style.trickroom > 2 || (style.trickroom > 1 && style.slow > 1);
+  const trickroom = style.trickroom > 2 || (style.trickroom > 1 && style.slow > 1);
   if (trickroom) {
     tags.push('trickroom');
     if (weather.rain > 1) tags.push('trickrain');
@@ -410,11 +385,10 @@ const GREATER_OFFENSIVE_ABILITIES = new Set([
 ]);
 
 const LESSER_OFFENSIVE_ABILITIES = new Set([
-  'chlorophyll', 'download',    'hustle',      'moxie',        'reckless',
-  'sandrush',    'solarpower',  'swiftswim',   'technician',   'tintedlens',
-  'darkaura',    'fairyaura',   'infiltrator', 'parentalbond', 'protean',
-  'strongjaw',   'sweetveil',   'toughclaws',  'aerilate',     'normalize',
-  'pixilate',    'refrigerate',
+  'chlorophyll', 'download',     'hustle',     'moxie',       'reckless',  'sandrush',
+  'solarpower',  'swiftswim',    'technician', 'tintedlens',  'darkaura',  'fairyaura',
+  'infiltrator', 'parentalbond', 'protean',    'strongjaw',   'sweetveil', 'toughclaws',
+  'aerilate',    'normalize',    'pixilate',   'refrigerate',
 ]);
 
 const LESSER_DEFENSIVE_ABILITITIES = new Set([
@@ -441,33 +415,29 @@ function abilityStallinessModifier(pokemon: PokemonSet) {
 }
 
 const LESSER_BOOSTING_ITEM = new Set([
-  'expertbelt',  'wiseglasses',  'muscleband',   'dracoplate',  'dreadplate',
-  'earthplate',  'fistplate',    'flameplate',   'icicleplate', 'insectplate',
-  'ironplate',   'meadowplate',  'mindplate',    'skyplate',    'splashplate',
-  'spookyplate', 'stoneplate',   'toxicplate',   'zapplate',    'blackglasses',
-  'charcoal',    'dragonfang',   'hardstone',    'magnet',      'metalcoat',
-  'miracleseed', 'mysticwater',  'nevermeltice', 'poisonbarb',  'sharpbeak',
-  'silkscarf',   'silverpowder', 'softsand',     'spelltag',    'twistedspoon',
-  'pixieplate',
+  'expertbelt', 'wiseglasses',  'muscleband',  'dracoplate',   'dreadplate',   'earthplate',
+  'fistplate',  'flameplate',   'icicleplate', 'insectplate',  'ironplate',    'meadowplate',
+  'mindplate',  'skyplate',     'splashplate', 'spookyplate',  'stoneplate',   'toxicplate',
+  'zapplate',   'blackglasses', 'charcoal',    'dragonfang',   'hardstone',    'magnet',
+  'metalcoat',  'miracleseed',  'mysticwater', 'nevermeltice', 'poisonbarb',   'sharpbeak',
+  'silkscarf',  'silverpowder', 'softsand',    'spelltag',     'twistedspoon', 'pixieplate',
 ]);
 
 const GREATER_BOOSTING_ITEM = new Set([
-  'firegem',     'watergem',    'electricgem', 'grassgem',     'icegem',
-  'fightinggem', 'posiongem',   'groundgem',   'groundgem',    'flyinggem',
-  'psychicgem',  'buggem',      'rockgem',     'ghostgem',     'darkgem',
-  'steelgem',    'normalgem',   'focussash',   'mentalherb',   'powerherb',
-  'whiteherb',   'absorbbulb',  'berserkgene', 'cellbattery',  'redcard',
-  'focussash',   'airballoon',  'ejectbutton', 'shedshell',    'aguavberry',
-  'apicotberry', 'aspearberry', 'babiriberry', 'chartiberry',  'cheriberry',
-  'chestoberry', 'chilanberry', 'chopleberry', 'cobaberry',    'custapberry',
-  'enigmaberry', 'figyberry',   'ganlonberry', 'habanberry',   'iapapaberry',
-  'jabocaberry', 'kasibberry',  'kebiaberry',  'lansatberry',  'leppaberry',
-  'liechiberry', 'lumberry',    'magoberry',   'micleberry',   'occaberry',
-  'oranberry',   'passhoberry', 'payapaberry', 'pechaberry',   'persimberry',
-  'petayaberry', 'rawstberry',  'rindoberry',  'rowapberry',   'salacberry',
-  'shucaberry',  'sitrusberry', 'starfberry',  'tangaberry',   'wacanberry',
-  'wikiberry',   'yacheberry',  'keeberry',    'marangaberry', 'roseliberry',
-  'snowball',    'choiceband',  'choicescarf', 'choicespecs',  'lifeorb',
+  'firegem',     'watergem',     'electricgem', 'grassgem',    'icegem',      'fightinggem',
+  'posiongem',   'groundgem',    'groundgem',   'flyinggem',   'psychicgem',  'buggem',
+  'rockgem',     'ghostgem',     'darkgem',     'steelgem',    'normalgem',   'focussash',
+  'mentalherb',  'powerherb',    'whiteherb',   'absorbbulb',  'berserkgene', 'cellbattery',
+  'redcard',     'focussash',    'airballoon',  'ejectbutton', 'shedshell',   'aguavberry',
+  'apicotberry', 'aspearberry',  'babiriberry', 'chartiberry', 'cheriberry',  'chestoberry',
+  'chilanberry', 'chopleberry',  'cobaberry',   'custapberry', 'enigmaberry', 'figyberry',
+  'ganlonberry', 'habanberry',   'iapapaberry', 'jabocaberry', 'kasibberry',  'kebiaberry',
+  'lansatberry', 'leppaberry',   'liechiberry', 'lumberry',    'magoberry',   'micleberry',
+  'occaberry',   'oranberry',    'passhoberry', 'payapaberry', 'pechaberry',  'persimberry',
+  'petayaberry', 'rawstberry',   'rindoberry',  'rowapberry',  'salacberry',  'shucaberry',
+  'sitrusberry', 'starfberry',   'tangaberry',  'wacanberry',  'wikiberry',   'yacheberry',
+  'keeberry',    'marangaberry', 'roseliberry', 'snowball',    'choiceband',  'choicescarf',
+  'choicespecs', 'lifeorb',
 ]);
 
 function itemStallinessModifier(pokemon: PokemonSet) {
@@ -480,8 +450,7 @@ function itemStallinessModifier(pokemon: PokemonSet) {
       return -1.0;
     }
   }
-  if (item === 'flameorb' &&
-      ['flareboost', 'guts', 'quickfeet'].includes(pokemon.ability)) {
+  if (item === 'flameorb' && ['flareboost', 'guts', 'quickfeet'].includes(pokemon.ability)) {
     return -1.0;
   }
   if (item === 'souldew' && ['latios', 'latias'].includes(pokemon.species)) {
@@ -522,46 +491,40 @@ const RECOVERY_MOVES = new Set([
   'leechseed',
 ]);
 
-const PROTECT_MOVES =
-    new Set(['protect', 'detect', 'kingsshield', 'matblock', 'spikyshield']);
+const PROTECT_MOVES = new Set(['protect', 'detect', 'kingsshield', 'matblock', 'spikyshield']);
 
-const PHAZING_MOVES =
-    new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']);
+const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']);
 
-const PARALYSIS_MOVES =
-    new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
+const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
 
-const CONFUSION_MOVES = new Set(
-    ['supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn']);
+const CONFUSION_MOVES =
+    new Set(['supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn']);
 
-const SLEEP_MOVES = new Set([
-  'darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder',
-  'spore'
-]);
+const SLEEP_MOVES =
+    new Set(['darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore']);
 
 const LESSER_OFFENSIVE_MOVES = new Set([
-  'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage',
-  'volttackle', 'closecombat', 'flareblitz', 'bravebird', 'woodhammer',
-  'headsmash', 'headcharge', 'wildcharge', 'takedown', 'dragonascent'
+  'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage', 'volttackle',
+  'closecombat', 'flareblitz', 'bravebird', 'woodhammer', 'headsmash', 'headcharge', 'wildcharge',
+  'takedown', 'dragonascent'
 ]);
 
 const GREATER_OFFENSIVE_MOVES = new Set([
-  'selfdestruct', 'explosion', 'destinybond', 'perishsong', 'memento',
-  'healingwish', 'lunardance', 'finalgambit'
+  'selfdestruct', 'explosion', 'destinybond', 'perishsong', 'memento', 'healingwish', 'lunardance',
+  'finalgambit'
 ]);
 
 const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold']);
 
 const GREATER_SETUP_MOVES = new Set([
-  'curse', 'dragondance', 'growth', 'shiftgear', 'swordsdance', 'fierydance',
-  'nastyplot', 'tailglow', 'quiverdance', 'geomancy'
+  'curse', 'dragondance', 'growth', 'shiftgear', 'swordsdance', 'fierydance', 'nastyplot',
+  'tailglow', 'quiverdance', 'geomancy'
 ]);
 
 const LESSER_SETUP_MOVES = new Set([
-  'acupressure', 'bulkup', 'coil', 'howl', 'workup', 'meditate', 'sharpen',
-  'calmmind', 'chargebeam', 'agility', 'autotomize', 'flamecharge',
-  'rockpolish', 'doubleteam', 'minimize', 'tailwind', 'poweruppunch',
-  'rototiller'
+  'acupressure', 'bulkup', 'coil', 'howl', 'workup', 'meditate', 'sharpen', 'calmmind',
+  'chargebeam', 'agility', 'autotomize', 'flamecharge', 'rockpolish', 'doubleteam', 'minimize',
+  'tailwind', 'poweruppunch', 'rototiller'
 ]);
 
 function movesStallinessModifier(pokemon: PokemonSet) {

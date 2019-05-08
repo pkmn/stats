@@ -2,8 +2,7 @@ import {MetagameStatistics, PokemonUsage, UsageCounts} from './stats';
 
 
 export const Reporter = new class {
-  usageReport(
-      format: ID, pokemon: PokemonUsage, total: UsageCounts, battles: number) {
+  usageReport(format: ID, pokemon: PokemonUsage, total: UsageCounts, battles: number) {
     // TODO: sorted!
     // if (['challengecup1v1','1v1'].includes(format)) {
     //} else {
@@ -12,12 +11,9 @@ export const Reporter = new class {
     let s = ` Total battles: ${battles}\n`;
     const avg = battles ? Math.round(total.weighted / battles / 12) : 0;
     s += ` Avg. weight/team: ${avg}\n`;
-    s +=
-        ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
-    s +=
-        ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
-    s +=
-        ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
+    s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
 
     const t = {
       weighted: Math.max(1.0, total.weighted) * 6.0,
@@ -38,11 +34,9 @@ export const Reporter = new class {
       const rawp = (100 * usage.raw / t.raw).toFixed(3).padStart(6);
       const real = usage.real.toFixed().padEnd(6);
       const realp = (100 * usage.real / t.real).toFixed(3).padStart(6);
-      s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${rawp}% | ${real} | ${
-          realp}% | \n`;
+      s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
     }
-    s +=
-        ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     return s;
   }
 
@@ -61,8 +55,7 @@ export const Reporter = new class {
     total.raw = Math.max(1.0, total.raw);
     total.weighted = Math.max(1.0, total.weighted);
 
-    const sorted = leads.entries().sort(
-        (a, b) => b[0].weighted - a[0].weighted);  // TODO: verify
+    const sorted = leads.entries().sort((a, b) => b[0].weighted - a[0].weighted);  // TODO: verify
     for (const [i, entry] of sorted) {
       const species = entry[0];
       const usage = entry[1];
@@ -71,8 +64,7 @@ export const Reporter = new class {
 
       const raw = (i + 1).toFixed().padEnd(4);
       const poke = species.padEnd(18);
-      const use =
-          (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
+      const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
       s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${pct}% | \n`;
@@ -95,8 +87,7 @@ export const Reporter = new class {
   metagameReport(metagame: MetagameStatistics, totalWeight: number) {
     const W = Math.max(1.0, totalWeight);
 
-    const tags = Object.entries(metagame.tags)
-                     .sort((a, b) => b[1] - a[1]);  // TODO: verify
+    const tags = Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);  // TODO: verify
     let s = '';
     for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(30, '.');
@@ -105,8 +96,7 @@ export const Reporter = new class {
     s += '\n';
 
     if (!metagame.stalliness.length) return s;
-    const stalliness =
-        metagame.stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
+    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
 
     // Figure out a good bin range by looking at .1% and 99.9% points
     const index = Math.floor(stalliness.length / 1000);
@@ -117,9 +107,8 @@ export const Reporter = new class {
     let nbins = 13;
     const size = (high - low) / (nbins - 1);
     // Try to find a prettier bin size, zooming into 0.05 at most.
-    const binSize = [10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25, 0.2, 0.1, 0.05].find(
-                        bs => size > bs) ||
-        0.05;
+    const binSize =
+        [10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25, 0.2, 0.1, 0.05].find(bs => size > bs) || 0.05;
     let histogram = [[0, 0]];
     for (let x = binSize; x + binSize / 2 < high; x += binSize) {
       histogram.push([x, 0]);
@@ -171,8 +160,7 @@ export const Reporter = new class {
         }
         line += `${h[0].toFixed(1).padStart(3)}|`;
       }
-      s += line + '#'.repeat(Math.floor((h[1] + blockSize / 2) / blockSize)) +
-          '\n';
+      s += line + '#'.repeat(Math.floor((h[1] + blockSize / 2) / blockSize)) + '\n';
     }
     s += ` more negative = more offensive, more positive = more stall\n`;
     s += ` one # = ${(100.0 * blockSize / y).toFixed(2).padStart(5)}%`;
