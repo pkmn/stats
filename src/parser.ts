@@ -21,7 +21,7 @@ export interface Log {
 
 	log: string[];
 	inputLog: string[];
-};
+}
 
 export interface Battle {
   p1: Player;
@@ -29,26 +29,32 @@ export interface Battle {
   matchups: Array<[ID, ID, Outcome]>; // [ID, ID, Outcome] ?
   turns: number;
   endType?: 'normal' | 'forced' | 'forfeit';
-};
+}
 
 export interface Player {
   name: string; // ID?
-  rating: number;
+  rating: Rating;
   outcome?: 'win' | 'loss';
   team: Team;
-};
+}
+
+export interface Rating {
+  rpr: number;
+  rprd: number;
+}
 
 export interface Team {
   pokemon: Pokemon[];
   tags: ID[];
-};
+}
 
 export interface Pokemon {
   species: string; // ID?
+  set: PokemonSet;
   turnsOut: number;
   KOs: number;
   tags: ID[];
-};
+}
 
 export const enum Outcome {
   POKE1_KOED = 0,
@@ -64,7 +70,7 @@ export const enum Outcome {
   POKE1_FODDERED = 10,
   POKE2_FODDERED = 11,
   UNKNOWN = 12
-};
+}
 
 export const Parser = new class {
   parse(raw: Log) {

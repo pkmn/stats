@@ -1,5 +1,8 @@
+import {PokemonUsage, UsageCounts, MetagameStatistics} from './stats';
+
+
 export const Reporter = new class {
-  usageReport() {
+  usageReport(pokemon: PokemonUsage, total: UsageCounts, battles: number) {
     // StatCounter.py
     // Need 'turnsOut' to determine real %
   }
@@ -14,22 +17,20 @@ export const Reporter = new class {
     // Just JSON from above
   }
 
-  metagameReport(
-      tags: {[tag: string]: number}, stalliness: Array<[number, number]>,
-      totalWeight: number) {
+  metagameReport(metagame: MetagameStatistics, totalWeight: number) {
     const W = Math.max(1.0, totalWeight);
 
-    const sorted =
-        Object.entries(tags).sort((a, b) => b[1] - a[1]);  // TODO: verify
+    const tags =
+        Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);  // TODO: verify
     let s = '';
-    for (const [tag, weight] of sorted) {
+    for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(30, '.');
       s += `${(weight / W).toFixed(5).padStart(8)}%\n`;
     }
     s += '\n';
 
-    if (!stalliness.length) return s;
-    stalliness = stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
+    if (!metagame.stalliness.length) return s;
+    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
 
     // Figure out a good bin range by looking at .1% and 99.9% points
     const index = Math.floor(stalliness.length / 1000);
@@ -102,7 +103,7 @@ export const Reporter = new class {
     return s;
   }
 
-  leadsReport() {
+  leadsReport(leads: LeadUsage, battles: number) {
     // looks at matchups array and grabs first pair
   }
 
