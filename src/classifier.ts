@@ -1,4 +1,4 @@
-import {calcStat, Data, PokemonSet, Species, StatsTable, toID} from 'ps';
+import {calcStat, ID, Data, PokemonSet, Species, Stat, toID} from 'ps';
 
 import {getBaseSpecies, getSpecies, getMegaEvolution} from './util';
 
@@ -6,7 +6,7 @@ import {getBaseSpecies, getSpecies, getMegaEvolution} from './util';
 const LN3LN2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new class {
-  classifyTeam(team: PokemonSet[], format?: string|Data) {
+  classifyTeam(team: Array<PokemonSet<ID>>, format?: string|Data) {
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
@@ -19,37 +19,37 @@ export const Classifier = new class {
     const tags = tag(team);
 
     if (stalliness <= -1) {
-      tags.add('hyperoffense');
+      tags.add('hyperoffense' as ID);
 
-      if (!tags.has('multiweather') && !tags.has('allweather') && !tags.has('weatherless')) {
-        if (tags.has('rain')) {
-          tags.add('rainoffense');
-        } else if (tags.has('sun')) {
-          tags.add('sunoffense');
-        } else if (tags.has('sand')) {
-          tags.add('sandoffense');
+      if (!tags.has('multiweather' as ID) && !tags.has('allweather' as ID) && !tags.has('weatherless' as ID)) {
+        if (tags.has('rain' as ID)) {
+          tags.add('rainoffense' as ID);
+        } else if (tags.has('sun' as ID)) {
+          tags.add('sunoffense' as ID);
+        } else if (tags.has('sand' as ID)) {
+          tags.add('sandoffense' as ID);
         } else {
-          tags.add('hailoffense');
+          tags.add('hailoffense' as ID);
         }
       }
     } else if (stalliness < 0) {
-      tags.add('offense');
+      tags.add('offense' as ID);
     } else if (stalliness < 1.0) {
-      tags.add('balance');
+      tags.add('balance' as ID);
     } else if (stalliness < LN3LN2) {
-      tags.add('semistall');
+      tags.add('semistall' as ID);
     } else {
-      tags.add('stall');
+      tags.add('stall' as ID);
 
-      if (!tags.has('multiweather') && !tags.has('allweather') && !tags.has('weatherless')) {
-        if (tags.has('rain')) {
-          tags.add('rainstall');
-        } else if (tags.has('sun')) {
-          tags.add('sunstall');
-        } else if (tags.has('sand')) {
-          tags.add('sandstall');
+      if (!tags.has('multiweather' as ID) && !tags.has('allweather' as ID) && !tags.has('weatherless' as ID)) {
+        if (tags.has('rain' as ID)) {
+          tags.add('rainstall' as ID);
+        } else if (tags.has('sun' as ID)) {
+          tags.add('sunstall' as ID);
+        } else if (tags.has('sand' as ID)) {
+          tags.add('sandstall' as ID);
         } else {
-          tags.add('hailstall');
+          tags.add('hailstall' as ID);
         }
       }
     }
@@ -60,7 +60,7 @@ export const Classifier = new class {
   // For stats and moveset purposes we're now counting Mega Pokemon seperately,
   // but for team analysis we still want to consider the base (which presumably
   // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(pokemon: PokemonSet, format?: string|Data) {
+  classifyPokemon(pokemon: PokemonSet<ID>, format?: string|Data) {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
@@ -108,7 +108,7 @@ const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(pokemon: PokemonSet, format?: string|Data) {
+function classifyForme(pokemon: PokemonSet<ID>, format?: string|Data) {
   let stalliness = baseStalliness(pokemon, format);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
@@ -119,7 +119,7 @@ function classifyForme(pokemon: PokemonSet, format?: string|Data) {
   } else if (pokemon.moves.some(m => TRAPPING_MOVES.has(m))) {
     stalliness -= 0.5;
   }
-  if (pokemon.ability === 'harvest' || pokemon.moves.includes('recycle')) {
+  if (pokemon.ability === 'harvest' || pokemon.moves.includes('recycle' as ID)) {
     stalliness += 1.0;
   }
   if (['sandstream', 'snowwarning'].includes(pokemon.ability) ||
@@ -133,7 +133,7 @@ function classifyForme(pokemon: PokemonSet, format?: string|Data) {
   return {bias, stalliness};
 }
 
-function baseStalliness(pokemon: PokemonSet, format?: string|Data) {
+function baseStalliness(pokemon: PokemonSet<ID>, format?: string|Data) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
   if (pokemon.species === 'ditto') return LN3LN2;
@@ -145,12 +145,12 @@ function baseStalliness(pokemon: PokemonSet, format?: string|Data) {
       Math.log(2);
 }
 
-function calcStats(pokemon: PokemonSet, format?: string|Data) {
+function calcStats(pokemon: PokemonSet<ID>, format?: string|Data) {
   const stats = calcFormeStats(pokemon, format);
   if (pokemon.species === 'aegislash' && pokemon.ability === 'stancechange') {
-    pokemon.species = 'aegislashblade';
+    pokemon.species = 'aegislashblade' as ID;
     const blade = calcFormeStats(pokemon, format);
-    pokemon.species = 'aegislash';
+    pokemon.species = 'aegislash' as ID;
     blade.def = Math.floor((blade.def + stats.def) / 2);
     blade.spd = Math.floor((blade.spd + stats.spd) / 2);
     return blade;
@@ -158,11 +158,11 @@ function calcStats(pokemon: PokemonSet, format?: string|Data) {
   return stats;
 }
 
-function calcFormeStats(pokemon: PokemonSet, format?: string|Data) {
+function calcFormeStats(pokemon: PokemonSet<ID>, format?: string|Data) {
   const species = getSpecies(pokemon.species);
   const nature = Data.forFormat(format).getNature(pokemon.nature);
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
-  let stat: keyof StatsTable;
+  let stat: Stat;
   for (stat in stats) {
     stats[stat] =
         calcStat(stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], 100, nature);
@@ -178,9 +178,9 @@ const SETUP_MOVES = new Set([
   'rockpolish',  'doubleteam',  'minimize',    'substitute',  'acidarmor',  'barrier',
   'cosmicpower', 'cottonguard', 'defendorder', 'defensecurl', 'harden',     'irondefense',
   'stockpile',   'withdraw',    'amnesia',     'charge',      'ingrain'
-]);
+] as ID[]);
 
-const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost']);
+const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost'] as ID[]);
 
 const DRAGONS = new Set([
   'dratini',        'dragonair', 'bagon',    'shelgon',   'axew',   'fraxure', 'haxorus',
@@ -188,7 +188,7 @@ const DRAGONS = new Set([
   'gible',          'gabite',    'garchomp', 'reshiram',  'zekrom', 'kyurem',  'kyuremwhite',
   'kyuremblack',    'kingdra',   'vibrava',  'flygon',    'dialga', 'palkia',  'giratina',
   'giratinaorigin', 'deino',     'zweilous', 'hydreigon'
-]);
+] as ID[]);
 
 const LOW_ACCURACY_MOVES = new Set([
   'guillotine',   'fissure',     'sheercold',  'dynamicpunch', 'inferno',    'zapcannon',
@@ -200,9 +200,9 @@ const LOW_ACCURACY_MOVES = new Set([
   'rocktomb',     'stoneedge',   'submission', 'boneclub',     'bonerush',   'bonemerang',
   'bulldoze',     'dig',         'drillrun',   'earthpower',   'earthquake', 'magnitude',
   'mudbomb',      'mudshot',     'mudslap',    'sandattack',   'spikes',     'toxicspikes'
-]);
+] as ID[]);
 
-function tag(team: PokemonSet[]) {
+function tag(team: Array<PokemonSet<ID>>) {
   const weather = {rain: 0, sun: 0, sand: 0, hail: 0};
   const style = {
     batonpass: 0,
@@ -224,6 +224,7 @@ function tag(team: PokemonSet[]) {
   let possibleTypes: string[]|undefined;
   for (const pokemon of team) {
     const species = getBaseSpecies(pokemon.species);
+    const moves = new Set(pokemon.moves);
     possibleTypes = possibleTypes ? possibleTypes.filter(t => species.types.includes(t)) :
                                     species.types.slice();
 
@@ -241,27 +242,27 @@ function tag(team: PokemonSet[]) {
       weather.sun += 2;
     }
 
-    if (weather.rain < 2 && pokemon.moves.includes('raindance')) {
+    if (weather.rain < 2 && moves.has('raindance' as ID)) {
       weather.rain += pokemon.item === 'damprock' ? 2 : 1;
     }
-    if (weather.sun < 2 && pokemon.moves.includes('sunnyday')) {
+    if (weather.sun < 2 && moves.has('sunnyday' as ID)) {
       weather.sun += pokemon.item === 'heatrock' ? 2 : 1;
     }
-    if (weather.sand < 2 && pokemon.moves.includes('sandstorm')) {
+    if (weather.sand < 2 && moves.has('sandstorm' as ID)) {
       weather.sand += pokemon.item === 'smoothrock' ? 2 : 1;
     }
-    if (weather.hail < 2 && pokemon.moves.includes('hail')) {
+    if (weather.hail < 2 && moves.has('hail' as ID)) {
       weather.hail += pokemon.item === 'icyrock' ? 2 : 1;
     }
 
-    if (style.batonpass < 2 && pokemon.moves.includes('batonpass') &&
+    if (style.batonpass < 2 && moves.has('batonpass' as ID) &&
         (SETUP_ABILITIES.has(pokemon.ability) || pokemon.moves.some(m => SETUP_MOVES.has(m)))) {
       style.batonpass++;
     }
-    if (style.tailwind < 2 && pokemon.moves.includes('tailwind')) {
+    if (style.tailwind < 2 && moves.has('tailwind' as ID)) {
       style.tailwind++;
     }
-    if (pokemon.moves.includes('trickroom') && !pokemon.moves.includes('imprison')) {
+    if (moves.has('trickroom' as ID) && !moves.has('imprison' as ID)) {
       style.trickroom++;
     }
     // TODO: use actual stats and speed factor...
@@ -270,7 +271,7 @@ function tag(team: PokemonSet[]) {
          species.baseStats.spe <= 50)) {
       style.slow++;
     }
-    if (style.gravity < 2 && pokemon.moves.includes('gravity')) {
+    if (style.gravity < 2 && moves.has('gravity' as ID)) {
       style.gravity++;
     }
     if (pokemon.moves.some(m => LOW_ACCURACY_MOVES.has(m))) {
@@ -288,11 +289,11 @@ function tag(team: PokemonSet[]) {
       style.dragons++;
     }
     if (style.clearance < 2 && pokemon.ability === 'magicbounce' ||
-        pokemon.moves.includes('rapidspin')) {
+    moves.has('rapidspin' as ID)) {
       style.clearance++;
     }
     if (style.fear < 3 && (pokemon.ability === 'sturdy' || pokemon.item === 'focussash') &&
-        pokemon.moves.includes('endeavor')) {
+    moves.has('endeavor' as ID)) {
       style.fear++;
     }
     if (style.choice < 4 && pokemon.ability !== 'klutz' &&
@@ -352,7 +353,7 @@ function tag(team: PokemonSet[]) {
     }
   }
 
-  return new Set(tags);
+  return new Set(tags as ID[]);
 }
 
 const GREATER_OFFENSIVE_ABILITIES = new Set([
@@ -360,30 +361,30 @@ const GREATER_OFFENSIVE_ABILITIES = new Set([
   'hugepower',
   'speedboost',
   'moody',
-]);
+] as ID[]);
 
 const LESSER_OFFENSIVE_ABILITIES = new Set([
   'chlorophyll', 'download',     'hustle',     'moxie',       'reckless',  'sandrush',
   'solarpower',  'swiftswim',    'technician', 'tintedlens',  'darkaura',  'fairyaura',
   'infiltrator', 'parentalbond', 'protean',    'strongjaw',   'sweetveil', 'toughclaws',
   'aerilate',    'normalize',    'pixilate',   'refrigerate',
-]);
+] as ID[]);
 
 const LESSER_DEFENSIVE_ABILITITIES = new Set([
   'dryskin',   'filter',      'hydration',   'icebody',    'intimidate',
   'ironbarbs', 'marvelscale', 'naturalcure', 'magicguard', 'multiscale',
   'raindish',  'roughskin',   'solidrock',   'thickfat',   'unaware',
   'aromaveil', 'bulletproof', 'cheekpouch',  'gooey',      'regenerator',
-]);
+] as ID[]);
 
 const GREATER_DEFENSIVE_ABILITIES = new Set([
   'slowstart',
   'truant',
   'furcoat',
   'harvest',
-]);
+] as ID[]);
 
-function abilityStallinessModifier(pokemon: PokemonSet) {
+function abilityStallinessModifier(pokemon: PokemonSet<ID>) {
   const ability = pokemon.ability;
   if (GREATER_OFFENSIVE_ABILITIES.has(ability)) return -1.0;
   if (LESSER_OFFENSIVE_ABILITIES.has(ability)) return -0.5;
@@ -399,7 +400,7 @@ const LESSER_BOOSTING_ITEM = new Set([
   'zapplate',   'blackglasses', 'charcoal',    'dragonfang',   'hardstone',    'magnet',
   'metalcoat',  'miracleseed',  'mysticwater', 'nevermeltice', 'poisonbarb',   'sharpbeak',
   'silkscarf',  'silverpowder', 'softsand',    'spelltag',     'twistedspoon', 'pixieplate',
-]);
+] as ID[]);
 
 const GREATER_BOOSTING_ITEM = new Set([
   'firegem',     'watergem',     'electricgem', 'grassgem',    'icegem',      'fightinggem',
@@ -416,9 +417,9 @@ const GREATER_BOOSTING_ITEM = new Set([
   'sitrusberry', 'starfberry',   'tangaberry',  'wacanberry',  'wikiberry',   'yacheberry',
   'keeberry',    'marangaberry', 'roseliberry', 'snowball',    'choiceband',  'choicescarf',
   'choicespecs', 'lifeorb',
-]);
+] as ID[]);
 
-function itemStallinessModifier(pokemon: PokemonSet) {
+function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   const item = pokemon.item;
   if (['weaknesspolicy', 'lightclay'].includes(item)) return -1.0;
   if (['redcard', 'rockyhelmet', 'eviolite'].includes(item)) return 0.5;
@@ -467,59 +468,59 @@ const RECOVERY_MOVES = new Set([
   'softboiled',
   'swallow',
   'leechseed',
-]);
+] as ID[]);
 
-const PROTECT_MOVES = new Set(['protect', 'detect', 'kingsshield', 'matblock', 'spikyshield']);
+const PROTECT_MOVES = new Set(['protect', 'detect', 'kingsshield', 'matblock', 'spikyshield'] as ID[]);
 
-const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']);
+const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail'] as ID[]);
 
-const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
+const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle'] as ID[]);
 
 const CONFUSION_MOVES =
-    new Set(['supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn']);
+    new Set(['supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn'] as ID[]);
 
 const SLEEP_MOVES =
-    new Set(['darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore']);
+    new Set(['darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore'] as ID[]);
 
 const LESSER_OFFENSIVE_MOVES = new Set([
   'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage', 'volttackle',
   'closecombat', 'flareblitz', 'bravebird', 'woodhammer', 'headsmash', 'headcharge', 'wildcharge',
   'takedown', 'dragonascent'
-]);
+] as ID[]);
 
 const GREATER_OFFENSIVE_MOVES = new Set([
   'selfdestruct', 'explosion', 'destinybond', 'perishsong', 'memento', 'healingwish', 'lunardance',
   'finalgambit'
-]);
+] as ID[]);
 
-const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold']);
+const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold']  as ID[]);
 
 const GREATER_SETUP_MOVES = new Set([
   'curse', 'dragondance', 'growth', 'shiftgear', 'swordsdance', 'fierydance', 'nastyplot',
   'tailglow', 'quiverdance', 'geomancy'
-]);
+] as ID[]);
 
 const LESSER_SETUP_MOVES = new Set([
   'acupressure', 'bulkup', 'coil', 'howl', 'workup', 'meditate', 'sharpen', 'calmmind',
   'chargebeam', 'agility', 'autotomize', 'flamecharge', 'rockpolish', 'doubleteam', 'minimize',
   'tailwind', 'poweruppunch', 'rototiller'
-]);
+] as ID[]);
 
-function movesStallinessModifier(pokemon: PokemonSet) {
+function movesStallinessModifier(pokemon: PokemonSet<ID>) {
   const moves = new Set(pokemon.moves);
 
   let mod = 0;
-  if (moves.has('toxic')) mod += 1.0;
-  if (moves.has('spikes')) mod += 0.5;
-  if (moves.has('toxicspikes')) mod += 0.5;
-  if (moves.has('willowisp')) mod += 0.5;
-  if (moves.has('psychoshift')) mod += 0.5;
-  if (moves.has('healbell') || moves.has('aromatherapy')) mod += 0.5;
-  if (moves.has('haze') || moves.has('clearsmog')) mod += 0.5;
-  if (moves.has('substitute')) mod -= 0.5;
-  if (moves.has('superfang')) mod -= 0.5;
-  if (moves.has('trick')) mod -= 0.5;
-  if (moves.has('endeavor')) mod -= 1.0;
+  if (moves.has('toxic' as ID)) mod += 1.0;
+  if (moves.has('spikes' as ID)) mod += 0.5;
+  if (moves.has('toxicspikes' as ID)) mod += 0.5;
+  if (moves.has('willowisp' as ID)) mod += 0.5;
+  if (moves.has('psychoshift' as ID)) mod += 0.5;
+  if (moves.has('healbell' as ID) || moves.has('aromatherapy' as ID)) mod += 0.5;
+  if (moves.has('haze' as ID) || moves.has('clearsmog' as ID)) mod += 0.5;
+  if (moves.has('substitute' as ID)) mod -= 0.5;
+  if (moves.has('superfang' as ID)) mod -= 0.5;
+  if (moves.has('trick' as ID)) mod -= 0.5;
+  if (moves.has('endeavor' as ID)) mod -= 1.0;
 
   if (pokemon.moves.some(m => RECOVERY_MOVES.has(m))) mod += 1.0;
   if (pokemon.moves.some(m => PROTECT_MOVES.has(m))) mod += 1.0;
@@ -531,9 +532,9 @@ function movesStallinessModifier(pokemon: PokemonSet) {
   if (pokemon.moves.some(m => GREATER_OFFENSIVE_MOVES.has(m))) mod -= 1.0;
   if (pokemon.moves.some(m => OHKO_MOVES.has(m))) mod -= 1.0;
 
-  if (moves.has('bellydrum')) {
+  if (moves.has('bellydrum' as ID)) {
     mod -= 2.0;
-  } else if (moves.has('shellsmash')) {
+  } else if (moves.has('shellsmash' as ID)) {
     mod -= 1.5;
   } else if (pokemon.moves.some(m => GREATER_SETUP_MOVES.has(m))) {
     mod -= 1.0;

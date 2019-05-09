@@ -1,4 +1,4 @@
-import {Data, Species, PokemonSet, toID} from 'ps';
+import {Data, Species, PokemonSet, toID, ID} from 'ps';
 
 export function getSpecies(name: string, format?: string|Data) {
   const species = Data.forFormat(format).getSpecies(name);
@@ -15,17 +15,17 @@ export function isMegaRayquazaAllowed(data?: string|Data) {
   return MEGA_RAYQUAZA_ALLOWED.has(Data.forFormat(data).format);
 }
 
-export function getMegaEvolution(pokemon: PokemonSet, format?: string|Data) {
+export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format?: string|Data) {
   const item = Data.forFormat(format).getItem(pokemon.item);
   if (!item) return undefined;
   const species = getSpecies(pokemon.species);
   if (item.name === 'Blue Orb' &&
       (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
-    return {species: 'kyogreprimal', ability: 'primoridalsea'};
+    return {species: 'kyogreprimal' as ID, ability: 'primoridalsea' as ID};
   }
   if (item.name === 'Red Orb' &&
       (species.species === 'Groudon' || species.baseSpecies === 'Groudon')) {
-    return {species: 'groudonprimal', ability: 'desolateland'};
+    return {species: 'groudonprimal' as ID, ability: 'desolateland' as ID};
   }
   // FIXME: Ultra Burst?
   if (!item.megaEvolves) return undefined;

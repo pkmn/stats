@@ -1,27 +1,29 @@
 declare module 'ps' {
     type ID = '' | string & {__isID: true}
-    type StatName = 'hp' | 'atk' | 'def' | 'spa' | 'spd' | 'spe'
-    type StatsTable = {[stat in StatName]: number }
+    type Stat = 'hp' | 'atk' | 'def' | 'spa' | 'spd' | 'spe'
+    type Gender = 'M' | 'F' | 'N' | ''
+    type StatsTable<T> = {[stat in Stat]: T }
     interface Nature {
         name: string
-        plus?: keyof StatsTable
-        minus?: keyof StatsTable
+        plus?: Stat
+        minus?: Stat
         [k: string]: any
     }
-    type PokemonSet = {
-        name: string,
-        species: string,
-        item: string,
-        ability: string,
-        moves: string[],
-        nature: string,
-        gender: string,
-        evs: StatsTable,
-        ivs: StatsTable,
+    type PokemonSet<T> = {
+        name: T,
+        species: T,
+        item: T,
+        ability: T,
+        moves: T[],
+        nature: T,
+        gender: Gender,
+        evs: StatsTable<number>,
+        ivs: StatsTable<number>,
+        forcedLevel?: number,
         level: number,
         shiny?: boolean,
         happiness?: number,
-        pokeball?: string,
+        pokeball?: T,
         hpType?: string,
     }
     interface Effect {
@@ -43,7 +45,7 @@ declare module 'ps' {
     type Nonstandard = 'Glitch' | 'Past' | 'Future' | 'CAP' | 'LGPE' | 'Pokestar' | 'Custom'
     interface Species extends Effect {
         abilities: {0: string, 1?: string, H?: string, S?: string}
-        baseStats: StatsTable
+        baseStats: StatsTable<number>
         species: string
         types: string[]
         baseSpecies?: string
@@ -55,8 +57,8 @@ declare module 'ps' {
     // TODO: add format banlists
     interface Type {
         damageTaken: {[attackingTypeNameOrEffectid: string]: number}
-        HPdvs?: Partial<StatsTable>
-        HPivs?: Partial<StatsTable>
+        HPdvs?: Partial<StatsTable<number>>
+        HPivs?: Partial<StatsTable<number>>
     }
     interface DexTable<T> {
         [key: string]: T
@@ -85,7 +87,7 @@ declare module 'ps' {
         getType(name: string): Type | undefined
     }
     function toID(text: any): ID
-    function calcStat(stat: StatName, base: number, iv: number, ev: number, level: number, nature?: Nature): number
-    function unpackTeam(buf: string): PokemonSet[] | undefined
-    function hiddenPower(ivs: StatsTable, gen?: number): {type: string, basePower: number} | undefined;
+    function calcStat(stat: Stat, base: number, iv: number, ev: number, level: number, nature?: Nature): number
+    function unpackTeam(buf: string): PokemonSet<string>[] | undefined
+    function hiddenPower(ivs: StatsTable<number>, gen?: number): {type: string, basePower: number} | undefined;
 }
