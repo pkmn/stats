@@ -39,7 +39,7 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format?: string
 const MEGA_RAYQUAZA_ALLOWED =
     new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
-export const NON_SINGLES_FORMATS = new Set([
+const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles',
   'battlespotspecial7',
   'battlespottriples',
@@ -76,7 +76,7 @@ export const NON_SINGLES_FORMATS = new Set([
   'vgc2017',
 ]);
 
-export const NON_6V6_FORMATS = new Set([
+const NON_6V6_FORMATS = new Set([
   '1v1',
   'battlespotdoubles',
   'battlespotsingles',
@@ -96,6 +96,24 @@ export const NON_6V6_FORMATS = new Set([
   'vgc2016',
   'vgc2017',
 ]);
+
+export function isNonSinglesFormat(format?: string|data) {
+  return NON_SINGLES_FORMATS.has(Data.forFormat().format);
+}
+
+export function canonicalizeFormat(format: string) {
+  if (format.endsWith('current')) format = format.slice(0, -7);
+  if (format.startsWith('pokebank')) format = format.slice(8, -4);
+  if (format.startsWith('oras')) format.slice(4);
+  if (format === 'capbeta') return 'cap';
+  if (format === 'vgc2014beta') return 'vgc2014';
+  if (format.startsWith('xybattlespot') && format.endsWith('beta')) format = format.slice(0, -4);
+  if (['battlespotdoubles', 'battlespotdoublesvgc2015'].includes(format)) return 'vgc2015';
+  if (format === 'smogondoubles') return 'doublesou';
+  if (format === 'smogondoublesubers') return 'doublesubers';
+  if (format === 'smogondoublesuu') return 'doublesuu';
+  return format;
+}
 
 export function victoryChance(r1: number, d1: number, r2: number, d2: number) {
   const C = 3.0 * Math.pow(Math.log(10.0), 2.0) / Math.pow(400.0 * Math.PI, 2);

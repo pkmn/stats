@@ -1,6 +1,7 @@
 import {Data, hiddenPower, ID, PokemonSet, Stat, toID} from 'ps';
 
-import {getMegaEvolution, getSpecies, isMegaRayquazaAllowed} from './util';
+import {Classifier} from './classifier';
+import {getMegaEvolution, getSpecies, isMegaRayquazaAllowed, isNonSinglesFormat} from './util';
 
 export interface Log {
   id: string;         // gen1randombattle-12345
@@ -40,16 +41,9 @@ export interface Player {
   team: Team;
 }
 
-export interface Rating {
-  r: number;
-  rd: number;
-  rpr: number;
-  rprd: number;
-}
-
 export interface Team {
   pokemon: Pokemon[];
-  tags: Set<ID>;
+  classification: {bias: number; stalliness: number; tags?: Set<ID>;};
 }
 
 export interface Pokemon {
@@ -57,7 +51,13 @@ export interface Pokemon {
   set: PokemonSet<ID>;
   turnsOut: number;
   KOs: number;
-  tags: Set<ID>;
+}
+
+export interface Rating {
+  r: number;
+  rd: number;
+  rpr: number;
+  rprd: number;
 }
 
 export const enum Outcome {
@@ -77,76 +77,104 @@ export const enum Outcome {
 }
 
 export const Parser = new class {
-  parse(raw: Log) {
-    /*
+  parse(raw: Log, format? string|Data) {
     // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
     if (raw as unknown === '"log"') throw new Error('Log = "log"');
 
     const spacelog = !(raw.log && raw.log[0].startsWith('| '));
     if (raw.turns === undefined) throw new Error('No turn count');
 
-    const ts = []; // TODO: name
-    const rating = {};
-
-    // 0 for tie/unknown, 1 for p1 and 2 for p2
-    let winner: 0|1|2 = 0;
+    let winner: 'tie'|'p1'|'p2' = 'tie';
     if (raw.log) {
-      // TODO: scan log just once?
       const winners = raw.log.filter(line => line.startsWith('|win|'));
-      if (winners.includes(`|win|${raw.p1}`)) winner = 1;
+      if (winners.includes(`|win|${raw.p1}`)) winner = 'p1';
       if (winners.includes(`|win|${raw.p2}`)) {
-        if (winner === 1) throw new Error('Battle had two winners');
-        winner = 2;
+        if (winner === 'p1') throw new Error('Battle had two winners');
+        winner = 'p2';
       }
     }
 
-    if (!ratings) {
-      for (const sideid of [1, 2]) {
-        const logRating = sideid === 1 ? raw.p1rating : raw.p2rating;
-        if (!logRating) continue;
-        const r = rating[`p${sideid}team`] = {};
-        // TODO: logRating is dict?
-        for (const k of ['r', 'rd', 'rpr', 'rprd']) {
-          const n = Number(logRating[k]);
-          if (!isNaN(n)) r[k] = n;
+    const idents: {p1: string[], p2: string[]} = {p1: [], p2: []};
+    const battle = ({matchups: [], turns: raw.turns, endType: raw.endType} as unknown) as Battle;
+    for (const side of (['p1', 'p2'] as ('p1'|'p2')[])) {
+      const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team']);
+
+      const mons = [];
+      for (let i = 0; i < 6; i++) {
+        const pokemon = team[i];
+        idents[side].push(`${side}: ${pokemon ? (pokemon.name || pokemon.species) : 'empty'}`);
+        mons.push({
+          species: pokemon ? pokemon.species : ('empty' as ID),
+          set: pokemon || ({} as PokemonSet<ID>),
+          turnsOut: 0,
+          KOs: 0,
+        });
+      }
+
+      const player: Player = {
+        name: toID(raw[side]),
+        rating: raw[side === 'p1' ? 'p1rating' : 'p2rating'],
+        team: {
+          pokemon: mons,
+          classification: Classifier.classifyTeam(team),
+        },
+      };
+      if (winner !== 'tie') player.outcome = winner === side ? 'win' : 'loss';
+      battle[side] = player;
+    }
+    if (battle.p1 === battle.p2) throw new Error('Player battling themself.');
+    if (!raw.log || isNonSinglesFormat(format)) return battle;
+
+    // TODO
+    let flags = {
+      roar: false, uturn: false, fodder: false, hazard: false, uturnko: false,
+      ko: [false, false], switch: [false, false],
+    };
+    let turnMatchups = [];
+
+    for (const rawLine in log) {
+      if (rawLine.length < 2 || !rawLine.startsWith('|')) continue;
+      const line = rawLine.split('|').map(s => s.trim());
+      if (line.length < 2) throw new Error(`Could not parse line '${rawLine}'`);
+
+      switch (line[1]) {
+        case 'turn':
+          matchups = matchups.push(turnMatchups);
+          flags = {
+            roar: false, uturn: false, fodder: false, hazard: false, uturnko: false,
+            ko: [false, false], switch: [false, false],
+          };
+          turnMatchups = [];
+          turnsOut[active.p1]++;
+          turnsOut[active.p2]++;
+          break;
+        case 'win':
+        case 'tie':
+          break;
+        case 'move':
+          break;
+        case '-enditem':
+          if (rawLine.lastIndexOf('Red Card') > -1) {
+            roar = true;
+          } else if (rawLine.lastIndexOf('Eject Button') > -1) {
+            uturn = true;
+          }
+          break;
+        case: 'faint':
+          break;
+        case 'replace':
+          break;
+        case 'switch':
+        case 'drag': {
+          if (line.length < 4) throw new Error(`Could not parse line '${rawLine}'`);
+          const species = getSpecies(line[3].split(',')[0]);
+          break;
         }
       }
-    } else {
-      for (const player of [raw.p1, raw.p2]) {
-        ratings[player] = ratings[player] || Glicko.newPlayer();
-      }
-      Glicko.update(ratings[raw.p1], ratings[raw.p2], winner);
-      for (const player of [[raw.p1, 'p1team'], [raw.p2, 'p2team']]) {
-        const provisional = Glicko.provisional(ratings[player[0]]);
-        const r = ratings[player[0]].R
-        const rd = ratings[player[0]].RD
-        const rpr = provisional.R
-        const rprd = provisional.RD
-        rating[player[1]] = {r, rd, rpr, rprd};
-      }
     }
+    // TODO
 
-    const teams = [];
-    for (const team of [raw.p1team, raw.p2team]) {
-      teams.push(this.canonicalizeTeam(team));
-    }
-
-    for (const team of ['p1team', 'p2team']) {
-      const trainer = raw[team.slice(0, 2)];
-      for (const pokemon in teams[team]) {
-        ts.push([trainer, pokemon.species]);
-      }
-
-      while (log[team].length < 6) {
-        ts.push([trainer, 'empty']);
-      }
-
-
-      teams[team].push(analyzeTeam(teams[team])); */
-
-
-
-    // return Battle;
+    return battle;
   }
 
   canonicalizeTeam(team: Array<PokemonSet<string>>, format?: string|Data): Array<PokemonSet<ID>> {
@@ -199,4 +227,6 @@ export const Parser = new class {
     }
     return team as Array<PokemonSet<ID>>;
   }
+
+
 };

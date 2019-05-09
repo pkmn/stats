@@ -10,7 +10,7 @@ declare module 'ps' {
         [k: string]: any
     }
     type PokemonSet<T> = {
-        name: T,
+        name: string,
         species: T,
         item: T,
         ability: T,
