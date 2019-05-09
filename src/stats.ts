@@ -67,9 +67,22 @@ export const Stats = new class {
 
 function newStatistics() {
   return {
-    leads: new Map(),
-    pokemon: new Map(),
-    total: {raw: 0, real: 0, weighted: 0}
-    metagame: {tags: new Map(), stalliness: [];},
+    leads: {
+      usage: new Map(),
+      total: {raw: 0, real: 0, weighted: 0},
+    },
+    pokemon: {
+      usage: new Map(),
+      total: {raw: 0, real: 0, weighted: 0},
+    },
+    sets: {
+      abilities: new Map(),
+      items: new Map(),
+      happinesses: new Map(),
+      spreads: new Map(),
+      moves: new Map(),
+      cutoff: 0,
+    },
+    metagame: {tags: new Map(), stalliness: []},
   };
 }

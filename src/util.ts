@@ -1,4 +1,4 @@
-import {Data, Species, PokemonSet, toID, ID} from 'ps';
+import {Data, ID, PokemonSet, Species, toID} from 'ps';
 
 export function getSpecies(name: string, format?: string|Data) {
   const species = Data.forFormat(format).getSpecies(name);
@@ -36,7 +36,8 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format?: string
   return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
 }
 
-const MEGA_RAYQUAZA_ALLOWED = new Set(['ubers','battlefactory','megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
+const MEGA_RAYQUAZA_ALLOWED =
+    new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 export const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles',

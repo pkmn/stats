@@ -3,12 +3,12 @@ import {MetagameStatistics, Usage} from './stats';
 
 export const Reporter = new class {
   usageReport(format: ID, pokemon: Usage, battles: number) {
-    const sorted = Array.from(pokemon.usage.entries);
+    const sorted = Array.from(pokemon.usage.entries());
     // TODO: verify sort orders...
-    if (['challengecup1v1','1v1'].includes(format)) {
-       sorted.sort((a, b) => b[1].real - a[1].real);
+    if (['challengecup1v1', '1v1'].includes(format)) {
+      sorted.sort((a, b) => b[1].real - a[1].real);
     } else {
-       sorted.sort((a, b) => b[1].weighted - a[1].weighted);
+      sorted.sort((a, b) => b[1].weighted - a[1].weighted);
     }
 
     let s = ` Total battles: ${battles}\n`;
@@ -49,11 +49,12 @@ export const Reporter = new class {
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
 
-    const total = { raw: 0, weighted: 0 };
+    const total = {raw: 0, weighted: 0};
     total.raw = Math.max(1.0, leads.total.raw);
     total.weighted = Math.max(1.0, leads.total.weighted);
 
-    const sorted = Array.from(leads.usage.entries()).sort((a, b) => b[1].weighted - a[1].weighted);  // TODO: verify
+    const sorted = Array.from(leads.usage.entries())
+                       .sort((a, b) => b[1].weighted - a[1].weighted);  // TODO: verify
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1];
