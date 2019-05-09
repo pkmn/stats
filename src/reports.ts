@@ -1,73 +1,69 @@
-import {MetagameStatistics, PokemonUsage, UsageCounts} from './stats';
-
+import {ID, toID} from 'ps';
+import {MetagameStatistics, Usage} from './stats';
 
 export const Reporter = new class {
-  usageReport(format: ID, pokemon: PokemonUsage, total: UsageCounts, battles: number) {
+  usageReport(format: ID, pokemon: Usage, battles: number) {
     // TODO: sorted!
     // if (['challengecup1v1','1v1'].includes(format)) {
     //} else {
     //}
 
     let s = ` Total battles: ${battles}\n`;
-    const avg = battles ? Math.round(total.weighted / battles / 12) : 0;
+    const avg = battles ? Math.round(pokemon.total.weighted / battles / 12) : 0;
     s += ` Avg. weight/team: ${avg}\n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
 
-    const t = {
-      weighted: Math.max(1.0, total.weighted) * 6.0,
-      raw: Math.max(1.0, total.raw) * 6.0,
-      real: Math.max(1.0, total.real) * 6.0,
+    const total = {
+      weighted: Math.max(1.0, pokemon.total.weighted) * 6.0,
+      raw: Math.max(1.0, pokemon.total.raw) * 6.0,
+      real: Math.max(1.0, pokemon.total.real) * 6.0,
     };
 
-    for (const [i, entry] of sorted) {
+    for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1];
       if (species === 'empty') continue;
       if (usage.raw === 0) break;
 
-      const raw = (i + 1).toFixed().padEnd(4);
+      const rank = (i + 1).toFixed().padEnd(4);
       const poke = species.padEnd(18);
-      const use = (100 * usage.weighted / t.weighted).toFixed(5).padStart(8);
+      const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
-      const rawp = (100 * usage.raw / t.raw).toFixed(3).padStart(6);
+      const rawp = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
       const real = usage.real.toFixed().padEnd(6);
-      const realp = (100 * usage.real / t.real).toFixed(3).padStart(6);
-      s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
+      const realp = (100 * usage.real / total.real).toFixed(3).padStart(6);
+      s += ` | ${rank} | ${poke} | ${use}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
     }
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     return s;
   }
 
-  leadsReport(leads: LeadUsage, battles: number) {
+  leadsReport(leads: Usage, battles: number) {
     let s = ` Total leads: ${battles * 2}\n`;
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
 
     // TODO store lead totals instead of computing?
-    const total = { raw: 0; weighted: 0 };
-    for (const [lead, usage] of leads.entries()) {
-      total.raw += usage.raw;
-      weighted.raw += weighted.raw;
-    }
-    total.raw = Math.max(1.0, total.raw);
-    total.weighted = Math.max(1.0, total.weighted);
+    const total = { raw: 0, weighted: 0 };
+    total.raw = Math.max(1.0, leads.total.raw);
+    total.weighted = Math.max(1.0, leads.total.weighted);
 
-    const sorted = leads.entries().sort((a, b) => b[0].weighted - a[0].weighted);  // TODO: verify
-    for (const [i, entry] of sorted) {
+    const sorted = Array.from(leads.usage.entries()).sort((a, b) => b[1].weighted - a[1].weighted);  // TODO: verify
+    for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1];
       if (species === 'empty') continue;
       if (usage.raw === 0) break;
 
-      const raw = (i + 1).toFixed().padEnd(4);
+      const rank = (i + 1).toFixed().padEnd(4);
       const poke = species.padEnd(18);
       const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
-      s += ` | ${rank} | ${poke} | ${usage}% | ${raw} | ${pct}% | \n`;
+      s += ` | ${rank} | ${poke} | ${use}% | ${raw} | ${pct}% | \n`;
     }
 
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
@@ -179,8 +175,8 @@ function parseUsageReport(report: string) {
     const line = lines[i].split('|');
     if (line.length < 3) break;
     const name = line[2].slice(1).trim();
-    const pct = Number(line[3].slice(1, line[3].index('%'))) / 100;
-    usage[toID(name)] = pct;
+    const pct = Number(line[3].slice(1, line[3].indexOf('%'))) / 100;
+    usage.set(toID(name), pct);
   }
 
   return {usage, battles};

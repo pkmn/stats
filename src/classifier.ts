@@ -1,16 +1,16 @@
 import {calcStat, Data, PokemonSet, Species, StatsTable, toID} from 'ps';
 
-import {getBaseSpecies, getSpecies} from './common';
+import {getBaseSpecies, getSpecies, getMegaEvolution} from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
 const LN3LN2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new class {
-  classifyTeam(team: PokemonSet[]) {
+  classifyTeam(team: PokemonSet[], format?: string|Data) {
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
-      const {bias, stalliness} = this.classifyPokemon(pokemon);
+      const {bias, stalliness} = this.classifyPokemon(pokemon, format);
       teamBias += bias;
       teamStalliness.push(stalliness / LN3LN2);
     }
@@ -60,35 +60,35 @@ export const Classifier = new class {
   // For stats and moveset purposes we're now counting Mega Pokemon seperately,
   // but for team analysis we still want to consider the base (which presumably
   // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(pokemon: PokemonSet) {
+  classifyPokemon(pokemon: PokemonSet, format?: string|Data) {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
     const species = getSpecies(pokemon.species);
     if (isMega(species)) pokemon.species = toID(species.baseSpecies);
 
-    let {bias, stalliness} = classifyForme(pokemon);
+    let {bias, stalliness} = classifyForme(pokemon, format);
     /* // FIXME: Intended behavior, but not used for compatibility:
     if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong')) {
       pokemon.species = 'meloettapirouette';
-      stalliness = (stalliness + classifyForme(pokemon).stalliness) / 2;
+      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     } else if (
         pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
       pokemon.species = 'darmanitanzen';
-      stalliness = (stalliness + classifyForme(pokemon).stalliness) / 2;
+      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     } else if (
         pokemon.species === 'rayquaza' &&
         pokemon.moves.includes('dragonascent')) {
       pokemon.species = 'darmanitanzen';
       pokemon.ability = 'deltastream';
-      stalliness = (stalliness + classifyForme(pokemon).stalliness) / 2;
+      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     } else {
      */
-    const mega = checkMega(pokemon);
+    const mega = getMegaEvolution(pokemon, format);
     if (mega) {
       pokemon.species = mega.species;
       pokemon.ability = mega.ability;
-      stalliness = (stalliness + classifyForme(pokemon).stalliness) / 2;
+      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     }
 
     // Make sure to revert back to the original values
@@ -104,33 +104,12 @@ function isMega(species: Species) {
   return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
 }
 
-function checkMega(pokemon: PokemonSet) {
-  const item = Data.getItem(pokemon.item);
-  if (!item) return undefined;
-  const species = getSpecies(pokemon.species);
-  if (item.name === 'Blue Orb' &&
-      (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
-    return {species: 'kyogreprimal', ability: 'primoridalsea'};
-  }
-  if (item.name === 'Red Orb' &&
-      (species.species === 'Groudon' || species.baseSpecies === 'Groudon')) {
-    return {species: 'groudonprimal', ability: 'desolateland'};
-  }
-  // FIXME: Ultra Burst?
-  if (!item.megaEvolves) return undefined;
-  const mega = getSpecies(item.megaEvolves);
-  if (species.species !== mega.species || species.species !== mega.baseSpecies) {
-    return undefined;
-  }
-  return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
-}
-
 const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(pokemon: PokemonSet) {
-  let stalliness = baseStalliness(pokemon);
+function classifyForme(pokemon: PokemonSet, format?: string|Data) {
+  let stalliness = baseStalliness(pokemon, format);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
   stalliness += movesStallinessModifier(pokemon);
@@ -154,11 +133,11 @@ function classifyForme(pokemon: PokemonSet) {
   return {bias, stalliness};
 }
 
-function baseStalliness(pokemon: PokemonSet) {
+function baseStalliness(pokemon: PokemonSet, format?: string|Data) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
   if (pokemon.species === 'ditto') return LN3LN2;
-  const stats = calcStats(pokemon);
+  const stats = calcStats(pokemon, format);
   return -Math.log(
              (2.0 * pokemon.level + 10) / 250 *
              Math.max(stats.atk, stats.spa / Math.max(stats.def, stats.spd) * 120 + 2) * 0.925 /
@@ -166,12 +145,11 @@ function baseStalliness(pokemon: PokemonSet) {
       Math.log(2);
 }
 
-
-function calcStats(pokemon: PokemonSet) {
-  const stats = calcFormeStats(pokemon);
+function calcStats(pokemon: PokemonSet, format?: string|Data) {
+  const stats = calcFormeStats(pokemon, format);
   if (pokemon.species === 'aegislash' && pokemon.ability === 'stancechange') {
     pokemon.species = 'aegislashblade';
-    const blade = calcFormeStats(pokemon);
+    const blade = calcFormeStats(pokemon, format);
     pokemon.species = 'aegislash';
     blade.def = Math.floor((blade.def + stats.def) / 2);
     blade.spd = Math.floor((blade.spd + stats.spd) / 2);
@@ -180,9 +158,9 @@ function calcStats(pokemon: PokemonSet) {
   return stats;
 }
 
-function calcFormeStats(pokemon: PokemonSet) {
+function calcFormeStats(pokemon: PokemonSet, format?: string|Data) {
   const species = getSpecies(pokemon.species);
-  const nature = Data.getNature(pokemon.nature);
+  const nature = Data.forFormat(format).getNature(pokemon.nature);
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: keyof StatsTable;
   for (stat in stats) {

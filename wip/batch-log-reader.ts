@@ -1,4 +1,4 @@
-import {getSpecies, getBaseSpecies} from './common';
+import {getSpecies, getBaseSpecies} from './util';
 
 export const enum Outcome {
   POKE1_KOED = 0,

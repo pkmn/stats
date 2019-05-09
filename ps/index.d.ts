@@ -61,7 +61,7 @@ declare module 'ps' {
     interface DexTable<T> {
         [key: string]: T
     }
-    const Data: {
+    class Data {
         Abilities: DexTable<Ability>
         Items: DexTable<Item>
         Moves: DexTable<Move>
@@ -70,8 +70,11 @@ declare module 'ps' {
         Aliases: {[id: string]: string}
         Natures: DexTable<Nature>
         Types: DexTable<Type>
+        
+        format: ID;
+        gen: 1|2|3|4|5|6|7;
 
-        forFormat(format: string): typeof Data
+        static forFormat(format?: string|Data): Data
 
         getAbility(name: string): Ability | undefined
         getItem(name: string): Item | undefined

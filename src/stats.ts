@@ -1,3 +1,4 @@
+import {ID} from 'ps';
 import {Battle, Outcome, Player, Pokemon, Team} from './parser';
 // TODO WEIGHTED PAIRS!!!
 
@@ -9,15 +10,16 @@ export interface TaggedStatistics {
 }
 
 export interface Statistics {
-  leads: LeadUsage;
-  pokemon: PokemonUsage;
-  total: UsageCounts;
+  leads: Usage;
+  pokemon: Usage;
   sets: SetStatistics;
   metagame: MetagameStatistics;
 }
 
-export type LeadUsage = Map<ID /* Pokemon */, {raw: number, weighted: number}>;
-export type PokemonUsage = Map<ID /* Pokemon */, UsageCounts>;
+export interface Usage {
+  usage: Map<ID /* Pokemon */, UsageCounts>;
+  total: UsageCounts;
+}
 
 export interface UsageCounts {
   raw: number;

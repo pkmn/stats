@@ -1,15 +1,42 @@
-import {Data, Species} from 'ps';
+import {Data, Species, PokemonSet, toID} from 'ps';
 
-export function getSpecies(name: string) {
-  const species = Data.getSpecies(name);
+export function getSpecies(name: string, format?: string|Data) {
+  const species = Data.forFormat(format).getSpecies(name);
   if (!species) throw new Error(`Unknown species '${name}'`);
   return species;
 }
 
-export function getBaseSpecies(name: string): Species {
-  const species = getSpecies(name);
-  return species.baseSpecies ? getBaseSpecies(species.baseSpecies) : species;
+export function getBaseSpecies(name: string, format?: string|Data): Species {
+  const species = getSpecies(name, format);
+  return species.baseSpecies ? getBaseSpecies(species.baseSpecies, format) : species;
 }
+
+export function isMegaRayquazaAllowed(data?: string|Data) {
+  return MEGA_RAYQUAZA_ALLOWED.has(Data.forFormat(data).format);
+}
+
+export function getMegaEvolution(pokemon: PokemonSet, format?: string|Data) {
+  const item = Data.forFormat(format).getItem(pokemon.item);
+  if (!item) return undefined;
+  const species = getSpecies(pokemon.species);
+  if (item.name === 'Blue Orb' &&
+      (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
+    return {species: 'kyogreprimal', ability: 'primoridalsea'};
+  }
+  if (item.name === 'Red Orb' &&
+      (species.species === 'Groudon' || species.baseSpecies === 'Groudon')) {
+    return {species: 'groudonprimal', ability: 'desolateland'};
+  }
+  // FIXME: Ultra Burst?
+  if (!item.megaEvolves) return undefined;
+  const mega = getSpecies(item.megaEvolves);
+  if (species.species !== mega.species || species.species !== mega.baseSpecies) {
+    return undefined;
+  }
+  return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
+}
+
+const MEGA_RAYQUAZA_ALLOWED = new Set(['ubers','battlefactory','megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 export const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles',

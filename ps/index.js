@@ -1,9 +1,26 @@
 'use strict';
 const Dex = require('pokemon-showdown/.sim-dist').Dex;
 
-const Data = new class {
+const toID = Dex.Data.Tools.getId;
+
+class Data {
+  static cache = new Map();
+  static forFormat(format) {
+    if (format instanceof Data) return data;
+    format = toID(format);
+    let data = cache.get(format);
+    if (!data) {
+      data = new Data(Dex.forFormat(format));
+      cache.set(format, data);
+    }
+    return data;
+  }
+
   constructor(dex) {
     this.dex = dex;
+    this.format = dex.format.id;
+    this.gen = dex.gen;
+
     this.Abilities = dex.data.Abilities;
     this.Items = dex.data.Items;
     this.Moves = dex.data.Moves;
@@ -12,11 +29,6 @@ const Data = new class {
     this.Aliases = dex.data.Aliases;
     this.Types = dex.data.TypeChart;
     this.Natures = dex.data.Natures;
-  }
-
-  forFormat(format) {
-    this.dex = dex.forFormat(format);
-    return this;
   }
 
   getAbility(name) {
@@ -64,11 +76,11 @@ const HIDDEN_POWER_TYPES = [
   'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark',
 ];
 
-function hiddenPower(ivs: StatsTable, gen = 7) {
+function hiddenPower(ivs, gen = 7) {
   if (gen < 2) return undefined;
 
-  let type: string;
-  let basePower: number;
+  let type;
+  let basePower;
   if (gen === 2) {
     const atkDV = Math.floor(ivs.atk / 2);
     const defDV = Math.floor(ivs.def / 2);
@@ -85,9 +97,7 @@ function hiddenPower(ivs: StatsTable, gen = 7) {
   } else {
     let hpType = 0, hpPower = 0;
     let i = 1;
-
-    let s: Stat;
-    for (s in ivs) {
+    for (let s in ivs) {
       hpType += i * (ivs[s] % 2);
       hpPower += i * (Math.floor(ivs[s] / 2) % 2);
       i *= 2;
@@ -106,7 +116,7 @@ function unpackTeam(buf) {
 
 module.exports = {
   Data,
-  toID: Dex.Data.Tools.getId,
+  toID,
   calcStat,
   unpackTeam,
   hiddenPower,
