@@ -3,10 +3,13 @@ import {MetagameStatistics, Usage} from './stats';
 
 export const Reporter = new class {
   usageReport(format: ID, pokemon: Usage, battles: number) {
-    // TODO: sorted!
-    // if (['challengecup1v1','1v1'].includes(format)) {
-    //} else {
-    //}
+    const sorted = Array.from(pokemon.usage.entries);
+    // TODO: verify sort orders...
+    if (['challengecup1v1','1v1'].includes(format)) {
+       sorted.sort((a, b) => b[1].real - a[1].real);
+    } else {
+       sorted.sort((a, b) => b[1].weighted - a[1].weighted);
+    }
 
     let s = ` Total battles: ${battles}\n`;
     const avg = battles ? Math.round(pokemon.total.weighted / battles / 12) : 0;
@@ -46,7 +49,6 @@ export const Reporter = new class {
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
 
-    // TODO store lead totals instead of computing?
     const total = { raw: 0, weighted: 0 };
     total.raw = Math.max(1.0, leads.total.raw);
     total.weighted = Math.max(1.0, leads.total.weighted);
