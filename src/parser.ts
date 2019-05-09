@@ -17,8 +17,8 @@ export interface Log {
   p1team: Array<PokemonSet<string>>;
   p2team: Array<PokemonSet<string>>;
 
-  p1rating: {};
-  p2rating: {};
+  p1rating: Rating;
+  p2rating: Rating;
 
   log: string[];
   inputLog: string[];
@@ -40,6 +40,8 @@ export interface Player {
 }
 
 export interface Rating {
+  r: number;
+  rd: number;
   rpr: number;
   rprd: number;
 }
@@ -75,6 +77,75 @@ export const enum Outcome {
 
 export const Parser = new class {
   parse(raw: Log) {
+  // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
+  if (raw as unknown === '"log"') throw new Error('Log = "log"');
+
+  const spacelog = !(raw.log && raw.log[0].startsWith('| '));
+  if (raw.turns === undefined) throw new Error('No turn count');
+
+  const ts = []; // TODO: name
+  const rating = {};
+
+  // 0 for tie/unknown, 1 for p1 and 2 for p2 
+  let winner: 0|1|2 = 0;
+  if (raw.log) {
+    // TODO: scan log just once?
+    const winners = raw.log.filter(line => line.startsWith('|win|'));
+    if (winners.includes(`|win|${raw.p1}`)) winner = 1;
+    if (winners.includes(`|win|${raw.p2}`)) {
+      if (winner === 1) throw new Error('Battle had two winners');
+      winner = 2;
+    }
+  }
+
+  if (!ratings) {
+    for (const sideid of [1, 2]) {
+      const logRating = sideid === 1 ? raw.p1rating : raw.p2rating;
+      if (!logRating) continue;
+      const r = rating[`p${sideid}team`] = {};
+      // TODO: logRating is dict?
+      for (const k of ['r', 'rd', 'rpr', 'rprd']) {
+        const n = Number(logRating[k]);
+        if (!isNaN(n)) r[k] = n; 
+      }
+    }
+  } else {
+    for (const player of [raw.p1, raw.p2]) {
+      ratings[player] = ratings[player] || Glicko.newPlayer();
+    }
+    Glicko.update(ratings[raw.p1], ratings[raw.p2], winner);
+    for (const player of [[raw.p1, 'p1team'], [raw.p2, 'p2team']]) {
+      const provisional = Glicko.provisional(ratings[player[0]]);
+      const r = ratings[player[0]].R
+      const rd = ratings[player[0]].RD
+      const rpr = provisional.R
+      const rprd = provisional.RD
+      rating[player[1]] = {r, rd, rpr, rprd};
+    }
+  }
+
+  const teams = [];
+  for (const team of [raw.p1team, raw.p2team]) {
+    teams.push(this.canonicalizeTeam(team));
+  }
+
+  for (const team of ['p1team', 'p2team']) {
+		const trainer = raw[team.slice(0, 2)];
+		for (const pokemon in teams[team]) {
+      ts.push([trainer, pokemon.species]);
+    }
+
+    while (log[team].length < 6) {
+      ts.push([trainer, 'empty']);
+    }
+
+
+    teams[team].push(analyzeTeam(teams[team]));
+    
+
+  }
+
+
     // return Battle;
   }
 
@@ -111,10 +182,10 @@ export const Parser = new class {
       pokemon.ability = ability ? ability.id : 'unknown';
       pokemon.species = getSpecies(pokemon.species || pokemon.name, data).id;
       if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
-        pokemon.species = 'megarayquaza';
+        pokemon.species = 'rayquazamega';
         pokemon.ability = 'deltastream';
       } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
-        pokemon.species = 'ashgreninja';
+        pokemon.species = 'greninjaash';
       } else {
         const mega = getMegaEvolution(pokemon, data);
         if (mega) {

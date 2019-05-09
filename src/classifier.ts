@@ -68,22 +68,21 @@ export const Classifier = new class {
     if (isMega(species)) pokemon.species = toID(species.baseSpecies);
 
     let {bias, stalliness} = classifyForme(pokemon, format);
-    /* // FIXME: Intended behavior, but not used for compatibility:
-    if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong')) {
-      pokemon.species = 'meloettapirouette';
-      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
-    } else if (
-        pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
-      pokemon.species = 'darmanitanzen';
-      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
-    } else if (
-        pokemon.species === 'rayquaza' &&
-        pokemon.moves.includes('dragonascent')) {
-      pokemon.species = 'darmanitanzen';
-      pokemon.ability = 'deltastream';
-      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
-    } else {
-     */
+    // FIXME: Intended behavior, but not used for compatibility:
+    // if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong' as ID)) {
+    //   pokemon.species = 'meloettapirouette' as ID;
+    //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+    // } else if (
+    //     pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
+    //   pokemon.species = 'darmanitanzen'  as ID;
+    //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+    // } else if (
+    //     pokemon.species === 'rayquaza' &&
+    //     pokemon.moves.includes('dragonascent' as ID)) {
+    //   pokemon.species = 'rayquazamega' as ID;
+    //   pokemon.ability = 'deltastream' as ID;
+    //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+    // } else {
     const mega = getMegaEvolution(pokemon, format);
     if (mega) {
       pokemon.species = mega.species;
