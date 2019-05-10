@@ -17,8 +17,6 @@ CREATE TABLE teams (
 
     player INTEGER NOT NULL,
     outcome INTEGER NOT NULL,
-    rating_r REAL NOT NULL,
-    rating_rd REAL NOT NULL,
     rating_rpr REAL NOT NULL,
     rating_rprd REAL NOT NULL,
     bias REAL NOT NULL,
