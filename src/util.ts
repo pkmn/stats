@@ -15,6 +15,11 @@ export function isMegaRayquazaAllowed(data?: string|Data) {
   return MEGA_RAYQUAZA_ALLOWED.has(Data.forFormat(data).format);
 }
 
+export function isMega(species: Species) {
+  // FIXME: Ultra Burst?
+  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
+}
+
 export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format?: string|Data) {
   const item = Data.forFormat(format).getItem(pokemon.item);
   if (!item) return undefined;
@@ -97,7 +102,7 @@ const NON_6V6_FORMATS = new Set([
   'vgc2017',
 ]);
 
-export function isNonSinglesFormat(format?: string|data) {
+export function isNonSinglesFormat(format?: string|Data) {
   return NON_SINGLES_FORMATS.has(Data.forFormat().format);
 }
 

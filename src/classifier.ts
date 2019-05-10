@@ -1,9 +1,8 @@
 import {calcStat, Data, ID, PokemonSet, Species, Stat, toID} from 'ps';
-
-import {getBaseSpecies, getMegaEvolution, getSpecies} from './util';
+import {getBaseSpecies, getMegaEvolution, getSpecies, isMega} from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
-const LN3LN2 = Math.log(3) / Math.log(2);
+const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new class {
   classifyTeam(team: Array<PokemonSet<ID>>, format?: string|Data) {
@@ -12,11 +11,11 @@ export const Classifier = new class {
     for (const pokemon of team) {
       const {bias, stalliness} = this.classifyPokemon(pokemon, format);
       teamBias += bias;
-      teamStalliness.push(stalliness / LN3LN2);
+      teamStalliness.push(stalliness / LOG3_LOG2);
     }
 
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
-    const tags = tag(team) as Set<string>;
+    const tags = tag(team, format) as Set<string>;
 
     if (stalliness <= -1) {
       tags.add('hyperoffense');
@@ -36,7 +35,7 @@ export const Classifier = new class {
       tags.add('offense');
     } else if (stalliness < 1.0) {
       tags.add('balance');
-    } else if (stalliness < LN3LN2) {
+    } else if (stalliness < LOG3_LOG2) {
       tags.add('semistall');
     } else {
       tags.add('stall');
@@ -98,11 +97,6 @@ export const Classifier = new class {
   }
 };
 
-function isMega(species: Species) {
-  // FIXME: Ultra Burst?
-  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
-}
-
 const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
@@ -135,7 +129,7 @@ function classifyForme(pokemon: PokemonSet<ID>, format?: string|Data) {
 function baseStalliness(pokemon: PokemonSet<ID>, format?: string|Data) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
-  if (pokemon.species === 'ditto') return LN3LN2;
+  if (pokemon.species === 'ditto') return LOG3_LOG2;
   const stats = calcStats(pokemon, format);
   return -Math.log(
              (2.0 * pokemon.level + 10) / 250 *
@@ -201,7 +195,7 @@ const LOW_ACCURACY_MOVES = new Set([
   'mudbomb',      'mudshot',     'mudslap',    'sandattack',   'spikes',     'toxicspikes'
 ]);
 
-function tag(team: Array<PokemonSet<ID>>) {
+function tag(team: Array<PokemonSet<ID>>, format?: string|Data) {
   const weather = {rain: 0, sun: 0, sand: 0, hail: 0};
   const style = {
     batonpass: 0,
@@ -222,7 +216,9 @@ function tag(team: Array<PokemonSet<ID>>) {
 
   let possibleTypes: string[]|undefined;
   for (const pokemon of team) {
-    const species = getBaseSpecies(pokemon.species);
+    let species = getSpecies(pokemon.species, format);
+    if (isMega(species)) species = getBaseSpecies(species.id, format);
+
     const moves = new Set(pokemon.moves as string[]);
     possibleTypes = possibleTypes ? possibleTypes.filter(t => species.types.includes(t)) :
                                     species.types.slice();

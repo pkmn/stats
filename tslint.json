@@ -4,6 +4,7 @@
     "forin": false,
     "variable-name": false,
     "new-parens": false,
+    "switch-default": false,
     "prefer-const": {
       "options": {
         "destructuring": "all"
