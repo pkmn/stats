@@ -7,10 +7,10 @@ export interface TaggedStatistics {
   tags: Map<ID, WeightedStatistics>;
 }
 
-export type WeightedStatistics = Map</* cutoff */ number, Statistics>;
+export type WeightedStatistics = Map<number, Statistics>;
 
 export interface Statistics {
-  pokemon: Map<ID /* species */, UsageStatistics>;
+  pokemon: Map<ID, UsageStatistics>;
   leads: Usage;
   usage: Usage;
   metagame: MetagameStatistics;
@@ -26,8 +26,11 @@ export interface UsageStatistics {
   spreads: Map<string, number>;
   moves: Map<ID, number>;
 
-  encounters: Map</* species */ ID, Map<Outcome, number>>;
-  teammates: Map</* species */ ID, number>;
+  viability: number;
+  weight: number;
+
+  encounters: Map<ID, Map<Outcome, number>>;
+  teammates: Map<ID, number>;
 }
 
 export interface Usage {
@@ -37,8 +40,8 @@ export interface Usage {
 }
 
 export interface MetagameStatistics {
-  tags: Map<ID /* tag */, number /* weight */>;
-  stalliness: Array<[number /* stalliness */, number /* weight */]>;
+  tags: Map<ID, number>;
+  stalliness: Array<[number, number]>;
 }
 
 export const Stats = new class {

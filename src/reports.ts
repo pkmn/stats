@@ -1,10 +1,23 @@
 import {ID, toID} from 'ps';
+
 import {MetagameStatistics, Statistics, Usage} from './stats';
+import * as util from './util';
+
+interface MovesetStatistics {
+  'Raw count': number;
+  'Viability Ceiling': number;
+  'Abilities': {[key: string]: number};
+  'Items': {[key: string]: number};
+  'Spreads': {[key: string]: number};
+  'Moves': {[key: string]: number};
+  'Teammates': {[key: string]: number};
+  //'Checks and Counters': {[key: string]: number};
+  'usage': number;
+}
 
 export const Reports = new class {
   usageReport(format: ID, stats: Statistics, battles: number) {
     const sorted = Array.from(stats.pokemon.entries());
-    // TODO: verify sort orders...
     if (['challengecup1v1', '1v1'].includes(format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real);
     } else {
@@ -31,7 +44,7 @@ export const Reports = new class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = species.padEnd(18);
+      const poke = util.getSpecies(species, format).species.padEnd(18);
       const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const rawp = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
@@ -43,7 +56,7 @@ export const Reports = new class {
     return s;
   }
 
-  leadsReport(stats: Statistics, battles: number) {
+  leadsReport(format: ID, stats: Statistics, battles: number) {
     let s = ` Total leads: ${battles * 2}\n`;
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
@@ -53,8 +66,8 @@ export const Reports = new class {
     total.raw = Math.max(1.0, stats.leads.raw);
     total.weighted = Math.max(1.0, stats.leads.weighted);
 
-    const sorted = Array.from(stats.pokemon.entries())
-                       .sort((a, b) => b[1].lead.weighted - a[1].lead.weighted);  // TODO: verify
+    const sorted =
+        Array.from(stats.pokemon.entries()).sort((a, b) => b[1].lead.weighted - a[1].lead.weighted);
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1].lead;
@@ -62,7 +75,7 @@ export const Reports = new class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = species.padEnd(18);
+      const poke = util.getSpecies(species, format).species.padEnd(18);
       const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
@@ -79,14 +92,30 @@ export const Reports = new class {
     // looking at matchups array
     //
   }
-  detailedMovesetReport() {  // 'chaos'
-    // Just JSON from above
+
+  detailedMovesetReport(
+      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
+    const info = {
+      'metagame': format,
+      'cutoff': cutoff,
+      'cutoff deviation': 0,
+      'team type': tag,
+      'number of battles': battles,
+    };
+
+    const data: {[key: string]: MovesetStatistics} = {};
+    for (const [species, moveset] of toMovesetStatistics(format, stats).entries()) {
+      if (moveset.usage < 0.0001) break;  // 1/100th of a percent
+      data[species] = moveset;
+    }
+
+    return JSON.stringify({info, data});
   }
 
   metagameReport(metagame: MetagameStatistics, totalWeight: number) {
     const W = Math.max(1.0, totalWeight);
 
-    const tags = Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);  // TODO: verify
+    const tags = Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);
     let s = '';
     for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(30, '.');
@@ -95,7 +124,7 @@ export const Reports = new class {
     s += '\n';
 
     if (!metagame.stalliness.length) return s;
-    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0]);  // TODO: verify
+    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0]);
 
     // Figure out a good bin range by looking at .1% and 99.9% points
     const index = Math.floor(stalliness.length / 1000);
@@ -183,4 +212,63 @@ function parseUsageReport(report: string) {
   }
 
   return {usage, battles};
+}
+
+function toMovesetStatistics(format: ID, stats: Statistics) {
+  const sorted = Array.from(stats.pokemon.entries());
+  const real = ['challengecup1v1', '1v1'].includes(format);
+  if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
+    sorted.sort((a, b) => a[0].localeCompare(b[0]));
+  } else if (real) {
+    sorted.sort((a, b) => b[1].usage.real - a[1].usage.real);
+  } else {
+    sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted);
+  }
+
+  const movesets: Map<string, MovesetStatistics> = new Map();
+  for (const entry of sorted) {
+    const species = entry[0];
+    const pokemon = entry[1];
+    const usage = real ? pokemon.usage.real : pokemon.usage.weighted;
+    movesets.set(util.getSpecies(species, format).species, {
+      'Raw count': pokemon.usage.raw,
+      'Viability Ceiling': pokemon.viability,
+      'Abilities': toObject(pokemon.abilities),
+      'Items': toObject(pokemon.items),
+      'Spreads': toObject(pokemon.spreads),
+      'Moves': toObject(pokemon.moves),
+      'Teammates': getTeammates(format, pokemon.teammates, pokemon.weight, stats),
+      //'Checks and Counters': getChecksAndCounters(pokemon.encounters), // TODO only used by
+      //detailed!
+      'usage': usage,
+    });
+  }
+
+  return movesets;
+}
+
+// function getChecksAndCounters(
+// encounters: Map<ID, Map<Outcome, number>>): Map<string, [number, number, number]> {
+
+//}
+
+function getTeammates(format: ID, teammates: Map<ID, number>, weight: number, stats: Statistics):
+    {[key: string]: number} {
+  const real = ['challengecup1v1', '1v1'].includes(format);
+  const m: Map<string, number> = new Map();
+  for (const [id, w] of teammates.entries()) {
+    const species = util.getSpecies(id, format).species;
+    const s = stats.pokemon.get(id);
+    m.set(species, s ? (w - weight * (real ? s.usage.real : s.usage.weighted)) : 0);
+  }
+  return toObject(m);
+}
+
+function toObject(map: Map<string, number>): {[key: string]: number} {
+  const obj: {[key: string]: number} = {};
+  const sorted = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+  for (const [k, v] of sorted) {
+    obj[k] = v;
+  }
+  return obj;
 }
