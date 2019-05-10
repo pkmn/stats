@@ -5,7 +5,7 @@ import {getBaseSpecies, getMegaEvolution, getSpecies, isMega} from './util';
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new class {
-  classifyTeam(team: Array<PokemonSet<ID>>, format?: string|Data) {
+  classifyTeam(team: Array<PokemonSet<ID>>, format: string|Data) {
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
@@ -59,11 +59,11 @@ export const Classifier = new class {
   // For stats and moveset purposes we're now counting Mega Pokemon seperately,
   // but for team analysis we still want to consider the base (which presumably
   // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(pokemon: PokemonSet<ID>, format?: string|Data) {
+  classifyPokemon(pokemon: PokemonSet<ID>, format: string|Data) {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
-    const species = getSpecies(pokemon.species);
+    const species = getSpecies(pokemon.species, format);
     if (isMega(species)) pokemon.species = toID(species.baseSpecies);
 
     let {bias, stalliness} = classifyForme(pokemon, format);
@@ -101,7 +101,7 @@ const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(pokemon: PokemonSet<ID>, format?: string|Data) {
+function classifyForme(pokemon: PokemonSet<ID>, format: string|Data) {
   let stalliness = baseStalliness(pokemon, format);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
@@ -126,7 +126,7 @@ function classifyForme(pokemon: PokemonSet<ID>, format?: string|Data) {
   return {bias, stalliness};
 }
 
-function baseStalliness(pokemon: PokemonSet<ID>, format?: string|Data) {
+function baseStalliness(pokemon: PokemonSet<ID>, format: string|Data) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
   if (pokemon.species === 'ditto') return LOG3_LOG2;
@@ -138,7 +138,7 @@ function baseStalliness(pokemon: PokemonSet<ID>, format?: string|Data) {
       Math.log(2);
 }
 
-function calcStats(pokemon: PokemonSet<ID>, format?: string|Data) {
+function calcStats(pokemon: PokemonSet<ID>, format: string|Data) {
   const stats = calcFormeStats(pokemon, format);
   if (pokemon.species === 'aegislash' && pokemon.ability === 'stancechange') {
     pokemon.species = 'aegislashblade' as ID;
@@ -151,8 +151,8 @@ function calcStats(pokemon: PokemonSet<ID>, format?: string|Data) {
   return stats;
 }
 
-function calcFormeStats(pokemon: PokemonSet<ID>, format?: string|Data) {
-  const species = getSpecies(pokemon.species);
+function calcFormeStats(pokemon: PokemonSet<ID>, format: string|Data) {
+  const species = getSpecies(pokemon.species, format);
   const nature = Data.forFormat(format).getNature(pokemon.nature);
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: Stat;
@@ -195,7 +195,7 @@ const LOW_ACCURACY_MOVES = new Set([
   'mudbomb',      'mudshot',     'mudslap',    'sandattack',   'spikes',     'toxicspikes'
 ]);
 
-function tag(team: Array<PokemonSet<ID>>, format?: string|Data) {
+function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
   const weather = {rain: 0, sun: 0, sand: 0, hail: 0};
   const style = {
     batonpass: 0,

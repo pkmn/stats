@@ -82,7 +82,7 @@ const ROAR = new Set(['Roar', 'Whirlwind', 'Circle Throw', 'Dragon Tail']);
 const UTURN = new Set(['U-Turn', 'U-turn', 'Volt Switch', 'Baton Pass']);
 
 export const Parser = new class {
-  parse(raw: Log, format?: string|Data) {
+  parse(raw: Log, format: string|Data) {
     // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
     if (raw as unknown === '"log"') throw new Error('Log = "log"');
 
@@ -101,7 +101,7 @@ export const Parser = new class {
     const idents: {p1: string[], p2: string[]} = {p1: [], p2: []};
     const battle = ({matchups: [], turns: raw.turns, endType: raw.endType} as unknown) as Battle;
     for (const side of (['p1', 'p2'] as Array<'p1'|'p2'>)) {
-      const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team']);
+      const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team'], format);
 
       const mons = [];
       for (let i = 0; i < 6; i++) {
@@ -120,7 +120,7 @@ export const Parser = new class {
         rating: raw[side === 'p1' ? 'p1rating' : 'p2rating'],
         team: {
           pokemon: mons,
-          classification: Classifier.classifyTeam(team),
+          classification: Classifier.classifyTeam(team, format),
         },
       };
       if (winner !== 'tie') player.outcome = winner === side ? 'win' : 'loss';
@@ -276,7 +276,7 @@ export const Parser = new class {
     return battle;
   }
 
-  canonicalizeTeam(team: Array<PokemonSet<string>>, format?: string|Data): Array<PokemonSet<ID>> {
+  canonicalizeTeam(team: Array<PokemonSet<string>>, format: string|Data): Array<PokemonSet<ID>> {
     const data = Data.forFormat(format);
     const mray = isMegaRayquazaAllowed(data);
     for (const pokemon of team) {
@@ -334,7 +334,7 @@ const FORMES =
 
 function identify(
     name: string, side: 'p1'|'p2', battle: Battle, idents: {p1: string[], p2: string[]},
-    format?: string|Data) {
+    format: string|Data) {
   const team = battle[side].team.pokemon;
   const names = idents[side];
 

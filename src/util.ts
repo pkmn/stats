@@ -1,18 +1,18 @@
 import {Data, ID, PokemonSet, Species, toID} from 'ps';
 
-export function getSpecies(name: string, format?: string|Data) {
+export function getSpecies(name: string, format: string|Data) {
   const species = Data.forFormat(format).getSpecies(name);
   if (!species) throw new Error(`Unknown species '${name}'`);
   return species;
 }
 
-export function getBaseSpecies(name: string, format?: string|Data): Species {
+export function getBaseSpecies(name: string, format: string|Data): Species {
   const species = getSpecies(name, format);
   return species.baseSpecies ? getBaseSpecies(species.baseSpecies, format) : species;
 }
 
-export function isMegaRayquazaAllowed(data?: string|Data) {
-  return MEGA_RAYQUAZA_ALLOWED.has(Data.forFormat(data).format);
+export function isMegaRayquazaAllowed(format?: string|Data) {
+  return MEGA_RAYQUAZA_ALLOWED.has(Data.forFormat(format).format);
 }
 
 export function isMega(species: Species) {
@@ -20,10 +20,10 @@ export function isMega(species: Species) {
   return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
 }
 
-export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format?: string|Data) {
+export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|Data) {
   const item = Data.forFormat(format).getItem(pokemon.item);
   if (!item) return undefined;
-  const species = getSpecies(pokemon.species);
+  const species = getSpecies(pokemon.species, format);
   if (item.name === 'Blue Orb' &&
       (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
     return {species: 'kyogreprimal' as ID, ability: 'primoridalsea' as ID};
@@ -34,7 +34,7 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format?: string
   }
   // FIXME: Ultra Burst?
   if (!item.megaEvolves) return undefined;
-  const mega = getSpecies(item.megaEvolves);
+  const mega = getSpecies(item.megaEvolves, format);
   if (species.species !== mega.species || species.species !== mega.baseSpecies) {
     return undefined;
   }
@@ -102,8 +102,8 @@ const NON_6V6_FORMATS = new Set([
   'vgc2017',
 ]);
 
-export function isNonSinglesFormat(format?: string|Data) {
-  return NON_SINGLES_FORMATS.has(Data.forFormat().format);
+export function isNonSinglesFormat(format: string|Data) {
+  return NON_SINGLES_FORMATS.has(Data.forFormat(format).format);
 }
 
 export function canonicalizeFormat(format: string) {
