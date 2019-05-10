@@ -1,7 +1,7 @@
 import {Data, hiddenPower, ID, PokemonSet, Stat, toID} from 'ps';
 
 import {Classifier} from './classifier';
-import {getBaseSpecies, getMegaEvolution, getSpecies, isMega, isMegaRayquazaAllowed, isNonSinglesFormat} from './util';
+import * as util from './util';
 
 export interface Log {
   id: string;         // gen1randombattle-12345
@@ -127,7 +127,7 @@ export const Parser = new class {
       battle[side] = player;
     }
     if (battle.p1 === battle.p2) throw new Error('Player battling themself.');
-    if (!raw.log || isNonSinglesFormat(format)) return battle;
+    if (!raw.log || util.isNonSinglesFormat(format)) return battle;
 
     const active: {p1?: Slot, p2?: Slot} = {};
     let flags = {
@@ -266,7 +266,7 @@ export const Parser = new class {
             flags.hazard = true;
           }
 
-          // FIXME: in the replace case we need to oo back and fix the previously affected matchups!
+          // FIXME: in the replace case we need to go back and fix the previously affected matchups!
           active[side] = identify(name, side, battle, idents, format);
           break;
         }
@@ -278,7 +278,7 @@ export const Parser = new class {
 
   canonicalizeTeam(team: Array<PokemonSet<string>>, format: string|Data): Array<PokemonSet<ID>> {
     const data = Data.forFormat(format);
-    const mray = isMegaRayquazaAllowed(data);
+    const mray = util.isMegaRayquazaAllowed(data);
     for (const pokemon of team) {
       const item = pokemon.item && data.getItem(pokemon.item);
       pokemon.item = item ? item.id : 'nothing';
@@ -309,14 +309,14 @@ export const Parser = new class {
       pokemon.level = pokemon.forcedLevel || pokemon.level || 100;
       const ability = pokemon.ability && data.getAbility(pokemon.ability);
       pokemon.ability = ability ? ability.id : 'unknown';
-      pokemon.species = getSpecies(pokemon.species || pokemon.name, data).id;
+      pokemon.species = util.getSpecies(pokemon.species || pokemon.name, data).id;
       if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
         pokemon.species = 'rayquazamega';
         pokemon.ability = 'deltastream';
       } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
         pokemon.species = 'greninjaash';
       } else {
-        const mega = getMegaEvolution(pokemon, data);
+        const mega = util.getMegaEvolution(pokemon, data);
         if (mega) {
           pokemon.species = mega.species;
           pokemon.ability = mega.ability;
@@ -360,13 +360,13 @@ function identify(
     }
   } else {
     // Maybe its a pokemon name (or possibly an alias)?
-    let species = getSpecies(name, format);
+    let species = util.getSpecies(name, format);
     let index = team.findIndex(p => p.species === species!.id);
     if (index !== -1) return index as Slot;
 
     // Try undoing a forme change to see if that solves things?
-    if (isMega(species) || FORMES.has(species.id)) {
-      species = getBaseSpecies(species.id, format);
+    if (util.isMega(species) || FORMES.has(species.id)) {
+      species = util.getBaseSpecies(species.id, format);
       index = team.findIndex(p => p.species === species.id);
     }
     if (index !== -1) return index as Slot;

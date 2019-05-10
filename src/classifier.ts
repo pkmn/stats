@@ -1,5 +1,5 @@
 import {calcStat, Data, ID, PokemonSet, Species, Stat, toID} from 'ps';
-import {getBaseSpecies, getMegaEvolution, getSpecies, isMega} from './util';
+import * as util from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
@@ -63,8 +63,8 @@ export const Classifier = new class {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
-    const species = getSpecies(pokemon.species, format);
-    if (isMega(species)) pokemon.species = toID(species.baseSpecies);
+    const species = util.getSpecies(pokemon.species, format);
+    if (util.isMega(species)) pokemon.species = toID(species.baseSpecies);
 
     let {bias, stalliness} = classifyForme(pokemon, format);
     // FIXME: Intended behavior, but not used for compatibility:
@@ -82,7 +82,7 @@ export const Classifier = new class {
     //   pokemon.ability = 'deltastream';
     //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     // } else {
-    const mega = getMegaEvolution(pokemon, format);
+    const mega = util.getMegaEvolution(pokemon, format);
     if (mega) {
       pokemon.species = mega.species;
       pokemon.ability = mega.ability;
@@ -152,7 +152,7 @@ function calcStats(pokemon: PokemonSet<ID>, format: string|Data) {
 }
 
 function calcFormeStats(pokemon: PokemonSet<ID>, format: string|Data) {
-  const species = getSpecies(pokemon.species, format);
+  const species = util.getSpecies(pokemon.species, format);
   const nature = Data.forFormat(format).getNature(pokemon.nature);
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: Stat;
@@ -216,8 +216,8 @@ function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
 
   let possibleTypes: string[]|undefined;
   for (const pokemon of team) {
-    let species = getSpecies(pokemon.species, format);
-    if (isMega(species)) species = getBaseSpecies(species.id, format);
+    let species = util.getSpecies(pokemon.species, format);
+    if (util.isMega(species)) species = util.getBaseSpecies(species.id, format);
 
     const moves = new Set(pokemon.moves as string[]);
     possibleTypes = possibleTypes ? possibleTypes.filter(t => species.types.includes(t)) :

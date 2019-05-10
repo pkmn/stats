@@ -1,7 +1,7 @@
 import {ID, toID} from 'ps';
 import {MetagameStatistics, Usage} from './stats';
 
-export const Reporter = new class {
+export const Reports = new class {
   usageReport(format: ID, pokemon: Usage, battles: number) {
     const sorted = Array.from(pokemon.usage.entries());
     // TODO: verify sort orders...
