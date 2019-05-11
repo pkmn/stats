@@ -29,7 +29,7 @@ export interface UsageStatistics {
   viability: number;
   weight: number;
 
-  encounters: Map<ID, Map<Outcome, number>>;
+  encounters: Map<ID, number[/* Outcome */]>;
   teammates: Map<ID, number>;
 }
 
