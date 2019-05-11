@@ -127,24 +127,8 @@ function updateEncounterMatrix(encounters: EncounterMatrix, matchups: [string, s
   }
 }
 
-// Only consider battles which are long enough
-const tooShort = battle.turns && !NON_6V6_FORMATS.has(tier) &&
-  (battle.turns < 2 || battle.turns < 3 && !NON_SINGLES_FORMATS.has(tier));
-
 
 // MOVESETS
-interface MovesetStatistics {
-  'Raw count': number;
-  'Viability Ceiling': number;
-  'Abilities': abilities,
-  'Items': items,
-  'Spreads': spreads,
-  'Moves': moves,
-  'Happiness' : happinesses,
-  'Teammates': teammates,
-  'Checks and Counters': cc
-};
-
 const TABLE_WIDTH = 40;
 
 function displayMovesetStatistics() {

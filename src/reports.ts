@@ -229,7 +229,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
     const pokemon = entry[1];
     const usage = real ? pokemon.usage.real : pokemon.usage.weighted;
     movesets.set(util.getSpecies(species, data).species, {
-      'Raw count': pokemon.usage.raw,
+      'Raw count': pokemon.count,
       'Viability Ceiling': pokemon.viability,
       'Abilities': toObject(
           pokemon.abilities,
@@ -240,6 +240,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
       'Items': toObject(
           pokemon.items,
           i => {
+            if (i === 'nothing') return 'Nothing';
             const o = data.getItem(i);
             return (o && o.name) || i;
           }),

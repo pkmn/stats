@@ -103,7 +103,13 @@ const NON_6V6_FORMATS = new Set([
 ]);
 
 export function isNonSinglesFormat(format: string|Data) {
-  return NON_SINGLES_FORMATS.has(Data.forFormat(format).format);
+  const f = Data.forFormat(format).format;
+  return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
+}
+
+export function isNon6v6Format(format: string|Data) {
+  const f = Data.forFormat(format).format;
+  return NON_6V6_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
 export function canonicalizeFormat(format: string) {
