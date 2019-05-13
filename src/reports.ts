@@ -96,6 +96,13 @@ export const Reports = new class {
     return s;
   }
 
+  movesetReports(format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
+    const movesetStats = toMovesetStatistics(format, stats);
+    const basic = movesetReport(movesetStats);
+    const detailed = detailedMovesetReport(format, stats, battles, cutoff, tag, movesetStats);
+    return {basic, detailed};
+  }
+
   movesetReport() {
     // batchMovesetCounter.py
     // 'Checks and Counters' = Encounter Matrix created in StatsCounter.py when
@@ -104,7 +111,9 @@ export const Reports = new class {
   }
 
   detailedMovesetReport(
-      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
+      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null, movesetStats?: MovesetStatistics) {
+    movesetStats = movesetStats || toMovesetStatistics(format, stats);
+
     const info = {
       'metagame': format,
       'cutoff': cutoff,
@@ -114,7 +123,7 @@ export const Reports = new class {
     };
 
     const data: {[key: string]: object} = {};
-    for (const [species, moveset] of toMovesetStatistics(format, stats).entries()) {
+    for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
       // tslint:disable-next-line: no-any
       const m: any = Object.assign({}, moveset);
