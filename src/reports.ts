@@ -99,24 +99,41 @@ export const Reports = new class {
   movesetReports(
       format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
     const movesetStats = toMovesetStatistics(format, stats);
-    const basic = this.movesetReport(movesetStats);
+    const basic = this.movesetReport(format, stats, movesetStats);
     const detailed = this.detailedMovesetReport(format, stats, battles, cutoff, tag, movesetStats);
     return {basic, detailed};
   }
 
-  movesetReport(movesetStats?: Map<string, MovesetStatistics>) {
+  movesetReport(format: ID, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>) {
+    movesetStats = movesetStats || toMovesetStatistics(format, stats);
+
+    const data = Data.forFormat(format);
     const WIDTH = 40;
+
     const sep = ` +${'-'.repeat(WIDTH)}+ `;
-    const s = sep;
-    // s += ` | ${species.padEnd()}| `;
-    // s += sep;
-    // s += ` | Raw count: ${stats['Raw count']}`.padEnd(WIDTH + 2) + '| ';
+    let s = '';
+    for (const [species, moveset] of movesetStats.entries()) {
+      if (moveset.usage < 0.0001) break;  // 1/100th of a percent
+
+      const p = stats.pokemon.get(species)!;
+
+      s += sep;
+      s += ` | ${util.getSpecies(species, data).species}`.padEnd(WIDTH + 2) + '| ';
+      s += sep;
+      s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| ';
+      const avg = p.weights.count ? `${Math.floor(p.weights.sum / p.weights.count)}` : '---';
+      s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| ';
+      const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
+      s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| ';
+      s += sep;
+    }
+
     return s;
   }
 
   detailedMovesetReport(
       format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
-      movesetStats?: Map<string, MovesetStatistics>) {
+      movesetStats?: Map<ID, MovesetStatistics>) {
     movesetStats = movesetStats || toMovesetStatistics(format, stats);
 
     const info = {
@@ -127,13 +144,14 @@ export const Reports = new class {
       'number of battles': battles,
     };
 
+    const d = Data.forFormat(format);
     const data: {[key: string]: object} = {};
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
       // tslint:disable-next-line: no-any
       const m: any = Object.assign({}, moveset);
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
-      data[species] = m;
+      data[util.getSpecies(species, d).species] = m;
     }
 
     return JSON.stringify({info, data});
@@ -237,7 +255,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
   }
   const data = Data.forFormat(format);
 
-  const movesets: Map<string, MovesetStatistics> = new Map();
+  const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {
     const species = entry[0];
     const pokemon = entry[1];
@@ -249,7 +267,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
           gxes[Math.ceil(0.2 * gxes.length) - 1]
         ] :
         [0, 0, 0, 0];
-    movesets.set(util.getSpecies(species, data).species, {
+    movesets.set(species, {
       'Raw count': pokemon.count,
       'Viability Ceiling': viability,
       'Abilities': toObject(
