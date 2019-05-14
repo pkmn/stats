@@ -286,7 +286,7 @@ function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2
     }
   }
 
-  // Possible in the case of a 1v1 of similar battle which was forfeited before starting
+  // Possible in the case of a 1v1 or similar battle which was forfeited before starting
   if (leads.p1 !== 'empty' || leads.p2 === 'empty') return;
 
   for (const side of sides) {

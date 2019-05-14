@@ -12,7 +12,7 @@ export function getBaseSpecies(name: string, format: string|Data): Species {
 }
 
 export function isMegaRayquazaAllowed(format?: string|Data) {
-  return MEGA_RAYQUAZA_ALLOWED.has(Data.forFormat(format).format);
+  return !MEGA_RAYQUAZA_BANNED.has(Data.forFormat(format).format);
 }
 
 export function isMega(species: Species) {
@@ -41,7 +41,7 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|
   return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
 }
 
-const MEGA_RAYQUAZA_ALLOWED =
+const MEGA_RAYQUAZA_BANNED =
     new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 const NON_SINGLES_FORMATS = new Set([
