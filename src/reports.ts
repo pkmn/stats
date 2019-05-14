@@ -6,7 +6,7 @@ import * as util from './util';
 
 interface MovesetStatistics {
   'Raw count': number;
-  'Viability Ceiling': number;
+  'Viability Ceiling': [number, number, number, number];
   'Abilities': {[key: string]: number};
   'Items': {[key: string]: number};
   'Spreads': {[key: string]: number};
@@ -96,14 +96,15 @@ export const Reports = new class {
     return s;
   }
 
-  movesetReports(format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
+  movesetReports(
+      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
     const movesetStats = toMovesetStatistics(format, stats);
-    const basic = movesetReport(movesetStats);
-    const detailed = detailedMovesetReport(format, stats, battles, cutoff, tag, movesetStats);
+    const basic = this.movesetReport(movesetStats);
+    const detailed = this.detailedMovesetReport(format, stats, battles, cutoff, tag, movesetStats);
     return {basic, detailed};
   }
 
-  movesetReport() {
+  movesetReport(movesetStats?: Map<string, MovesetStatistics>) {
     // batchMovesetCounter.py
     // 'Checks and Counters' = Encounter Matrix created in StatsCounter.py when
     // looking at matchups array
@@ -111,7 +112,8 @@ export const Reports = new class {
   }
 
   detailedMovesetReport(
-      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null, movesetStats?: MovesetStatistics) {
+      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
+      movesetStats?: Map<string, MovesetStatistics>) {
     movesetStats = movesetStats || toMovesetStatistics(format, stats);
 
     const info = {
@@ -237,9 +239,16 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
     const species = entry[0];
     const pokemon = entry[1];
     const usage = real ? pokemon.usage.real : pokemon.usage.weighted;
+    const gxes = Array.from(pokemon.gxes.values()).sort((a, b) => b - a);
+    const viability: [number, number, number, number] = gxes.length ?
+        [
+          gxes.length, gxes[0], gxes[Math.ceil(0.01 * gxes.length) - 1],
+          gxes[Math.ceil(0.2 * gxes.length) - 1]
+        ] :
+        [0, 0, 0, 0];
     movesets.set(util.getSpecies(species, data).species, {
       'Raw count': pokemon.count,
-      'Viability Ceiling': pokemon.viability,
+      'Viability Ceiling': viability,
       'Abilities': toObject(
           pokemon.abilities,
           a => {
@@ -260,7 +269,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
             const o = data.getMove(m);
             return (o && o.name) || m;
           }),
-      'Teammates': getTeammates(format, pokemon.teammates, pokemon.weight, stats),
+      'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),
       'Checks and Counters':
           getChecksAndCounters(pokemon.encounters, s => util.getSpecies(species, data).species),
       'usage': usage,
@@ -270,14 +279,14 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
   return movesets;
 }
 
-function getTeammates(format: ID, teammates: Map<ID, number>, weight: number, stats: Statistics):
+function getTeammates(format: ID, teammates: Map<ID, number>, count: number, stats: Statistics):
     {[key: string]: number} {
   const real = ['challengecup1v1', '1v1'].includes(format);
   const m: Map<string, number> = new Map();
   for (const [id, w] of teammates.entries()) {
     const species = util.getSpecies(id, format).species;
     const s = stats.pokemon.get(id);
-    m.set(species, s ? (w - weight * (real ? s.usage.real : s.usage.weighted)) : 0);
+    m.set(species, s ? (w - count * (real ? s.usage.real : s.usage.weighted)) : 0);
   }
   return toObject(m);
 }

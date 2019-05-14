@@ -43,7 +43,7 @@ export interface Player {
 
 export interface Team {
   pokemon: Pokemon[];
-  classification: {bias: number; stalliness: number; tags?: Set<ID>;};
+  classification: {bias: number; stalliness: number; tags: Set<ID>;};
 }
 
 export interface Pokemon {

@@ -1,5 +1,7 @@
-import {ID} from 'ps';
+import {Data, ID} from 'ps';
+
 import {Battle, Outcome, Player, Pokemon, Team} from './parser';
+import * as util from './util';
 
 export interface TaggedStatistics {
   battles: number;
@@ -7,10 +9,7 @@ export interface TaggedStatistics {
   tags: Map<ID, WeightedStatistics>;
 }
 
-export interface WeightedStatistics {
-  stats: Map<number, Statistics>;
-  gxes: Map<ID, number>;
-}
+export type WeightedStatistics = Map<number, Statistics>;
 
 export interface Statistics {
   pokemon: Map<ID, UsageStatistics>;
@@ -29,12 +28,12 @@ export interface UsageStatistics {
   spreads: Map<string, number>;
   moves: Map<ID, number>;
 
-  viability: number;
-  weight: number;
   count: number;
+  weights: {sum: number, count: number};
 
   encounters: Map<ID, number[/* Outcome */]>;
   teammates: Map<ID, number>;
+  gxes: Map<ID, number>;
 }
 
 export interface Usage {
@@ -48,17 +47,19 @@ export interface MetagameStatistics {
   stalliness: Array<[number, number]>;
 }
 
-// TODO: 'empty'
+const EMPTY: Set<ID> = new Set();
+
 export const Stats = new class {
-  update(format: ID, battle: Battle, cutoffs: number[], stats?: TaggedStatistics, tags?: Set<ID>) {
+  update(format: ID, battle: Battle, cutoffs: number[], stats?: TaggedStatistics, tags = EMPTY) {
     stats = stats || {battles: 0, total: new Map(), tags: new Map()};
     stats.battles++;
 
-
-
-    const weights = [];
+    const weights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
-      const w = this.getWeights(battle.p1, cuttoffs);
+      const [w, save] = getWeights(battle.p1, cutoffs);
+      const gxe = player.rating && player.rating.rprd ?
+          Math.round(100 * util.victoryChance(player.rating.rpr, player.rating.rprd, 1500, 130)) :
+          undefined;
       weights.push(w);
       for (const [i, cutoff] of cutoffs.entries()) {
         const weight = w[i];
@@ -68,10 +69,10 @@ export const Stats = new class {
           s = newStatistics();
           stats.total.set(cutoff, s);
         }
-        this.updateStats(format, player, battle, weight, s);
+        updateStats(format, player, battle, weight, gxe, save, s);
 
         for (const tag of tags) {
-          const t = stats.tags.get(tag);
+          let t = stats.tags.get(tag);
           if (!t) {
             t = new Map();
             stats.tags.set(tag, t);
@@ -81,110 +82,118 @@ export const Stats = new class {
             s = newStatistics();
             t.set(cutoff, s);
           }
-          if (player.team.tags.has(tag)) {
-            this.updateStats(format, player, battle, weight, s, tag);
+          if (player.team.classification.tags.has(tag)) {
+            updateStats(format, player, battle, weight, gxe, save, s, tag);
           }
         }
       }
     }
 
     if (!util.isNonSinglesFormat(format)) {
-      const mins = weights.map(weights[0], (w, i) => Math.min(w, weights[1]));
+      const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
       for (const [i, weight] of mins.entries()) {
+        const pw = {p1: weights[0][i], p2: weights[1][i]};
         const cutoff = cutoffs[i];
         const s = stats.total.get(cutoff)!;
-        updateEncounterMatrix(s, battle.matchups, weight);
+        updateEncounters(s, battle.matchups, weight);
+        updateLeads(s, battle, pw);
 
         for (const tag of tags) {
           const s = stats.tags.get(tag)!.get(cutoff)!;
           updateEncounters(s, battle.matchups, weight);
+          updateLeads(s, battle, pw);
         }
       }
     }
-
-    return s;
-  }
-
-  private updateStats(format: ID, player: Player, battle: Battle, weight: number, stats: Statistics, tag?: ID) {
-    const isNonSingles = !util.isNonSinglesFormat(format);
-    const tooShort = !util.isNon6vFormat(format) && 
-      (battle.turns < 2 || (battle.turns < 3 && isNonSingles));
-
-    // We still partially update moveset stats even if the battle is too short.
-    stats = this.updateMovesets(format, player, battle, weights, stats, !tooShort, tag);
-
-    // Lead stats for non-singles is not currently supported
-    if (isNonSingles) return stats;
-
-    // TODO leads, scope to player...
-    //const leads = {p1: 'empty', p2: 'empty'};
-    //if (battle.matchups.length === 0) {
-      //leaders.p1 = 
-    //} else {
-      //const matchup = battle.matchups[0];
-      //leads.p1 = matchup[0];
-      //leads.p2 = matchup[1];
-    //}
-
 
     return stats;
   }
-
-  private updateMovesets(format: ID, player: Player, battle: Battle, weight: number, stats: Statistics, tooShort: boolean, tag?: ID) {
-    for (const [i, pokemon] of player.team.pokemon.entries()) {
-      const set = pokemon.set;
-
-      let p = stats.pokemon.get(pokemon.species);
-      if (!p) {
-        p = newUsageStatistics();
-        stats.pokemon.set(pokemon.species p);
-      }
-      p.count++;
-
-      const ability = set.ability === 'unknown' ? 'illuminate' : set.ability;
-      const a = p.abilities.get(ability);
-      p.abilities.set(ability, (a || 0) + weight);
-
-      const i = p.items.get(set.item);
-      p.items.set(set.item, (i || 0) + weight);
-
-      // TODO movesets
-
-
-      if (!tooShort) {
-        updateTeammates(player.team.pokemon, i, pokemon, p.teammates, stats, weight);
-
-        p.usage.raw++;
-        if (p.turnsOut > 0) p.usage.real++;
-        p.usage.weighed += weight;
-
-        for (const tag in player.team.classification.tags) {
-          stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weight);
-          stats.metagame.stalliness.push([player.team.classification.stalliness, weight]);
-        }
-      }
-
-    }
-  }
-
-  private getWeights(player: Player, cutoffs: number[]) {
-    let rpr = 1500;
-    let rpr = 130;
-    if (player.rating && player.rating.rprd !== 0) {
-      rpr = player.rating.rpr;
-      rprd = player.rating.rprd;
-    } else if (player.outcome) {
-      rpr = player.outcome === 'win' ? 1540.16061434 : 1459.83938566;
-      rprd = 122.858308077;
-    }
-
-    const w = [];
-    for (const cutoff of cutoffs) {
-      w.push(util.weighting(rpr, rprd, cutoff);
-    }
-    return w;
-  }
 };
+
+function getWeights(player: Player, cutoffs: number[]): [number[], boolean] {
+  let save = false;
+  let rpr = 1500;
+  let rprd = 130;
+  if (player.rating && player.rating.rprd !== 0) {
+    rpr = player.rating.rpr;
+    rprd = player.rating.rprd;
+    save = true;
+  } else if (player.outcome) {
+    rpr = player.outcome === 'win' ? 1540.16061434 : 1459.83938566;
+    rprd = 122.858308077;
+  }
+
+  const w = [];
+  for (const cutoff of cutoffs) {
+    w.push(util.weighting(rpr, rprd, cutoff));
+  }
+  return [w, save];
+}
+
+function updateStats(
+    format: ID, player: Player, battle: Battle, weight: number, gxe: number|undefined,
+    save: boolean, stats: Statistics, tag?: ID) {
+  const data = Data.forFormat(format);
+  for (const [index, pokemon] of player.team.pokemon.entries()) {
+    const set = pokemon.set;
+
+    let p = stats.pokemon.get(pokemon.species);
+    if (!p) {
+      p = newUsageStatistics();
+      stats.pokemon.set(pokemon.species, p);
+    }
+    p.count++;
+
+    if (gxe !== undefined) {
+      const g = p.gxes.get(player.name);
+      if (!g || g < gxe) p.gxes.set(player.name, gxe);
+    }
+
+    if (save) {
+      p.weights.sum += weight;
+      p.weights.count++;
+    }
+
+    const ability = set.ability === 'unknown' ? 'illuminate' as ID : set.ability;
+    const a = p.abilities.get(ability);
+    p.abilities.set(ability, (a || 0) + weight);
+
+    const i = p.items.get(set.item);
+    p.items.set(set.item, (i || 0) + weight);
+
+    const nature = data.getNature(
+        ['serious', 'docile', 'quirky', 'bashful'].includes(set.nature) ? 'hardy' as ID :
+                                                                          set.nature)!;
+    const evs = Object.values(set.evs);  // TODO round evs
+    const spread = `${nature}:${evs.join('/')}`;
+    const s = p.spreads.get(spread);
+    p.spreads.set(spread, (s || 0) + weight);
+
+    for (const move of set.moves) {
+      // NOTE: We're OK with triple counting 'nothing'
+      const m = p.moves.get(move);
+      p.moves.set(move, (m || 0) + weight);
+    }
+
+    const h = p.happinesses.get(set.happiness!);
+    p.happinesses.set(set.happiness!, (h || 0) + weight);
+
+    const tooShort = !util.isNon6v6Format(data) &&
+        (battle.turns < 2 || (battle.turns < 3 && !util.isNonSinglesFormat(data)));
+    if (!tooShort) {
+      p.usage.raw++;
+      if (pokemon.turnsOut > 0) p.usage.real++;
+      p.usage.weighted += weight;
+
+      for (const tag of player.team.classification.tags) {
+        stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weight);
+        stats.metagame.stalliness.push([player.team.classification.stalliness, weight]);
+      }
+
+      updateTeammates(player.team.pokemon, index, pokemon.species, p.teammates, stats, weight);
+    }
+  }
+}
 
 function newStatistics() {
   return {
@@ -205,10 +214,11 @@ function newUsageStatistics() {
     spreads: new Map(),
     moves: new Map(),
     viability: 0,
-    weight: 0,
+    weights: {sum: 0, count: 0},
     count: 0,
     encounters: new Map(),
     teammates: new Map(),
+    gxes: new Map(),
   };
 }
 
@@ -216,7 +226,8 @@ function newUsage() {
   return {raw: 0, real: 0, weighted: 0};
 }
 
-function updateTeammates(pokemon: Pokemon[], i: number, a: Pokemon, ta: Map<ID, number>, stats: Stats, weight: number) {
+function updateTeammates(
+    pokemon: Pokemon[], i: number, a: ID, ta: Map<ID, number>, stats: Statistics, weight: number) {
   for (let j = 0; j < i; j++) {
     const b = pokemon[j].species;
 
@@ -236,25 +247,25 @@ function updateTeammates(pokemon: Pokemon[], i: number, a: Pokemon, ta: Map<ID, 
 // lookup table for the outcomes if poke1 and poke2 were exchanged
 // clang-format off
 const INVERSE_OUTCOMES: Outcome[] = [
-  POKE2_KOED, POKE1_KOED,
-  DOUBLE_DOWN,
-  POKE2_SWITCHED_OUT, POKE1_SWITCHED_OUT,
-  DOUBLE_SWITCH,
-  POKE2_FORCED_OUT, POKE1_FORCED_OUT,
-  POKE2_UTURN_KOED, POKE1_UTURN_KOED,
-  POKE2_FODDERED, POKE1_FODDERED,
-  UNKNOWN,
+  Outcome.POKE2_KOED, Outcome.POKE1_KOED,
+  Outcome.DOUBLE_DOWN,
+  Outcome.POKE2_SWITCHED_OUT, Outcome.POKE1_SWITCHED_OUT,
+  Outcome.DOUBLE_SWITCH,
+  Outcome.POKE2_FORCED_OUT, Outcome.POKE1_FORCED_OUT,
+  Outcome.POKE2_UTURN_KOED, Outcome.POKE1_UTURN_KOED,
+  Outcome.POKE2_FODDERED, Outcome.POKE1_FODDERED,
+  Outcome.UNKNOWN,
 ];
 // clang-format on
 
-function updateEncounters(stats: Statistics, matchups: [string, string][], weight: number)
-  for (const [a, b, outcome] in matchups) {
+function updateEncounters(stats: Statistics, matchups: Array<[ID, ID, Outcome]>, weight: number) {
+  for (const [a, b, outcome] of matchups) {
     let ea = stats.pokemon.get(a);
     if (!ea) {
       ea = newUsageStatistics();
       stats.pokemon.set(a, ea);
     }
-   
+
     let eb = stats.pokemon.get(b);
     if (!eb) {
       eb = newUsageStatistics();
@@ -266,14 +277,43 @@ function updateEncounters(stats: Statistics, matchups: [string, string][], weigh
       eab = new Array(13).fill(0);
       ea.encounters.set(b, eab);
     }
-   
+
     let eba = eb.encounters.get(a);
     if (!eba) {
       eba = new Array(13).fill(0);
-      eba.encounters.set(a, eba);
+      eb.encounters.set(a, eba);
     }
 
     eab[outcome] += weight;
     eba[INVERSE_OUTCOMES[outcome]] += weight;
+  }
+}
+
+function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2: number}) {
+  const sides: Array<'p1'|'p2'> = ['p1', 'p2'];
+  const leads = {p1: 'empty' as ID, p2: 'empty' as ID};
+  const matchups = battle.matchups;
+  if (matchups.length) {
+    leads.p1 = matchups[0][0];
+    leads.p2 = matchups[0][1];
+  } else {
+    for (const side of sides) {
+      for (const pokemon of battle[side].team.pokemon) {
+        if (pokemon.turnsOut > 0) {
+          leads[side] = pokemon.species;
+          break;
+        }
+      }
+    }
+  }
+
+  // Possible in the case of a 1v1 of similar battle which was forfeited before starting
+  if (leads.p1 !== 'empty' || leads.p2 === 'empty') return;
+
+  for (const side of sides) {
+    const usage = stats.pokemon.get(leads[side])!.lead;
+    usage.raw++;
+    usage.real++;
+    usage.weighted += weights[side];
   }
 }
