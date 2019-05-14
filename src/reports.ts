@@ -105,10 +105,13 @@ export const Reports = new class {
   }
 
   movesetReport(movesetStats?: Map<string, MovesetStatistics>) {
-    // batchMovesetCounter.py
-    // 'Checks and Counters' = Encounter Matrix created in StatsCounter.py when
-    // looking at matchups array
-    //
+    const WIDTH = 40;
+    const sep = ` +${'-'.repeat(WIDTH)}+ `;
+    const s = sep;
+    // s += ` | ${species.padEnd()}| `;
+    // s += sep;
+    // s += ` | Raw count: ${stats['Raw count']}`.padEnd(WIDTH + 2) + '| ';
+    return s;
   }
 
   detailedMovesetReport(
@@ -219,7 +222,7 @@ export const Reports = new class {
     return s;
   }
 
-  risesAndDropsReport() {}
+  risesAndDropsReport() {}  // TODO
 };
 
 function toMovesetStatistics(format: ID, stats: Statistics) {

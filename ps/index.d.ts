@@ -73,8 +73,8 @@ declare module 'ps' {
         Natures: DexTable<Nature>
         Types: DexTable<Type>
         
-        format: ID;
-        gen: 1|2|3|4|5|6|7;
+        format: ID
+        gen: 1|2|3|4|5|6|7
 
         static forFormat(format?: string|Data): Data
 
@@ -88,6 +88,6 @@ declare module 'ps' {
     }
     function toID(text: any): ID
     function calcStat(stat: Stat, base: number, iv: number, ev: number, level: number, nature?: Nature): number
-    function unpackTeam(buf: string): PokemonSet<string>[] | undefined
-    function hiddenPower(ivs: StatsTable<number>, gen?: number): {type: string, basePower: number} | undefined;
+    function statToEV(stat: Stat, val: number, base: number, iv: number, level: number, nature?: Nature): number
+    function hiddenPower(ivs: StatsTable<number>, gen?: number): {type: string, basePower: number} | undefined
 }

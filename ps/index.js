@@ -71,6 +71,15 @@ function calcStat(stat, base, iv, ev, level, nature) {
   }
 }
 
+function statToEV(stat, val, base, iv, level, nature) {
+  if (stat === 'hp') {
+    return base === 1 ? 0 : (Math.ceil(((stat - level - 10) * 100) /  level) - (2 * base) - iv) * 4;
+  } else {
+    const n = !nature ? 1 : nature.plus === stat ? 1.1 : nature.minus === stat ? 0.9 : 1;
+    return (Math.ceil(((Math.ceil(stat / n) - 5) * 100) /  level) - (2 * base) - iv) * 4;
+  }
+}
+
 const HIDDEN_POWER_TYPES = [
   'Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost', 'Steel',
   'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark',
@@ -109,15 +118,10 @@ function hiddenPower(ivs, gen = 7) {
   return {type, basePower};
 }
 
-function unpackTeam(buf) {
-  // TODO toID everything, handle array.
-  return Dex.fastUnpackTeam(buf) || undefined;
-}
-
 module.exports = {
   Data,
   toID,
   calcStat,
-  unpackTeam,
+  statToEV,
   hiddenPower,
 };

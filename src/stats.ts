@@ -1,4 +1,4 @@
-import {Data, ID} from 'ps';
+import {calcStat, Data, ID, Nature, PokemonSet, Stat, StatsTable, statToEV} from 'ps';
 
 import {Battle, Outcome, Player, Pokemon, Team} from './parser';
 import * as util from './util';
@@ -161,11 +161,9 @@ function updateStats(
     const i = p.items.get(set.item);
     p.items.set(set.item, (i || 0) + weight);
 
-    const nature = data.getNature(
-        ['serious', 'docile', 'quirky', 'bashful'].includes(set.nature) ? 'hardy' as ID :
-                                                                          set.nature)!;
-    const evs = Object.values(set.evs);  // TODO round evs
-    const spread = `${nature}:${evs.join('/')}`;
+    const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
+    const nature = data.getNature(NEUTRAL.has(set.nature) ? 'hardy' as ID : set.nature)!;
+    const spread = getSpread(nature, util.getSpecies(pokemon.species, data).baseStats, pokemon.set);
     const s = p.spreads.get(spread);
     p.spreads.set(spread, (s || 0) + weight);
 
@@ -195,35 +193,16 @@ function updateStats(
   }
 }
 
-function newStatistics() {
-  return {
-    pokemon: new Map(),
-    leads: newUsage(),
-    usage: newUsage(),
-    metagame: {tags: new Map(), stalliness: []},
-  };
-}
+function getSpread<T>(nature: Nature, base: StatsTable<number>, pokemon: PokemonSet<T>) {
+  const evs: number[] = [];
 
-function newUsageStatistics() {
-  return {
-    lead: newUsage(),
-    usage: newUsage(),
-    abilities: new Map(),
-    items: new Map(),
-    happinesses: new Map(),
-    spreads: new Map(),
-    moves: new Map(),
-    viability: 0,
-    weights: {sum: 0, count: 0},
-    count: 0,
-    encounters: new Map(),
-    teammates: new Map(),
-    gxes: new Map(),
-  };
-}
-
-function newUsage() {
-  return {raw: 0, real: 0, weighted: 0};
+  let stat: Stat;
+  for (stat in pokemon.evs) {
+    const val =
+        calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
+    evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
+  }
+  return `${nature.name}:${evs.join('/')}`;
 }
 
 function updateTeammates(
@@ -316,4 +295,35 @@ function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2
     usage.real++;
     usage.weighted += weights[side];
   }
+}
+
+function newStatistics() {
+  return {
+    pokemon: new Map(),
+    leads: newUsage(),
+    usage: newUsage(),
+    metagame: {tags: new Map(), stalliness: []},
+  };
+}
+
+function newUsageStatistics() {
+  return {
+    lead: newUsage(),
+    usage: newUsage(),
+    abilities: new Map(),
+    items: new Map(),
+    happinesses: new Map(),
+    spreads: new Map(),
+    moves: new Map(),
+    viability: 0,
+    weights: {sum: 0, count: 0},
+    count: 0,
+    encounters: new Map(),
+    teammates: new Map(),
+    gxes: new Map(),
+  };
+}
+
+function newUsage() {
+  return {raw: 0, real: 0, weighted: 0};
 }
