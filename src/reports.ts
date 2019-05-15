@@ -157,8 +157,9 @@ export const Reports = new class {
     return JSON.stringify({info, data});
   }
 
-  metagameReport(metagame: MetagameStatistics, totalWeight: number) {
-    const W = Math.max(1.0, totalWeight);
+  metagameReport(stats: Statistics) {
+    const metagame = stats.metagame;
+    const W = Math.max(1.0, stats.usage.weighted);
 
     const tags = Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);
     let s = '';
@@ -240,7 +241,7 @@ export const Reports = new class {
     return s;
   }
 
-  risesAndDropsReport() {}  // TODO
+  updateReport() {}  // TODO rises and drops
 };
 
 function toMovesetStatistics(format: ID, stats: Statistics) {

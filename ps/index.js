@@ -4,14 +4,14 @@ const Dex = require('pokemon-showdown/.sim-dist').Dex;
 const toID = Dex.Data.Tools.getId;
 
 class Data {
-  static cache = new Map();
   static forFormat(format) {
+    if (Data.cache === undefined) Data.cache = new Map();
     if (format instanceof Data) return data;
     format = toID(format);
-    let data = cache.get(format);
+    let data = Data.cache.get(format);
     if (!data) {
       data = new Data(Dex.forFormat(format));
-      cache.set(format, data);
+      Data.cache.set(format, data);
     }
     return data;
   }

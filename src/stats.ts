@@ -50,8 +50,12 @@ export interface MetagameStatistics {
 const EMPTY: Set<ID> = new Set();
 
 export const Stats = new class {
+  create() {
+    return {battles: 0, total: new Map(), tags: new Map()};
+  }
+
   update(format: ID, battle: Battle, cutoffs: number[], stats?: TaggedStatistics, tags = EMPTY) {
-    stats = stats || {battles: 0, total: new Map(), tags: new Map()};
+    stats = stats || this.create();
     stats.battles++;
 
     const weights: number[][] = [];
