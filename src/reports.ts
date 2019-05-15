@@ -126,6 +126,39 @@ export const Reports = new class {
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
       s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| ';
       s += sep;
+
+      let total = 0;
+      s += ' | Abilities'.padEnd(WIDTH + 2) + '| ';
+      for (const [i, ability] of Object.keys(moveset['Abilities']).entries()) {
+        if (i > 5) {
+          s += ` | Other ${(100 * (1 - total)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + ' |';
+          break;
+        }
+        const weight = moveset['Abilities'][ability];
+        s += ` | ${ability} ${weight.toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + ' |';
+        total = total + (weight / count); // TODO
+      }
+      s += sep;
+      total = 0;
+      s += ' | Items'.padEnd(WIDTH + 2) + '| ';
+      // TODO
+      s += sep;
+      total = 0;
+      s += ' | Spreads'.padEnd(WIDTH + 2) + '| ';
+      // TODO
+      s += sep;
+      total = 0;
+      s += ' | Moves'.padEnd(WIDTH + 2) + '| ';
+      // TODO
+      s += sep;
+      total = 0;
+       s += ' | Teammates'.padEnd(WIDTH + 2) + '| ';
+      // TODO
+      s += sep;
+      total = 0;
+      s += ' | Checks and Counters'.padEnd(WIDTH + 2) + '| ';
+      // TODO
+      s += sep;
     }
 
     return s;
