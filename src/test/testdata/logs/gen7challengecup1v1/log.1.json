@@ -469,7 +469,7 @@
         ""
     ],
     "p1rating": null,
-    "p2rating": null,
+    "p2rating": {"rpr": 1600, "rprd": 0},
     "endType": "forfeit",
     "ladderError": true,
     "timestamp": "Wed May 15 2019 20:17:40 GMT-0700 (Pacific Daylight Time)",

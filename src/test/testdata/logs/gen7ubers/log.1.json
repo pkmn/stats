@@ -396,8 +396,8 @@
         "|win|test-player-b",
         ""
     ],
-    "p1rating": null,
-    "p2rating": null,
+    "p1rating": {"rpr": 1450, "rprd": 50},
+    "p2rating": {"rpr": 1600, "rprd": 150},
     "endType": "forfeit",
     "ladderError": true,
     "timestamp": "Wed May 15 2019 20:04:49 GMT-0700 (Pacific Daylight Time)",

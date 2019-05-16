@@ -1,4 +1,5 @@
-#!/usr/bin/env node  -r source-map-support/register
+#!/usr/bin/env node
 
+require('source-map-support').install();
 const integration = require('../../build/test/integration');
 integration.update(integration.process()); // Update golden files

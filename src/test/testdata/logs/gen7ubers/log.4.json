@@ -450,7 +450,7 @@
         "|win|test-player-b",
         ""
     ],
-    "p1rating": null,
+    "p1rating": {"rpr": 1900, "rprd": 50},
     "p2rating": null,
     "endType": "forfeit",
     "ladderError": true,

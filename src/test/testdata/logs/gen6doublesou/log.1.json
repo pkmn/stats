@@ -587,7 +587,7 @@
         ""
     ],
     "p1rating": null,
-    "p2rating": null,
+    "p2rating": {"rpr": 1600, "rprd": 0},
     "endType": "normal",
     "ladderError": true,
     "timestamp": "Wed May 15 2019 20:32:23 GMT-0700 (Pacific Daylight Time)",

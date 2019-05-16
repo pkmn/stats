@@ -772,8 +772,8 @@
         "|win|test-player-a",
         ""
     ],
-    "p1rating": null,
-    "p2rating": null,
+    "p1rating": {"rpr": 1900, "rprd": 50},
+    "p2rating": {"rpr": 1750, "rprd": 100},
     "endType": "normal",
     "ladderError": true,
     "timestamp": "Wed May 15 2019 20:14:09 GMT-0700 (Pacific Daylight Time)",
