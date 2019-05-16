@@ -50,7 +50,6 @@ export const Reports = new class {
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1].usage;
-      if (species === 'empty') continue;
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
@@ -81,7 +80,6 @@ export const Reports = new class {
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1].lead;
-      if (species === 'empty') continue;
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
