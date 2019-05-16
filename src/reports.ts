@@ -108,6 +108,12 @@ export const Reports = new class {
     const data = Data.forFormat(format);
     const WIDTH = 40;
 
+    const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
+    const other = (t: number, f = 1) =>
+        ` | Other ${(f * 100 * (1 - t)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+    const display = (n: string, w: number) =>
+        ` | ${n} ${(100 * w).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+
     const sep = ` +${'-'.repeat(WIDTH)}+ \n`;
     let s = '';
     for (const [species, moveset] of movesetStats.entries()) {
@@ -119,51 +125,89 @@ export const Reports = new class {
       s += ` | ${util.getSpecies(species, data).species}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
-      const avg = p.weights.count ? `${Math.floor(p.weights.sum / p.weights.count).toFixed(1)}` : '---';
+      const avg =
+          p.weights.count ? `${Math.floor(p.weights.sum / p.weights.count).toFixed(1)}` : '---';
       s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| \n';
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
       s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
 
       let total = 0;
-      s += ' | Abilities'.padEnd(WIDTH + 2) + '| \n';
+      s += heading('Abilities');
       for (const [i, ability] of Object.keys(moveset['Abilities']).entries()) {
         if (i > 5) {
-          s += ` | Other ${(100 * (1 - total)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+          s += other(total);
           break;
         }
         const weight = moveset['Abilities'][ability] / p.count;
-        s += ` | ${ability} ${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        s += display(ability, weight);
         total += weight;
       }
       s += sep;
       total = 0;
-      s += ' | Items'.padEnd(WIDTH + 2) + '| \n';
+      s += heading('Items');
       for (const [i, item] of Object.keys(moveset['Items']).entries()) {
-        if (total > 0.95 || i > 5) {
-          s += ` | Other ${(100 * (1 - total)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        if (total > 0.95) {
+          s += other(total);
           break;
         }
         const weight = moveset['Items'][item] / p.count;
-        s += ` | ${item} ${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        s += display(item, weight);
         total += weight;
       }
       s += sep;
       total = 0;
-      s += ' | Spreads'.padEnd(WIDTH + 2) + '| \n';
-      // TODO
+      s += heading('Spreads');
+      for (const [i, spread] of Object.keys(moveset['Spreads']).entries()) {
+        if (total > 0.95 || i > 5) {
+          s += other(total);
+          break;
+        }
+        const weight = moveset['Spreads'][spread] / p.count;
+        s += display(spread, weight);
+        total += weight;
+      }
       s += sep;
       total = 0;
-      s += ' | Moves'.padEnd(WIDTH + 2) + '| \n';
-      // TODO
+      s += heading('Moves');
+      for (const [i, move] of Object.keys(moveset['Moves']).entries()) {
+        if (total > 0.95) {
+          s += other(total, 4);
+          break;
+        }
+        const weight = moveset['Moves'][move] / p.count;
+        s += display(move, weight);
+        total += weight / 4;
+      }
       s += sep;
       total = 0;
-      s += ' | Teammates'.padEnd(WIDTH + 2) + '| \n';
-      // TODO
+      s += heading('Teammates');
+      for (const [i, teammate] of Object.keys(moveset['Teammates']).entries()) {
+        if (total > 0.95 || i > 10) break;
+        const w = moveset['Teammates'][teammate];
+        const weight = w / p.count;
+        s += ` | ${teammate} +${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        if (w < 0.005 * p.count) break;
+        total += weight / 5;
+      }
       s += sep;
-      total = 0;
-      s += ' | Checks and Counters'.padEnd(WIDTH + 2) + '| \n';
-      // TODO
+      s += heading('Checks and Counters');
+      for (const [i, cc] of Object.keys(moveset['Checks and Counters']).entries()) {
+        if (i > 10) break;
+        const v = moveset['Checks and Counters'][cc];
+        if (v.score < 0.5) break;
+
+        const score = (100 * v.score).toFixed(3).padStart(6);
+        const p = (100 * v.p).toFixed(2).padStart(3);
+        const d = (100 * v.d).toFixed(2).padStart(3);
+        s += ` | ${cc} ${score} (${p}\u00b1${d})`.padEnd(WIDTH + 1) + '| \n';
+        const ko = 100 * v.koed / v.n;
+        const koed = ko.toFixed(1).padStart(2);
+        const sw = (100 * v.switched / v.n);
+        const switched = sw.toFixed(1).padStart(2);
+        s += ` |\t (${koed}% KOed / ${switched}% switched out)`.padEnd(WIDTH + 2) + '| \n';
+        if (ko < 10 || sw < 10) s += ' ';
+      }
       s += sep;
     }
 

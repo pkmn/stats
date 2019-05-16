@@ -120,14 +120,11 @@ function writeReports(dir: string, reports: Reports, cutoff: number) {
   eachReport(reports, cutoff, (name, data) => fs.writeFileSync(path.resolve(dir, name), data));
 }
 
-function compareReports(
-    dir: string, reports: Reports, cutoff: number, cmp: CompareFn) {
-  eachReport(
-      reports, cutoff,
-    (name, data) => {
-      const file = path.resolve(dir, name);
-      cmp(file, data, fs.readFileSync(file, 'utf8'));
-    });
+function compareReports(dir: string, reports: Reports, cutoff: number, cmp: CompareFn) {
+  eachReport(reports, cutoff, (name, data) => {
+    const file = path.resolve(dir, name);
+    cmp(file, data, fs.readFileSync(file, 'utf8'));
+  });
 }
 
 function eachReport(reports: Reports, cutoff: number, fn: (name: string, data: string) => void) {
