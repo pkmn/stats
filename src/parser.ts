@@ -97,6 +97,7 @@ export const Parser = new class {
         winner = 'p2';
       }
     }
+    if (raw.p1 === raw.p2) throw new Error('Player battling themself');
 
     const idents: {p1: string[], p2: string[]} = {p1: [], p2: []};
     const battle = ({matchups: [], turns: raw.turns, endType: raw.endType} as unknown) as Battle;
@@ -126,7 +127,6 @@ export const Parser = new class {
       if (winner !== 'tie') player.outcome = winner === side ? 'win' : 'loss';
       battle[side] = player;
     }
-    if (battle.p1 === battle.p2) throw new Error('Player battling themself.');
     if (!raw.log || util.isNonSinglesFormat(format)) return battle;
 
     const active: {p1?: Slot, p2?: Slot} = {};
@@ -141,10 +141,9 @@ export const Parser = new class {
     };
     let turnMatchups: Array<[ID, ID, Outcome]> = [];
 
-    for (const rawLine in raw.log) {
+    for (const rawLine of raw.log) {
       if (rawLine.length < 2 || !rawLine.startsWith('|')) continue;
       const line = rawLine.split('|').map(s => s.trim());
-      if (line.length < 2) throw new Error(`Could not parse line '${rawLine}'`);
 
       switch (line[1]) {
         case 'turn':
@@ -188,7 +187,7 @@ export const Parser = new class {
           break;
         }
         case 'move':
-          if (line.length < 4) throw new Error(`Could not parse line '${rawLine}'`);
+          if (line.length < 4) throw new Error(`Could not parse line: '${rawLine}'`);
           flags.hazard = false;
           const move = line[3];
           if (ROAR.has(move)) {
@@ -217,7 +216,7 @@ export const Parser = new class {
         case 'replace':
         case 'switch':
         case 'drag': {
-          if (line.length < 4) throw new Error(`Could not parse line '${rawLine}'`);
+          if (line.length < 4) throw new Error(`Could not parse line: '${rawLine}'`);
           const name = line[3].split(',')[0];
           const side = line[2].startsWith('p1') ? 'p1' : 'p2';
           if (line[0] === 'replace' || active.p1 !== undefined && active.p2 !== undefined) {
@@ -370,11 +369,15 @@ function identify(
       index = team.findIndex(p => p.species === species.id);
     }
     if (index !== -1) return index as Slot;
+
+    // Maybe the pokemon hasn't changed forme yet?
+    index = team.findIndex(p => util.getBaseSpecies(p.species, format).id === species!.id);
+    if (index !== -1) return index as Slot;
   }
 
   const state = {
     p1: {team: battle.p1.team.pokemon.map(p => p.species), idents: idents.p1},
     p2: {team: battle.p2.team.pokemon.map(p => p.species), idents: idents.p2},
   };
-  throw new Error(`Unable to locate '${name}' in ${JSON.stringify(state)}`);
+  throw new Error(`Unable to locate ${side}'s '${name}' in ${JSON.stringify(state)}`);
 }
