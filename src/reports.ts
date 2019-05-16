@@ -108,7 +108,7 @@ export const Reports = new class {
     const data = Data.forFormat(format);
     const WIDTH = 40;
 
-    const sep = ` +${'-'.repeat(WIDTH)}+ `;
+    const sep = ` +${'-'.repeat(WIDTH)}+ \n`;
     let s = '';
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
@@ -116,45 +116,53 @@ export const Reports = new class {
       const p = stats.pokemon.get(species)!;
 
       s += sep;
-      s += ` | ${util.getSpecies(species, data).species}`.padEnd(WIDTH + 2) + '| ';
+      s += ` | ${util.getSpecies(species, data).species}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
-      s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| ';
-      const avg = p.weights.count ? `${Math.floor(p.weights.sum / p.weights.count)}` : '---';
-      s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| ';
+      s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
+      const avg = p.weights.count ? `${Math.floor(p.weights.sum / p.weights.count).toFixed(1)}` : '---';
+      s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| \n';
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
-      s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| ';
+      s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
 
       let total = 0;
-      s += ' | Abilities'.padEnd(WIDTH + 2) + '| ';
+      s += ' | Abilities'.padEnd(WIDTH + 2) + '| \n';
       for (const [i, ability] of Object.keys(moveset['Abilities']).entries()) {
         if (i > 5) {
-          s += ` | Other ${(100 * (1 - total)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + ' |';
+          s += ` | Other ${(100 * (1 - total)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
           break;
         }
-        const weight = moveset['Abilities'][ability];
-        s += ` | ${ability} ${weight.toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + ' |';
-        // total = total + (weight / count); // TODO
+        const weight = moveset['Abilities'][ability] / p.count;
+        s += ` | ${ability} ${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        total += weight;
       }
       s += sep;
       total = 0;
-      s += ' | Items'.padEnd(WIDTH + 2) + '| ';
+      s += ' | Items'.padEnd(WIDTH + 2) + '| \n';
+      for (const [i, item] of Object.keys(moveset['Items']).entries()) {
+        if (total > 0.95 || i > 5) {
+          s += ` | Other ${(100 * (1 - total)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+          break;
+        }
+        const weight = moveset['Items'][item] / p.count;
+        s += ` | ${item} ${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        total += weight;
+      }
+      s += sep;
+      total = 0;
+      s += ' | Spreads'.padEnd(WIDTH + 2) + '| \n';
       // TODO
       s += sep;
       total = 0;
-      s += ' | Spreads'.padEnd(WIDTH + 2) + '| ';
+      s += ' | Moves'.padEnd(WIDTH + 2) + '| \n';
       // TODO
       s += sep;
       total = 0;
-      s += ' | Moves'.padEnd(WIDTH + 2) + '| ';
+      s += ' | Teammates'.padEnd(WIDTH + 2) + '| \n';
       // TODO
       s += sep;
       total = 0;
-      s += ' | Teammates'.padEnd(WIDTH + 2) + '| ';
-      // TODO
-      s += sep;
-      total = 0;
-      s += ' | Checks and Counters'.padEnd(WIDTH + 2) + '| ';
+      s += ' | Checks and Counters'.padEnd(WIDTH + 2) + '| \n';
       // TODO
       s += sep;
     }
