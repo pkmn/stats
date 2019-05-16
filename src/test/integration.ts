@@ -21,6 +21,7 @@ interface Reports {
   metagame: string;
   // TODO update: string;
 }
+type CompareFn = (file: string, actual: string, expected: string) => void;
 
 export function process() {
   const base = path.resolve(TESTDATA, 'logs');
@@ -86,20 +87,20 @@ export function update(reports: Map<ID, TaggedReports>, dest = 'reports') {
   }
 }
 
-export function compare(reports: Map<ID, TaggedReports>, assert: (a: string, b: string) => void) {
+export function compare(reports: Map<ID, TaggedReports>, cmp: CompareFn) {
   const dir = path.resolve(TESTDATA, 'reports');
   for (const [format, taggedReports] of reports.entries()) {
     const d = path.resolve(dir, format);
 
     for (const [c, rs] of taggedReports.total.entries()) {
-      compareReports(d, rs, c, assert);
+      compareReports(d, rs, c, cmp);
     }
 
     for (const [t, trs] of taggedReports.tags.entries()) {
       const td = path.resolve(d, t);
 
       for (const [c, rs] of trs.entries()) {
-        compareReports(td, rs, c, assert);
+        compareReports(td, rs, c, cmp);
       }
     }
   }
@@ -116,18 +117,20 @@ function createReports(
 }
 
 function writeReports(dir: string, reports: Reports, cutoff: number) {
-  eachReport(dir, reports, cutoff, (name, data) => fs.writeFileSync(path.resolve(dir, name), data));
+  eachReport(reports, cutoff, (name, data) => fs.writeFileSync(path.resolve(dir, name), data));
 }
 
 function compareReports(
-    dir: string, reports: Reports, cutoff: number, assert: (a: string, b: string) => void) {
+    dir: string, reports: Reports, cutoff: number, cmp: CompareFn) {
   eachReport(
-      dir, reports, cutoff,
-      (name, data) => assert(fs.readFileSync(path.resolve(dir, name), 'utf8'), data));
+      reports, cutoff,
+    (name, data) => {
+      const file = path.resolve(dir, name);
+      cmp(file, data, fs.readFileSync(file, 'utf8'));
+    });
 }
 
-function eachReport(
-    dir: string, reports: Reports, cutoff: number, fn: (name: string, data: string) => void) {
+function eachReport(reports: Reports, cutoff: number, fn: (name: string, data: string) => void) {
   fn(`usage.${cutoff}.txt`, reports.usage);
   fn(`leads.${cutoff}.txt`, reports.leads);
   fn(`movesets.${cutoff}.txt`, reports.movesets.basic);
