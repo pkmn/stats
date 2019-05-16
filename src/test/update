@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node  -r source-map-support/register
 
 const integration = require('../../build/test/integration');
 integration.update(integration.process(__dirname), __dirname); // Update golden files

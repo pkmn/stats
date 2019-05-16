@@ -8,7 +8,9 @@ export function getSpecies(name: string, format: string|Data) {
 
 export function getBaseSpecies(name: string, format: string|Data): Species {
   const species = getSpecies(name, format);
-  return species.baseSpecies ? getBaseSpecies(species.baseSpecies, format) : species;
+  return species.baseSpecies && species.baseSpecies !== species.name ?
+      getBaseSpecies(species.baseSpecies, format) :
+      species;
 }
 
 export function isMegaRayquazaAllowed(format?: string|Data) {

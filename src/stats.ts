@@ -139,6 +139,7 @@ function updateStats(
     save: boolean, stats: Statistics, tag?: ID) {
   const data = Data.forFormat(format);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
+    if (pokemon.species === 'empty') continue;
     const set = pokemon.set;
 
     let p = stats.pokemon.get(pokemon.species);

@@ -6,7 +6,7 @@ const toID = Dex.Data.Tools.getId;
 class Data {
   static forFormat(format) {
     if (Data.cache === undefined) Data.cache = new Map();
-    if (format instanceof Data) return data;
+    if (format instanceof Data) return format;
     format = toID(format);
     let data = Data.cache.get(format);
     if (!data) {
