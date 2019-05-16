@@ -1,0 +1,24 @@
+ balance.......................100.00000%
+ weatherless...................100.00000%
+
+ Stalliness (mean:  0.601)
+  0.0|
+     |
+ +0.1|
+     |
+ +0.2|
+     |
+     |##############################
+     |
+     |
+     |
+     |
+     |
+     |
+     |
+ +0.7|
+     |
+ +0.8|
+     |
+ more negative = more offensive, more positive = more stall
+ one # =  1.67%
