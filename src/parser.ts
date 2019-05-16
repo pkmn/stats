@@ -19,8 +19,8 @@ export interface Log {
   p1team: Array<PokemonSet<string>>;
   p2team: Array<PokemonSet<string>>;
 
-  p1rating: Rating;
-  p2rating: Rating;
+  p1rating: Rating|null;
+  p2rating: Rating|null;
 
   log: string[];
   inputLog: string[];
@@ -36,7 +36,7 @@ export interface Battle {
 
 export interface Player {
   name: ID;
-  rating: Rating;
+  rating?: Rating;
   outcome?: 'win'|'loss';
   team: Team;
 }
@@ -54,8 +54,6 @@ export interface Pokemon {
 }
 
 export interface Rating {
-  r: number;
-  rd: number;
   rpr: number;
   rprd: number;
 }
@@ -118,7 +116,7 @@ export const Parser = new class {
 
       const player: Player = {
         name: toID(raw[side]),
-        rating: raw[side === 'p1' ? 'p1rating' : 'p2rating'],
+        rating: raw[side === 'p1' ? 'p1rating' : 'p2rating'] || undefined,
         team: {
           pokemon: mons,
           classification: Classifier.classifyTeam(team, format),
