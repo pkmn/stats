@@ -10,15 +10,16 @@ class Data {
     format = toID(format);
     let data = Data.cache.get(format);
     if (!data) {
-      data = new Data(Dex.forFormat(format));
+      const f = Dex.getFormat();
+      data = new Data(Dex.forFormat(f), f.id);
       Data.cache.set(format, data);
     }
     return data;
   }
 
-  constructor(dex) {
+  constructor(dex, format) {
     this.dex = dex;
-    this.format = dex.format.id;
+    this.format = format;
     this.gen = dex.gen;
 
     this.Abilities = dex.data.Abilities;
