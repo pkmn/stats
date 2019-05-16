@@ -2,4 +2,5 @@
 
 require('source-map-support').install();
 const integration = require('../../build/test/integration');
-integration.update(integration.process()); // Update golden files
+const dest = process.argv[2] || 'reports';
+integration.update(integration.process(), dest); // Update golden files

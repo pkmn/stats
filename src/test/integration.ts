@@ -62,8 +62,8 @@ export function process() {
   return reports;
 }
 
-export function update(reports: Map<ID, TaggedReports>) {
-  const dir = path.resolve(TESTDATA, 'reports');
+export function update(reports: Map<ID, TaggedReports>, dest = 'reports') {
+  const dir = path.resolve(TESTDATA, dest);
   rmrf(dir);
   fs.mkdirSync(dir);
 
