@@ -5,9 +5,6 @@ import {ID, toID} from 'ps';
 
 import * as stats from '../index';
 
-
-const TESTDATA = path.resolve(__dirname, 'testdata');
-
 const CUTOFFS = [0, 1500, 1630, 1760];
 const TAGS = new Set(['monowater', 'monosteel'] as ID[]);
 
@@ -24,13 +21,14 @@ interface Reports {
   // TODO update: string;
 }
 
-export function process() {
+export function process(dirname = __dirname) {
+  const base = path.resolve(dirname, 'testdata', 'logs');
   const parsed: Map<ID, stats.Battle[]> = new Map();
-  for (const dir of fs.readdirSync(path.resolve(TESTDATA, 'logs'))) {
-    const format = toID(path.basename(dir));
+  for (const dir of fs.readdirSync(base)) {
+    const format = toID(dir);
     const battles: stats.Battle[] = [];
-    for (const log of fs.readdirSync(dir)) {
-      const raw = JSON.parse(fs.readFileSync(path.resolve(dir, log), 'utf8'));
+    for (const log of fs.readdirSync(path.resolve(base, dir))) {
+      const raw = JSON.parse(fs.readFileSync(path.resolve(base, dir, log), 'utf8'));
       battles.push(stats.Parser.parse(raw, format));
     }
     parsed.set(format, battles);
@@ -63,8 +61,9 @@ export function process() {
   return reports;
 }
 
-export function update(reports: Map<ID, TaggedReports>) {
-  const dir = path.resolve(TESTDATA, 'reports');
+export function update(reports: Map<ID, TaggedReports>, dirname = __dirname) {
+  const testdata = path.resolve(dirname, 'testdata');
+  const dir = path.resolve(testdata, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
 
@@ -87,8 +86,10 @@ export function update(reports: Map<ID, TaggedReports>) {
   }
 }
 
-export function compare(reports: Map<ID, TaggedReports>, assert: (a: string, b: string) => void) {
-  const dir = path.resolve(TESTDATA, 'reports');
+export function compare(
+    reports: Map<ID, TaggedReports>, assert: (a: string, b: string) => void, dirname = __dirname) {
+  const testdata = path.resolve(dirname, 'testdata');
+  const dir = path.resolve(testdata, 'reports');
   for (const [format, taggedReports] of reports.entries()) {
     const d = path.resolve(dir, format);
 

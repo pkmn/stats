@@ -136,7 +136,7 @@ export const Reports = new class {
         }
         const weight = moveset['Abilities'][ability];
         s += ` | ${ability} ${weight.toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + ' |';
-        total = total + (weight / count); // TODO
+        // total = total + (weight / count); // TODO
       }
       s += sep;
       total = 0;
@@ -152,7 +152,7 @@ export const Reports = new class {
       // TODO
       s += sep;
       total = 0;
-       s += ' | Teammates'.padEnd(WIDTH + 2) + '| ';
+      s += ' | Teammates'.padEnd(WIDTH + 2) + '| ';
       // TODO
       s += sep;
       total = 0;

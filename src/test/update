@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
 const integration = require('../../build/test/integration');
-integration.update(integration.process()); // Update golden files
+integration.update(integration.process(__dirname), __dirname); // Update golden files
