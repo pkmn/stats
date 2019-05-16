@@ -5,6 +5,7 @@ import {ID, toID} from 'ps';
 
 import * as stats from '../index';
 
+const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 const CUTOFFS = [0, 1500, 1630, 1760];
 const TAGS = new Set(['monowater', 'monosteel'] as ID[]);
 
@@ -21,8 +22,8 @@ interface Reports {
   // TODO update: string;
 }
 
-export function process(dirname = __dirname) {
-  const base = path.resolve(dirname, 'testdata', 'logs');
+export function process() {
+  const base = path.resolve(TESTDATA, 'logs');
   const parsed: Map<ID, stats.Battle[]> = new Map();
   for (const dir of fs.readdirSync(base)) {
     const format = toID(dir);
@@ -61,9 +62,8 @@ export function process(dirname = __dirname) {
   return reports;
 }
 
-export function update(reports: Map<ID, TaggedReports>, dirname = __dirname) {
-  const testdata = path.resolve(dirname, 'testdata');
-  const dir = path.resolve(testdata, 'reports');
+export function update(reports: Map<ID, TaggedReports>) {
+  const dir = path.resolve(TESTDATA, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
 
@@ -86,10 +86,8 @@ export function update(reports: Map<ID, TaggedReports>, dirname = __dirname) {
   }
 }
 
-export function compare(
-    reports: Map<ID, TaggedReports>, assert: (a: string, b: string) => void, dirname = __dirname) {
-  const testdata = path.resolve(dirname, 'testdata');
-  const dir = path.resolve(testdata, 'reports');
+export function compare(reports: Map<ID, TaggedReports>, assert: (a: string, b: string) => void) {
+  const dir = path.resolve(TESTDATA, 'reports');
   for (const [format, taggedReports] of reports.entries()) {
     const d = path.resolve(dir, format);
 
