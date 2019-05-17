@@ -4,16 +4,19 @@ import {Outcome} from './parser';
 import {MetagameStatistics, Statistics, Usage} from './stats';
 import * as util from './util';
 
+const PRECISION = 1e10;
+
 interface MovesetStatistics {
   'Raw count': number;
+  'usage': number;
   'Viability Ceiling': [number, number, number, number];
   'Abilities': {[key: string]: number};
   'Items': {[key: string]: number};
   'Spreads': {[key: string]: number};
+  'Happiness': {[key: string]: number};
   'Moves': {[key: string]: number};
   'Teammates': {[key: string]: number};
   'Checks and Counters': {[key: string]: EncounterStatistics};
-  'usage': number;
 }
 
 interface EncounterStatistics {
@@ -141,7 +144,8 @@ export const Reports = new class {
           break;
         }
         const weight = moveset['Abilities'][ability] / p.count;
-        s += display(ability, weight);
+        const o = data.getAbility(ability);
+        s += display((o && o.name) || ability, weight);
         total += weight;
       }
       s += sep;
@@ -153,7 +157,8 @@ export const Reports = new class {
           break;
         }
         const weight = moveset['Items'][item] / p.count;
-        s += display(item, weight);
+        const o = data.getItem(item);
+        s += display(item === 'nothing' ? 'Nothing' : (o && o.name) || item, weight);
         total += weight;
       }
       s += sep;
@@ -177,7 +182,8 @@ export const Reports = new class {
           break;
         }
         const weight = moveset['Moves'][move] / p.count;
-        s += display(move || 'Nothing', weight);
+        const o = data.getMove(move);
+        s += display(move === '' ? 'Nothing' : (o && o.name) || move, weight);
         total += weight / 4;
       }
       s += sep;
@@ -360,31 +366,16 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
         [0, 0, 0, 0];
     movesets.set(species, {
       'Raw count': pokemon.count,
+      'usage': round(usage),
       'Viability Ceiling': viability,
-      'Abilities': toObject(
-          pokemon.abilities,
-          a => {
-            const o = data.getAbility(a);
-            return (o && o.name) || a;
-          }),
-      'Items': toObject(
-          pokemon.items,
-          i => {
-            if (i === 'nothing') return 'Nothing';
-            const o = data.getItem(i);
-            return (o && o.name) || i;
-          }),
+      'Abilities': toObject(pokemon.abilities),
+      'Items': toObject(pokemon.items),
       'Spreads': toObject(pokemon.spreads),
-      'Moves': toObject(
-          pokemon.moves,
-          m => {
-            const o = data.getMove(m);
-            return (o && o.name) || m;
-          }),
-      'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),
+      'Happiness': toObject(pokemon.happinesses),
+      'Moves': toObject(pokemon.moves),
+      'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),  // TODO empty
       'Checks and Counters':
           getChecksAndCounters(pokemon.encounters, s => util.getSpecies(species, data).species),
-      'usage': usage,
     });
   }
 
@@ -435,15 +426,18 @@ function forDetailed(cc: {[key: string]: EncounterStatistics}) {
   return obj;
 }
 
-function toObject(
-    map: Map<string, number>, display?: (id: string) => string): {[key: string]: number} {
+function toObject(map: Map<number|string, number>) {
   const obj: {[key: string]: number} = {};
-  const sorted = Array.from(map.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const sorted = Array.from(map.entries())
+                     .sort((a, b) => b[1] - a[1] || a[0].toString().localeCompare(b[0].toString()));
   for (const [k, v] of sorted) {
-    const d = display ? display(k) : k;
-    obj[d] = v;
+    obj[k.toString()] = round(v);
   }
   return obj;
+}
+
+function round(v: number) {
+  return Math.round(v * PRECISION) / PRECISION;
 }
 
 function parseUsageReport(report: string) {
