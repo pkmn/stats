@@ -44,7 +44,7 @@ export function process() {
     }
 
     const trs = {total: new Map, tags: new Map()};
-    const b = taggedStats.battles;  // === battles.length
+    const b = taggedStats.battles;
 
     for (const [c, s] of taggedStats.total.entries()) {
       trs.total.set(c, createReports(format, s, b, c));
