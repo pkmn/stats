@@ -244,7 +244,7 @@ export const Reports = new class {
     const metagame = stats.metagame;
     const W = Math.max(1.0, stats.usage.weighted);
 
-    const tags = Object.entries(metagame.tags).sort((a, b) => b[1] - a[1]);
+    const tags = Array.from(metagame.tags.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     let s = '';
     for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(30, '.');
@@ -257,8 +257,13 @@ export const Reports = new class {
 
     // Figure out a good bin range by looking at .1% and 99.9% points
     const index = Math.floor(stalliness.length / 1000);
-    const low = Math.max(stalliness[index][0], 0);
-    const high = Math.min(stalliness[stalliness.length - index - 1][0], 0);
+    let low = stalliness[index][0];
+    let high = stalliness[stalliness.length - index - 1][0];
+    if (low > 0) {
+      low = 0;
+    } else if (high < 0) {
+      high = 0;
+    }
 
     // Rough guess at number of bins - possible the minimum?
     let nbins = 13;
@@ -294,7 +299,7 @@ export const Reports = new class {
 
     // Maximum number of blocks to go across
     const MAX_BLOCKS = 30;
-    const blockSize = max / MAX_BLOCKS;
+    const blockSize = Math.floor(max / MAX_BLOCKS);
 
     if (blockSize <= 0) return s;
 

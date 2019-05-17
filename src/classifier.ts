@@ -342,7 +342,7 @@ function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
 
   if (possibleTypes && possibleTypes.length) {
     tags.push('monotype');
-    for (const monotype in possibleTypes) {
+    for (const monotype of possibleTypes) {
       tags.push(`mono${monotype.toLowerCase()}`);
     }
   }
