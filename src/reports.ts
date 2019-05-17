@@ -29,9 +29,9 @@ export const Reports = new class {
   usageReport(format: ID, stats: Statistics, battles: number) {
     const sorted = Array.from(stats.pokemon.entries());
     if (['challengecup1v1', '1v1'].includes(format)) {
-      sorted.sort((a, b) => b[1].usage.real - a[1].usage.real);
+      sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
     } else {
-      sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted);
+      sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
     }
 
     let s = ` Total battles: ${battles}\n`;
@@ -255,7 +255,7 @@ export const Reports = new class {
     s += '\n';
 
     if (!metagame.stalliness.length) return s;
-    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0]);
+    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
 
     // Figure out a good bin range by looking at .1% and 99.9% points
     const index = Math.floor(stalliness.length / 1000);
@@ -280,7 +280,7 @@ export const Reports = new class {
     for (let x = -binSize; x - binSize / 2 > low; x -= binSize) {
       histogram.push([x, 0]);
     }
-    histogram = histogram.sort((a, b) => a[0] - b[0]);
+    histogram = histogram.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
     nbins = histogram.length;
 
     const start = 0;
@@ -340,9 +340,9 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
   if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
     sorted.sort((a, b) => a[0].localeCompare(b[0]));
   } else if (real) {
-    sorted.sort((a, b) => b[1].usage.real - a[1].usage.real);
+    sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
   } else {
-    sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted);
+    sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
   }
   const data = Data.forFormat(format);
 
@@ -419,7 +419,7 @@ function getChecksAndCounters(
     cc.push([id, {koed, switched, n, p, d, score}]);
   }
 
-  const sorted = cc.sort((a, b) => (b[1].score - a[1].score));
+  const sorted = cc.sort((a, b) => (b[1].score - a[1].score || a[0].localeCompare(b[0])));
   const obj: {[key: string]: EncounterStatistics} = {};
   for (const [k, v] of sorted) {
     obj[display(k)] = v;
@@ -438,7 +438,7 @@ function forDetailed(cc: {[key: string]: EncounterStatistics}) {
 function toObject(
     map: Map<string, number>, display?: (id: string) => string): {[key: string]: number} {
   const obj: {[key: string]: number} = {};
-  const sorted = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+  const sorted = Array.from(map.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   for (const [k, v] of sorted) {
     const d = display ? display(k) : k;
     obj[d] = v;
