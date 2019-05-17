@@ -92,7 +92,6 @@ async function dirSize(dir: string) {
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
 function partition(formatSizes: Array<[ID, string, number]>, partitions: number) {
   formatSizes.sort((a, b) => b[2] - a[2] || a[0].localeCompare(b[0]));
-  console.log(formatSizes);
 
   // Given partitions is expected to be small, using a priority queue here shouldn't be necessary
   const ps: Array<{total: number, formats: Array<[ID, string]>}> = [];
