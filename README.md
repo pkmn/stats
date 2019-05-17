@@ -13,7 +13,6 @@ Introduction
 
 This is a repository for the code which processes input logs into usage statistics for Pokémon Showdown.
 
-
 Usage
 ------------------------------------------------------------------------
 
