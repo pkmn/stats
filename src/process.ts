@@ -33,7 +33,7 @@ const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono
 
 export function process(month: string, reports: string) {
   rmrf(reports);
-  fs.mkdirSync(reports);
+  fs.mkdirSync(reports, {recursive: true});
 
   // YYYY-MM
   // └── format
@@ -108,14 +108,20 @@ function writeReports(
     reports: string, format: ID, cutoff: number, stats: Statistics, battles: number, tag?: ID) {
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
-  fs.writeFileSync(path.resolve(reports, `${file}.txt`), usage);
+  ensureWriteFileSync(path.resolve(reports, `${file}.txt`), usage);
   const leads = Reports.leadsReport(format, stats, battles);
-  fs.writeFileSync(path.resolve(reports, 'leads', `${file}.txt`), leads);
+  ensureWriteFileSync(path.resolve(reports, 'leads', `${file}.txt`), leads);
   const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag);
-  fs.writeFileSync(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic);
-  fs.writeFileSync(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed);
+  ensureWriteFileSync(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic);
+  ensureWriteFileSync(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed);
   const metagame = Reports.metagameReport(stats);
-  fs.writeFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
+  ensureWriteFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
+}
+
+function ensureWriteFileSync(file: string, data: string) {
+  const dir = path.dirname(file);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+  fs.writeFileSync(file, data);
 }
 
 function rmrf(dir: string) {
