@@ -1,10 +1,39 @@
+// We expect the logs (YYYY-MM) directory to be structured as follows:
+//
+//     YYYY-MM
+//     └── format
+//         └── YYYY-MM-DD
+//             └── battle-format-N.log.json
+//
+// The resulting reports will be written out in the following directory structure:
+//
+//     YYYY-MM
+//     ├── chaos
+//     │   └── format-N.json
+//     ├── format-N.txt
+//     ├── leads
+//     │   └── format-N.txt
+//     ├── metagame
+//     │   └── format-N.txt
+//     ├── monotype
+//     │   ├── chaos
+//     │   │   └── format-monoT-N.json
+//     │   ├── format-monoT-N.txt
+//     │   ├── leads
+//     │   │   └── format-monoT-N.txt
+//     │   ├── metagame
+//     │   │   └── format-monoT-N.txt
+//     │   └── moveset
+//     │       └── format-monoT-N.txt
+//     └── moveset
+//         └── format-N.txt
+
 import * as os from 'os';
 import * as path from 'path';
-
 import {Data, ID, toID} from 'ps';
 
 import * as fs from './fs';
-import {canonicalizeFormat, Parser, Reports, Statistics, Stats} from './index';
+import {canonicalizeFormat, Parser, Reports, Statistics, Stats, TaggedStatistics} from './index';
 
 const NUM_CPUS = os.cpus().length;
 
@@ -30,18 +59,17 @@ const CUTOFFS = {
   popular: [0, 1500, 1695, 1825],
 };
 
-const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
-
 export async function process(month: string, reports: string) {
-  rmrf(reports);
+  // Set up out report output directory structure
+  await rmrf(reports);
   await fs.mkdir(reports, {recursive: true, mode: 0o755});
+  const monotype = path.resolve(reports, 'monotype');
+  await fs.mkdir(monotype, {mode: 0o755});
+  await Promise.all([...mkdirs(reports), ...mkdirs(monotype)]);
 
-  // YYYY-MM
-  // └── format
-  //    └── YYYY-MM-DD
-  //        └── battle-format-N.log.json
-
-  // TODO: async + multi process
+  // All of the reports we're writing
+  const writes: Array<Promise<void>> = [];
+  // TODO: multi process
   for (const f of await fs.readdir(month)) {
     const format = canonicalizeFormat(toID(f));
     if (format.startsWith('seasonal') || format.includes('random') ||
@@ -51,57 +79,45 @@ export async function process(month: string, reports: string) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
+    // TODO: chunk the number of files we read instead of all at once
+    const logs: Array<Promise<void>> = [];
 
     const d = path.resolve(month, f);
     for (const day of await fs.readdir(d)) {
       const l = path.resolve(d, day);
       for (const log of await fs.readdir(l)) {
-        const file = path.resolve(l, log);
-        try {
-          // TODO: gzip
-          const raw = JSON.parse(await fs.readFile(file, 'utf8'));
-          // TODO: save checkpoints/IR
-          const battle = Parser.parse(raw, data);
-          const tags = format === 'gen7monotype' ? monotypes(data) : undefined;
-          Stats.update(data, battle, cutoffs, stats, tags);
-        } catch (err) {
-          console.error(`${file}: ${err.message}`);
-        }
+        logs.push(processLog(format, data, path.resolve(l, log), cutoffs, stats));
       }
     }
+    await Promise.all(logs);
 
-    // YYYY-MM
-    // ├── chaos
-    // │   └── format-N.json
-    // ├── format-N.txt
-    // ├── leads
-    // │   └── format-N.txt
-    // ├── metagame
-    // │   └── format-N.txt
-    // ├── monotype
-    // │   ├── chaos
-    // │   │   └── format-monoT-N.json
-    // │   ├── format-monoT-N.txt
-    // │   ├── leads
-    // │   │   └── format-monoT-N.txt
-    // │   ├── metagame
-    // │   │   └── format-monoT-N.txt
-    // │   └── moveset
-    // │       └── format-monoT-N.txt
-    // └── moveset
-    //     └── format-N.txt
-
-    // TODO: stream directly to file instead of building up string
     const b = stats.battles;
     for (const [c, s] of stats.total.entries()) {
-      writeReports(reports, format, c, s, b);
+      writes.push(...writeReports(reports, format, c, s, b));
     }
 
     for (const [t, ts] of stats.tags.entries()) {
       for (const [c, s] of ts.entries()) {
-        writeReports(reports, format, c, s, b, t);
+        writes.push(...writeReports(reports, format, c, s, b, t));
       }
     }
+  }
+  await Promise.all(writes);
+}
+
+const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
+
+async function processLog(
+    format: ID, data: Data, file: string, cutoffs: number[], stats: TaggedStatistics) {
+  try {
+    // TODO: gzip if necessary
+    const raw = JSON.parse(await fs.readFile(file, 'utf8'));
+    // TODO: save checkpoints/IR (by chunk)
+    const battle = Parser.parse(raw, data);
+    const tags = format === 'gen7monotype' ? monotypes(data) : undefined;
+    Stats.update(data, battle, cutoffs, stats, tags);
+  } catch (err) {
+    console.error(`${file}: ${err.message}`);
   }
 }
 
@@ -109,32 +125,40 @@ function writeReports(
     reports: string, format: ID, cutoff: number, stats: Statistics, battles: number, tag?: ID) {
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
-  ensureWriteFileSync(path.resolve(reports, `${file}.txt`), usage);
+
+  const writes: Array<Promise<void>> = [];
+  writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
   const leads = Reports.leadsReport(format, stats, battles);
-  ensureWriteFileSync(path.resolve(reports, 'leads', `${file}.txt`), leads);
+  writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));
   const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag);
-  ensureWriteFileSync(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic);
-  ensureWriteFileSync(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed);
+  writes.push(fs.writeFile(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic));
+  writes.push(fs.writeFile(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed));
   const metagame = Reports.metagameReport(stats);
-  ensureWriteFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
+  writes.push(fs.writeFile(path.resolve(reports, 'metagame', `${file}.txt`), metagame));
+  return writes;
 }
 
-async function ensureWriteFileSync(file: string, data: string) {
-  const dir = path.dirname(file);
-  if (!(await fs.exists(dir))) await fs.mkdir(dir, {mode: 0o755});
-  await fs.writeFile(file, data);
+function mkdirs(dir: string) {
+  const dirs: Array<Promise<void>> = [];
+  dirs.push(fs.mkdir(path.resolve(dir, 'chaos'), {mode: 0o755}));
+  dirs.push(fs.mkdir(path.resolve(dir, 'leads'), {mode: 0o755}));
+  dirs.push(fs.mkdir(path.resolve(dir, 'moveset'), {mode: 0o755}));
+  dirs.push(fs.mkdir(path.resolve(dir, 'metagame'), {mode: 0o755}));
+  return dirs;
 }
 
 async function rmrf(dir: string) {
   if (await fs.exists(dir)) {
+    const rms: Array<Promise<void>> = [];
     for (const file of await fs.readdir(dir)) {
       const f = path.resolve(dir, file);
       if ((await fs.lstat(f)).isDirectory()) {
-        await rmrf(f);
+        rms.push(rmrf(f));
       } else {
-        await fs.unlink(f);
+        rms.push(fs.unlink(f));
       }
     }
+    await Promise.all(rms);
     await fs.rmdir(dir);
   }
 }
