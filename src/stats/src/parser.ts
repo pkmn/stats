@@ -324,6 +324,10 @@ export const Parser = new class {
     }
     return team as Array<PokemonSet<ID>>;
   }
+
+  // TODO
+  // serialize(battle: Battle) { }
+  // deserialize(obj: util.AnyObject) { }
 };
 
 // FIXME: meloettapiroutte? darmanitanzen?

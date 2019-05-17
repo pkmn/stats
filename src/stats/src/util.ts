@@ -256,3 +256,92 @@ function erfc3(y: number) {
   const del = (y - ysq) * (y + ysq);
   return Math.exp(-ysq * ysq) * Math.exp(-del) * result;
 }
+
+// tslint:disable-next-line: no-any
+export type AnyObject = {
+  [key: string]: any
+};
+
+export function serializeObject(
+    obj: object,
+    skip: Set<string>,
+    ): AnyObject {
+  const state: AnyObject = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (skip.has(key)) continue;
+    const val = serialize(value);
+    state[key] = val;
+  }
+  return state;
+}
+
+export function deserializeObject(state: AnyObject, obj: object, skip: Set<string>) {
+  for (const [key, value] of Object.entries(state)) {
+    if (skip.has(key)) continue;
+    // @ts-ignore - index signature
+    obj[key] = deserialize(value);
+  }
+}
+
+function serialize(obj: unknown): unknown {
+  switch (typeof obj) {
+    case 'function':
+      return undefined;
+    case 'undefined':
+    case 'boolean':
+    case 'number':
+    case 'string':
+      return obj;
+    case 'object':
+      if (obj === null) return null;
+      if (Array.isArray(obj)) {
+        const arr = new Array(obj.length);
+        for (const [i, o] of obj.entries()) {
+          arr[i] = serialize(o);
+        }
+        return arr;
+      }
+
+      if (obj.constructor !== Object) {
+        throw new TypeError(`Unsupported type ${obj.constructor.name}: ${obj}`);
+      }
+
+      // tslint:disable-next-line: no-any
+      const o: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        o[key] = serialize(value);
+      }
+      return o;
+    default:
+      throw new TypeError(`Unexpected typeof === '${typeof obj}': ${obj}`);
+  }
+}
+
+function deserialize(obj: unknown) {
+  switch (typeof obj) {
+    case 'undefined':
+    case 'boolean':
+    case 'number':
+    case 'string':
+      return obj;
+    case 'object':
+      if (obj === null) return null;
+      if (Array.isArray(obj)) {
+        const arr = new Array(obj.length);
+        for (const [i, o] of obj.entries()) {
+          arr[i] = deserialize(o);
+        }
+        return arr;
+      }
+
+      // tslint:disable-next-line: no-any
+      const o: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        o[key] = deserialize(value);
+      }
+      return o;
+    case 'function':
+    default:
+      throw new TypeError(`Unexpected typeof === '${typeof obj}': ${obj}`);
+  }
+}
