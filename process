@@ -2,4 +2,4 @@
 
 require('source-map-support').install();
 const stats = require('./build/process');
-stats.process(process.argv[2], process.argv[3]);
+(async () => stats.process(process.argv[2], process.argv[3]))();

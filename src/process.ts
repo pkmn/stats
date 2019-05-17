@@ -1,8 +1,9 @@
-import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+
 import {Data, ID, toID} from 'ps';
 
+import * as fs from './fs';
 import {canonicalizeFormat, Parser, Reports, Statistics, Stats} from './index';
 
 const NUM_CPUS = os.cpus().length;
@@ -31,9 +32,9 @@ const CUTOFFS = {
 
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
-export function process(month: string, reports: string) {
+export async function process(month: string, reports: string) {
   rmrf(reports);
-  fs.mkdirSync(reports, {recursive: true});
+  await fs.mkdir(reports, {recursive: true, mode: 0o755});
 
   // YYYY-MM
   // └── format
@@ -41,7 +42,7 @@ export function process(month: string, reports: string) {
   //        └── battle-format-N.log.json
 
   // TODO: async + multi process
-  for (const f of fs.readdirSync(month)) {
+  for (const f of await fs.readdir(month)) {
     const format = canonicalizeFormat(toID(f));
     if (format.startsWith('seasonal') || format.includes('random') ||
         format.includes('metronome' || format.includes('superstaff'))) {
@@ -52,13 +53,13 @@ export function process(month: string, reports: string) {
     const stats = Stats.create();
 
     const d = path.resolve(month, f);
-    for (const day of fs.readdirSync(d)) {
+    for (const day of await fs.readdir(d)) {
       const l = path.resolve(d, day);
-      for (const log of fs.readdirSync(l)) {
+      for (const log of await fs.readdir(l)) {
         const file = path.resolve(l, log);
         try {
           // TODO: gzip
-          const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
+          const raw = JSON.parse(await fs.readFile(file, 'utf8'));
           // TODO: save checkpoints/IR
           const battle = Parser.parse(raw, data);
           const tags = format === 'gen7monotype' ? monotypes(data) : undefined;
@@ -118,22 +119,22 @@ function writeReports(
   ensureWriteFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
 }
 
-function ensureWriteFileSync(file: string, data: string) {
+async function ensureWriteFileSync(file: string, data: string) {
   const dir = path.dirname(file);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-  fs.writeFileSync(file, data);
+  if (!(await fs.exists(dir))) await fs.mkdir(dir, {mode: 0o755});
+  await fs.writeFile(file, data);
 }
 
-function rmrf(dir: string) {
-  if (fs.existsSync(dir)) {
-    for (const file of fs.readdirSync(dir)) {
+async function rmrf(dir: string) {
+  if (await fs.exists(dir)) {
+    for (const file of await fs.readdir(dir)) {
       const f = path.resolve(dir, file);
-      if (fs.lstatSync(f).isDirectory()) {
-        rmrf(f);
+      if ((await fs.lstat(f)).isDirectory()) {
+        await rmrf(f);
       } else {
-        fs.unlinkSync(f);
+        await fs.unlink(f);
       }
     }
-    fs.rmdirSync(dir);
+    await fs.rmdir(dir);
   }
 }
