@@ -1,12 +1,35 @@
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
+import {Data, ID, toID} from 'ps';
 
-import {ID, toID} from 'ps';
+import {canonicalizeFormat, Parser, Reports, Statistics, Stats} from './index';
 
-import {Parser, Reports, Stats} from './index';
+const NUM_CPUS = os.cpus().length;
 
-const CUTOFFS = [0, 1500, 1630, 1760];  // TODO: gen7ou
-// const TAGS: Set<ID> = new Set(); // TODO: monotype
+const POPULAR = new Set([
+  'ou',
+  'doublesou',
+  'randombattle',
+  'oususpecttest',
+  'smogondoublessuspecttest',
+  'doublesoususpecttest',
+  'gen7pokebankou',
+  'gen7ou',
+  'gen7pokebankdoublesou',
+  'gen7pokebankoususpecttest',
+  'gen7oususpecttest',
+  'gen7pokebankdoublesoususpecttest',
+  'gen7doublesoususpecttest',
+  'gen7doublesou',
+] as ID[]);
+
+const CUTOFFS = {
+  default: [0, 1500, 1630, 1760],
+  popular: [0, 1500, 1695, 1825],
+};
+
+const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
 export function process(month: string, reports: string) {
   rmrf(reports);
@@ -19,11 +42,13 @@ export function process(month: string, reports: string) {
 
   // TODO: async + multi process
   for (const f of fs.readdirSync(month)) {
-    const format = toID(f);
+    const format = canonicalizeFormat(toID(f));
     if (format.startsWith('seasonal') || format.includes('random') ||
         format.includes('metronome' || format.includes('superstaff'))) {
       continue;
     }
+    const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
+    const data = Data.forFormat(format);
     const stats = Stats.create();
 
     const d = path.resolve(month, f);
@@ -35,8 +60,9 @@ export function process(month: string, reports: string) {
           // TODO: gzip
           const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
           // TODO: save checkpoints/IR
-          const battle = Parser.parse(raw, format);
-          Stats.update(format, battle, CUTOFFS, stats /*, TODO: TAGS */);
+          const battle = Parser.parse(raw, data);
+          const tags = format === 'gen7monotype' ? monotypes(data) : undefined;
+          Stats.update(data, battle, cutoffs, stats, tags);
         } catch (err) {
           console.error(`${file}: ${err.message}`);
         }
@@ -67,25 +93,29 @@ export function process(month: string, reports: string) {
     // TODO: stream directly to file instead of building up string
     const b = stats.battles;
     for (const [c, s] of stats.total.entries()) {
-      const file = `${format}-${c}`;
-      const usage = Reports.usageReport(format, s, b);
-      fs.writeFileSync(path.resolve(reports, `${file}.txt`), usage);
-      const leads = Reports.leadsReport(format, s, b);
-      fs.writeFileSync(path.resolve(reports, 'leads', `${file}.txt`), leads);
-      const movesets = Reports.movesetReports(format, s, b, c);
-      fs.writeFileSync(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic);
-      fs.writeFileSync(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed);
-      const metagame = Reports.metagameReport(s);
-      fs.writeFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
+      writeReports(reports, format, c, s, b);
     }
 
-    // TODO tags
     for (const [t, ts] of stats.tags.entries()) {
       for (const [c, s] of ts.entries()) {
-        // TODO tags
+        writeReports(reports, format, c, s, b, t);
       }
     }
   }
+}
+
+function writeReports(
+    reports: string, format: ID, cutoff: number, stats: Statistics, battles: number, tag?: ID) {
+  const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
+  const usage = Reports.usageReport(format, stats, battles);
+  fs.writeFileSync(path.resolve(reports, `${file}.txt`), usage);
+  const leads = Reports.leadsReport(format, stats, battles);
+  fs.writeFileSync(path.resolve(reports, 'leads', `${file}.txt`), leads);
+  const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag);
+  fs.writeFileSync(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic);
+  fs.writeFileSync(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed);
+  const metagame = Reports.metagameReport(stats);
+  fs.writeFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
 }
 
 function rmrf(dir: string) {

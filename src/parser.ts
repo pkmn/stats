@@ -99,6 +99,7 @@ export const Parser = new class {
 
     const idents: {p1: string[], p2: string[]} = {p1: [], p2: []};
     const battle = ({matchups: [], turns: raw.turns, endType: raw.endType} as unknown) as Battle;
+    if (typeof format === 'string') format = util.canonicalizeFormat(toID(format));
     for (const side of (['p1', 'p2'] as Array<'p1'|'p2'>)) {
       const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team'], format);
 

@@ -54,7 +54,9 @@ export const Stats = new class {
     return {battles: 0, total: new Map(), tags: new Map()};
   }
 
-  update(format: ID, battle: Battle, cutoffs: number[], stats?: TaggedStatistics, tags = EMPTY) {
+  update(
+      format: string|Data, battle: Battle, cutoffs: number[], stats?: TaggedStatistics,
+      tags = EMPTY) {
     stats = stats || this.create();
 
     const singles = !util.isNonSinglesFormat(format);
@@ -140,7 +142,7 @@ function getWeights(player: Player, cutoffs: number[]): [number[], boolean] {
 }
 
 function updateStats(
-    format: ID, player: Player, battle: Battle, weight: number, gxe: number|undefined,
+    format: string|Data, player: Player, battle: Battle, weight: number, gxe: number|undefined,
     save: boolean, short: boolean, stats: Statistics, tag?: ID) {
   const data = Data.forFormat(format);
   for (const [index, pokemon] of player.team.pokemon.entries()) {

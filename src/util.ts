@@ -114,18 +114,20 @@ export function isNon6v6Format(format: string|Data) {
   return NON_6V6_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
-export function canonicalizeFormat(format: string) {
-  if (format.endsWith('current')) format = format.slice(0, -7);
-  if (format.startsWith('pokebank')) format = format.slice(8, -4);
-  if (format.startsWith('oras')) format.slice(4);
-  if (format === 'capbeta') return 'cap';
-  if (format === 'vgc2014beta') return 'vgc2014';
-  if (format.startsWith('xybattlespot') && format.endsWith('beta')) format = format.slice(0, -4);
-  if (['battlespotdoubles', 'battlespotdoublesvgc2015'].includes(format)) return 'vgc2015';
-  if (format === 'smogondoubles') return 'doublesou';
-  if (format === 'smogondoublesubers') return 'doublesubers';
-  if (format === 'smogondoublesuu') return 'doublesuu';
-  return format;
+export function canonicalizeFormat(format: ID) {
+  if (format.endsWith('current')) format = format.slice(0, -7) as ID;
+  if (format.startsWith('pokebank')) format = format.slice(8, -4) as ID;
+  if (format.startsWith('oras')) format = format.slice(4) as ID;
+  if (format === 'capbeta') return 'cap' as ID;
+  if (format === 'vgc2014beta') return 'vgc2014' as ID;
+  if (format.startsWith('xybattlespot') && format.endsWith('beta')) {
+    format = format.slice(0, -4) as ID;
+  }
+  if (['battlespotdoubles', 'battlespotdoublesvgc2015'].includes(format)) return 'vgc2015' as ID;
+  if (format === 'smogondoubles') return 'doublesou' as ID;
+  if (format === 'smogondoublesubers') return 'doublesubers' as ID;
+  if (format === 'smogondoublesuu') return 'doublesuu' as ID;
+  return format as ID;
 }
 
 export function victoryChance(r1: number, d1: number, r2: number, d2: number) {
