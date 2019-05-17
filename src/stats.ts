@@ -203,9 +203,15 @@ function getSpread<T>(nature: Nature, base: StatsTable<number>, pokemon: Pokemon
 
   let stat: Stat;
   for (stat in pokemon.evs) {
-    const val =
-        calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
-    evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
+    // FIXME: The intention of the original code was to clearly round all EVs,
+    // but in reality on the last stat gets modified.
+    if (stat === 'spe') {
+      const val =
+          calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
+      evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
+    } else {
+      evs.push(pokemon.evs[stat]);
+    }
   }
   return `${nature.name}:${evs.join('/')}`;
 }
