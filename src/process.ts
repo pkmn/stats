@@ -3,10 +3,10 @@ import * as path from 'path';
 
 import {ID, toID} from 'ps';
 
-import * as stats from '../index';
+import {Parser, Reports, Stats} from './index';
 
-const CUTOFFS = [0, 1500, 1630, 1760]; // TODO: gen7ou
-//const TAGS: Set<ID> = new Set(); // TODO: monotype
+const CUTOFFS = [0, 1500, 1630, 1760];  // TODO: gen7ou
+// const TAGS: Set<ID> = new Set(); // TODO: monotype
 
 export function process(month: string, reports: string) {
   rmrf(reports);
@@ -20,11 +20,14 @@ export function process(month: string, reports: string) {
   // TODO: async + multi process
   for (const f of fs.readdirSync(month)) {
     const format = toID(f);
-    const s = stats.Stats.create();
+    if (format.startsWith('seasonal') || format.includes('random') ||
+        format.includes('metronome' || format.includes('superstaff'))) {
+      continue;
+    }
+    const stats = Stats.create();
 
     const d = path.resolve(month, f);
     for (const day of fs.readdirSync(d)) {
-
       const l = path.resolve(d, day);
       for (const log of fs.readdirSync(l)) {
         const file = path.resolve(l, log);
@@ -32,10 +35,10 @@ export function process(month: string, reports: string) {
           // TODO: gzip
           const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
           // TODO: save checkpoints/IR
-          const battle = stats.Parser.parse(raw, format);
-          stats.Stats.update(format, battle, CUTOFFS, s /*, TODO: TAGS */);
+          const battle = Parser.parse(raw, format);
+          Stats.update(format, battle, CUTOFFS, stats /*, TODO: TAGS */);
         } catch (err) {
-          console.err(`${file}: ${err.message}`);
+          console.error(`${file}: ${err.message}`);
         }
       }
     }
@@ -62,22 +65,22 @@ export function process(month: string, reports: string) {
     //     └── format-N.txt
 
     // TODO: stream directly to file instead of building up string
-    const b = s.battles;
-    for (const [c, s] of s.total.entries()) {
+    const b = stats.battles;
+    for (const [c, s] of stats.total.entries()) {
       const file = `${format}-${c}`;
-      const usage = stats.Reports.usageReport(format, s, b);
+      const usage = Reports.usageReport(format, s, b);
       fs.writeFileSync(path.resolve(reports, `${file}.txt`), usage);
-      const leads = stats.Reports.leadsReport(format, s, b);
+      const leads = Reports.leadsReport(format, s, b);
       fs.writeFileSync(path.resolve(reports, 'leads', `${file}.txt`), leads);
-      const movesets = stats.Reports.movesetReports(format, s, b, c);
+      const movesets = Reports.movesetReports(format, s, b, c);
       fs.writeFileSync(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic);
       fs.writeFileSync(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed);
-      const metagame = stats.Reports.metagameReport(s);
+      const metagame = Reports.metagameReport(s);
       fs.writeFileSync(path.resolve(reports, 'metagame', `${file}.txt`), metagame);
     }
 
     // TODO tags
-    for (const [t, ts] of s.tags.entries()) {
+    for (const [t, ts] of stats.tags.entries()) {
       for (const [c, s] of ts.entries()) {
         // TODO tags
       }

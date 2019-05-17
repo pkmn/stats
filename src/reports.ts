@@ -76,7 +76,8 @@ export const Reports = new class {
     total.weighted = Math.max(1.0, stats.leads.weighted);
 
     const sorted =
-        Array.from(stats.pokemon.entries()).sort((a, b) => (b[1].lead.weighted - a[1].lead.weighted) || a[0].localeCompare(b[0]));
+        Array.from(stats.pokemon.entries())
+            .sort((a, b) => (b[1].lead.weighted - a[1].lead.weighted) || a[0].localeCompare(b[0]));
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1].lead;
@@ -244,7 +245,8 @@ export const Reports = new class {
     const metagame = stats.metagame;
     const W = Math.max(1.0, stats.usage.weighted);
 
-    const tags = Array.from(metagame.tags.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const tags =
+        Array.from(metagame.tags.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     let s = '';
     for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(30, '.');

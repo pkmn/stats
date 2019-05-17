@@ -13,6 +13,9 @@ export function getBaseSpecies(name: string, format: string|Data): Species {
       species;
 }
 
+const MEGA_RAYQUAZA_BANNED =
+    new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
+
 export function isMegaRayquazaAllowed(format?: string|Data) {
   return !MEGA_RAYQUAZA_BANNED.has(Data.forFormat(format).format);
 }
@@ -42,9 +45,6 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|
   }
   return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
 }
-
-const MEGA_RAYQUAZA_BANNED =
-    new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles',
@@ -83,6 +83,11 @@ const NON_SINGLES_FORMATS = new Set([
   'vgc2017',
 ]);
 
+export function isNonSinglesFormat(format: string|Data) {
+  const f = Data.forFormat(format).format;
+  return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
+}
+
 const NON_6V6_FORMATS = new Set([
   '1v1',
   'battlespotdoubles',
@@ -103,11 +108,6 @@ const NON_6V6_FORMATS = new Set([
   'vgc2016',
   'vgc2017',
 ]);
-
-export function isNonSinglesFormat(format: string|Data) {
-  const f = Data.forFormat(format).format;
-  return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
-}
 
 export function isNon6v6Format(format: string|Data) {
   const f = Data.forFormat(format).format;

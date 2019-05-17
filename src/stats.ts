@@ -58,7 +58,8 @@ export const Stats = new class {
     stats = stats || this.create();
 
     const singles = !util.isNonSinglesFormat(format);
-    const short = !util.isNon6v6Format(format) && (battle.turns < 2 || (battle.turns < 3 && singles));
+    const short =
+        !util.isNon6v6Format(format) && (battle.turns < 2 || (battle.turns < 3 && singles));
     if (!short) stats.battles++;
 
     const weights: number[][] = [];
