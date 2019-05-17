@@ -10,11 +10,9 @@ export function exists(path: string): Promise<boolean> {
   });
 }
 
-export function mkdir(path: string, options: {recursive?: boolean, mode?: number} = {
-  mode: 0o755
-}): Promise<void> {
+export function mkdir(path: string, options?: {recursive?: boolean, mode?: number}): Promise<void> {
   return new Promise((resolve, reject) => {
-    fs.mkdir(path, options, err => {
+    fs.mkdir(path, Object.assign({mode: 0o755}, options), err => {
       err ? reject(err) : resolve();
     });
   });
