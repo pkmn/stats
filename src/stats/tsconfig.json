@@ -13,7 +13,6 @@
   "exclude": [
     "ps",
     "build",
-    "src/stats",
     "wip"
   ]
 }

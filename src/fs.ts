@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as zlib from 'zlib';
 
 export function exists(path: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
@@ -28,10 +29,17 @@ export function readdir(path: string): Promise<string[]> {
 
 export function readFile(path: string, encoding: 'utf8'): Promise<string> {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, encoding, (err, data) => {
-      err ? reject(err) : resolve(data as string);
+    fs.readFile(path, (err, data) => {
+      if (err) reject(err);
+      !isGzipped(data) ? resolve(data.toString(encoding)) : zlib.gunzip(data, (err, buf) => {
+        err ? reject(err) : resolve(buf.toString(encoding));
+      });
     });
   });
+}
+
+function isGzipped(buf: Buffer) {
+  return (buf.length >= 3 && buf[0] === 0x1F && buf[1] === 0x8B && buf[2] === 0x08);
 }
 
 export function writeFile(path: string, data: string): Promise<void> {

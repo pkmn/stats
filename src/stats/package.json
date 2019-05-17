@@ -1,8 +1,7 @@
 {
-  "name": "pokemon-showdown-stats",
-  "private": true,
+  "name": "@psim/stats",
   "version": "0.0.1",
-  "description": "The stats processing logic for the Pokémon Showdown battle simulator",
+  "description": "Logic for processing stats from Pokémon Showdown battle simulator logs",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "repository": {
@@ -12,13 +11,15 @@
   "author": "Kirk Scheibelhut",
   "license": "MIT",
   "dependencies": {
-    "@psim/stats": "file:src/stats",
     "@types/node": "^11.13.4",
-    "ps": "file:ps"
+    "ps": "file:../../ps"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "gts": "^0.9.0",
+    "jest": "^24.8.0",
     "source-map-support": "^0.5.12",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.4.3"
   },
   "scripts": {
@@ -26,7 +27,7 @@
     "clean": "gts clean",
     "compile": "tsc -p .",
     "fix": "gts fix",
-    "test": "cd src/stats && npm run test",
+    "test": "jest",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run check"

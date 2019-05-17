@@ -19,7 +19,7 @@ Usage
 To generate usage statistics reports from a Pokémon Showdown server's battle
 logs in batch, run:
 
-    $ ./process smogon-reports path/to/logs path/to/output/reports
+    $ ./process path/to/logs path/to/output/reports
 
 `process` expects the `logs` directory to be structured as follows (ie. the default
 for Pokémon Showdown servers):
@@ -52,8 +52,12 @@ The resulting reports will be written out in the following directory structure:
     └── moveset
         └── format-N.txt
 
-Numerous other options for processing and reporting exist beyond the default,
-run `./process --help` for more details.
+Numerous other options for processing exist beyond the default, including
+options for saving intermediate state, as well as limiting the number of threads
+used or the batch size run `./process --help` for more details.
+
+If you wish to construct different reports or tweak which reports are produced,
+see the `@psim/stats` sub package, housed under `src/stats`.
 
 License
 ------------------------------------------------------------------------
