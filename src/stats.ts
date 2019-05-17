@@ -56,7 +56,10 @@ export const Stats = new class {
 
   update(format: ID, battle: Battle, cutoffs: number[], stats?: TaggedStatistics, tags = EMPTY) {
     stats = stats || this.create();
-    stats.battles++;
+
+    const singles = !util.isNonSinglesFormat(format);
+    const short = !util.isNon6v6Format(format) && (battle.turns < 2 || (battle.turns < 3 && singles));
+    if (!short) stats.battles++;
 
     const weights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
@@ -73,7 +76,7 @@ export const Stats = new class {
           s = newStatistics();
           stats.total.set(cutoff, s);
         }
-        updateStats(format, player, battle, weight, gxe, save, s);
+        updateStats(format, player, battle, weight, gxe, save, short, s);
 
         for (const tag of tags) {
           let t = stats.tags.get(tag);
@@ -87,25 +90,26 @@ export const Stats = new class {
             t.set(cutoff, s);
           }
           if (player.team.classification.tags.has(tag)) {
-            updateStats(format, player, battle, weight, gxe, save, s, tag);
+            updateStats(format, player, battle, weight, gxe, save, short, s, tag);
           }
         }
       }
     }
 
-    if (!util.isNonSinglesFormat(format)) {
+    if (singles) {
+      const tooShort = !util.isNon6v6Format(format) && battle.turns < 3;
       const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
       for (const [i, weight] of mins.entries()) {
         const pw = {p1: weights[0][i], p2: weights[1][i]};
         const cutoff = cutoffs[i];
         const s = stats.total.get(cutoff)!;
         updateEncounters(s, battle.matchups, weight);
-        updateLeads(s, battle, pw);
+        if (!short) updateLeads(s, battle, pw);
 
         for (const tag of tags) {
           const s = stats.tags.get(tag)!.get(cutoff)!;
           updateEncounters(s, battle.matchups, weight);
-          updateLeads(s, battle, pw);
+          if (!short) updateLeads(s, battle, pw);
         }
       }
     }
@@ -136,7 +140,7 @@ function getWeights(player: Player, cutoffs: number[]): [number[], boolean] {
 
 function updateStats(
     format: ID, player: Player, battle: Battle, weight: number, gxe: number|undefined,
-    save: boolean, stats: Statistics, tag?: ID) {
+    save: boolean, short: boolean, stats: Statistics, tag?: ID) {
   const data = Data.forFormat(format);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
     if (pokemon.species === 'empty') continue;
@@ -181,9 +185,7 @@ function updateStats(
     const h = p.happinesses.get(set.happiness!);
     p.happinesses.set(set.happiness!, (h || 0) + weight);
 
-    const tooShort = !util.isNon6v6Format(data) &&
-        (battle.turns < 2 || (battle.turns < 3 && !util.isNonSinglesFormat(data)));
-    if (!tooShort) {
+    if (!short) {
       p.usage.raw++;
       if (pokemon.turnsOut > 0) p.usage.real++;
       p.usage.weighted += weight;
@@ -298,13 +300,18 @@ function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2
   }
 
   // Possible in the case of a 1v1 or similar battle which was forfeited before starting
-  if (leads.p1 !== 'empty' || leads.p2 === 'empty') return;
+  if (leads.p1 === 'empty' || leads.p2 === 'empty') return;
 
   for (const side of sides) {
     const usage = stats.pokemon.get(leads[side])!.lead;
     usage.raw++;
+    stats.leads.raw++;
+
     usage.real++;
+    stats.leads.real++;
+
     usage.weighted += weights[side];
+    stats.leads.weighted += weights[side];
   }
 }
 

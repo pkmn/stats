@@ -76,7 +76,7 @@ export const Reports = new class {
     total.weighted = Math.max(1.0, stats.leads.weighted);
 
     const sorted =
-        Array.from(stats.pokemon.entries()).sort((a, b) => b[1].lead.weighted - a[1].lead.weighted);
+        Array.from(stats.pokemon.entries()).sort((a, b) => (b[1].lead.weighted - a[1].lead.weighted) || a[0].localeCompare(b[0]));
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1].lead;
@@ -176,7 +176,7 @@ export const Reports = new class {
           break;
         }
         const weight = moveset['Moves'][move] / p.count;
-        s += display(move, weight);
+        s += display(move || 'Nothing', weight);
         total += weight / 4;
       }
       s += sep;
