@@ -147,6 +147,30 @@ function mkdirs(dir: string) {
   return dirs;
 }
 
+// https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
+function partition(formatSizes: Array<[ID, number]>, partitions: number) {
+  formatSizes.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+  // Given partitions is expected to be small, using a priority queue here shouldn't be necessary
+  const ps: Array<{total: number, formats: ID[]}> =
+      new Array(partitions).fill({total: 0, formats: []});
+  for (const [format, size] of formatSizes) {
+    let min: {total: number, formats: ID[]}|undefined;
+    for (const p of ps) {
+      if (!min || p.total < min.total) {
+        min = p;
+        // Shortcut to speed up the first few partitions
+        if (min.total === 0) break;
+      }
+    }
+    // We must have a min here provided partitions > 0
+    min!.total += size;
+    min!.formats.push(format);
+  }
+
+  return ps.map(p => p.formats);
+}
+
 async function rmrf(dir: string) {
   if (await fs.exists(dir)) {
     const rms: Array<Promise<void>> = [];
