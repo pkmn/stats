@@ -34,21 +34,17 @@ interface Options extends main.Options {
   reportsPath: string;
 }
 
-async function process(formats: Array<[ID, string]>, options: Options) {
+async function process(formats: main.FormatData[], options: Options) {
   // All of the reports we're writing
   const writes: Array<Promise<void>> = [];
-  for (const [format, dir] of formats) {
+  for (const {format, size, files} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
     // TODO: chunk the number of files we read instead of all at once
     const logs: Array<Promise<void>> = [];
-
-    for (const day of await fs.readdir(dir)) {
-      const l = path.resolve(dir, day);
-      for (const log of await fs.readdir(l)) {
-        logs.push(processLog(format, data, path.resolve(l, log), cutoffs, stats));
-      }
+    for (const file of files) {
+      logs.push(processLog(format, data, file, cutoffs, stats));
     }
     await Promise.all(logs);
 

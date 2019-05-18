@@ -42,6 +42,12 @@ export interface Options {
   intermediatePath?: number;
 }
 
+export interface FormatData {
+  format: ID;
+  size: number;
+  files: string[];
+}
+
 const WORKER = path.resolve(__dirname, 'worker.js');
 
 export async function process(month: string, reports: string, options: Options = {}) {
@@ -52,7 +58,7 @@ export async function process(month: string, reports: string, options: Options =
   await fs.mkdir(monotype, {mode: 0o755});
   await Promise.all([...mkdirs(reports), ...mkdirs(monotype)]);
 
-  const formatSizes: Array<Promise<[ID, string, number]>> = [];
+  const formatData: Array<Promise<FormatData>> = [];
   for (const f of await fs.readdir(month)) {
     const format = canonicalizeFormat(toID(f));
     if (format.startsWith('seasonal') || format.includes('random') ||
@@ -60,15 +66,15 @@ export async function process(month: string, reports: string, options: Options =
       continue;
     }
     const dir = path.resolve(month, f);
-    formatSizes.push(dirSize(dir).then(size => [format, dir, size]));
+    formatData.push(listLogs(dir).then(files => ({format, size: files.length, files})));
   }
 
   const numWorkers = options.numWorkers || (os.cpus().length - 1);
-  const partitions = partition(await Promise.all(formatSizes), numWorkers);
+  const partitions = partition(await Promise.all(formatData), numWorkers);
   const workers: Array<Promise<void>> = [];
   const opts = Object.assign({}, options, {reportsPath: reports});
-  for (const formats of partitions) {
-    const workerData = {formats, options: opts};
+  for (const [i, formats] of partitions.entries()) {
+    const workerData = {formats, options: opts, num: i + 1};
     workers.push(new Promise((resolve, reject) => {
       const worker = new Worker(WORKER, {workerData});
       worker.on('message', resolve);
@@ -81,24 +87,29 @@ export async function process(month: string, reports: string, options: Options =
   await Promise.all(workers);
 }
 
-async function dirSize(dir: string) {
+async function listLogs(dir: string) {
   const dirs: Array<Promise<string[]>> = [];
   for (const d of await fs.readdir(dir)) {
-    dirs.push(fs.readdir(path.resolve(dir, d)));
+    const p = path.resolve(dir, d);
+    dirs.push(fs.readdir(p).then(files => files.map(f => path.resolve(p, f))));
   }
-  return (await Promise.all(dirs)).reduce((sum, d) => sum + d.length, 0);
+  const all: string[] = [];
+  for (const files of await Promise.all(dirs)) {
+    all.push(...files);
+  }
+  return all.sort();
 }
 
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
-function partition(formatSizes: Array<[ID, string, number]>, partitions: number) {
-  formatSizes.sort((a, b) => b[2] - a[2] || a[0].localeCompare(b[0]));
+function partition(formatData: FormatData[], partitions: number) {
+  formatData.sort((a, b) => b.size - a.size || a.format.localeCompare(b.format));
 
   // Given partitions is expected to be small, using a priority queue here shouldn't be necessary
-  const ps: Array<{total: number, formats: Array<[ID, string]>}> = [];
-  for (const [format, dir, size] of formatSizes) {
-    let min: {total: number, formats: Array<[ID, string]>}|undefined;
+  const ps: Array<{total: number, formats: FormatData[]}> = [];
+  for (const data of formatData) {
+    let min: {total: number, formats: FormatData[]}|undefined;
     if (ps.length < partitions) {
-      ps.push({total: size, formats: [[format, dir]]});
+      ps.push({total: data.size, formats: [data]});
       continue;
     }
 
@@ -108,8 +119,8 @@ function partition(formatSizes: Array<[ID, string, number]>, partitions: number)
       }
     }
     // We must have a min here provided partitions > 0
-    min!.total += size;
-    min!.formats.push([format, dir]);
+    min!.total += data.size;
+    min!.formats.push(data);
   }
 
   return ps.map(p => p.formats);
