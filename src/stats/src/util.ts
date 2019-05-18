@@ -1,5 +1,9 @@
 import {Data, ID, PokemonSet, Species, toID} from 'ps';
 
+export type AnyObject = {
+  [key: string]: any
+};
+
 export function getSpecies(name: string, format: string|Data) {
   const species = Data.forFormat(format).getSpecies(name);
   if (!species) throw new Error(`Unknown species '${name}'`);

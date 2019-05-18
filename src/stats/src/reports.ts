@@ -238,7 +238,6 @@ export const Reports = new class {
     const data: {[key: string]: object} = {};
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
-      // tslint:disable-next-line: no-any
       const m: any = Object.assign({}, moveset);
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
       data[util.getSpecies(species, d).species] = m;

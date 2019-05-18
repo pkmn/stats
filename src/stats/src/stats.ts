@@ -100,7 +100,6 @@ export const Stats = new class {
     }
 
     if (singles) {
-      const tooShort = !util.isNon6v6Format(format) && battle.turns < 3;
       const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
       for (const [i, weight] of mins.entries()) {
         const pw = {p1: weights[0][i], p2: weights[1][i]};
@@ -118,6 +117,10 @@ export const Stats = new class {
     }
 
     return stats;
+  }
+
+  serialize(tagged: TaggedStatistics) {
+    return serializeTagged(tagged);
   }
 };
 
@@ -347,4 +350,69 @@ function newUsageStatistics() {
 
 function newUsage() {
   return {raw: 0, real: 0, weighted: 0};
+}
+
+function serializeTagged(tagged: TaggedStatistics) {
+  const obj: util.AnyObject = {};
+  obj.battles = tagged.battles;
+  obj.total = serializeWeighted(tagged.total);
+  obj.tags = {};
+  for (const [tag, weighted] of tagged.tags.entries()) {
+    obj.tags[tag] = serializeWeighted(weighted);
+  }
+  return obj;
+}
+
+function serializeWeighted(weighted: WeightedStatistics) {
+  const obj: util.AnyObject = {};
+  for (const [cutoff, stats] of weighted.entries()) {
+    obj[cutoff] = serializeStats(stats);
+  }
+  return obj;
+}
+
+function serializeStats(stats: Statistics) {
+  const obj: util.AnyObject = {};
+  for (const [pokemon, usage] of stats.pokemon.entries()) {
+    obj[pokemon] = serializeUsage(usage);
+  }
+  obj.leads = Object.assign({}, stats.leads);
+  obj.usage = Object.assign({}, stats.usage);
+  obj.metagame = serializeMetagame(stats.metagame);
+  return obj;
+}
+
+function serializeUsage(usage: UsageStatistics) {
+  const obj: util.AnyObject = {};
+  obj.lead = Object.assign({}, usage.lead);
+  obj.usage = Object.assign({}, usage.usage);
+  obj.abilities = mapToObject(usage.abilities);
+  obj.items = mapToObject(usage.items);
+  obj.happinesses = mapToObject(usage.happinesses);
+  obj.spreads = mapToObject(usage.spreads);
+  obj.moves = mapToObject(usage.moves);
+  obj.count = usage.count;
+  obj.weights = Object.assign({}, usage.weights);
+  obj.encounters = {};
+  for (const [k, v] of usage.encounters.entries()) {
+    obj.encounters[k] = v.slice();
+  }
+  obj.teammates = mapToObject(usage.teammates);
+  obj.gxes = mapToObject(usage.gxes);
+  return obj;
+}
+
+function serializeMetagame(meta: MetagameStatistics) {
+  const obj: util.AnyObject = {};
+  obj.tags = mapToObject(meta.tags);
+  obj.stalliness = meta.stalliness.map(a => a.slice());
+  return obj;
+}
+
+function mapToObject(map: Map<number|string, number>) {
+  const obj: {[key: string]: number} = {};
+  for (const [k, v] of map.entries()) {
+    obj[k] = v;
+  }
+  return obj;
 }

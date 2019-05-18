@@ -6,6 +6,7 @@
     "new-parens": false,
     "switch-default": false,
     "no-floating-promises": true,
+    "no-any": false,
     "prefer-const": {
       "options": {
         "destructuring": "all"
