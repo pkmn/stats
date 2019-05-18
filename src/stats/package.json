@@ -1,5 +1,5 @@
 {
-  "name": "@psim/stats",
+  "name": "stats",
   "version": "0.0.1",
   "description": "Logic for processing stats from Pokémon Showdown battle simulator logs",
   "main": "build/index.js",

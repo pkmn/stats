@@ -1,6 +1,6 @@
-import {Parser, Reports, Statistics, Stats, TaggedStatistics} from '@psim/stats';
 import * as path from 'path';
 import {Data, ID, toID} from 'ps';
+import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
 import {parentPort, workerData} from 'worker_threads';
 
 import * as fs from './fs';

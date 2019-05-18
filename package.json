@@ -12,7 +12,7 @@
   "author": "Kirk Scheibelhut",
   "license": "MIT",
   "dependencies": {
-    "@psim/stats": "file:src/stats",
+    "stats": "file:src/stats",
     "@types/node": "^11.13.4",
     "ps": "file:ps"
   },

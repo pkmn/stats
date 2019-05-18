@@ -28,10 +28,10 @@
 //     └── moveset
 //         └── format-N.txt
 
-import {canonicalizeFormat} from '@psim/stats';
 import * as os from 'os';
 import * as path from 'path';
 import {ID, toID} from 'ps';
+import {canonicalizeFormat} from 'stats';
 import {Worker} from 'worker_threads';
 
 import * as fs from './fs';
