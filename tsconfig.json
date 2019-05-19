@@ -8,12 +8,12 @@
     "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": [
-    "**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "ps",
     "build",
-    "src/stats",
+    "stats",
     "wip"
   ]
 }

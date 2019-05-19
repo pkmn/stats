@@ -12,23 +12,29 @@
   "author": "Kirk Scheibelhut",
   "license": "MIT",
   "dependencies": {
-    "stats": "file:src/stats",
+    "stats": "file:stats",
     "@types/node": "^11.13.4",
     "ps": "file:ps"
   },
   "devDependencies": {
     "gts": "^0.9.0",
     "source-map-support": "^0.5.12",
+    "subpackage": "^1.1.0",
     "typescript": "^3.4.3"
   },
   "scripts": {
-    "check": "gts check",
-    "clean": "gts clean",
-    "compile": "tsc -p .",
-    "fix": "gts fix",
-    "test": "cd src/stats && npm run test",
+    "check": "gts check && subpkg run check",
+    "clean": "gts clean && subpkg run check",
+    "compile": "tsc -p . && subpkg run compile",
+    "fix": "gts fix && subpkg run fix",
+    "test": "subpkg run test",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
-  }
+    "posttest": "npm run check",
+    "postinstall": "subpkg install"
+
+  },
+  "subPackages": [
+    "stats"
+  ]
 }

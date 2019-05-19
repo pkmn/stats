@@ -3,4 +3,4 @@ build
 package-lock.json
 .tsbuildinfo
 src/test/testdata/result/
-Stats
+Reports
