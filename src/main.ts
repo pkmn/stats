@@ -71,20 +71,29 @@ export async function process(month: string, reports: string, options: Options =
 
   const numWorkers = options.numWorkers || (os.cpus().length - 1);
   const partitions = partition(await Promise.all(formatData), numWorkers);
-  const workers: Array<Promise<void>> = [];
+  const workers: Array<[ID[], Promise<void>]> = [];
   const opts = Object.assign({}, options, {reportsPath: reports});
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options: opts, num: i + 1};
-    workers.push(new Promise((resolve, reject) => {
+    workers.push([formats.map(f => f.format), new Promise((resolve, reject) => {
       const worker = new Worker(WORKER, {workerData});
       worker.on('message', resolve);
       worker.on('error', reject);
       worker.on('exit', (code) => {
         if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
       });
-    }));
+    })]);
   }
-  await Promise.all(workers);
+  let failures = 0;
+  for (const [formats, worker] of workers) {
+    try {
+      await worker;
+    } catch (err) {
+      console.error(`Error occurred when processing formats: ${formats.join(', ')}`, err);
+      failures++;
+    }
+  }
+  return failures;
 }
 
 async function listLogs(dir: string) {

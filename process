@@ -3,4 +3,4 @@
 require('source-map-support').install();
 const stats = require('./build/index');
 // tslint:disable-next-line: no-floating-promises
-(async () => stats.process(process.argv[2], process.argv[3]))();
+(async () => process.exit(await stats.process(process.argv[2], process.argv[3])))();
