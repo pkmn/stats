@@ -1,5 +1,6 @@
-import {ID} from 'ps';
+import {ID, PokemonSet} from 'ps';
 import * as stats from 'stats';
+import { ParsedUrlQuery } from 'querystring';
 
 // TODO: can avoid copying by just mutating directly
 
@@ -263,4 +264,52 @@ function combineCounts(a: Usage, b: Usage|undefined) {
   a.real += b.real;
   a.weighted += b.weighted;
   return a;
+}
+
+interface Battle {
+  p1: Player;
+  p2: Player;
+  matchups: Array<[string, string, number]>;
+  turns: number;
+  endType?: 'normal'|'forced'|'forfeit';
+}
+
+export function serializeBattle(battle: stats.Battle) {
+  const obj: Partial<Battle> = {};
+  obj.p1 = serializePlayer(battle.p1);
+  obj.p2 = serializePlayer(battle.p2);
+  obj.matchups = battle.matchups.map(mu => mu.slice() as [string, string, number]);
+  obj.turns = battle.turns;
+  obj.endType = battle.endType;
+  return obj as Battle;
+}
+
+interface Player {
+  name: string;
+  rating?: Rating;
+  outcome?: 'win'|'loss';
+  team: Team;
+}
+
+function serializePlayer(player: stats.Player) {
+  const obj: Partial<Player> = {};
+  
+  return obj as Player;
+}
+
+interface Team {
+  pokemon: Pokemon[];
+  classification: {bias: number; stalliness: number; tags: string[];};
+}
+
+interface Pokemon {
+  species: string;
+  set: PokemonSet<string>;
+  turnsOut: number;
+  kos: number;
+}
+
+interface Rating {
+  rpr: number;
+  rprd: number;
 }
