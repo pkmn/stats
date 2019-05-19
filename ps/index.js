@@ -10,7 +10,7 @@ class Data {
     format = toID(format);
     let data = Data.cache.get(format);
     if (!data) {
-      const f = Dex.getFormat();
+      const f = Dex.getFormat(format);
       data = new Data(Dex.forFormat(f), f.id);
       Data.cache.set(format, data);
     }
