@@ -143,7 +143,7 @@ function getWeights(player: Player, cutoffs: number[]): [number[], boolean] {
 function updateStats(
     format: string|Data, player: Player, battle: Battle, weight: number, gxe: number|undefined,
     save: boolean, short: boolean, stats: Statistics, tag?: ID) {
-  const data = Data.forFormat(format);
+  const data = util.dataForFormat(format);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
     if (pokemon.species === 'empty') continue;
     const set = pokemon.set;

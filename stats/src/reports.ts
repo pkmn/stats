@@ -109,7 +109,7 @@ export const Reports = new class {
   movesetReport(format: ID, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>) {
     movesetStats = movesetStats || toMovesetStatistics(format, stats);
 
-    const data = Data.forFormat(format);
+    const data = util.dataForFormat(format);
     const WIDTH = 40;
 
     const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
@@ -234,7 +234,7 @@ export const Reports = new class {
       'number of battles': battles,
     };
 
-    const d = Data.forFormat(format);
+    const d = util.dataForFormat(format);
     const data: {[key: string]: object} = {};
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
@@ -349,7 +349,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
   } else {
     sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
   }
-  const data = Data.forFormat(format);
+  const data = util.dataForFormat(format);
 
   const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {

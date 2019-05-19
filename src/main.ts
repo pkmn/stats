@@ -69,20 +69,25 @@ export async function process(month: string, reports: string, options: Options =
     formatData.push(listLogs(dir).then(files => ({format, size: files.length, files})));
   }
 
-  const numWorkers = options.numWorkers || (os.cpus().length - 1);
+  const numWorkers = 1;  // options.numWorkers || (os.cpus().length - 1);
   const partitions = partition(await Promise.all(formatData), numWorkers);
   const workers: Array<[ID[], Promise<void>]> = [];
   const opts = Object.assign({}, options, {reportsPath: reports});
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options: opts, num: i + 1};
-    workers.push([formats.map(f => f.format), new Promise((resolve, reject) => {
-      const worker = new Worker(WORKER, {workerData});
-      worker.on('message', resolve);
-      worker.on('error', reject);
-      worker.on('exit', (code) => {
-        if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
-      });
-    })]);
+    workers.push([
+      formats.map(f => f.format), new Promise((resolve, reject) => {
+        const worker = new Worker(WORKER, {workerData});
+        worker.on('error', reject);
+        worker.on('exit', (code) => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject(new Error(`Worker stopped with exit code ${code}`));
+          }
+        });
+      })
+    ]);
   }
   let failures = 0;
   for (const [formats, worker] of workers) {

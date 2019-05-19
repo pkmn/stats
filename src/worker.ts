@@ -1,7 +1,7 @@
 import * as path from 'path';
 import {Data, ID, toID} from 'ps';
 import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
-import {parentPort, workerData} from 'worker_threads';
+import {workerData} from 'worker_threads';
 
 import * as fs from './fs';
 import * as main from './main';
@@ -39,7 +39,7 @@ async function process(formats: main.FormatData[], options: Options) {
   const writes: Array<Promise<void>> = [];
   for (const {format, size, files} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
-    const data = Data.forFormat(format);
+    const data = Data.forFormat(/* FIXME format */);
     const stats = Stats.create();
     // TODO: chunk the number of files we read instead of all at once
     const logs: Array<Promise<void>> = [];
@@ -93,4 +93,4 @@ function writeReports(
 }
 
 // tslint:disable-next-line: no-floating-promises
-(async () => parentPort!.postMessage(await process(workerData.formats, workerData.options)))();
+(async () => await process(workerData.formats, workerData.options))();

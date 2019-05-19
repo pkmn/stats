@@ -11,7 +11,7 @@ export const Classifier = new class {
     for (const pokemon of team) {
       const {bias, stalliness} = this.classifyPokemon(pokemon, format);
       teamBias += bias;
-      teamStalliness.push(stalliness / LOG3_LOG2);
+      teamStalliness.push(stalliness - LOG3_LOG2);
     }
 
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
@@ -84,7 +84,7 @@ export const Classifier = new class {
     // } else {
     const mega = util.getMegaEvolution(pokemon, format);
     if (mega) {
-      pokemon.species = mega.species;
+      // pokemon.species = mega.species; FIXME see above
       pokemon.ability = mega.ability;
       stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     }
@@ -132,9 +132,10 @@ function baseStalliness(pokemon: PokemonSet<ID>, format: string|Data) {
   if (pokemon.species === 'ditto') return LOG3_LOG2;
   const stats = calcStats(pokemon, format);
   return -Math.log(
-             (2.0 * pokemon.level + 10) / 250 *
-             Math.max(stats.atk, stats.spa / Math.max(stats.def, stats.spd) * 120 + 2) * 0.925 /
-             stats.hp) /
+             (Math.floor(2.0 * pokemon.level + 10) / 250 * Math.max(stats.atk, stats.spa) /
+                  Math.max(stats.def, stats.spd) * 120 +
+              2) *
+             0.925 / stats.hp) /
       Math.log(2);
 }
 
@@ -153,7 +154,7 @@ function calcStats(pokemon: PokemonSet<ID>, format: string|Data) {
 
 function calcFormeStats(pokemon: PokemonSet<ID>, format: string|Data) {
   const species = util.getSpecies(pokemon.species, format);
-  const nature = Data.forFormat(format).getNature(pokemon.nature);
+  const nature = util.dataForFormat(format).getNature(pokemon.nature);
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: Stat;
   for (stat in stats) {
@@ -183,7 +184,7 @@ const DRAGONS = new Set([
   'giratinaorigin', 'deino',     'zweilous', 'hydreigon'
 ]);
 
-const LOW_ACCURACY_MOVES = new Set([
+const GRAVITY_MOVES = new Set([
   'guillotine',   'fissure',     'sheercold',  'dynamicpunch', 'inferno',    'zapcannon',
   'grasswhistle', 'sing',        'supersonic', 'hypnosis',     'blizzard',   'focusblast',
   'gunkshot',     'hurricane',   'smog',       'thunder',      'clamp',      'dragonrush',
@@ -202,7 +203,7 @@ function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
     tailwind: 0,
     trickroom: 0,
     slow: 0,
-    lowacc: 0,
+    gravityMoves: 0,
     gravity: 0,
     voltturn: 0,
     dragons: 0,
@@ -269,8 +270,8 @@ function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
     if (style.gravity < 2 && moves.has('gravity')) {
       style.gravity++;
     }
-    if (pokemon.moves.some(m => LOW_ACCURACY_MOVES.has(m))) {
-      style.lowacc++;
+    if (pokemon.moves.some(m => GRAVITY_MOVES.has(m))) {
+      style.gravityMoves++;
     }
     if (style.voltturn < 3 && pokemon.item === 'ejectbutton' ||
         pokemon.moves.some(m => ['voltswitch', 'uturn', 'batonpass'].includes(m))) {
@@ -325,7 +326,7 @@ function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
     if (weather.sand > 1) tags.push('tricksand');
     if (weather.hail > 1) tags.push('trickhail');
   }
-  if (style.gravity > 2 || (style.gravity > 1 && style.lowacc > 1)) {
+  if (style.gravity > 2 || (style.gravity > 1 && style.gravityMoves > 1)) {
     tags.push('gravity');
   }
   if (style.voltturn > 2 && style.batonpass < 2) tags.push('voltturn');
@@ -397,26 +398,26 @@ const LESSER_BOOSTING_ITEM = new Set([
 ]);
 
 const GREATER_BOOSTING_ITEM = new Set([
-  'firegem',     'watergem',     'electricgem', 'grassgem',    'icegem',      'fightinggem',
-  'posiongem',   'groundgem',    'groundgem',   'flyinggem',   'psychicgem',  'buggem',
-  'rockgem',     'ghostgem',     'darkgem',     'steelgem',    'normalgem',   'focussash',
-  'mentalherb',  'powerherb',    'whiteherb',   'absorbbulb',  'berserkgene', 'cellbattery',
-  'redcard',     'focussash',    'airballoon',  'ejectbutton', 'shedshell',   'aguavberry',
-  'apicotberry', 'aspearberry',  'babiriberry', 'chartiberry', 'cheriberry',  'chestoberry',
-  'chilanberry', 'chopleberry',  'cobaberry',   'custapberry', 'enigmaberry', 'figyberry',
-  'ganlonberry', 'habanberry',   'iapapaberry', 'jabocaberry', 'kasibberry',  'kebiaberry',
-  'lansatberry', 'leppaberry',   'liechiberry', 'lumberry',    'magoberry',   'micleberry',
-  'occaberry',   'oranberry',    'passhoberry', 'payapaberry', 'pechaberry',  'persimberry',
-  'petayaberry', 'rawstberry',   'rindoberry',  'rowapberry',  'salacberry',  'shucaberry',
-  'sitrusberry', 'starfberry',   'tangaberry',  'wacanberry',  'wikiberry',   'yacheberry',
-  'keeberry',    'marangaberry', 'roseliberry', 'snowball',    'choiceband',  'choicescarf',
-  'choicespecs', 'lifeorb',
+  'firegem',      'watergem',    'electricgem', 'grassgem',    'icegem',      'fightinggem',
+  'posiongem',    'groundgem',   'groundgem',   'flyinggem',   'psychicgem',  'buggem',
+  'rockgem',      'ghostgem',    'darkgem',     'steelgem',    'normalgem',   'focussash',
+  'mentalherb',   'powerherb',   'whiteherb',   'absorbbulb',  'berserkgene', 'cellbattery',
+  'focussash',    'airballoon',  'ejectbutton', 'shedshell',   'aguavberry',  'apicotberry',
+  'aspearberry',  'babiriberry', 'chartiberry', 'cheriberry',  'chestoberry', 'chilanberry',
+  'chopleberry',  'cobaberry',   'custapberry', 'enigmaberry', 'figyberry',   'ganlonberry',
+  'habanberry',   'iapapaberry', 'jabocaberry', 'kasibberry',  'kebiaberry',  'lansatberry',
+  'leppaberry',   'liechiberry', 'lumberry',    'magoberry',   'micleberry',  'occaberry',
+  'oranberry',    'passhoberry', 'payapaberry', 'pechaberry',  'persimberry', 'petayaberry',
+  'rawstberry',   'rindoberry',  'rowapberry',  'salacberry',  'shucaberry',  'sitrusberry',
+  'starfberry',   'tangaberry',  'wacanberry',  'wikiberry',   'yacheberry',  'keeberry',
+  'marangaberry', 'roseliberry', 'snowball',    'choiceband',  'choicescarf', 'choicespecs',
+  'lifeorb',
 ]);
 
 function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   const item = pokemon.item;
   if (['weaknesspolicy', 'lightclay'].includes(item)) return -1.0;
-  if (['redcard', 'rockyhelmet', 'eviolite'].includes(item)) return 0.5;
+  if (['rockyhelmet', 'eviolite'].includes(item)) return 0.5;
   if (item === 'toxicorb') {
     if (pokemon.ability === 'poisonheal') return 0.5;
     if (['toxicboost', 'guts', 'quickfeet'].includes(pokemon.ability)) {

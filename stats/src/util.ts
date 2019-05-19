@@ -1,7 +1,7 @@
 import {Data, ID, PokemonSet, Species, toID} from 'ps';
 
 export function getSpecies(name: string, format: string|Data) {
-  const species = Data.forFormat(format).getSpecies(name);
+  const species = dataForFormat(format).getSpecies(name);
   if (!species) throw new Error(`Unknown species '${name}'`);
   return species;
 }
@@ -13,11 +13,15 @@ export function getBaseSpecies(name: string, format: string|Data): Species {
       species;
 }
 
+export function dataForFormat(format?: string|Data) {
+  return Data.forFormat(/* FIXME format */);
+}
+
 const MEGA_RAYQUAZA_BANNED =
     new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 export function isMegaRayquazaAllowed(format?: string|Data) {
-  return !MEGA_RAYQUAZA_BANNED.has(Data.forFormat(format).format);
+  return !MEGA_RAYQUAZA_BANNED.has(dataForFormat(format).format);
 }
 
 export function isMega(species: Species) {
@@ -26,7 +30,7 @@ export function isMega(species: Species) {
 }
 
 export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|Data) {
-  const item = Data.forFormat(format).getItem(pokemon.item);
+  const item = dataForFormat(format).getItem(pokemon.item);
   if (!item) return undefined;
   const species = getSpecies(pokemon.species, format);
   if (item.name === 'Blue Orb' &&
@@ -38,11 +42,11 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|
     return {species: 'groudonprimal' as ID, ability: 'desolateland' as ID};
   }
   // FIXME: Ultra Burst?
-  if (!item.megaEvolves) return undefined;
-  const mega = getSpecies(item.megaEvolves, format);
-  if (species.species !== mega.species || species.species !== mega.baseSpecies) {
+  if (!item.megaEvolves || item.megaEvolves !== species.species || !item.megaStone) {
     return undefined;
   }
+  const mega = getSpecies(item.megaStone, format);
+  if (!mega) return undefined;
   return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
 }
 
@@ -84,7 +88,7 @@ const NON_SINGLES_FORMATS = new Set([
 ]);
 
 export function isNonSinglesFormat(format: string|Data) {
-  const f = Data.forFormat(format).format;
+  const f = dataForFormat(format).format;
   return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
@@ -110,7 +114,7 @@ const NON_6V6_FORMATS = new Set([
 ]);
 
 export function isNon6v6Format(format: string|Data) {
-  const f = Data.forFormat(format).format;
+  const f = dataForFormat(format).format;
   return NON_6V6_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
