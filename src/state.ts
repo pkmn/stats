@@ -1,6 +1,5 @@
 import {ID, PokemonSet} from 'ps';
 import * as stats from 'stats';
-import { ParsedUrlQuery } from 'querystring';
 
 // TODO: can avoid copying by just mutating directly
 
@@ -274,42 +273,45 @@ interface Battle {
   endType?: 'normal'|'forced'|'forfeit';
 }
 
+interface Player {
+  name: string;
+  rating?: stats.Rating;
+  outcome?: 'win'|'loss';
+  team: Team;
+}
+
+interface Team {
+  pokemon: stats.Pokemon[];
+  classification: {bias: number; stalliness: number; tags: string[];};
+}
+
+// NOTE: Serialized Battle is NOT a copy and shares memory.
 export function serializeBattle(battle: stats.Battle) {
   const obj: Partial<Battle> = {};
   obj.p1 = serializePlayer(battle.p1);
   obj.p2 = serializePlayer(battle.p2);
-  obj.matchups = battle.matchups.map(mu => mu.slice() as [string, string, number]);
+  obj.matchups = battle.matchups;
   obj.turns = battle.turns;
   obj.endType = battle.endType;
   return obj as Battle;
 }
 
-interface Player {
-  name: string;
-  rating?: Rating;
-  outcome?: 'win'|'loss';
-  team: Team;
-}
-
 function serializePlayer(player: stats.Player) {
   const obj: Partial<Player> = {};
-  
+  obj.name = player.name;
+  obj.rating = player.rating;
+  obj.outcome = player.outcome;
+  obj.team = serializeTeam(player.team);
   return obj as Player;
 }
 
-interface Team {
-  pokemon: Pokemon[];
-  classification: {bias: number; stalliness: number; tags: string[];};
-}
-
-interface Pokemon {
-  species: string;
-  set: PokemonSet<string>;
-  turnsOut: number;
-  kos: number;
-}
-
-interface Rating {
-  rpr: number;
-  rprd: number;
+function serializeTeam(team: stats.Team) {
+  const obj: Partial<Team> = {};
+  obj.pokemon = team.pokemon;
+  obj.classification = {
+    bias: team.classification.bias,
+    stalliness: team.classification.stalliness,
+    tags: Array.from(team.classification.tags),
+  };
+  return obj as Team;
 }
