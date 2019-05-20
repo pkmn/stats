@@ -21,7 +21,7 @@ const MEGA_RAYQUAZA_BANNED =
     new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 export function isMegaRayquazaAllowed(format?: string|Data) {
-  // NOTE: We deliberatly use Data.forFormat instead of dataForFormat here
+  // NOTE: We deliberately use Data.forFormat instead of dataForFormat here
   return !MEGA_RAYQUAZA_BANNED.has(Data.forFormat(format).format);
 }
 
