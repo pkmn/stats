@@ -125,10 +125,12 @@ function getWeights(player: Player, cutoffs: number[]): [number[], boolean] {
   let save = false;
   let rpr = 1500;
   let rprd = 130;
-  if (player.rating && player.rating.rprd !== 0) {
-    rpr = player.rating.rpr;
-    rprd = player.rating.rprd;
-    save = true;
+  if (player.rating) {
+    if (player.rating.rprd !== 0) {
+      rpr = player.rating.rpr;
+      rprd = player.rating.rprd;
+      save = true;
+    }
   } else if (player.outcome) {
     rpr = player.outcome === 'win' ? 1540.16061434 : 1459.83938566;
     rprd = 122.858308077;
