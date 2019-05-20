@@ -200,8 +200,13 @@ function updateStats(
 
     if (!short) {
       p.usage.raw++;
-      if (pokemon.turnsOut > 0) p.usage.real++;
+      stats.usage.raw++;
+      if (pokemon.turnsOut > 0) {
+        p.usage.real++;
+        stats.usage.real++;
+      }
       p.usage.weighted += weights.s;
+      stats.usage.weighted += weights.s;
 
       for (const tag of player.team.classification.tags) {
         stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weights.s);

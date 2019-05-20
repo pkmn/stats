@@ -38,16 +38,17 @@ export const Reports = new class {
     }
 
     let s = ` Total battles: ${battles}\n`;
-    const avg = battles ? Math.round(stats.usage.weighted / battles / 12) : 0;
-    s += ` Avg. weight/team: ${avg}\n`;
+    const avg = battles ? Math.round((stats.usage.weighted / battles / 12) * 1e3) / 1e3 : 0;
+    const avgd = avg === Math.floor(avg) ? `${avg.toFixed(1)}` : `${avg}`;
+    s += ` Avg. weight/team: ${avgd}\n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
 
     const total = {
-      raw: Math.max(1.0, stats.usage.raw) * 6.0,
-      real: Math.max(1.0, stats.usage.real) * 6.0,
-      weighted: Math.max(1.0, stats.usage.weighted) * 6.0,
+      raw: Math.max(1.0, stats.usage.raw),
+      real: Math.max(1.0, stats.usage.real),
+      weighted: Math.max(1.0, stats.usage.weighted),
     };
 
     for (const [i, entry] of sorted.entries()) {
@@ -57,11 +58,11 @@ export const Reports = new class {
 
       const rank = (i + 1).toFixed().padEnd(4);
       const poke = util.getSpecies(species, format).species.padEnd(18);
-      const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
+      const use = (100 * usage.weighted / total.weighted * 6).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
-      const rawp = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
+      const rawp = (100 * usage.raw / total.raw * 6).toFixed(3).padStart(6);
       const real = usage.real.toFixed().padEnd(6);
-      const realp = (100 * usage.real / total.real).toFixed(3).padStart(6);
+      const realp = (100 * usage.real / total.real * 6).toFixed(3).padStart(6);
       s += ` | ${rank} | ${poke} | ${use}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
     }
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
