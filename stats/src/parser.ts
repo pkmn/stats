@@ -264,7 +264,7 @@ export const Parser = new class {
             flags.hazard = true;
           }
 
-          // FIXME: in the replace case we need to go back and fix the previously affected matchups!
+          // TODO: in the replace case we need to go back and fix the previously affected matchups!
           active[side] = identify(name, side, battle, idents, format);
           break;
         }
@@ -276,7 +276,8 @@ export const Parser = new class {
 
   canonicalizeTeam(team: Array<PokemonSet<string>>, format: string|Data): Array<PokemonSet<ID>> {
     const data = util.dataForFormat(format);
-    const mray = util.isMegaRayquazaAllowed(data);
+    // FIXME: we pass the correct format here instead of the using current gen OU.
+    const mray = util.isMegaRayquazaAllowed(format);
     for (const pokemon of team) {
       const item = pokemon.item && data.getItem(pokemon.item);
       pokemon.item = item ? item.id : 'nothing';

@@ -32,7 +32,6 @@
     "pretest": "npm run compile",
     "posttest": "npm run check",
     "postinstall": "subpkg install"
-
   },
   "subPackages": [
     "stats"

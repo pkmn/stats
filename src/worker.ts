@@ -40,7 +40,7 @@ async function process(formats: main.FormatData[], options: Options) {
   const writes: Array<Promise<void>> = [];
   for (const {format, size, files} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
-    const data = Data.forFormat(/* FIXME format */);
+    const data = Data.forFormat(format);
     const stats = Stats.create();
     // TODO: chunk the number of files we read instead of all at once
     const logs: Array<Promise<void>> = [];
@@ -69,7 +69,7 @@ async function processLog(
     const raw = JSON.parse(await fs.readFile(file, 'utf8'));
     // TODO: save checkpoints/IR (by chunk)
     const battle = Parser.parse(raw, data);
-  
+
     console.log(file);
     // console.log(JSON.stringify(state.serializeBattle(battle), null, 2));  // DEBUG
 

@@ -314,7 +314,7 @@ function serializePlayer(player: stats.Player) {
 
 function serializeTeam(team: stats.Team) {
   const obj: Partial<Team> = {};
-  obj.pokemon = serializePokemon(team.pokemon); // DEBUG
+  obj.pokemon = serializePokemon(team.pokemon);  // DEBUG
   obj.classification = {
     bias: team.classification.bias,
     stalliness: team.classification.stalliness,
@@ -323,7 +323,7 @@ function serializeTeam(team: stats.Team) {
   return obj as Team;
 }
 
- // DEBUG
+// DEBUG
 function serializePokemon(pokemon: stats.Pokemon[]) {
   const objs: Pokemon[] = [];
   for (const p of pokemon) {
