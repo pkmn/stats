@@ -5,6 +5,7 @@ import {workerData} from 'worker_threads';
 
 import * as fs from './fs';
 import * as main from './main';
+import * as state from './state';
 
 const POPULAR = new Set([
   'ou',
@@ -68,8 +69,13 @@ async function processLog(
     const raw = JSON.parse(await fs.readFile(file, 'utf8'));
     // TODO: save checkpoints/IR (by chunk)
     const battle = Parser.parse(raw, data);
+  
+    console.log(file);
+    // console.log(JSON.stringify(state.serializeBattle(battle), null, 2));  // DEBUG
+
     const tags = format === 'gen7monotype' ? monotypes(data) : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);
+
   } catch (err) {
     console.error(`${file}: ${err.message}`);
   }

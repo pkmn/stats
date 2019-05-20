@@ -281,8 +281,15 @@ interface Player {
 }
 
 interface Team {
-  pokemon: stats.Pokemon[];
+  pokemon: Pokemon[];
   classification: {bias: number; stalliness: number; tags: string[];};
+}
+
+// DEBUG
+export interface Pokemon {
+  species: ID;
+  turnsOut: number;
+  kos: number;
 }
 
 // NOTE: Serialized Battle is NOT a copy and shares memory.
@@ -307,11 +314,24 @@ function serializePlayer(player: stats.Player) {
 
 function serializeTeam(team: stats.Team) {
   const obj: Partial<Team> = {};
-  obj.pokemon = team.pokemon;
+  obj.pokemon = serializePokemon(team.pokemon); // DEBUG
   obj.classification = {
     bias: team.classification.bias,
     stalliness: team.classification.stalliness,
     tags: Array.from(team.classification.tags),
   };
   return obj as Team;
+}
+
+ // DEBUG
+function serializePokemon(pokemon: stats.Pokemon[]) {
+  const objs: Pokemon[] = [];
+  for (const p of pokemon) {
+    objs.push({
+      species: p.species,
+      turnsOut: p.turnsOut,
+      kos: p.kos,
+    });
+  }
+  return objs;
 }

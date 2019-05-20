@@ -79,6 +79,7 @@ export const Stats = new class {
           s = newStatistics();
           stats.total.set(cutoff, s);
         }
+        console.log(cutoff, player.name, weight);
         updateStats(format, player, battle, weight, gxe, save, short, s);
 
         for (const tag of tags) {

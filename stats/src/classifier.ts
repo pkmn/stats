@@ -93,6 +93,7 @@ export const Classifier = new class {
     pokemon.species = originalSpecies;
     pokemon.ability = originalAbility;
 
+    // console.log(species.id, {bias, stalliness}); // DEBUG
     return {bias, stalliness};
   }
 };
@@ -103,9 +104,13 @@ const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
 function classifyForme(pokemon: PokemonSet<ID>, format: string|Data) {
   let stalliness = baseStalliness(pokemon, format);
+  // console.log(pokemon.species, stalliness); // DEBUG
   stalliness += abilityStallinessModifier(pokemon);
+  // console.log('after ability', stalliness);
   stalliness += itemStallinessModifier(pokemon);
+  // console.log('after item', stalliness);
   stalliness += movesStallinessModifier(pokemon);
+  // console.log('after moves', stalliness);
 
   if (TRAPPING_ABILITIES.has(pokemon.ability)) {
     stalliness -= 1.0;
