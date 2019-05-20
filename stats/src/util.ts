@@ -50,6 +50,12 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|
   return {species: toID(mega.species), ability: toID(mega.abilities['0'])};
 }
 
+export function revertFormes(id: ID, format: string|Data) {
+  const species = getSpecies(id, format);
+  if (!species.forme || isMega(species)) return id;
+  return getBaseSpecies(species.id, format).id;
+}
+
 const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles',
   'battlespotspecial7',
