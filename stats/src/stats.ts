@@ -62,7 +62,6 @@ export const Stats = new class {
     const singles = !util.isNonSinglesFormat(format);
     const short =
         !util.isNon6v6Format(format) && (battle.turns < 2 || (battle.turns < 3 && singles));
-    if (!short) stats.battles++;
 
     const weights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
@@ -99,6 +98,7 @@ export const Stats = new class {
       }
     }
 
+    let leads = true;
     if (singles) {
       const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
       for (const [i, weight] of mins.entries()) {
@@ -106,15 +106,17 @@ export const Stats = new class {
         const cutoff = cutoffs[i];
         const s = stats.total.get(cutoff)!;
         updateEncounters(s, battle.matchups, weight);
-        if (!short) updateLeads(s, battle, pw);
+        if (!short) leads = updateLeads(s, battle, pw);
 
         for (const tag of tags) {
           const s = stats.tags.get(tag)!.get(cutoff)!;
           updateEncounters(s, battle.matchups, weight);
-          if (!short) updateLeads(s, battle, pw);
+          if (!short) leads = updateLeads(s, battle, pw);
         }
       }
     }
+
+    if (!short && leads) stats.battles++;
 
     return stats;
   }
@@ -311,7 +313,7 @@ function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2
   }
 
   // Possible in the case of a 1v1 or similar battle which was forfeited before starting
-  if (leads.p1 === 'empty' || leads.p2 === 'empty') return;
+  if (leads.p1 === 'empty' || leads.p2 === 'empty') return false;
 
   for (const side of sides) {
     const usage = stats.pokemon.get(leads[side])!.lead;
@@ -324,6 +326,8 @@ function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2
     usage.weighted += weights[side];
     stats.leads.weighted += weights[side];
   }
+
+  return true;
 }
 
 function newStatistics() {

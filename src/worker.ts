@@ -44,7 +44,7 @@ async function process(formats: main.FormatData[], options: Options) {
     // TODO: chunk the number of files we read instead of all at once
     const logs: Array<Promise<void>> = [];
     for (const file of files) {
-      logs.push(processLog(format, data, file, cutoffs, stats));
+      logs.push(processLog(data, file, cutoffs, stats));
     }
     await Promise.all(logs);
 
@@ -62,13 +62,12 @@ async function process(formats: main.FormatData[], options: Options) {
   await Promise.all(writes);
 }
 
-async function processLog(
-    format: ID, data: Data, file: string, cutoffs: number[], stats: TaggedStatistics) {
+async function processLog(data: Data, file: string, cutoffs: number[], stats: TaggedStatistics) {
   try {
     const raw = JSON.parse(await fs.readFile(file, 'utf8'));
     // TODO: save checkpoints/IR (by chunk)
     const battle = Parser.parse(raw, data);
-    const tags = format === 'gen7monotype' ? monotypes(data) : undefined;
+    const tags = data.format === 'gen7monotype' ? monotypes(data) : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);
   } catch (err) {
     console.error(`${file}: ${err.message}`);

@@ -21,7 +21,6 @@ const MEGA_RAYQUAZA_BANNED =
     new Set(['ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers']);
 
 export function isMegaRayquazaAllowed(format?: string|Data) {
-  // NOTE: We deliberately use Data.forFormat instead of dataForFormat here
   return !MEGA_RAYQUAZA_BANNED.has(Data.forFormat(format).format);
 }
 
@@ -89,7 +88,7 @@ const NON_SINGLES_FORMATS = new Set([
 ]);
 
 export function isNonSinglesFormat(format: string|Data) {
-  const f = dataForFormat(format).format;
+  const f = Data.forFormat(format).format;
   return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
@@ -115,7 +114,7 @@ const NON_6V6_FORMATS = new Set([
 ]);
 
 export function isNon6v6Format(format: string|Data) {
-  const f = dataForFormat(format).format;
+  const f = Data.forFormat(format).format;
   return NON_6V6_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
