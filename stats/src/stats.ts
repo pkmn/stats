@@ -66,7 +66,7 @@ export const Stats = new class {
 
     const weights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
-      const [w, save] = getWeights(battle.p1, cutoffs);
+      const [w, save] = getWeights(player, cutoffs);
       const gxe = player.rating && player.rating.rprd ?
           Math.round(100 * util.victoryChance(player.rating.rpr, player.rating.rprd, 1500, 130)) :
           undefined;
