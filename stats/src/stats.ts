@@ -66,20 +66,20 @@ export const Stats = new class {
 
     const weights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
-      const [w, save] = getWeights(player, cutoffs);
+      const [ws, save] = getWeights(player, cutoffs);
       const gxe = player.rating && player.rating.rprd ?
           Math.round(100 * util.victoryChance(player.rating.rpr, player.rating.rprd, 1500, 130)) :
           undefined;
-      weights.push(w);
+      weights.push(ws.map(w => w.s));
       for (const [i, cutoff] of cutoffs.entries()) {
-        const weight = w[i];
+        const wsm = ws[i];
 
         let s = stats.total.get(cutoff);
         if (!s) {
           s = newStatistics();
           stats.total.set(cutoff, s);
         }
-        updateStats(format, player, battle, weight, gxe, save, short, s);
+        updateStats(format, player, battle, wsm, gxe, save, short, s);
 
         for (const tag of tags) {
           let t = stats.tags.get(tag);
@@ -93,7 +93,7 @@ export const Stats = new class {
             t.set(cutoff, s);
           }
           if (player.team.classification.tags.has(tag)) {
-            updateStats(format, player, battle, weight, gxe, save, short, s, tag);
+            updateStats(format, player, battle, wsm, gxe, save, short, s, tag);
           }
         }
       }
@@ -120,31 +120,38 @@ export const Stats = new class {
   }
 };
 
-function getWeights(player: Player, cutoffs: number[]): [number[], boolean] {
+function getWeights(player: Player, cutoffs: number[]): [Array<{s: number, m: number}>, boolean] {
   let save = false;
   let rpr = 1500;
   let rprd = 130;
-  if (player.rating) {
-    if (player.rating.rprd !== 0) {
-      rpr = player.rating.rpr;
-      rprd = player.rating.rprd;
-      save = true;
-    }
+  // FIXME: StatCounter and batchMovesetReader treat rprd === 0 differently :(
+  const rprd0 = !player.rating || player.rating.rprd === 0;
+
+  if (!rprd0) {
+    rpr = player.rating!.rpr;
+    rprd = player.rating!.rprd;
+    save = true;
   } else if (player.outcome) {
     rpr = player.outcome === 'win' ? 1540.16061434 : 1459.83938566;
     rprd = 122.858308077;
   }
 
-  const w = [];
+  const weights = [];
   for (const cutoff of cutoffs) {
-    w.push(util.weighting(rpr, rprd, cutoff));
+    const w = util.weighting(rpr, rprd, cutoff);
+    if (!rprd0) {
+      weights.push({s: w, m: util.weighting(1500, 130, cutoff)});
+    } else {
+      weights.push({s: w, m: w});
+    }
   }
-  return [w, save];
+
+  return [weights, save];
 }
 
 function updateStats(
-    format: string|Data, player: Player, battle: Battle, weight: number, gxe: number|undefined,
-    save: boolean, short: boolean, stats: Statistics, tag?: ID) {
+    format: string|Data, player: Player, battle: Battle, weights: {s: number, m: number},
+    gxe: number|undefined, save: boolean, short: boolean, stats: Statistics, tag?: ID) {
   const data = util.dataForFormat(format);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
     if (pokemon.species === 'empty') continue;
@@ -163,43 +170,43 @@ function updateStats(
     }
 
     if (save) {
-      p.weights.sum += weight;
+      p.weights.sum += weights.m;
       p.weights.count++;
     }
 
     const ability = set.ability === 'unknown' ? 'illuminate' as ID : set.ability;
     const a = p.abilities.get(ability);
-    p.abilities.set(ability, (a || 0) + weight);
+    p.abilities.set(ability, (a || 0) + weights.m);
 
     const i = p.items.get(set.item);
-    p.items.set(set.item, (i || 0) + weight);
+    p.items.set(set.item, (i || 0) + weights.m);
 
     const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
     const nature = data.getNature(NEUTRAL.has(set.nature) ? 'hardy' as ID : set.nature)!;
     const spread = getSpread(nature, util.getSpecies(pokemon.species, data).baseStats, pokemon.set);
     const s = p.spreads.get(spread);
-    p.spreads.set(spread, (s || 0) + weight);
+    p.spreads.set(spread, (s || 0) + weights.m);
 
     for (const move of set.moves) {
       // NOTE: We're OK with triple counting 'nothing'
       const m = p.moves.get(move);
-      p.moves.set(move, (m || 0) + weight);
+      p.moves.set(move, (m || 0) + weights.m);
     }
 
     const h = p.happinesses.get(set.happiness!);
-    p.happinesses.set(set.happiness!, (h || 0) + weight);
+    p.happinesses.set(set.happiness!, (h || 0) + weights.m);
 
     if (!short) {
       p.usage.raw++;
       if (pokemon.turnsOut > 0) p.usage.real++;
-      p.usage.weighted += weight;
+      p.usage.weighted += weights.s;
 
       for (const tag of player.team.classification.tags) {
-        stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weight);
-        stats.metagame.stalliness.push([player.team.classification.stalliness, weight]);
+        stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weights.s);
+        stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
       }
 
-      updateTeammates(player.team.pokemon, index, pokemon.species, p.teammates, stats, weight);
+      updateTeammates(player.team.pokemon, index, pokemon.species, p.teammates, stats, weights.s);
     }
   }
 }
