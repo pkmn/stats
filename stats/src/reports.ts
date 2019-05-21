@@ -57,7 +57,7 @@ export const Reports = new class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = util.getSpecies(species, format).species.padEnd(18);
+      const poke = displaySpecies(species, format).padEnd(18);
       const use = (100 * usage.weighted / total.weighted * 6).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const rawp = (100 * usage.raw / total.raw * 6).toFixed(3).padStart(6);
@@ -89,7 +89,7 @@ export const Reports = new class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = util.getSpecies(species, format).species.padEnd(18);
+      const poke = displaySpecies(species, format).padEnd(18);
       const use = (100 * usage.weighted / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = (100 * usage.raw / total.raw).toFixed(3).padStart(6);
@@ -128,7 +128,7 @@ export const Reports = new class {
       const p = stats.pokemon.get(species)!;
 
       s += sep;
-      s += ` | ${util.getSpecies(species, data).species}`.padEnd(WIDTH + 2) + '| \n';
+      s += ` | ${displaySpecies(species, data)}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
       const avg =
@@ -242,7 +242,7 @@ export const Reports = new class {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
       const m: any = Object.assign({}, moveset);
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
-      data[util.getSpecies(species, d).species] = m;
+      data[displaySpecies(species, d)] = m;
     }
 
     return JSON.stringify({info, data});
@@ -376,7 +376,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
       'Moves': toObject(pokemon.moves),
       'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),  // TODO empty
       'Checks and Counters':
-          getChecksAndCounters(pokemon.encounters, s => util.getSpecies(species, data).species),
+          getChecksAndCounters(pokemon.encounters, s => displaySpecies(species, data)),
     });
   }
 
@@ -455,4 +455,9 @@ function parseUsageReport(report: string) {
   }
 
   return {usage, battles};
+}
+
+function displaySpecies(name: string, format: string|Data) {
+  const species = util.getSpecies(name, format).species;
+  return species.startsWith('Nidoran') ? species.replace('-', '') : species;
 }
