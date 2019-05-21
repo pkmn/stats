@@ -448,22 +448,6 @@ function round(v: number) {
   return Math.round(v * PRECISION) / PRECISION;
 }
 
-function parseUsageReport(report: string) {
-  const usage: Map<ID, number> = new Map();
-  const lines = report.split('\n');
-  const battles = Number(lines[0].slice(16));
-
-  for (let i = 5; i < lines.length; i++) {
-    const line = lines[i].split('|');
-    if (line.length < 3) break;
-    const name = line[2].slice(1).trim();
-    const pct = Number(line[3].slice(1, line[3].indexOf('%'))) / 100;
-    usage.set(toID(name), pct);
-  }
-
-  return {usage, battles};
-}
-
 function displaySpecies(name: string, format: string|Data) {
   const species = util.getSpecies(name, format).species;
   // FIXME: remove bad display of Nidoran-M / Nidoran-F

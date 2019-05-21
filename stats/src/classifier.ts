@@ -165,8 +165,8 @@ function calcFormeStats(pokemon: PokemonSet<ID>, format: string|Data) {
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: Stat;
   for (stat in stats) {
-    stats[stat] =
-        calcStat(stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
+    stats[stat] = calcStat(
+        stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
   }
   return stats;
 }
