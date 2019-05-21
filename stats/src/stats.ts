@@ -126,7 +126,7 @@ function getWeights(player: Player, cutoffs: number[]): [Array<{s: number, m: nu
   let save = false;
   let rpr = 1500;
   let rprd = 130;
-  // FIXME: StatCounter and batchMovesetReader treat rprd === 0 differently :(
+  // FIXME: StatCounter and batchMovesetCounter treat rprd === 0 differently :(
   const rprd0 = !player.rating || player.rating.rprd === 0;
 
   if (!rprd0) {
@@ -193,7 +193,8 @@ function updateStats(
     p.items.set(set.item, (i || 0) + weights.m);
 
     const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
-    const nature = data.getNature(NEUTRAL.has(set.nature) ? 'hardy' as ID : set.nature)!;
+    // FIXME: batchMovesetCounter is actually outputing 'Serious' instead of 'Hardy'...
+    const nature = data.getNature(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
     const spread = getSpread(nature, util.getSpecies(pokemon.species, data).baseStats, pokemon.set);
     const s = p.spreads.get(spread);
     p.spreads.set(spread, (s || 0) + weights.m);

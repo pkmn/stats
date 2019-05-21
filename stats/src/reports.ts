@@ -466,5 +466,6 @@ function parseUsageReport(report: string) {
 
 function displaySpecies(name: string, format: string|Data) {
   const species = util.getSpecies(name, format).species;
+  // FIXME: remove bad display of Nidoran-M / Nidoran-F
   return species.startsWith('Nidoran') ? species.replace('-', '') : species;
 }
