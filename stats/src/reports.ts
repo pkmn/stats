@@ -256,8 +256,8 @@ export const Reports = new class {
         Array.from(metagame.tags.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     let s = '';
     for (const [tag, weight] of tags) {
-      s += ` ${tag}`.padEnd(30, '.');
-      s += `${(weight / W).toFixed(5).padStart(8)}%\n`;
+      s += ` ${tag}`.padEnd(31, '.');
+      s += `${(100 * weight / W).toFixed(5).padStart(8)}%\n`;
     }
     s += '\n';
 
@@ -297,7 +297,7 @@ export const Reports = new class {
     // }
     let j = 0;
     for (let i = start; i < stalliness.length; i++) {
-      while (stalliness[i][0] > histogram[0][0] + binSize * (j * 0.5)) j++;
+      while (stalliness[i][0] > histogram[0][0] + binSize * (j + 0.5)) j++;
       if (j >= nbins) break;
       histogram[j][1] = histogram[j][1] + stalliness[i][1];
     }
@@ -308,7 +308,8 @@ export const Reports = new class {
 
     // Maximum number of blocks to go across
     const MAX_BLOCKS = 30;
-    const blockSize = Math.floor(max / MAX_BLOCKS);
+    const blockSize = max / MAX_BLOCKS;
+
 
     if (blockSize <= 0) return s;
 
@@ -322,7 +323,7 @@ export const Reports = new class {
     s += ` Stalliness (mean: ${(x / y).toFixed(3).padStart(6)})\n`;
     for (const h of histogram) {
       let line = '     |';
-      if (h[0] % (2 * binSize) < Math.floor(binSize / 2)) {
+      if (fmod(h[0], 2 * binSize) < binSize / 2) {
         line = ' ';
         if (h[0] > 0) {
           line += '+';
@@ -334,12 +335,18 @@ export const Reports = new class {
       s += line + '#'.repeat(Math.floor((h[1] + blockSize / 2) / blockSize)) + '\n';
     }
     s += ` more negative = more offensive, more positive = more stall\n`;
-    s += ` one # = ${(100.0 * blockSize / y).toFixed(2).padStart(5)}%`;
+    s += ` one # = ${(100.0 * blockSize / y).toFixed(2).padStart(5)}%\n`;
     return s;
   }
 
   updateReport() {}  // TODO rises and drops
 };
+
+function fmod(a: number, b: number, f = 1e3) {
+  a = Math.round(a * f) / f;
+  b = Math.round(b * f) / f;
+  return (Math.abs(a * f) % (b * f)) / f;
+}
 
 function toMovesetStatistics(format: ID, stats: Statistics) {
   const sorted = Array.from(stats.pokemon.entries());

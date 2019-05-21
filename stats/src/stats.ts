@@ -162,8 +162,8 @@ function updateStats(
 
       for (const tag of player.team.classification.tags) {
         stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weights.s);
-        stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
       }
+      stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
     }
     if (pokemon.species === 'empty') continue;
     const set = pokemon.set;

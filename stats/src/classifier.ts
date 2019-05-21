@@ -11,7 +11,7 @@ export const Classifier = new class {
     for (const pokemon of team) {
       const {bias, stalliness} = this.classifyPokemon(pokemon, format);
       teamBias += bias;
-      teamStalliness.push(stalliness - LOG3_LOG2);
+      teamStalliness.push(stalliness);
     }
 
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
@@ -129,6 +129,7 @@ function classifyForme(pokemon: PokemonSet<ID>, format: string|Data) {
   const bias =
       pokemon.evs.atk + pokemon.evs.spa - pokemon.evs.hp - pokemon.evs.def - pokemon.evs.spd;
 
+  stalliness -= LOG3_LOG2;
   return {bias, stalliness};
 }
 
@@ -165,7 +166,7 @@ function calcFormeStats(pokemon: PokemonSet<ID>, format: string|Data) {
   let stat: Stat;
   for (stat in stats) {
     stats[stat] =
-        calcStat(stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], 100, nature);
+        calcStat(stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
   }
   return stats;
 }
@@ -345,7 +346,7 @@ function tag(team: Array<PokemonSet<ID>>, format: string|Data) {
     if (trickroom) tags.push('trickfear');
   }
   if (style.choice > 3) tags.push('choice');
-  if (style.choice > 1) tags.push('swagplay');
+  if (style.swagplay > 1) tags.push('swagplay');
 
   if (possibleTypes && possibleTypes.length) {
     tags.push('monotype');
