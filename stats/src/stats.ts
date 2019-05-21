@@ -156,6 +156,15 @@ function updateStats(
     gxe: number|undefined, save: boolean, short: boolean, stats: Statistics, tag?: ID) {
   const data = util.dataForFormat(format);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
+    if (!short) {
+      stats.usage.raw++;
+      stats.usage.weighted += weights.s;
+
+      for (const tag of player.team.classification.tags) {
+        stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weights.s);
+        stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
+      }
+    }
     if (pokemon.species === 'empty') continue;
     const set = pokemon.set;
 
@@ -200,18 +209,11 @@ function updateStats(
 
     if (!short) {
       p.usage.raw++;
-      stats.usage.raw++;
       if (pokemon.turnsOut > 0) {
         p.usage.real++;
         stats.usage.real++;
       }
       p.usage.weighted += weights.s;
-      stats.usage.weighted += weights.s;
-
-      for (const tag of player.team.classification.tags) {
-        stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weights.s);
-        stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
-      }
 
       updateTeammates(player.team.pokemon, index, pokemon.species, p.teammates, stats, weights.s);
     }
