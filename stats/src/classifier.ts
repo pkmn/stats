@@ -64,7 +64,14 @@ export const Classifier = new class {
     const originalAbility = pokemon.ability;
 
     const species = util.getSpecies(pokemon.species, format);
-    if (util.isMega(species)) pokemon.species = toID(species.baseSpecies);
+    let mega: {species: ID, ability: ID}|undefined;
+    if (util.isMega(species)) {
+      mega = {
+        species: toID(species.species),
+        ability: toID(species.abilities['0']),
+      };
+      pokemon.species = toID(species.baseSpecies);
+    }
 
     let {bias, stalliness} = classifyForme(pokemon, format);
     // FIXME: Intended behavior, but not used for compatibility:
@@ -82,7 +89,6 @@ export const Classifier = new class {
     //   pokemon.ability = 'deltastream';
     //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
     // } else {
-    const mega = util.getMegaEvolution(pokemon, format);
     if (mega) {
       // pokemon.species = mega.species; FIXME see above
       pokemon.ability = mega.ability;
