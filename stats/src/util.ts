@@ -1,4 +1,13 @@
 import {Data, ID, PokemonSet, Species, toID} from 'ps';
+import * as aliases from './aliases.json';
+
+const ALIASES: Readonly<{[id: string]: string}> = aliases;
+
+export function fromAlias(name: string) {
+  const id = toID(name);
+  const a = ALIASES[id];
+  return a ? a as ID : id;
+}
 
 export function getSpecies(name: string, format: string|Data) {
   const species = dataForFormat(format).getSpecies(name);

@@ -276,7 +276,6 @@ export const Parser = new class {
 
   canonicalizeTeam(team: Array<PokemonSet<string>>, format: string|Data): Array<PokemonSet<ID>> {
     const data = util.dataForFormat(format);
-    // FIXME: we pass the correct format here instead of the using current gen OU.
     const mray = util.isMegaRayquazaAllowed(format);
     for (const pokemon of team) {
       const item = pokemon.item && data.getItem(pokemon.item);
@@ -308,7 +307,7 @@ export const Parser = new class {
       pokemon.level = pokemon.forcedLevel || pokemon.level || 100;
       const ability = pokemon.ability && data.getAbility(pokemon.ability);
       pokemon.ability = ability ? ability.id : 'unknown';
-      pokemon.species = util.getSpecies(pokemon.species || pokemon.name, data).id;
+      pokemon.species = util.getSpecies(util.fromAlias(pokemon.species || pokemon.name), data).id;
       if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
         pokemon.species = 'rayquazamega';
         pokemon.ability = 'deltastream';
@@ -363,19 +362,15 @@ function identify(
     }
   } else {
     // Maybe its a pokemon name (or possibly an alias)?
-    let species = util.getSpecies(name, format);
-    let index = team.findIndex(p => p.species === species!.id);
+    let species = util.getSpecies(util.fromAlias(name), format);
+    let index = team.findIndex(p => p.species === species.id);
     if (index !== -1) return index as Slot;
 
     // Try undoing a forme change to see if that solves things?
     if (util.isMega(species) || FORMES.has(species.id)) {
       species = util.getBaseSpecies(species.id, format);
-      index = team.findIndex(p => p.species === species.id);
     }
-    if (index !== -1) return index as Slot;
-
-    // Maybe the pokemon hasn't changed forme yet?
-    index = team.findIndex(p => util.getBaseSpecies(p.species, format).id === species!.id);
+    index = team.findIndex(p => p.species.startsWith(species.id));
     if (index !== -1) return index as Slot;
   }
 
