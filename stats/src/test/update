@@ -2,5 +2,5 @@
 
 require('source-map-support').install();
 const integration = require('../../build/test/integration');
-const dest = process.argv[2] || 'reports';
-integration.update(integration.process(), dest); // Update golden files
+// tslint:disable-next-line: no-floating-promises
+(async () =>integration.update(await integration.process()))();  // Update golden files
