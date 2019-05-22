@@ -4,9 +4,7 @@ import * as aliases from './aliases.json';
 const ALIASES: Readonly<{[id: string]: string}> = aliases;
 
 export function fromAlias(name: string) {
-  const id = toID(name);
-  const a = ALIASES[id];
-  return a ? a as ID : id;
+  return ALIASES[toID(name)] || name;
 }
 
 export function getSpecies(name: string, format: string|Data) {

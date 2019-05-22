@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const stats = require('stats');
+require('source-map-support').install();
+
+if (process.argv.length < 3 || process.argv.length > 5) {
+    console.error('updates path/to/month1 <path/to/month2> <path/to/month3>');
+    process.exit(1);
+}
+
+stats.Reports.tierUpdateReport(process.argv.slice(2), (month, format) => {
+    const baseline = format.startsWith('gen7ou') ? 1695 : 1630;
+    try {
+        return fs.readSync(path.resolve(`${month}, ${format}-${baseline}.txt`), 'utf8');
+    } catch (err) {
+        if (err.code === 'ENOENT') return undefined;
+        throw err;
+    }
+});
