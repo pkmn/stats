@@ -11,11 +11,12 @@ if (process.argv.length < 3 || process.argv.length > 5) {
 }
 
 process.stdout.write(stats.Reports.tierUpdateReport(process.argv.slice(2), (month, format) => {
-    const baseline = format.startsWith('gen7ou') ? 1695 : 1630;
-    try {
-        return fs.readSync(path.resolve(`${month}, ${format}-${baseline}.txt`), 'utf8');
-    } catch (err) {
-        if (err.code === 'ENOENT') return undefined;
-        throw err;
-    }
+  const baseline = format.startsWith('gen7ou') ? 1695 : 1630;
+  const file = path.resolve(`${month}, ${format}-${baseline}.txt`);
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, 'utf8', (err, data) => {
+      if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
+      resolve(data);
+    });
+  });
 }));

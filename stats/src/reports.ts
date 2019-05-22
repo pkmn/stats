@@ -356,22 +356,26 @@ export const Reports = new class {
     return s;
   }
 
-  tierUpdateReport(
+  async tierUpdateReport(
       months: [string]|[string, string]|[string, string, string],
-      read: (month: string, format: string) => string | undefined) {
+      read: (month: string, format: string) => Promise<string | undefined>) {
     const data = Data.forFormat();
 
     const pokemon: Map<ID, UsageTiers<number>> = new Map();
     for (const [i, month] of months.entries()) {
       const weight = WEIGHTS[months.length - 1][i];
       for (const tier of USAGE_TIERS) {
+        const reports: Array<Promise<[string, [Map<ID, number>, number]|undefined]>> = [];
+        for (const suffix of SUFFIXES) {
+          reports.push(maybeParseUsageReport(read(month, `gen7${toID(tier)}${suffix}`)).then(r => [suffix, r]));
+        }
+     
         const n: {[suffix: string]: number} = {};
         const u: {[suffix: string]: Map<ID, number>} = {};
         let ntot = 0;
-        for (const suffix of SUFFIXES) {
-          const report = read(month, `gen7${toID(tier)}${suffix}`);
+        for (const [suffix, report] of await Promise.all(reports)) {
           if (report) {
-            [u[suffix], n[suffix]] = parseUsageReport(report);
+            [u[suffix], n[suffix]] = report;
             ntot += n[suffix];
           }
         }
@@ -659,6 +663,11 @@ function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, data: Data) {
   s += ' + ---- + ------------------ + ------- + \n';
   s += '[/CODE][/HIDE]\n';
   return s;
+}
+
+async function maybeParseUsageReport(report: Promise<string|undefined>) {
+  const r = await report;
+  return r ? parseUsageReport(r) : undefined;
 }
 
 function parseUsageReport(report: string): [Map<ID, number>, number] {
