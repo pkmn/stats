@@ -7,9 +7,9 @@ import * as stats from '../index';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 const MONTHS: [string, string, string] = [
-  path.resolve(TESTDATA, 'stats', '2018-04'),
-  path.resolve(TESTDATA, 'stats', '2018-05'),
   path.resolve(TESTDATA, 'stats', '2018-06'),
+  path.resolve(TESTDATA, 'stats', '2018-05'),
+  path.resolve(TESTDATA, 'stats', '2018-04'),
 ];
 const UPDATE = path.resolve(TESTDATA, 'stats', 'update.txt');
 const CUTOFFS = [0, 1500, 1630, 1760];

@@ -1,6 +1,6 @@
 import * as integration from './integration';
 
-describe('Integration', async () => {
+describe('Integration', () => {
   test('process', async () => {
     const actual: {[file: string]: string} = {};
     const expected: {[file: string]: string} = {};
