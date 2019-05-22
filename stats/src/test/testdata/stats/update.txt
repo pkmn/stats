@@ -1,4 +1,3 @@
-Updating tiers
 [HIDE=OU][CODE]
 Combined usage for OU
  + ---- + ------------------ + ------- + 

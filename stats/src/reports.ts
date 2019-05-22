@@ -41,7 +41,7 @@ type UsageTiers<T> = {
 const USAGE_TIERS: UsageTier[] = ['OU', 'UU', 'RU', 'NU', 'PU'];
 const TIERS: Tier[] = ['Uber', 'OU', 'BL', 'UU', 'BL2', 'RU', 'BL3', 'NU', 'BL4', 'PU'];
 
-const WEIGHTS = [[20, 3, 1], [20, 4], [24]];
+const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
 
 const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 
@@ -416,7 +416,8 @@ export const Reports = new class {
     const {current, updated} = updateTiers(pokemon, rise, drop, data);
 
     s += '\n';
-    for (const [id, tier] of current.entries()) {
+    const sorted = Array.from(current.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    for (const [id, tier] of sorted) {
       const update = updated.get(id)!;
       if (tier !== update) {
         const species = data.getSpecies(id)!;
@@ -451,7 +452,7 @@ function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: n
   const updated: Map<ID, Tier> = new Map();
   for (const name of Object.keys(data.Species)) {
     const species = data.getSpecies(name)!;
-    if (SKIP.has(species.id) || species.isNonstandard || !species.tier ||
+    if (SKIP.has(species.id) || species.isNonstandard || !data.hasFormatsDataTier(species.id) || !species.tier ||
         species.tier === 'Illegal' || species.tier === 'Unreleased') {
       continue;
     }

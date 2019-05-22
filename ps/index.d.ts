@@ -50,9 +50,9 @@ declare module 'ps' {
         types: string[]
         baseSpecies?: string
         forme?: string
-
         isNonstandard?: Nonstandard | null
         tier?: string
+        eventOnly?: boolean
     }
     // TODO: add format banlists
     interface Type {
@@ -85,6 +85,8 @@ declare module 'ps' {
         
         getNature(name: string): Nature | undefined
         getType(name: string): Type | undefined
+
+        hasFormatsDataTier(name: string): boolean
     }
     function toID(text: any): ID
     function calcStat(stat: Stat, base: number, iv: number, ev: number, level: number, nature?: Nature): number

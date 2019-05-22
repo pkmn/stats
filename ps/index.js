@@ -25,7 +25,7 @@ class Data {
     this.Abilities = dex.data.Abilities;
     this.Items = dex.data.Items;
     this.Moves = dex.data.Moves;
-    this.Species = dex.data.Templates;
+    this.Species = dex.data.Pokedex;
 
     this.Aliases = dex.data.Aliases;
     this.Types = dex.data.TypeChart;
@@ -60,6 +60,12 @@ class Data {
   getNature(name) {
     const n = this.dex.getNature(name);
     return n.exists ? n : undefined;
+  }
+
+  // FIXME: This is stupidly arbitrary and should be a field on Species
+  hasFormatsDataTier(name) {
+    const d = this.dex.data.FormatsData[toID(name)];
+    return !!(d && d.tier);
   }
 };
 
