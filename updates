@@ -10,7 +10,7 @@ if (process.argv.length < 3 || process.argv.length > 5) {
     process.exit(1);
 }
 
-stats.Reports.tierUpdateReport(process.argv.slice(2), (month, format) => {
+process.stdout.write(stats.Reports.tierUpdateReport(process.argv.slice(2), (month, format) => {
     const baseline = format.startsWith('gen7ou') ? 1695 : 1630;
     try {
         return fs.readSync(path.resolve(`${month}, ${format}-${baseline}.txt`), 'utf8');
@@ -18,4 +18,4 @@ stats.Reports.tierUpdateReport(process.argv.slice(2), (month, format) => {
         if (err.code === 'ENOENT') return undefined;
         throw err;
     }
-});
+}));
