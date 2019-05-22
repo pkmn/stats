@@ -358,18 +358,19 @@ export const Reports = new class {
 
   async tierUpdateReport(
       months: [string]|[string, string]|[string, string, string],
-      read: (month: string, format: string) => Promise<string | undefined>) {
+      read: (month: string, format: string) => Promise<string|undefined>) {
     const data = Data.forFormat();
 
     const pokemon: Map<ID, UsageTiers<number>> = new Map();
     for (const [i, month] of months.entries()) {
       const weight = WEIGHTS[months.length - 1][i];
       for (const tier of USAGE_TIERS) {
-        const reports: Array<Promise<[string, [Map<ID, number>, number]|undefined]>> = [];
+        const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
-          reports.push(maybeParseUsageReport(read(month, `gen7${toID(tier)}${suffix}`)).then(r => [suffix, r]));
+          reports.push(maybeParseUsageReport(read(month, `gen7${toID(tier)}${suffix}`))
+                           .then(r => [suffix, r]));
         }
-     
+
         const n: {[suffix: string]: number} = {};
         const u: {[suffix: string]: Map<ID, number>} = {};
         let ntot = 0;
@@ -452,8 +453,8 @@ function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: n
   const updated: Map<ID, Tier> = new Map();
   for (const name of Object.keys(data.Species)) {
     const species = data.getSpecies(name)!;
-    if (SKIP.has(species.id) || species.isNonstandard || !data.hasFormatsDataTier(species.id) || !species.tier ||
-        species.tier === 'Illegal' || species.tier === 'Unreleased') {
+    if (SKIP.has(species.id) || species.isNonstandard || !data.hasFormatsDataTier(species.id) ||
+        !species.tier || species.tier === 'Illegal' || species.tier === 'Unreleased') {
       continue;
     }
     // FIXME: Code which is either undesirable or unused

@@ -123,7 +123,7 @@ export function compare(reports: {formats: Map<ID, TaggedReports>, tiers: string
     }
   }
 
-  cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8')) 
+  cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8'));
 }
 
 function createReports(
