@@ -113,7 +113,7 @@ function hiddenPower(ivs, gen = 7) {
   } else {
     let hpType = 0, hpPower = 0;
     let i = 1;
-    for (let s in ivs) {
+    for (let s of ['hp', 'atk', 'def', 'spe', 'spa', 'spd']) {
       hpType += i * (ivs[s] % 2);
       hpPower += i * (Math.floor(ivs[s] / 2) % 2);
       i *= 2;

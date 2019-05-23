@@ -55,9 +55,8 @@ export const Reports = new class {
     }
 
     let s = ` Total battles: ${battles}\n`;
-    const avg = battles ? Math.round((stats.usage.weighted / battles / 12) * 1e3) / 1e3 : 0;
-    const avgd = avg === Math.floor(avg) ? `${avg.toFixed(1)}` : `${avg}`;
-    s += ` Avg. weight/team: ${avgd}\n`;
+    const avg = battles ? roundStr(stats.usage.weighted / battles / 12, 1e3) : '0.0';
+    s += ` Avg. weight/team: ${avg}\n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
@@ -153,7 +152,7 @@ export const Reports = new class {
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
       const avg =
-          p.weights.count ? `${Math.floor(p.weights.sum / p.weights.count).toFixed(1)}` : '---';
+          p.saved.count ? roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
       s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| \n';
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
       s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| \n';
@@ -166,7 +165,7 @@ export const Reports = new class {
           s += other(total);
           break;
         }
-        const weight = moveset['Abilities'][ability] / p.count;
+        const weight = moveset['Abilities'][ability] / p.raw.weight;
         const o = data.getAbility(ability);
         s += display((o && o.name) || ability, weight);
         total += weight;
@@ -179,7 +178,7 @@ export const Reports = new class {
           s += other(total);
           break;
         }
-        const weight = moveset['Items'][item] / p.count;
+        const weight = moveset['Items'][item] / p.raw.weight;
         const o = data.getItem(item);
         s += display(item === 'nothing' ? 'Nothing' : (o && o.name) || item, weight);
         total += weight;
@@ -192,7 +191,7 @@ export const Reports = new class {
           s += other(total);
           break;
         }
-        const weight = moveset['Spreads'][spread] / p.count;
+        const weight = moveset['Spreads'][spread] / p.raw.weight;
         s += display(spread, weight);
         total += weight;
       }
@@ -204,7 +203,7 @@ export const Reports = new class {
           s += other(total, 4);
           break;
         }
-        const weight = moveset['Moves'][move] / p.count;
+        const weight = moveset['Moves'][move] / p.raw.weight;
         const o = data.getMove(move);
         s += display(move === '' ? 'Nothing' : (o && o.name) || move, weight);
         total += weight / 4;
@@ -215,8 +214,8 @@ export const Reports = new class {
       for (const [i, teammate] of Object.keys(moveset['Teammates']).entries()) {
         if (total > 0.95 || i > 10) break;
         const w = moveset['Teammates'][teammate];
-        if (w < 0.005 * p.count) break;
-        const weight = w / p.count;
+        if (w < 0.005 * p.raw.weight) break;
+        const weight = w / p.raw.weight;
         s += ` | ${teammate} +${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
         total += weight / 5;
       }
@@ -557,22 +556,23 @@ function fmod(a: number, b: number, f = 1e3) {
 function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
   const sorted = Array.from(stats.pokemon.entries());
   const real = ['challengecup1v1', '1v1'].includes(format);
+  const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
+  // FIXME: Sort without this stupid rounding to avoid incorrect ordering
+  const usage = (n: number) => round(n / total * 6, 1e7);
   if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
     sorted.sort((a, b) => a[0].localeCompare(b[0]));
   } else if (real) {
-    sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
+    sorted.sort((a, b) => usage(b[1].usage.real) - usage(a[1].usage.real) || a[0].localeCompare(b[0]));
   } else {
-    sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
+    sorted.sort((a, b) => usage(b[1].usage.weighted) - usage(a[1].usage.weighted) || a[0].localeCompare(b[0]));
   }
   const data = util.dataForFormat(format);
 
-  const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
 
   const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {
     const species = entry[0];
     const pokemon = entry[1];
-    const usage = (real ? pokemon.usage.real : pokemon.usage.weighted) / total * 6;
     const gxes = Array.from(pokemon.gxes.values()).sort((a, b) => b - a);
     const viability: [number, number, number, number] = gxes.length ?
         [
@@ -581,8 +581,8 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
         ] :
         [0, 0, 0, 0];
     movesets.set(species, {
-      'Raw count': pokemon.count,
-      'usage': round(usage),
+      'Raw count': pokemon.raw.count,
+      'usage': usage(real ? pokemon.usage.real : pokemon.usage.weighted),
       'Viability Ceiling': viability,
       'Abilities': toObject(
           pokemon.abilities,
@@ -607,7 +607,7 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
             return (o && o.name) || move;
           }),
       'Teammates':
-          getTeammates(format, pokemon.teammates, pokemon.count, total, stats),  // TODO empty
+          getTeammates(format, pokemon.teammates, pokemon.raw.weight, total, stats),  // TODO empty
       'Checks and Counters':
           getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data), min),
     });
@@ -622,14 +622,14 @@ function getTeammates(
   const real = ['challengecup1v1', '1v1'].includes(format);
   const m: Map<string, number> = new Map();
   for (const [id, w] of teammates.entries()) {
-    const species = util.getSpecies(id, format).species;
+    const species = displaySpecies(id, format);
     const s = stats.pokemon.get(id);
     if (!s) {
       m.set(species, 0);
       continue;
     }
     const usage = (real ? s.usage.real : s.usage.weighted) / total * 6;
-    m.set(species, round(w - count * usage));
+    m.set(species, w - round(count) * round(usage, 1e7));
   }
   return toObject(m);
 }
@@ -661,25 +661,30 @@ function getChecksAndCounters(
 function forDetailed(cc: {[key: string]: EncounterStatistics}) {
   const obj: {[key: string]: [number, number, number]} = {};
   for (const [k, v] of Object.entries(cc)) {
-    obj[k] = [v.n, v.p, v.d];
+    obj[k] = [round(v.n), round(v.p), round(v.d)];
   }
   return obj;
 }
 
-function toObject(map: Map<number|string, number>, display?: (id: string) => string) {
+function toObject(map: Map<number|string, number>, display?: (id: string) => string, p = PRECISION) {
   const obj: {[key: string]: number} = {};
   const d = (k: number|string) => (typeof k === 'string' && display) ? display(k) : k.toString();
   const sorted =
       Array.from(map.entries()).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
     // FIXME: use display here for `chaos` reports as well
-    obj[k.toString()] = round(v);
+    obj[k.toString()] = round(v, p);
   }
   return obj;
 }
 
-function round(v: number) {
-  return Math.round(v * PRECISION) / PRECISION;
+function round(v: number, p = PRECISION) {
+  return Math.round(v * p) / p;
+}
+
+function roundStr(v: number, p = PRECISION) {
+  const num = round(v, p);
+  return num === Math.floor(num) ? `${num.toFixed(1)}` : `${num}`;
 }
 
 function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, data: Data) {

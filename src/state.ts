@@ -30,8 +30,8 @@ interface UsageStatistics {
   spreads: {[spread: string]: number};
   moves: {[id: string]: number};
 
-  count: number;
-  weights: {sum: number, count: number};
+  raw: {weight: number, count: number};
+  saved: {weight: number, count: number};
 
   encounters: {[id: string]: number[/* Outcome */]};
   teammates: {[id: string]: number};
@@ -152,8 +152,8 @@ function serializeUsage(usage: stats.UsageStatistics) {
   }
   obj.spreads = mapToObject(usage.spreads);
   obj.moves = mapToObject(usage.moves);
-  obj.count = usage.count;
-  obj.weights = Object.assign({}, usage.weights);
+  obj.raw = Object.assign({}, usage.raw);
+  obj.saved = Object.assign({}, usage.saved);
   obj.encounters = {};
   for (const [k, v] of usage.encounters.entries()) {
     obj.encounters[k] = v.slice();
@@ -175,8 +175,8 @@ function deserializeUsage(usage: UsageStatistics) {
   }
   obj.spreads = objectToMap(usage.spreads) as Map<ID, number>;
   obj.moves = objectToMap(usage.moves) as Map<ID, number>;
-  obj.count = usage.count;
-  obj.weights = Object.assign({}, usage.weights);
+  obj.raw = Object.assign({}, usage.raw);
+  obj.saved = Object.assign({}, usage.saved);
   obj.encounters = new Map();
   for (const [k, v] of Object.entries(usage.encounters)) {
     obj.encounters.set(k as ID, v.slice());
@@ -198,9 +198,10 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics|undefined) {
   }
   a.spreads = combineMap(a.spreads, b.spreads);
   a.moves = combineMap(a.moves, b.moves);
-  a.count += b.count;
-  a.weights.count += b.weights.count;
-  a.weights.count += b.weights.count;
+  a.raw.weight += b.raw.weight;
+  a.raw.count += b.raw.count;
+  a.saved.weight += b.saved.weight;
+  a.saved.count += b.saved.count;
   for (const [k, v] of Object.entries(b.encounters)) {
     const ae = a.encounters[k];
     for (let i = 0; i < ae.length; i++) {

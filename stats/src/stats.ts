@@ -28,8 +28,8 @@ export interface UsageStatistics {
   spreads: Map<string, number>;
   moves: Map<ID, number>;
 
-  count: number;
-  weights: {sum: number, count: number};
+  raw: {weight: number; count: number};
+  saved: {weight: number,  count: number};
 
   encounters: Map<ID, number[/* Outcome */]>;
   teammates: Map<ID, number>;
@@ -127,9 +127,8 @@ function getWeights(player: Player, cutoffs: number[]): [Array<{s: number, m: nu
   let rpr = 1500;
   let rprd = 130;
   // FIXME: StatCounter and batchMovesetCounter treat rprd === 0 differently :(
-  const rprd0 = !player.rating || player.rating.rprd === 0;
-
-  if (!rprd0) {
+  const valid = player.rating && player.rating.rprd !== 0;
+  if (valid) {
     rpr = player.rating!.rpr;
     rprd = player.rating!.rprd;
     save = true;
@@ -141,7 +140,7 @@ function getWeights(player: Player, cutoffs: number[]): [Array<{s: number, m: nu
   const weights = [];
   for (const cutoff of cutoffs) {
     const w = util.weighting(rpr, rprd, cutoff);
-    if (!rprd0) {
+    if (!valid) {
       weights.push({s: w, m: util.weighting(1500, 130, cutoff)});
     } else {
       weights.push({s: w, m: w});
@@ -173,16 +172,17 @@ function updateStats(
       p = newUsageStatistics();
       stats.pokemon.set(pokemon.species, p);
     }
-    p.count++;
+
+    p.raw.weight += weights.m;
+    p.raw.count++;
+    if (save) {
+      p.saved.weight += weights.m;
+      p.saved.count++;
+    }
 
     if (gxe !== undefined) {
       const g = p.gxes.get(player.name);
       if (!g || g < gxe) p.gxes.set(player.name, gxe);
-    }
-
-    if (save) {
-      p.weights.sum += weights.m;
-      p.weights.count++;
     }
 
     const ability = set.ability === 'unknown' ? 'illuminate' as ID : set.ability;
@@ -226,15 +226,11 @@ function getSpread<T>(nature: Nature, base: StatsTable<number>, pokemon: Pokemon
 
   let stat: Stat;
   for (stat in pokemon.evs) {
-    // FIXME: The intention of the original code was to clearly round all EVs,
-    // but in reality on the last stat gets modified.
-    if (stat === 'spe') {
-      const val =
-          calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
-      evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
-    } else {
-      evs.push(pokemon.evs[stat]);
-    }
+    // FIXME: The intention of the original code was to clearly round all EVs
+    //const val =
+        //calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
+    //evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
+    evs.push(pokemon.evs[stat]);
   }
   return `${nature.name}:${evs.join('/')}`;
 }
@@ -357,8 +353,8 @@ function newUsageStatistics() {
     spreads: new Map(),
     moves: new Map(),
     viability: 0,
-    weights: {sum: 0, count: 0},
-    count: 0,
+    raw: {weight: 0, count: 0},
+    saved: {weight: 0, count: 0},
     encounters: new Map(),
     teammates: new Map(),
     gxes: new Map(),

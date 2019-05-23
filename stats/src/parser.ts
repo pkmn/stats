@@ -304,7 +304,7 @@ export const Parser = new class {
         let move = toID(pokemon.moves[i]);
         if (move === 'hiddenpower') {
           move = (move +
-                  toID(/* pokemon.hpType ? pokemon.hpType : */ hiddenPower(ivs, data.gen)!.type)) as
+                  toID(/* FIXME pokemon.hpType ? pokemon.hpType : */ hiddenPower(ivs, data.gen)!.type)) as
               ID;
         }
         pokemon.moves[i] = move;
