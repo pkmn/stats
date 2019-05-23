@@ -219,7 +219,8 @@ export const Parser = new class {
           const name = line[3].split(',')[0];
           const side = line[2].startsWith('p1') ? 'p1' : 'p2';
           if (line[1] === 'replace') {
-            // TODO: in the replace case we need to go back and fix the previously affected matchups!
+            // TODO: in the replace case we need to go back and fix the previously affected
+            // matchups!
             active[side] = identify(name, side, battle, idents, format);
             break;
           }

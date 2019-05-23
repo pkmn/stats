@@ -211,9 +211,9 @@ export const Reports = new class {
       for (const [i, teammate] of Object.keys(moveset['Teammates']).entries()) {
         if (total > 0.95 || i > 10) break;
         const w = moveset['Teammates'][teammate];
+        if (w < 0.005 * p.count) break;
         const weight = w / p.count;
         s += ` | ${teammate} +${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
-        if (w < 0.005 * p.count) break;
         total += weight / 5;
       }
       s += sep;
@@ -226,13 +226,15 @@ export const Reports = new class {
         const score = (100 * v.score).toFixed(3).padStart(6);
         const p = (100 * v.p).toFixed(2).padStart(3);
         const d = (100 * v.d).toFixed(2).padStart(3);
-        s += ` | ${cc} ${score} (${p}\u00b1${d})`.padEnd(WIDTH + 1) + '| \n';
+        let line = ` | ${cc} ${score} (${p}\u00b1${d})`.padEnd(WIDTH + 1) + ' |\n';
         const ko = 100 * v.koed / v.n;
         const koed = ko.toFixed(1).padStart(2);
         const sw = (100 * v.switched / v.n);
         const switched = sw.toFixed(1).padStart(2);
-        s += ` |\t (${koed}% KOed / ${switched}% switched out)`.padEnd(WIDTH + 2) + '| \n';
-        if (ko < 10 || sw < 10) s += ' ';
+        line += ` |\t (${koed}% KOed / ${switched}% switched out)`;
+        if (ko < 10) line += ' ';
+        if (sw < 10) line += ' ';
+        s += line.padEnd(WIDTH + 2) + '| \n';
       }
       s += sep;
     }
@@ -560,11 +562,13 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
   }
   const data = util.dataForFormat(format);
 
+  const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
+
   const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {
     const species = entry[0];
     const pokemon = entry[1];
-    const usage = real ? pokemon.usage.real : pokemon.usage.weighted;
+    const usage = (real ? pokemon.usage.real : pokemon.usage.weighted) / total * 6;
     const gxes = Array.from(pokemon.gxes.values()).sort((a, b) => b - a);
     const viability: [number, number, number, number] = gxes.length ?
         [
@@ -576,39 +580,51 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
       'Raw count': pokemon.count,
       'usage': round(usage),
       'Viability Ceiling': viability,
-      'Abilities': toObject(pokemon.abilities, ability => {
-        const o = data.getAbility(ability);
-        return (o && o.name) || ability;
-      }),
-      'Items': toObject(pokemon.items, item => {
-        if (item === 'nothing') return 'Nothing';
-        const o = data.getItem(item);
-        return (o && o.name) || item;
-      }),
+      'Abilities': toObject(
+          pokemon.abilities,
+          ability => {
+            const o = data.getAbility(ability);
+            return (o && o.name) || ability;
+          }),
+      'Items': toObject(
+          pokemon.items,
+          item => {
+            if (item === 'nothing') return 'Nothing';
+            const o = data.getItem(item);
+            return (o && o.name) || item;
+          }),
       'Spreads': toObject(pokemon.spreads),
       'Happiness': toObject(pokemon.happinesses),
-      'Moves': toObject(pokemon.moves, move => {
-        if (move === '') return 'Nothing';
-        const o = data.getMove(move);
-        return (o && o.name) || move;
-      }),
-      'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),  // TODO empty
-      'Checks and Counters':
-          getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data)),
+      'Moves': toObject(
+          pokemon.moves,
+          move => {
+            if (move === '') return 'Nothing';
+            const o = data.getMove(move);
+            return (o && o.name) || move;
+          }),
+      'Teammates':
+          getTeammates(format, pokemon.teammates, pokemon.count, total, stats),  // TODO empty
+      'Checks and Counters': getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data)),
     });
   }
 
   return movesets;
 }
 
-function getTeammates(format: ID, teammates: Map<ID, number>, count: number, stats: Statistics):
-    {[key: string]: number} {
+function getTeammates(
+    format: ID, teammates: Map<ID, number>, count: number, total: number,
+    stats: Statistics): {[key: string]: number} {
   const real = ['challengecup1v1', '1v1'].includes(format);
   const m: Map<string, number> = new Map();
   for (const [id, w] of teammates.entries()) {
     const species = util.getSpecies(id, format).species;
     const s = stats.pokemon.get(id);
-    m.set(species, s ? round(w - count * (real ? s.usage.real : s.usage.weighted)) : 0);
+    if (!s) {
+      m.set(species, 0);
+      continue;
+    }
+    const usage = (real ? s.usage.real : s.usage.weighted) / total * 6;
+    m.set(species, round(w - count * usage));
   }
   return toObject(m);
 }
@@ -648,8 +664,8 @@ function forDetailed(cc: {[key: string]: EncounterStatistics}) {
 function toObject(map: Map<number|string, number>, display?: (id: string) => string) {
   const obj: {[key: string]: number} = {};
   const d = (k: number|string) => (typeof k === 'string' && display) ? display(k) : k.toString();
-  const sorted = Array.from(map.entries())
-                     .sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
+  const sorted =
+      Array.from(map.entries()).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
     // FIXME: use display here for `chaos` reports as well
     obj[k.toString()] = round(v);
