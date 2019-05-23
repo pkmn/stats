@@ -594,7 +594,7 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
       }),
       'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),  // TODO empty
       'Checks and Counters':
-          getChecksAndCounters(pokemon.encounters, s => displaySpecies(species, data)),
+          getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data)),
     });
   }
 
@@ -608,7 +608,7 @@ function getTeammates(format: ID, teammates: Map<ID, number>, count: number, sta
   for (const [id, w] of teammates.entries()) {
     const species = util.getSpecies(id, format).species;
     const s = stats.pokemon.get(id);
-    m.set(species, s ? (w - count * (real ? s.usage.real : s.usage.weighted)) : 0);
+    m.set(species, s ? round(w - count * (real ? s.usage.real : s.usage.weighted)) : 0);
   }
   return toObject(m);
 }
@@ -618,14 +618,14 @@ function getChecksAndCounters(
   const cc: Array<[string, EncounterStatistics]> = [];
   for (const [id, outcomes] of encounters.entries()) {
     // Outcome.POKE1_KOED...Outcome.DOUBLE_SWITCH
-    const n = outcomes.slice(6).reduce((a, b) => a + b);
+    const n = outcomes.slice(0, 6).reduce((a, b) => a + b);
     if (n <= 20) continue;
 
     const koed = outcomes[Outcome.POKE1_KOED];
-    const switched = outcomes[Outcome.POKE2_SWITCHED_OUT];
-    const p = (koed + switched) / n;
-    const d = Math.sqrt(p * (1.0 - p) / n);
-    const score = p - 4 * d;
+    const switched = outcomes[Outcome.POKE1_SWITCHED_OUT];
+    const p = round((koed + switched) / n);
+    const d = round(Math.sqrt(p * (1.0 - p) / n));
+    const score = round(p - 4 * d);
     cc.push([id, {koed, switched, n, p, d, score}]);
   }
 
