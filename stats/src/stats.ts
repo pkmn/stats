@@ -29,7 +29,7 @@ export interface UsageStatistics {
   moves: Map<ID, number>;
 
   raw: {weight: number; count: number};
-  saved: {weight: number,  count: number};
+  saved: {weight: number, count: number};
 
   encounters: Map<ID, number[/* Outcome */]>;
   teammates: Map<ID, number>;
@@ -166,9 +166,11 @@ function updateStats(
       stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
     }
     if (pokemon.species === 'empty') {
-        // FIXME: Stop including 'empty' in teammate stats!
-        if (!short) updateTeammates(player.team.pokemon, index, pokemon.species, new Map(), stats, weights.s);
-        continue;
+      // FIXME: Stop including 'empty' in teammate stats!
+      if (!short) {
+        updateTeammates(player.team.pokemon, index, pokemon.species, new Map(), stats, weights.s);
+      }
+      continue;
     }
 
     let p = stats.pokemon.get(pokemon.species);

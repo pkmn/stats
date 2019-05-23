@@ -136,7 +136,8 @@ export const Reports = new class {
 
     const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
     const other = (t: number, f = 1) =>
-        ` | Other ${Math.abs(f * 100 * (1 - t)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        ` | Other ${Math.abs(f * 100 * (1 - t)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) +
+        '| \n';
     const display = (n: string, w: number) =>
         ` | ${n} ${(100 * w).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
 
@@ -151,8 +152,7 @@ export const Reports = new class {
       s += ` | ${displaySpecies(species, data)}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
-      const avg =
-          p.saved.count ? roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
+      const avg = p.saved.count ? roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
       s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| \n';
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
       s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| \n';
@@ -564,9 +564,12 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
   if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
     sorted.sort((a, b) => a[0].localeCompare(b[0]));
   } else if (real) {
-    sorted.sort((a, b) => usage(b[1].usage.real) - usage(a[1].usage.real) || a[0].localeCompare(b[0]));
+    sorted.sort(
+        (a, b) => usage(b[1].usage.real) - usage(a[1].usage.real) || a[0].localeCompare(b[0]));
   } else {
-    sorted.sort((a, b) => usage(b[1].usage.weighted) - usage(a[1].usage.weighted) || a[0].localeCompare(b[0]));
+    sorted.sort(
+        (a, b) =>
+            usage(b[1].usage.weighted) - usage(a[1].usage.weighted) || a[0].localeCompare(b[0]));
   }
   const data = util.dataForFormat(format);
 
@@ -608,8 +611,7 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
             const o = data.getMove(move);
             return (o && o.name) || move;
           }),
-      'Teammates':
-          getTeammates(format, pokemon.teammates, pokemon.raw.weight, total, stats),  // TODO empty
+      'Teammates': getTeammates(format, pokemon.teammates, pokemon.raw.weight, total, stats),
       'Checks and Counters':
           getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data), min),
     });
@@ -668,7 +670,8 @@ function forDetailed(cc: {[key: string]: EncounterStatistics}) {
   return obj;
 }
 
-function toObject(map: Map<number|string, number>, display?: (id: string) => string, p = PRECISION) {
+function toObject(
+    map: Map<number|string, number>, display?: (id: string) => string, p = PRECISION) {
   const obj: {[key: string]: number} = {};
   const d = (k: number|string) => (typeof k === 'string' && display) ? display(k) : k.toString();
   const sorted =
@@ -731,7 +734,7 @@ function parseUsageReport(report: string): [Map<ID, number>, number] {
 
 function displaySpecies(name: string, format: string|Data) {
   // FIXME: Seriously, we don't filter 'empty'?
-  if (name === 'empty') return name; 
+  if (name === 'empty') return name;
   const species = util.getSpecies(name, format).species;
   // FIXME: remove bad display of Nidoran-M / Nidoran-F
   return species.startsWith('Nidoran') ? species.replace('-', '') : species;
