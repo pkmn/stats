@@ -167,7 +167,7 @@ export const Parser = new class {
             const poke1 = battle.p1.team.pokemon[active.p1!];
             const poke2 = battle.p2.team.pokemon[active.p2!];
             const matchup: [ID, ID, Outcome] = [poke1.species, poke2.species, Outcome.UNKNOWN];
-            if (flags.ko.p2 && flags.ko.p2) {
+            if (flags.ko.p1 && flags.ko.p2) {
               poke1.kos++;
               poke2.kos++;
               matchup[2] = Outcome.DOUBLE_DOWN;
@@ -218,7 +218,13 @@ export const Parser = new class {
           if (line.length < 4) throw new Error(`Could not parse line: '${rawLine}'`);
           const name = line[3].split(',')[0];
           const side = line[2].startsWith('p1') ? 'p1' : 'p2';
-          if (line[0] === 'replace' || active.p1 !== undefined && active.p2 !== undefined) {
+          if (line[1] === 'replace') {
+            // TODO: in the replace case we need to go back and fix the previously affected matchups!
+            active[side] = identify(name, side, battle, idents, format);
+            break;
+          }
+
+          if (active.p1 !== undefined && active.p2 !== undefined) {
             flags.switch[side] = true;
             if (flags.switch.p1 && flags.switch.p2 && !flags.fodder) {
               // need to review previous matchup
@@ -264,7 +270,6 @@ export const Parser = new class {
             flags.hazard = true;
           }
 
-          // TODO: in the replace case we need to go back and fix the previously affected matchups!
           active[side] = identify(name, side, battle, idents, format);
           break;
         }
