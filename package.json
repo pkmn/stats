@@ -23,10 +23,10 @@
     "typescript": "^3.4.3"
   },
   "scripts": {
-    "check": "gts check && subpkg run check",
-    "clean": "gts clean && subpkg run check",
-    "compile": "tsc -p . && subpkg run compile",
-    "fix": "gts fix && subpkg run fix",
+    "check": "subpkg run check && gts check",
+    "clean": "subpkg run clean && gts clean",
+    "compile": "subpkg run compile && tsc -p .",
+    "fix": "subpkg run fix && gts fix",
     "test": "subpkg run test",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
