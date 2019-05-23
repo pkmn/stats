@@ -308,7 +308,7 @@ export const Reports = new class {
     nbins = histogram.length;
 
     const start = 0;
-    // FIXME: Python comparison of an array and a number = break immediately.
+    // FIXME: Python comparison of an array and a number = break immediately
     // for (; start < stalliness.length; start++) {
     //   if (stalliness[start] >= histogram[0][0] - binSize / 2) break;
     // }
@@ -576,11 +576,22 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
       'Raw count': pokemon.count,
       'usage': round(usage),
       'Viability Ceiling': viability,
-      'Abilities': toObject(pokemon.abilities),
-      'Items': toObject(pokemon.items),
+      'Abilities': toObject(pokemon.abilities, ability => {
+        const o = data.getAbility(ability);
+        return (o && o.name) || ability;
+      }),
+      'Items': toObject(pokemon.items, item => {
+        if (item === 'nothing') return 'Nothing';
+        const o = data.getItem(item);
+        return (o && o.name) || item;
+      }),
       'Spreads': toObject(pokemon.spreads),
       'Happiness': toObject(pokemon.happinesses),
-      'Moves': toObject(pokemon.moves),
+      'Moves': toObject(pokemon.moves, move => {
+        if (move === '') return 'Nothing';
+        const o = data.getMove(move);
+        return (o && o.name) || move;
+      }),
       'Teammates': getTeammates(format, pokemon.teammates, pokemon.count, stats),  // TODO empty
       'Checks and Counters':
           getChecksAndCounters(pokemon.encounters, s => displaySpecies(species, data)),
@@ -634,11 +645,13 @@ function forDetailed(cc: {[key: string]: EncounterStatistics}) {
   return obj;
 }
 
-function toObject(map: Map<number|string, number>) {
+function toObject(map: Map<number|string, number>, display?: (id: string) => string) {
   const obj: {[key: string]: number} = {};
+  const d = (k: number|string) => (typeof k === 'string' && display) ? display(k) : k.toString();
   const sorted = Array.from(map.entries())
-                     .sort((a, b) => b[1] - a[1] || a[0].toString().localeCompare(b[0].toString()));
+                     .sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
+    // FIXME: use display here for `chaos` reports as well
     obj[k.toString()] = round(v);
   }
   return obj;
