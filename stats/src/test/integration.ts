@@ -131,7 +131,7 @@ function createReports(
   return {
     usage: stats.Reports.usageReport(format, s, battles),
     leads: stats.Reports.leadsReport(format, s, battles),
-    movesets: stats.Reports.movesetReports(format, s, battles, cutoff, tag),
+    movesets: stats.Reports.movesetReports(format, s, battles, cutoff, tag, [0, -Infinity]),
     metagame: stats.Reports.metagameReport(s),
   };
 }

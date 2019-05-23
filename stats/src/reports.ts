@@ -118,15 +118,19 @@ export const Reports = new class {
   }
 
   movesetReports(
-      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null) {
-    const movesetStats = toMovesetStatistics(format, stats);
-    const basic = this.movesetReport(format, stats, movesetStats);
-    const detailed = this.detailedMovesetReport(format, stats, battles, cutoff, tag, movesetStats);
+      format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
+      min = [20, 0.5]) {
+    const movesetStats = toMovesetStatistics(format, stats, min[0]);
+    const basic = this.movesetReport(format, stats, movesetStats, min);
+    const detailed =
+        this.detailedMovesetReport(format, stats, battles, cutoff, tag, movesetStats, min[0]);
     return {basic, detailed};
   }
 
-  movesetReport(format: ID, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>) {
-    movesetStats = movesetStats || toMovesetStatistics(format, stats);
+  movesetReport(format: ID, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>, min = [
+    20, 0.5
+  ]) {
+    movesetStats = movesetStats || toMovesetStatistics(format, stats, min[0]);
 
     const data = util.dataForFormat(format);
     const WIDTH = 40;
@@ -221,7 +225,7 @@ export const Reports = new class {
       for (const [i, cc] of Object.keys(moveset['Checks and Counters']).entries()) {
         if (i > 10) break;
         const v = moveset['Checks and Counters'][cc];
-        if (v.score < 0.5) break;
+        if (v.score < min[1]) break;
 
         const score = (100 * v.score).toFixed(3).padStart(6);
         const p = (100 * v.p).toFixed(2).padStart(3);
@@ -244,8 +248,8 @@ export const Reports = new class {
 
   detailedMovesetReport(
       format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
-      movesetStats?: Map<ID, MovesetStatistics>) {
-    movesetStats = movesetStats || toMovesetStatistics(format, stats);
+      movesetStats?: Map<ID, MovesetStatistics>, min = 20) {
+    movesetStats = movesetStats || toMovesetStatistics(format, stats, min);
 
     const info = {
       'metagame': format,
@@ -550,7 +554,7 @@ function fmod(a: number, b: number, f = 1e3) {
   return (Math.abs(a * f) % (b * f)) / f;
 }
 
-function toMovesetStatistics(format: ID, stats: Statistics) {
+function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
   const sorted = Array.from(stats.pokemon.entries());
   const real = ['challengecup1v1', '1v1'].includes(format);
   if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
@@ -604,7 +608,8 @@ function toMovesetStatistics(format: ID, stats: Statistics) {
           }),
       'Teammates':
           getTeammates(format, pokemon.teammates, pokemon.count, total, stats),  // TODO empty
-      'Checks and Counters': getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data)),
+      'Checks and Counters':
+          getChecksAndCounters(pokemon.encounters, s => displaySpecies(s, data), min),
     });
   }
 
@@ -630,12 +635,12 @@ function getTeammates(
 }
 
 function getChecksAndCounters(
-    encounters: Map<ID, number[/* Outcome */]>, display: (id: string) => string) {
+    encounters: Map<ID, number[/* Outcome */]>, display: (id: string) => string, min = 20) {
   const cc: Array<[string, EncounterStatistics]> = [];
   for (const [id, outcomes] of encounters.entries()) {
     // Outcome.POKE1_KOED...Outcome.DOUBLE_SWITCH
     const n = outcomes.slice(0, 6).reduce((a, b) => a + b);
-    if (n <= 20) continue;
+    if (n <= min) continue;
 
     const koed = outcomes[Outcome.POKE1_KOED];
     const switched = outcomes[Outcome.POKE1_SWITCHED_OUT];
