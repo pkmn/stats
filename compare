@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ACTUAL='Reports'
+EXPECTED='../Smogon-Usage-Stats/Stats'
+
+failures=0
+for file in $(find $ACTUAL -type f); do
+    base=${file#$ACTUAL}
+    actual=$file
+    expected="${EXPECTED}${base}"
+
+    [[ $base == *.json ]] && cmd="json-diff" || cmd="diff"
+    if ! $($cmd $actual $expected >/dev/null); then
+        echo "$cmd {${EXPECTED},${ACTUAL}}${base}"
+        failures=$((failures + 1))
+    fi
+done
+exit $failures

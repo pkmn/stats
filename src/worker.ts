@@ -83,6 +83,7 @@ function writeReports(
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
   const leads = Reports.leadsReport(format, stats, battles);
   writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));
+  // const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag, [0, -Infinity]);
   const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag);
   writes.push(fs.writeFile(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic));
   writes.push(fs.writeFile(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed));

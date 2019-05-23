@@ -66,7 +66,7 @@ export const Stats = new class {
     const weights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
       const [ws, save] = getWeights(player, cutoffs);
-      const gxe = player.rating && player.rating.rprd ?
+      const gxe = player.rating ?
           Math.round(100 * util.victoryChance(player.rating.rpr, player.rating.rprd, 1500, 130)) :
           undefined;
       weights.push(ws.map(w => w.s));
@@ -98,25 +98,26 @@ export const Stats = new class {
       }
     }
 
-    let leads = true;
-    if (singles) {
-      const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
-      for (const [i, weight] of mins.entries()) {
-        const pw = {p1: weights[0][i], p2: weights[1][i]};
-        const cutoff = cutoffs[i];
-        const s = stats.total.get(cutoff)!;
-        updateEncounters(s, battle.matchups, weight);
-        if (!short) leads = updateLeads(s, battle, pw);
-
-        for (const tag of tags) {
-          const s = stats.tags.get(tag)!.get(cutoff)!;
+    if (!short) {
+      let leads = true;
+      if (!short && singles) {
+        const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
+        for (const [i, weight] of mins.entries()) {
+          const pw = {p1: weights[0][i], p2: weights[1][i]};
+          const cutoff = cutoffs[i];
+          const s = stats.total.get(cutoff)!;
           updateEncounters(s, battle.matchups, weight);
-          if (!short) leads = updateLeads(s, battle, pw);
+          leads = updateLeads(s, battle, pw);
+
+          for (const tag of tags) {
+            const s = stats.tags.get(tag)!.get(cutoff)!;
+            updateEncounters(s, battle.matchups, weight);
+            leads = updateLeads(s, battle, pw);
+          }
         }
       }
+      if (leads) stats.battles++;
     }
-
-    if (!short && leads) stats.battles++;
 
     return stats;
   }
@@ -164,8 +165,11 @@ function updateStats(
       }
       stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
     }
-    if (pokemon.species === 'empty') continue;
-    const set = pokemon.set;
+    if (pokemon.species === 'empty') {
+        // FIXME: Stop including 'empty' in teammate stats!
+        if (!short) updateTeammates(player.team.pokemon, index, pokemon.species, new Map(), stats, weights.s);
+        continue;
+    }
 
     let p = stats.pokemon.get(pokemon.species);
     if (!p) {
@@ -185,6 +189,7 @@ function updateStats(
       if (!g || g < gxe) p.gxes.set(player.name, gxe);
     }
 
+    const set = pokemon.set;
     const ability = set.ability === 'unknown' ? 'illuminate' as ID : set.ability;
     const a = p.abilities.get(ability);
     p.abilities.set(ability, (a || 0) + weights.m);
@@ -227,10 +232,13 @@ function getSpread<T>(nature: Nature, base: StatsTable<number>, pokemon: Pokemon
   let stat: Stat;
   for (stat in pokemon.evs) {
     // FIXME: The intention of the original code was to clearly round all EVs
-    //const val =
-        //calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
-    //evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
-    evs.push(pokemon.evs[stat]);
+    if (stat === 'def') {
+      const val =
+          calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
+      evs.push(statToEV(stat, val, base[stat], pokemon.ivs[stat], pokemon.level, nature));
+    } else {
+      evs.push(pokemon.evs[stat]);
+    }
   }
   return `${nature.name}:${evs.join('/')}`;
 }

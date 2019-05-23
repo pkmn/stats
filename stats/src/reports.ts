@@ -136,7 +136,7 @@ export const Reports = new class {
 
     const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
     const other = (t: number, f = 1) =>
-        ` | Other ${(f * 100 * (1 - t)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        ` | Other ${Math.abs(f * 100 * (1 - t)).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
     const display = (n: string, w: number) =>
         ` | ${n} ${(100 * w).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
 
@@ -216,7 +216,9 @@ export const Reports = new class {
         const w = moveset['Teammates'][teammate];
         if (w < 0.005 * p.raw.weight) break;
         const weight = w / p.raw.weight;
-        s += ` | ${teammate} +${(100 * weight).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+        const val = (100 * weight);
+        const sign = Math.sign(val) ? '+' : '-';
+        s += ` | ${teammate} ${sign}${val.toFixed(3).padStart(5)}%`.padEnd(WIDTH + 2) + '| \n';
         total += weight / 5;
       }
       s += sep;
@@ -728,6 +730,8 @@ function parseUsageReport(report: string): [Map<ID, number>, number] {
 }
 
 function displaySpecies(name: string, format: string|Data) {
+  // FIXME: Seriously, we don't filter 'empty'?
+  if (name === 'empty') return name; 
   const species = util.getSpecies(name, format).species;
   // FIXME: remove bad display of Nidoran-M / Nidoran-F
   return species.startsWith('Nidoran') ? species.replace('-', '') : species;

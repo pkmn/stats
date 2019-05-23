@@ -42,7 +42,7 @@ export function getMegaEvolution(pokemon: PokemonSet<string|ID>, format: string|
   const species = getSpecies(pokemon.species, format);
   if (item.name === 'Blue Orb' &&
       (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
-    return {species: 'kyogreprimal' as ID, ability: 'primoridalsea' as ID};
+    return {species: 'kyogreprimal' as ID, ability: 'primordialsea' as ID};
   }
   if (item.name === 'Red Orb' &&
       (species.species === 'Groudon' || species.baseSpecies === 'Groudon')) {
