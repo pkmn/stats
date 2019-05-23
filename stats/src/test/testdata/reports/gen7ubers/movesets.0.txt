@@ -1,38 +1,54 @@
  +----------------------------------------+ 
- | Zoroark                                | 
+ | Meloetta                               | 
  +----------------------------------------+ 
- | Raw count: 6                           | 
+ | Raw count: 7                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Illusion 100.000%                      | 
+ | Serene Grace 100.000%                  | 
  +----------------------------------------+ 
  | Items                                  | 
- | Life Orb 100.000%                      | 
+ | Red Card 85.714%                       | 
+ | Life Orb 14.286%                       | 
  +----------------------------------------+ 
  | Spreads                                | 
- | Jolly:0/252/0/0/4/252 100.000%         | 
+ | Timid:0/0/0/252/4/252 85.714%          | 
+ | Timid:0/0/56/196/4/252 14.286%         | 
  +----------------------------------------+ 
  | Moves                                  | 
- | U-turn 100.000%                        | 
- | Knock Off 100.000%                     | 
- | Pursuit 100.000%                       | 
- | Frustration 100.000%                   | 
+ | Focus Blast 100.000%                   | 
+ | Perish Song 100.000%                   | 
+ | Signal Beam 100.000%                   | 
+ | Relic Song 85.714%                     | 
+ | Other 14.286%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Rayquaza +26.667%                      | 
- | Greninja-Ash +26.667%                  | 
- | Shedinja +26.667%                      | 
- | Ditto +26.667%                         | 
- | Meloetta +26.667%                      | 
+ | Rayquaza +29.762%                      | 
+ | Zoroark +29.762%                       | 
+ | Ditto +23.810%                         | 
+ | Greninja-Ash +23.810%                  | 
+ | Shedinja +23.810%                      | 
+ | Greninja +5.952%                       | 
+ | Lycanroc-Dusk +5.952%                  | 
+ | NidoranM +5.952%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Darmanitan 100.000 (100.00±0.00)       |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Mimikyu 100.000 (100.00±0.00)          |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Pelipper 100.000 (100.00±0.00)         |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Gastrodon  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Zygarde  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Rayquaza                               | 
  +----------------------------------------+ 
- | Raw count: 6                           | 
+ | Raw count: 7                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
@@ -43,22 +59,85 @@
  | Eject Button 100.000%                  | 
  +----------------------------------------+ 
  | Spreads                                | 
- | Adamant:0/252/0/0/4/252 100.000%       | 
+ | Adamant:0/252/0/0/4/252 85.714%        | 
+ | Adamant:0/180/0/0/132/196 14.286%      | 
  +----------------------------------------+ 
  | Moves                                  | 
- | Roar 100.000%                          | 
  | Dragon Dance 100.000%                  | 
- | Extreme Speed 100.000%                 | 
- | Dragon Ascent 100.000%                 | 
+ | Roar 100.000%                          | 
+ | Dragon Ascent 85.714%                  | 
+ | Extreme Speed 85.714%                  | 
+ | Brick Break 14.286%                    | 
+ | Other 14.286%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja-Ash +26.667%                  | 
- | Shedinja +26.667%                      | 
- | Zoroark +26.667%                       | 
- | Meloetta +26.667%                      | 
- | Ditto +26.667%                         | 
+ | Meloetta +29.762%                      | 
+ | Zoroark +29.762%                       | 
+ | Ditto +23.810%                         | 
+ | Greninja-Ash +23.810%                  | 
+ | Shedinja +23.810%                      | 
+ | Greninja +5.952%                       | 
+ | Lycanroc-Dusk +5.952%                  | 
+ | NidoranM +5.952%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Kyogre-Primal 100.000 (100.00±0.00)    |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Pelipper 100.000 (100.00±0.00)         |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Gastrodon  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Zygarde -42.200 (66.67±27.22)          |
+ |	 (33.3% KOed / 33.3% switched out)| 
+ | Darmanitan -91.421 (50.00±35.36)       |
+ |	 (0.0% KOed / 50.0% switched out) | 
+ | Swampert-Mega -91.421 (50.00±35.36)    |
+ |	 (0.0% KOed / 50.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Zoroark                                | 
+ +----------------------------------------+ 
+ | Raw count: 7                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Illusion 100.000%                      | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Life Orb 100.000%                      | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Jolly:0/252/0/0/4/252 85.714%          | 
+ | Timid:96/0/24/152/4/232 14.286%        | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Frustration 85.714%                    | 
+ | Knock Off 85.714%                      | 
+ | Pursuit 85.714%                        | 
+ | U-turn 85.714%                         | 
+ | Flamethrower 14.286%                   | 
+ | Focus Blast 14.286%                    | 
+ | Shadow Ball 14.286%                    | 
+ | Other 14.286%                          | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Meloetta +29.762%                      | 
+ | Rayquaza +29.762%                      | 
+ | Ditto +23.810%                         | 
+ | Greninja-Ash +23.810%                  | 
+ | Shedinja +23.810%                      | 
+ | Greninja +5.952%                       | 
+ | Lycanroc-Dusk +5.952%                  | 
+ | NidoranM +5.952%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Swampert-Mega 100.000 (100.00±0.00)    |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Darmanitan  0.000 (0.00±0.00)          |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Mimikyu -91.421 (50.00±35.36)          |
+ |	 (50.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Ditto                                  | 
@@ -81,13 +160,25 @@
  | Transform 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Rayquaza +26.667%                      | 
- | Greninja-Ash +26.667%                  | 
- | Shedinja +26.667%                      | 
- | Zoroark +26.667%                       | 
- | Meloetta +26.667%                      | 
+ | Greninja-Ash +33.333%                  | 
+ | Shedinja +33.333%                      | 
+ | Meloetta +25.000%                      | 
+ | Rayquaza +25.000%                      | 
+ | Zoroark +25.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Kyogre-Primal 100.000 (100.00±0.00)    |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Mimikyu 100.000 (100.00±0.00)          |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Darmanitan  0.000 (0.00±0.00)          |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Magnezone  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Necrozma-Dusk-Mane  0.000 (0.00±0.00)  |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Shaymin-Sky  0.000 (0.00±0.00)         |
+ |	 (0.0% KOed / 0.0% switched out)  | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Greninja-Ash                           | 
@@ -107,49 +198,30 @@
  +----------------------------------------+ 
  | Moves                                  | 
  | Hidden Power Ghost 100.000%            | 
- | U-turn 100.000%                        | 
  | Spikes 100.000%                        | 
+ | U-turn 100.000%                        | 
  | Water Shuriken 100.000%                | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Rayquaza +26.667%                      | 
- | Meloetta +26.667%                      | 
- | Shedinja +26.667%                      | 
- | Zoroark +26.667%                       | 
- | Ditto +26.667%                         | 
+ | Ditto +33.333%                         | 
+ | Shedinja +33.333%                      | 
+ | Meloetta +25.000%                      | 
+ | Rayquaza +25.000%                      | 
+ | Zoroark +25.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Meloetta                               | 
- +----------------------------------------+ 
- | Raw count: 6                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Serene Grace 100.000%                  | 
- +----------------------------------------+ 
- | Items                                  | 
- | Red Card 100.000%                      | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Timid:0/0/0/252/4/252 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Perish Song 100.000%                   | 
- | Signal Beam 100.000%                   | 
- | Focus Blast 100.000%                   | 
- | Relic Song 100.000%                    | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Rayquaza +26.667%                      | 
- | Greninja-Ash +26.667%                  | 
- | Shedinja +26.667%                      | 
- | Zoroark +26.667%                       | 
- | Ditto +26.667%                         | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
+ | Gastrodon 100.000 (100.00±0.00)        |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Zygarde 100.000 (100.00±0.00)          |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Dugtrio  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Swampert-Mega  0.000 (0.00±0.00)       |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Darmanitan -91.421 (50.00±35.36)       |
+ |	 (0.0% KOed / 50.0% switched out) | 
+ | Kyogre-Primal -91.421 (50.00±35.36)    |
+ |	 (50.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Shedinja                               | 
@@ -168,81 +240,300 @@
  | Naive:0/196/0/4/0/232 100.000%         | 
  +----------------------------------------+ 
  | Moves                                  | 
- | Hidden Power Dark 100.000%             | 
  | Facade 100.000%                        | 
- | Swords Dance 100.000%                  | 
+ | Hidden Power Dark 100.000%             | 
  | Nothing 100.000%                       | 
+ | Swords Dance 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja-Ash +26.667%                  | 
- | Rayquaza +26.667%                      | 
- | Zoroark +26.667%                       | 
- | Meloetta +26.667%                      | 
- | Ditto +26.667%                         | 
+ | Ditto +33.333%                         | 
+ | Greninja-Ash +33.333%                  | 
+ | Meloetta +25.000%                      | 
+ | Rayquaza +25.000%                      | 
+ | Zoroark +25.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Gastrodon                              | 
- +----------------------------------------+ 
- | Raw count: 2                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Storm Drain 100.000%                   | 
- +----------------------------------------+ 
- | Items                                  | 
- | Eject Button 100.000%                  | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Sassy:252/4/0/0/252/0 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Surf 100.000%                          | 
- | Recover 100.000%                       | 
- | Earthquake 100.000%                    | 
- | Ice Beam 100.000%                      | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Zygarde +80.000%                       | 
- | Darmanitan +80.000%                    | 
- | Shaymin-Sky +80.000%                   | 
- | Mimikyu +80.000%                       | 
- | Dugtrio +80.000%                       | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
+ | Darmanitan 100.000 (100.00±0.00)       |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Swampert-Mega 100.000 (100.00±0.00)    |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Pelipper  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Tentacruel  0.000 (0.00±0.00)          |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Zygarde  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Darmanitan                             | 
  +----------------------------------------+ 
- | Raw count: 2                           | 
+ | Raw count: 3                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Zen Mode 100.000%                      | 
+ | Zen Mode 66.667%                       | 
+ | Sheer Force 33.333%                    | 
  +----------------------------------------+ 
  | Items                                  | 
  | Assault Vest 100.000%                  | 
  +----------------------------------------+ 
  | Spreads                                | 
- | Modest:251/0/0/252/4/0 100.000%        | 
+ | Modest:251/0/0/252/4/0 66.667%         | 
+ | Jolly:0/252/0/0/4/252 33.333%          | 
  +----------------------------------------+ 
  | Moves                                  | 
- | U-turn 100.000%                        | 
- | Psychic 100.000%                       | 
- | Fire Blast 100.000%                    | 
- | Flamethrower 100.000%                  | 
+ | Fire Blast 66.667%                     | 
+ | Flamethrower 66.667%                   | 
+ | Psychic 66.667%                        | 
+ | U-turn 66.667%                         | 
+ | Brick Break 33.333%                    | 
+ | Earthquake 33.333%                     | 
+ | Flame Charge 33.333%                   | 
+ | Flare Blitz 33.333%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Zygarde +80.000%                       | 
- | Gastrodon +80.000%                     | 
- | Shaymin-Sky +80.000%                   | 
- | Mimikyu +80.000%                       | 
- | Dugtrio +80.000%                       | 
+ | Dugtrio +75.000%                       | 
+ | Gastrodon +75.000%                     | 
+ | Mimikyu +75.000%                       | 
+ | Shaymin-Sky +75.000%                   | 
+ | Zygarde +75.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Ditto 100.000 (100.00±0.00)            |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Lycanroc-Dusk 100.000 (100.00±0.00)    |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Greninja  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Meloetta  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | NidoranM  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Rayquaza  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Shedinja  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Zoroark  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Greninja-Ash -91.421 (50.00±35.36)     |
+ |	 (0.0% KOed / 50.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Dugtrio                                | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Arena Trap 100.000%                    | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Choice Band 66.667%                    | 
+ | Focus Sash 33.333%                     | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Hasty:0/252/0/4/0/252 66.667%          | 
+ | Hasty:20/232/0/4/0/252 33.333%         | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Earthquake 100.000%                    | 
+ | Stone Edge 100.000%                    | 
+ | Hidden Power Grass 66.667%             | 
+ | Sucker Punch 66.667%                   | 
+ | Hidden Power Fighting 33.333%          | 
+ | Night Slash 33.333%                    | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Darmanitan +75.000%                    | 
+ | Gastrodon +75.000%                     | 
+ | Mimikyu +75.000%                       | 
+ | Shaymin-Sky +75.000%                   | 
+ | Zygarde +75.000%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Greninja 100.000 (100.00±0.00)         |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Greninja-Ash 100.000 (100.00±0.00)     |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Gastrodon                              | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Storm Drain 66.667%                    | 
+ | Sticky Hold 33.333%                    | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Eject Button 66.667%                   | 
+ | Rocky Helmet 33.333%                   | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Sassy:252/4/0/0/252/0 66.667%          | 
+ | Modest:252/0/0/252/4/0 33.333%         | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Ice Beam 100.000%                      | 
+ | Recover 100.000%                       | 
+ | Earthquake 66.667%                     | 
+ | Surf 66.667%                           | 
+ | Clear Smog 33.333%                     | 
+ | Earth Power 33.333%                    | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Darmanitan +75.000%                    | 
+ | Dugtrio +75.000%                       | 
+ | Mimikyu +75.000%                       | 
+ | Shaymin-Sky +75.000%                   | 
+ | Zygarde +75.000%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Greninja 100.000 (100.00±0.00)         |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Meloetta 100.000 (100.00±0.00)         |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Rayquaza 100.000 (100.00±0.00)         |
+ |	 (50.0% KOed / 50.0% switched out)| 
+ | Greninja-Ash  0.000 (0.00±0.00)        |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Lycanroc-Dusk  0.000 (0.00±0.00)       |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Mimikyu                                | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Disguise 100.000%                      | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Life Orb 66.667%                       | 
+ | Choice Band 33.333%                    | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Jolly:0/252/0/0/4/252 100.000%         | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Play Rough 100.000%                    | 
+ | Destiny Bond 66.667%                   | 
+ | Shadow Sneak 66.667%                   | 
+ | Swords Dance 66.667%                   | 
+ | Drain Punch 33.333%                    | 
+ | Frustration 33.333%                    | 
+ | Shadow Claw 33.333%                    | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Darmanitan +75.000%                    | 
+ | Dugtrio +75.000%                       | 
+ | Gastrodon +75.000%                     | 
+ | Shaymin-Sky +75.000%                   | 
+ | Zygarde +75.000%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Greninja 100.000 (100.00±0.00)         |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Lycanroc-Dusk 100.000 (100.00±0.00)    |
+ |	 (50.0% KOed / 50.0% switched out)| 
+ | Ditto  0.000 (0.00±0.00)               |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Meloetta  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Zoroark -91.421 (50.00±35.36)          |
+ |	 (50.0% KOed / 0.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Shaymin-Sky                            | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Serene Grace 100.000%                  | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Nothing 66.667%                        | 
+ | Life Orb 33.333%                       | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Timid:0/0/0/252/4/252 66.667%          | 
+ | Timid:68/0/0/184/4/252 33.333%         | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Air Slash 100.000%                     | 
+ | Dazzling Gleam 100.000%                | 
+ | Hidden Power Electric 100.000%         | 
+ | Grass Knot 66.667%                     | 
+ | Energy Ball 33.333%                    | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Darmanitan +75.000%                    | 
+ | Dugtrio +75.000%                       | 
+ | Gastrodon +75.000%                     | 
+ | Mimikyu +75.000%                       | 
+ | Zygarde +75.000%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Ditto 100.000 (100.00±0.00)            |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Lycanroc-Dusk -91.421 (50.00±35.36)    |
+ |	 (50.0% KOed / 0.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Zygarde                                | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Power Construct 66.667%                | 
+ | Aura Break 33.333%                     | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Assault Vest 66.667%                   | 
+ | Choice Band 33.333%                    | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Careful:252/4/0/0/252/0 66.667%        | 
+ | Jolly:0/252/0/0/4/252 33.333%          | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Glare 100.000%                         | 
+ | Thousand Arrows 100.000%               | 
+ | Brick Break 66.667%                    | 
+ | Dragon Tail 66.667%                    | 
+ | Outrage 33.333%                        | 
+ | Stone Edge 33.333%                     | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Darmanitan +75.000%                    | 
+ | Dugtrio +75.000%                       | 
+ | Gastrodon +75.000%                     | 
+ | Mimikyu +75.000%                       | 
+ | Shaymin-Sky +75.000%                   | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Meloetta 100.000 (100.00±0.00)         |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Shedinja 100.000 (100.00±0.00)         |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Greninja  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Greninja-Ash  0.000 (0.00±0.00)        |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | NidoranM  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Rayquaza -75.533 (33.33±27.22)         |
+ |	 (33.3% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Aegislash                              | 
@@ -262,78 +553,19 @@
  +----------------------------------------+ 
  | Moves                                  | 
  | Iron Head 100.000%                     | 
- | Sacred Sword 100.000%                  | 
  | King's Shield 100.000%                 | 
+ | Sacred Sword 100.000%                  | 
  | Shadow Sneak 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Necrozma-Dusk-Mane +46.667%            | 
- | Metagross-Mega +46.667%                | 
- | Genesect +46.667%                      | 
- | Magnezone +46.667%                     | 
+ | Genesect +50.000%                      | 
+ | Magnezone +50.000%                     | 
+ | Metagross-Mega +50.000%                | 
+ | Necrozma-Dusk-Mane +50.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Mimikyu                                | 
- +----------------------------------------+ 
- | Raw count: 2                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Disguise 100.000%                      | 
- +----------------------------------------+ 
- | Items                                  | 
- | Life Orb 100.000%                      | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Jolly:0/252/0/0/4/252 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Swords Dance 100.000%                  | 
- | Destiny Bond 100.000%                  | 
- | Play Rough 100.000%                    | 
- | Shadow Sneak 100.000%                  | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Zygarde +80.000%                       | 
- | Gastrodon +80.000%                     | 
- | Darmanitan +80.000%                    | 
- | Dugtrio +80.000%                       | 
- | Shaymin-Sky +80.000%                   | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Necrozma-Dusk-Mane                     | 
- +----------------------------------------+ 
- | Raw count: 3                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Prism Armor 100.000%                   | 
- +----------------------------------------+ 
- | Items                                  | 
- | Ultranecrozium Z 100.000%              | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Brave:252/252/0/4/0/0 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Iron Head 100.000%                     | 
- | Brick Break 100.000%                   | 
- | Earthquake 100.000%                    | 
- | Photon Geyser 100.000%                 | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Metagross-Mega +46.667%                | 
- | Aegislash +46.667%                     | 
- | Genesect +46.667%                      | 
- | Magnezone +46.667%                     | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
+ | Kyogre-Primal 100.000 (100.00±0.00)    |
+ |	 (100.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Genesect                               | 
@@ -352,139 +584,20 @@
  | Hasty:0/4/0/252/0/252 100.000%         | 
  +----------------------------------------+ 
  | Moves                                  | 
- | Flash Cannon 100.000%                  | 
  | Explosion 100.000%                     | 
  | Flamethrower 100.000%                  | 
+ | Flash Cannon 100.000%                  | 
  | Ice Beam 100.000%                      | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Necrozma-Dusk-Mane +46.667%            | 
- | Metagross-Mega +46.667%                | 
- | Aegislash +46.667%                     | 
- | Magnezone +46.667%                     | 
+ | Aegislash +50.000%                     | 
+ | Magnezone +50.000%                     | 
+ | Metagross-Mega +50.000%                | 
+ | Necrozma-Dusk-Mane +50.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Shaymin-Sky                            | 
- +----------------------------------------+ 
- | Raw count: 2                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Serene Grace 100.000%                  | 
- +----------------------------------------+ 
- | Items                                  | 
- | Nothing 100.000%                       | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Timid:0/0/0/252/4/252 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Hidden Power Electric 100.000%         | 
- | Grass Knot 100.000%                    | 
- | Dazzling Gleam 100.000%                | 
- | Air Slash 100.000%                     | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Zygarde +80.000%                       | 
- | Gastrodon +80.000%                     | 
- | Darmanitan +80.000%                    | 
- | Dugtrio +80.000%                       | 
- | Mimikyu +80.000%                       | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Swampert-Mega                          | 
- +----------------------------------------+ 
- | Raw count: 3                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Swift Swim 100.000%                    | 
- +----------------------------------------+ 
- | Items                                  | 
- | Swampertite 100.000%                   | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Adamant:0/252/0/0/4/252 100.000%       | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Stealth Rock 100.000%                  | 
- | Waterfall 100.000%                     | 
- | Earthquake 100.000%                    | 
- | Superpower 100.000%                    | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Ludicolo +46.667%                      | 
- | Kyogre-Primal +46.667%                 | 
- | Pelipper +46.667%                      | 
- | Tentacruel +46.667%                    | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Ludicolo                               | 
- +----------------------------------------+ 
- | Raw count: 3                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Swift Swim 100.000%                    | 
- +----------------------------------------+ 
- | Items                                  | 
- | Waterium Z 100.000%                    | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Serious:0/4/0/252/0/252 100.000%       | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Surf 100.000%                          | 
- | Grass Knot 100.000%                    | 
- | Fake Out 100.000%                      | 
- | Ice Beam 100.000%                      | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Swampert-Mega +46.667%                 | 
- | Kyogre-Primal +46.667%                 | 
- | Pelipper +46.667%                      | 
- | Tentacruel +46.667%                    | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Tentacruel                             | 
- +----------------------------------------+ 
- | Raw count: 3                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Rain Dish 100.000%                     | 
- +----------------------------------------+ 
- | Items                                  | 
- | Black Sludge 100.000%                  | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Timid:0/0/0/252/4/252 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Hydro Pump 100.000%                    | 
- | Toxic Spikes 100.000%                  | 
- | Hex 100.000%                           | 
- | Rapid Spin 100.000%                    | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Ludicolo +46.667%                      | 
- | Kyogre-Primal +46.667%                 | 
- | Pelipper +46.667%                      | 
- | Swampert-Mega +46.667%                 | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
+ | Kyogre-Primal  0.000 (0.00±0.00)       |
+ |	 (0.0% KOed / 0.0% switched out)  | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Kyogre-Primal                          | 
@@ -504,109 +617,95 @@
  +----------------------------------------+ 
  | Moves                                  | 
  | Calm Mind 100.000%                     | 
+ | Ice Beam 100.000%                      | 
  | Origin Pulse 100.000%                  | 
  | Thunder 100.000%                       | 
- | Ice Beam 100.000%                      | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ludicolo +46.667%                      | 
- | Swampert-Mega +46.667%                 | 
- | Pelipper +46.667%                      | 
- | Tentacruel +46.667%                    | 
+ | Ludicolo +50.000%                      | 
+ | Pelipper +50.000%                      | 
+ | Swampert-Mega +50.000%                 | 
+ | Tentacruel +50.000%                    | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Aegislash  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Ditto  0.000 (0.00±0.00)               |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Genesect  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Greninja-Ash  0.000 (0.00±0.00)        |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Magnezone  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Rayquaza  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
  +----------------------------------------+ 
  +----------------------------------------+ 
- | Dugtrio                                | 
- +----------------------------------------+ 
- | Raw count: 2                           | 
- | Avg. weight: 1.0                       | 
- | Viability Ceiling: 89                  | 
- +----------------------------------------+ 
- | Abilities                              | 
- | Arena Trap 100.000%                    | 
- +----------------------------------------+ 
- | Items                                  | 
- | Choice Band 100.000%                   | 
- +----------------------------------------+ 
- | Spreads                                | 
- | Hasty:0/252/0/4/0/252 100.000%         | 
- +----------------------------------------+ 
- | Moves                                  | 
- | Sucker Punch 100.000%                  | 
- | Stone Edge 100.000%                    | 
- | Earthquake 100.000%                    | 
- | Hidden Power Grass 100.000%            | 
- +----------------------------------------+ 
- | Teammates                              | 
- | Zygarde +80.000%                       | 
- | Gastrodon +80.000%                     | 
- | Darmanitan +80.000%                    | 
- | Shaymin-Sky +80.000%                   | 
- | Mimikyu +80.000%                       | 
- +----------------------------------------+ 
- | Checks and Counters                    | 
- +----------------------------------------+ 
- +----------------------------------------+ 
- | Pelipper                               | 
+ | Ludicolo                               | 
  +----------------------------------------+ 
  | Raw count: 3                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Drizzle 100.000%                       | 
+ | Swift Swim 100.000%                    | 
  +----------------------------------------+ 
  | Items                                  | 
- | Red Card 100.000%                      | 
+ | Waterium Z 100.000%                    | 
  +----------------------------------------+ 
  | Spreads                                | 
- | Bold:248/0/252/0/8/0 100.000%          | 
+ | Serious:0/4/0/252/0/252 100.000%       | 
  +----------------------------------------+ 
  | Moves                                  | 
- | Tailwind 100.000%                      | 
- | U-turn 100.000%                        | 
- | Scald 100.000%                         | 
- | Roost 100.000%                         | 
+ | Fake Out 100.000%                      | 
+ | Grass Knot 100.000%                    | 
+ | Ice Beam 100.000%                      | 
+ | Surf 100.000%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ludicolo +46.667%                      | 
- | Kyogre-Primal +46.667%                 | 
- | Tentacruel +46.667%                    | 
- | Swampert-Mega +46.667%                 | 
+ | Kyogre-Primal +50.000%                 | 
+ | Pelipper +50.000%                      | 
+ | Swampert-Mega +50.000%                 | 
+ | Tentacruel +50.000%                    | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Necrozma-Dusk-Mane 100.000 (100.00±0.00) |
+ |	 (100.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
- | Zygarde                                | 
+ | Magnezone                              | 
  +----------------------------------------+ 
- | Raw count: 2                           | 
+ | Raw count: 3                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Power Construct 100.000%               | 
+ | Magnet Pull 100.000%                   | 
  +----------------------------------------+ 
  | Items                                  | 
  | Assault Vest 100.000%                  | 
  +----------------------------------------+ 
  | Spreads                                | 
- | Careful:252/4/0/0/252/0 100.000%       | 
+ | Quiet:248/8/0/252/0/0 100.000%         | 
  +----------------------------------------+ 
  | Moves                                  | 
- | Dragon Tail 100.000%                   | 
- | Brick Break 100.000%                   | 
- | Glare 100.000%                         | 
- | Thousand Arrows 100.000%               | 
+ | Explosion 100.000%                     | 
+ | Flash Cannon 100.000%                  | 
+ | Sunny Day 100.000%                     | 
+ | Volt Switch 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Gastrodon +80.000%                     | 
- | Darmanitan +80.000%                    | 
- | Shaymin-Sky +80.000%                   | 
- | Mimikyu +80.000%                       | 
- | Dugtrio +80.000%                       | 
+ | Aegislash +50.000%                     | 
+ | Genesect +50.000%                      | 
+ | Metagross-Mega +50.000%                | 
+ | Necrozma-Dusk-Mane +50.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Ditto 100.000 (100.00±0.00)            |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Kyogre-Primal 100.000 (100.00±0.00)    |
+ |	 (100.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
  | Metagross-Mega                         | 
@@ -626,44 +725,285 @@
  +----------------------------------------+ 
  | Moves                                  | 
  | Nothing 200.000%                       | 
- | Explosion 100.000%                     | 
  | Earthquake 100.000%                    | 
+ | Explosion 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Necrozma-Dusk-Mane +46.667%            | 
- | Genesect +46.667%                      | 
- | Aegislash +46.667%                     | 
- | Magnezone +46.667%                     | 
+ | Aegislash +50.000%                     | 
+ | Genesect +50.000%                      | 
+ | Magnezone +50.000%                     | 
+ | Necrozma-Dusk-Mane +50.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Swampert-Mega 100.000 (100.00±0.00)    |
+ |	 (100.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
- | Magnezone                              | 
+ | Necrozma-Dusk-Mane                     | 
  +----------------------------------------+ 
  | Raw count: 3                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Magnet Pull 100.000%                   | 
+ | Prism Armor 100.000%                   | 
  +----------------------------------------+ 
  | Items                                  | 
- | Assault Vest 100.000%                  | 
+ | Ultranecrozium Z 100.000%              | 
  +----------------------------------------+ 
  | Spreads                                | 
- | Quiet:248/8/0/252/0/0 100.000%         | 
+ | Brave:252/252/0/4/0/0 100.000%         | 
  +----------------------------------------+ 
  | Moves                                  | 
- | Flash Cannon 100.000%                  | 
- | Explosion 100.000%                     | 
- | Sunny Day 100.000%                     | 
- | Volt Switch 100.000%                   | 
+ | Brick Break 100.000%                   | 
+ | Earthquake 100.000%                    | 
+ | Iron Head 100.000%                     | 
+ | Photon Geyser 100.000%                 | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Necrozma-Dusk-Mane +46.667%            | 
- | Metagross-Mega +46.667%                | 
- | Aegislash +46.667%                     | 
- | Genesect +46.667%                      | 
+ | Aegislash +50.000%                     | 
+ | Genesect +50.000%                      | 
+ | Magnezone +50.000%                     | 
+ | Metagross-Mega +50.000%                | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
+ | Ditto 100.000 (100.00±0.00)            |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Ludicolo  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Swampert-Mega  0.000 (0.00±0.00)       |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Tentacruel  0.000 (0.00±0.00)          |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Pelipper -75.533 (33.33±27.22)         |
+ |	 (33.3% KOed / 0.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Pelipper                               | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Drizzle 100.000%                       | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Red Card 100.000%                      | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Bold:248/0/252/0/8/0 100.000%          | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Roost 100.000%                         | 
+ | Scald 100.000%                         | 
+ | Tailwind 100.000%                      | 
+ | U-turn 100.000%                        | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Kyogre-Primal +50.000%                 | 
+ | Ludicolo +50.000%                      | 
+ | Swampert-Mega +50.000%                 | 
+ | Tentacruel +50.000%                    | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Shedinja 100.000 (100.00±0.00)         |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Meloetta  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Rayquaza  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Necrozma-Dusk-Mane -42.200 (66.67±27.22) |
+ |	 (0.0% KOed / 66.7% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Swampert-Mega                          | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Swift Swim 100.000%                    | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Swampertite 100.000%                   | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Adamant:0/252/0/0/4/252 100.000%       | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Earthquake 100.000%                    | 
+ | Stealth Rock 100.000%                  | 
+ | Superpower 100.000%                    | 
+ | Waterfall 100.000%                     | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Kyogre-Primal +50.000%                 | 
+ | Ludicolo +50.000%                      | 
+ | Pelipper +50.000%                      | 
+ | Tentacruel +50.000%                    | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Greninja-Ash 100.000 (100.00±0.00)     |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Necrozma-Dusk-Mane 100.000 (100.00±0.00) |
+ |	 (50.0% KOed / 50.0% switched out)| 
+ | Metagross-Mega  0.000 (0.00±0.00)      |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Shedinja  0.000 (0.00±0.00)            |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Zoroark  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Rayquaza -91.421 (50.00±35.36)         |
+ |	 (50.0% KOed / 0.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Tentacruel                             | 
+ +----------------------------------------+ 
+ | Raw count: 3                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Rain Dish 100.000%                     | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Black Sludge 100.000%                  | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Timid:0/0/0/252/4/252 100.000%         | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Hex 100.000%                           | 
+ | Hydro Pump 100.000%                    | 
+ | Rapid Spin 100.000%                    | 
+ | Toxic Spikes 100.000%                  | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Kyogre-Primal +50.000%                 | 
+ | Ludicolo +50.000%                      | 
+ | Pelipper +50.000%                      | 
+ | Swampert-Mega +50.000%                 | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Necrozma-Dusk-Mane 100.000 (100.00±0.00) |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Shedinja 100.000 (100.00±0.00)         |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Greninja                               | 
+ +----------------------------------------+ 
+ | Raw count: 1                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Protean 100.000%                       | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Choice Specs 100.000%                  | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Timid:40/0/12/212/0/244 100.000%       | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Dark Pulse 100.000%                    | 
+ | Extrasensory 100.000%                  | 
+ | Spikes 100.000%                        | 
+ | Water Shuriken 100.000%                | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Lycanroc-Dusk +91.667%                 | 
+ | NidoranM +91.667%                      | 
+ | Meloetta +58.333%                      | 
+ | Rayquaza +58.333%                      | 
+ | Zoroark +58.333%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Darmanitan 100.000 (100.00±0.00)       |
+ |	 (100.0% KOed / 0.0% switched out) | 
+ | Zygarde 100.000 (100.00±0.00)          |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Dugtrio  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Gastrodon  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Mimikyu  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | Lycanroc-Dusk                          | 
+ +----------------------------------------+ 
+ | Raw count: 1                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Tough Claws 100.000%                   | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Choice Band 100.000%                   | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Jolly:0/252/0/0/4/252 100.000%         | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Accelerock 100.000%                    | 
+ | Brick Break 100.000%                   | 
+ | Crunch 100.000%                        | 
+ | Drill Run 100.000%                     | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Greninja +91.667%                      | 
+ | NidoranM +91.667%                      | 
+ | Meloetta +58.333%                      | 
+ | Rayquaza +58.333%                      | 
+ | Zoroark +58.333%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Darmanitan  0.000 (0.00±0.00)          |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Gastrodon  0.000 (0.00±0.00)           |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Mimikyu  0.000 (0.00±0.00)             |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ | Shaymin-Sky  0.000 (0.00±0.00)         |
+ |	 (0.0% KOed / 0.0% switched out)  | 
+ +----------------------------------------+ 
+ +----------------------------------------+ 
+ | NidoranM                               | 
+ +----------------------------------------+ 
+ | Raw count: 1                           | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
+ +----------------------------------------+ 
+ | Abilities                              | 
+ | Poison Point 100.000%                  | 
+ +----------------------------------------+ 
+ | Items                                  | 
+ | Eviolite 100.000%                      | 
+ +----------------------------------------+ 
+ | Spreads                                | 
+ | Adamant:140/252/52/0/64/0 100.000%     | 
+ +----------------------------------------+ 
+ | Moves                                  | 
+ | Head Smash 100.000%                    | 
+ | Sucker Punch 100.000%                  | 
+ | Super Fang 100.000%                    | 
+ | Toxic Spikes 100.000%                  | 
+ +----------------------------------------+ 
+ | Teammates                              | 
+ | Greninja +91.667%                      | 
+ | Lycanroc-Dusk +91.667%                 | 
+ | Meloetta +58.333%                      | 
+ | Rayquaza +58.333%                      | 
+ | Zoroark +58.333%                       | 
+ +----------------------------------------+ 
+ | Checks and Counters                    | 
+ | Darmanitan 100.000 (100.00±0.00)       |
+ |	 (0.0% KOed / 100.0% switched out) | 
+ | Zygarde 100.000 (100.00±0.00)          |
+ |	 (100.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
