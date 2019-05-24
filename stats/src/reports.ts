@@ -29,6 +29,7 @@ interface EncounterStatistics {
 }
 
 type UsageTier = 'OU'|'UU'|'RU'|'NU'|'PU';
+// FIXME: Should BL{1,2,3,4} not be {UU,RU,NU,PU}BL instead?
 type Tier = UsageTier|'Uber'|'BL'|'BL2'|'BL3'|'BL4';
 type UsageTiers<T> = {
   OU: T,
@@ -44,6 +45,8 @@ const TIERS: Tier[] = ['Uber', 'OU', 'BL', 'UU', 'BL2', 'RU', 'BL3', 'NU', 'BL4'
 const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
 
 const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
+
+const MIN = [20, 0.5];
 
 export const Reports = new class {
   usageReport(format: ID, stats: Statistics, battles: number) {
@@ -118,7 +121,7 @@ export const Reports = new class {
 
   movesetReports(
       format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
-      min = [20, 0.5]) {
+      min = MIN) {
     const movesetStats = toMovesetStatistics(format, stats, min[0]);
     const basic = this.movesetReport(format, stats, movesetStats, min);
     const detailed =
@@ -126,9 +129,8 @@ export const Reports = new class {
     return {basic, detailed};
   }
 
-  movesetReport(format: ID, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>, min = [
-    20, 0.5
-  ]) {
+  movesetReport(
+      format: ID, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>, min = MIN) {
     movesetStats = movesetStats || toMovesetStatistics(format, stats, min[0]);
 
     const data = util.dataForFormat(format);
@@ -232,10 +234,12 @@ export const Reports = new class {
         const p = (100 * v.p).toFixed(2).padStart(3);
         const d = (100 * v.d).toFixed(2).padStart(3);
         let line = ` | ${cc} ${score} (${p}\u00b1${d})`.padEnd(WIDTH + 1) + ' |\n';
+
         const ko = 100 * v.koed / v.n;
         const koed = ko.toFixed(1).padStart(2);
         const sw = (100 * v.switched / v.n);
         const switched = sw.toFixed(1).padStart(2);
+        // FIXME: Remove the \t and pad properly base on the 2 different lines, not 1.
         line += ` |\t (${koed}% KOed / ${switched}% switched out)`;
         if (ko < 10) line += ' ';
         if (sw < 10) line += ' ';
@@ -247,6 +251,7 @@ export const Reports = new class {
     return s;
   }
 
+  // FIXME: Just Use names everywhere instead of a hybrid of names and IDs.
   detailedMovesetReport(
       format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
       movesetStats?: Map<ID, MovesetStatistics>, min = 20) {
@@ -333,7 +338,6 @@ export const Reports = new class {
     // Maximum number of blocks to go across
     const MAX_BLOCKS = 30;
     const blockSize = max / MAX_BLOCKS;
-
 
     if (blockSize <= 0) return s;
 
@@ -480,73 +484,39 @@ function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: n
       continue;
     }
     if (updated.has(species.id)) continue;
-    if (update.OU > rise) {
-      updated.set(species.id, 'OU');
-      continue;
-    }
-    if (tier === 'OU') {
-      if (update.OU < drop) {
-        updated.set(species.id, 'UU');
-      } else {
-        updated.set(species.id, 'OU');
-      }
-      continue;
-    }
-    if (tier === 'BL') {
-      updated.set(species.id, 'BL');
-      continue;
-    }
-    if (update.UU > rise) {
-      updated.set(species.id, 'UU');
-      continue;
-    }
-    if (tier === 'UU') {
-      if (update.UU < drop) {
-        updated.set(species.id, 'RU');
-      } else {
-        updated.set(species.id, 'UU');
-      }
-      continue;
-    }
-    if (tier === 'BL2') {
-      updated.set(species.id, 'BL2');
-      continue;
-    }
-    if (update.RU > rise) {
-      updated.set(species.id, 'RU');
-      continue;
-    }
-    if (tier === 'RU') {
-      if (update.UU < drop) {
-        updated.set(species.id, 'NU');
-      } else {
-        updated.set(species.id, 'RU');
-      }
-      continue;
-    }
-    if (tier === 'BL3') {
-      updated.set(species.id, 'BL3');
-      continue;
-    }
-    if (update.NU > rise) {
-      updated.set(species.id, 'NU');
-      continue;
-    }
-    if (tier === 'NU') {
-      if (update.UU < drop) {
-        updated.set(species.id, 'PU');
-      } else {
-        updated.set(species.id, 'NU');
-      }
-      continue;
-    }
-    if (tier === 'BL4') {
-      updated.set(species.id, 'BL4');
-      continue;
-    }
+
+    const riseAndDrop = (r: UsageTier, d: UsageTier, b: Tier) => computeRiseAndDrop(
+        species.id, update, updated, tier, rise, drop, {rise: r, drop: d, ban: b});
+    if (riseAndDrop('OU', 'UU', 'BL')) continue;
+    if (riseAndDrop('UU', 'RU', 'BL2')) continue;
+    if (riseAndDrop('RU', 'NU', 'BL3')) continue;
+    if (riseAndDrop('NU', 'PU', 'BL4')) continue;
+
     if (!updated.has(species.id)) updated.set(species.id, 'PU');
   }
   return {current, updated};
+}
+
+function computeRiseAndDrop(
+    species: ID, update: UsageTiers<number>, updated: Map<ID, Tier>, tier: Tier, rise: number,
+    drop: number, tiers: {rise: UsageTier, drop: UsageTier, ban: Tier}) {
+  if (update[tiers.rise] > rise) {
+    updated.set(species, tiers.rise);
+    return true;
+  }
+  if (tier === tiers.rise) {
+    if (update[tiers.rise] < drop) {
+      updated.set(species, tiers.drop);
+    } else {
+      updated.set(species, tiers.rise);
+    }
+    return true;
+  }
+  if (tier === tiers.ban) {
+    updated.set(species, tiers.ban);
+    return true;
+  }
+  return false;
 }
 
 function fmod(a: number, b: number, f = 1e3) {

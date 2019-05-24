@@ -35,11 +35,6 @@ declare module 'ps' {
     interface Item extends Effect {
         megaStone?: string
         megaEvolves?: string
-
-        zMove?: string | true
-        zMoveFrom?: string
-        zMoveType?: string
-        zMoveUser?: string[]
     }
     interface Move extends Effect {}
     type Nonstandard = 'Glitch' | 'Past' | 'Future' | 'CAP' | 'LGPE' | 'Pokestar' | 'Custom'
@@ -54,7 +49,6 @@ declare module 'ps' {
         tier?: string
         eventOnly?: boolean
     }
-    // TODO: add format banlists
     interface Type {
         damageTaken: {[attackingTypeNameOrEffectid: string]: number}
         HPdvs?: Partial<StatsTable<number>>

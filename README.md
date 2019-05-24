@@ -52,22 +52,27 @@ The resulting reports will be written out in the following directory structure:
     └── moveset
         └── format-N.txt
 
-Numerous other options for processing exist beyond the default, including
-options for saving intermediate state, as well as limiting the number of threads
-used or the batch size run `./process --help` for more details.
+A Tier Update report based on past usage reports can also be produced:
+
+    $ ./updates path/to/month1 <path/to/month2> <path/to/month3>
+
+Where `updates` may be passed the paths to 1 - 3 past usage report directories,
+ordered from most recent to least recent.
 
 If you wish to construct different reports or tweak which reports are produced,
-see the `@psim/stats` sub package, housed under `src/stats`.
+refer to the subpackage housed under [stats/][5].
+
+  [5]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/tree/master/stats
 
 License
 ------------------------------------------------------------------------
 
-Pokémon Showdown's stats processing library is distributed under the terms of the [MIT License][5].
+Pokémon Showdown's stats processing library is distributed under the terms of the [MIT License][6].
 
-  [5]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/blob/master/LICENSE
+  [6]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/blob/master/LICENSE
 
 Credits
 ------------------------------------------------------------------------
-This code is based on a rewrite of [Smogon-Usage-Stats][6], written by Antar Iliev.  
+This code is based on a rewrite of [Smogon-Usage-Stats][7], written by Antar Iliev.
 
-  [6]: https://github.com/Antar1011/Smogon-Usage-Stats
+  [7]: https://github.com/Antar1011/Smogon-Usage-Stats

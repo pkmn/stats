@@ -35,7 +35,7 @@ interface Options extends main.Options {
 }
 
 async function process(formats: main.FormatData[], options: Options) {
-  // All of the reports we're writing
+  // All of the reports we're writing from this worker
   const writes: Array<Promise<void>> = [];
   for (const {format, size, files} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
@@ -50,12 +50,12 @@ async function process(formats: main.FormatData[], options: Options) {
 
     const b = stats.battles;
     for (const [c, s] of stats.total.entries()) {
-      writes.push(...writeReports(options.reportsPath, format, c, s, b));
+      writes.push(...writeReports(options, format, c, s, b));
     }
 
     for (const [t, ts] of stats.tags.entries()) {
       for (const [c, s] of ts.entries()) {
-        writes.push(...writeReports(options.reportsPath, format, c, s, b, t));
+        writes.push(...writeReports(options, format, c, s, b, t));
       }
     }
   }
@@ -75,16 +75,17 @@ async function processLog(data: Data, file: string, cutoffs: number[], stats: Ta
 }
 
 function writeReports(
-    reports: string, format: ID, cutoff: number, stats: Statistics, battles: number, tag?: ID) {
+    options: Options, format: ID, cutoff: number, stats: Statistics, battles: number, tag?: ID) {
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
 
+  const reports = options.reportsPath;
+  const min = options.debug ? [0, -Infinity] : [20, 0.5];
   const writes: Array<Promise<void>> = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
   const leads = Reports.leadsReport(format, stats, battles);
   writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));
-  // const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag, [0, -Infinity]);
-  const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag);
+  const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag, min);
   writes.push(fs.writeFile(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic));
   writes.push(fs.writeFile(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed));
   const metagame = Reports.metagameReport(stats);

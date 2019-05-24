@@ -1,6 +1,49 @@
 #!/usr/bin/env node
 
+// Produces the standard Smogon reports in an output directory specified by
+// its second argument based on data from a logs directory provided by its
+// first argument.
+//
+// Expects the logs (YYYY-MM) directory to be structured as follows:
+//
+//     YYYY-MM
+//     └── format
+//         └── YYYY-MM-DD
+//             └── battle-format-N.log.json
+//
+// The resulting reports will be written out in the following directory structure:
+//
+//     YYYY-MM
+//     ├── chaos
+//     │   └── format-N.json
+//     ├── format-N.txt
+//     ├── leads
+//     │   └── format-N.txt
+//     ├── metagame
+//     │   └── format-N.txt
+//     ├── monotype
+//     │   ├── chaos
+//     │   │   └── format-monoT-N.json
+//     │   ├── format-monoT-N.txt
+//     │   ├── leads
+//     │   │   └── format-monoT-N.txt
+//     │   ├── metagame
+//     │   │   └── format-monoT-N.txt
+//     │   └── moveset
+//     │       └── format-monoT-N.txt
+//     └── moveset
+//         └── format-N.txt
+//
+// Usage:
+//
+//   $ ./process ../Pokemon-Showdown{logs,Stats}/2019-05
+
 require('source-map-support').install();
 const stats = require('./build/index');
+
+if (process.argv.length < 3 || process.argv.length > 4) {
+    console.error('process path/to/logs path/to/output/reports');
+    process.exit(1);
+}
 // tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(process.argv[2], process.argv[3])))();
+(async () => process.exit(await stats.process(process.argv[2], process.argv[3], {debug: true})))();

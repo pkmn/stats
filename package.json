@@ -34,6 +34,7 @@
     "postinstall": "subpkg install"
   },
   "subPackages": [
+    "ps",
     "stats"
   ]
 }

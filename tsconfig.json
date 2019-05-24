@@ -13,7 +13,6 @@
   "exclude": [
     "ps",
     "build",
-    "stats",
-    "wip"
+    "stats"
   ]
 }

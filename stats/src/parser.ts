@@ -4,17 +4,17 @@ import {Classifier} from './classifier';
 import * as util from './util';
 
 export interface Log {
-  id: string;         // gen1randombattle-12345
-  format: string;     // gen1randombattle;
-  timestamp: string;  // Date.toString();
-  winner: string;     // Name
+  id: string;
+  format: string;
+  timestamp: string;
+  winner: string;
   endType?: 'normal'|'forced'|'forfeit';
   seed: [number, number, number, number];
   turns: number;
   score: [number, number];
 
-  p1: string;  // Name
-  p2: string;  // Name
+  p1: string;
+  p2: string;
 
   p1team: Array<PokemonSet<string>>;
   p2team: Array<PokemonSet<string>>;
@@ -103,6 +103,7 @@ export const Parser = new class {
     for (const side of (['p1', 'p2'] as Array<'p1'|'p2'>)) {
       const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team'], format);
 
+      // TODO: Stop tracking empty slots?
       const mons = [];
       for (let i = 0; i < 6; i++) {
         const pokemon = team[i];
@@ -219,8 +220,7 @@ export const Parser = new class {
           const name = line[3].split(',')[0];
           const side = line[2].startsWith('p1') ? 'p1' : 'p2';
           if (line[1] === 'replace') {
-            // TODO: in the replace case we need to go back and fix the previously affected
-            // matchups!
+            // NOTE: Ideally we'd be able to go back and fix the previously affected matchups
             active[side] = identify(name, side, battle, idents, format);
             break;
           }
@@ -342,6 +342,7 @@ function identify(
   const team = battle[side].team.pokemon;
   const names = idents[side];
 
+  // TODO: Can we just get rid of all the nickname logic, or do we require it for Ditto etc?
   // Check if the name we've been given is the nickname
   if (name.startsWith(`${side}a: `) || name.startsWith(`${side}: `)) {
     name = name.substr(name.indexOf(' ') + 1);

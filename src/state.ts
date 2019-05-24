@@ -1,8 +1,7 @@
 import {ID, PokemonSet} from 'ps';
 import * as stats from 'stats';
 
-// TODO: can avoid copying by just mutating directly
-
+// TODO: we can avoid copies by just mutating directly
 interface TaggedStatistics {
   battles: number;
   total: WeightedStatistics;

@@ -1,33 +1,3 @@
-// We expect the logs (YYYY-MM) directory to be structured as follows:
-//
-//     YYYY-MM
-//     └── format
-//         └── YYYY-MM-DD
-//             └── battle-format-N.log.json
-//
-// The resulting reports will be written out in the following directory structure:
-//
-//     YYYY-MM
-//     ├── chaos
-//     │   └── format-N.json
-//     ├── format-N.txt
-//     ├── leads
-//     │   └── format-N.txt
-//     ├── metagame
-//     │   └── format-N.txt
-//     ├── monotype
-//     │   ├── chaos
-//     │   │   └── format-monoT-N.json
-//     │   ├── format-monoT-N.txt
-//     │   ├── leads
-//     │   │   └── format-monoT-N.txt
-//     │   ├── metagame
-//     │   │   └── format-monoT-N.txt
-//     │   └── moveset
-//     │       └── format-monoT-N.txt
-//     └── moveset
-//         └── format-N.txt
-
 import * as os from 'os';
 import * as path from 'path';
 import {ID, toID} from 'ps';
@@ -38,8 +8,7 @@ import * as fs from './fs';
 
 export interface Options {
   numWorkers?: number;
-  batchSize?: number;
-  intermediatePath?: number;
+  debug?: boolean;
 }
 
 export interface FormatData {
@@ -53,9 +22,9 @@ const WORKER = path.resolve(__dirname, 'worker.js');
 export async function process(month: string, reports: string, options: Options = {}) {
   // Set up out report output directory structure
   await rmrf(reports);
-  await fs.mkdir(reports, {recursive: true, mode: 0o755});
+  await fs.mkdir(reports, {recursive: true});
   const monotype = path.resolve(reports, 'monotype');
-  await fs.mkdir(monotype, {mode: 0o755});
+  await fs.mkdir(monotype);
   await Promise.all([...mkdirs(reports), ...mkdirs(monotype)]);
 
   const formatData: Array<Promise<FormatData>> = [];
@@ -69,7 +38,7 @@ export async function process(month: string, reports: string, options: Options =
     formatData.push(listLogs(dir).then(files => ({format, size: files.length, files})));
   }
 
-  const numWorkers = 1;  // DEBUG options.numWorkers || (os.cpus().length - 1);
+  const numWorkers = options.debug ? 1 : (options.numWorkers || (os.cpus().length - 1));
   const partitions = partition(await Promise.all(formatData), numWorkers);
   const workers: Array<[ID[], Promise<void>]> = [];
   const opts = Object.assign({}, options, {reportsPath: reports});
@@ -81,6 +50,10 @@ export async function process(month: string, reports: string, options: Options =
         worker.on('error', reject);
         worker.on('exit', (code) => {
           if (code === 0) {
+            // We need to wait for the worker to exit before resolving (as opposed to having
+            // the worker message us when it is finished) so that we know it is safe to
+            // terminate the main process (which will kill all the workers and result in
+            // strange behavior where `console` output from the workers goes missing).
             resolve();
           } else {
             reject(new Error(`Worker stopped with exit code ${code}`));

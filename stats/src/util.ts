@@ -20,6 +20,7 @@ export function getBaseSpecies(name: string, format: string|Data): Species {
       species;
 }
 
+// TODO: Remove this function in favor of direct Data.forFormat calls once format is fixed.
 export function dataForFormat(format?: string|Data) {
   return Data.forFormat(/* FIXME format */);
 }
@@ -63,6 +64,7 @@ export function revertFormes(id: ID, format: string|Data) {
   return getBaseSpecies(species.id, format).id;
 }
 
+// FIXME: Generate this based on gameType from config/formats.js
 const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles',
   'battlespotspecial7',
@@ -105,6 +107,7 @@ export function isNonSinglesFormat(format: string|Data) {
   return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
+// FIXME: Generate this based on teamLength from config/formats.js
 const NON_6V6_FORMATS = new Set([
   '1v1',
   'battlespotdoubles',
@@ -149,10 +152,8 @@ export function canonicalizeFormat(format: ID) {
 
 export function victoryChance(r1: number, d1: number, r2: number, d2: number) {
   const C = 3.0 * Math.pow(Math.log(10.0), 2.0) / Math.pow(400.0 * Math.PI, 2);
-  return 1.0 /
-      (1.0 +
-       Math.pow(
-           10.0, (r2 - r1) / 400.0 / Math.sqrt(1.0 + C * (Math.pow(d1, 2.0) + Math.pow(d2, 2.0)))));
+  const d = Math.pow(d1, 2.0) + Math.pow(d2, 2.0);
+  return 1.0 / (1.0 + Math.pow(10.0, (r2 - r1) / 400.0 / Math.sqrt(1.0 + C * d)));
 }
 
 export function weighting(rating: number, deviation: number, cutoff: number) {
@@ -190,15 +191,13 @@ const Q = [
   ]
 ];
 
-/**
- * Compute the erf function of a value using a rational Chebyshev
- * approximations for different intervals of x.
- *
- * This is a translation of W. J. Cody's Fortran implementation from
- * 1987 (https://www.netlib.org/specfun/erf). See the AMS publication
- * "Rational Chebyshev Approximations for the Error Function" by W. J.
- * Cody for an explanation of this process.
- */
+// Compute the erf function of a value using a rational Chebyshev
+// approximations for different intervals of x.
+//
+// This is a translation of W. J. Cody's Fortran implementation from
+// 1987 (https://www.netlib.org/specfun/erf). See the AMS publication
+// "Rational Chebyshev Approximations for the Error Function" by W. J.
+// Cody for an explanation of this process.
 function erf(x: number) {
   const y = Math.abs(x);
   if (y >= MAX_NUM) return Math.sign(x);
@@ -207,13 +206,11 @@ function erf(x: number) {
   return Math.sign(x) * (1 - erfc3(y));
 }
 
-/**
- * Approximates the error function erf() for x <= 0.46875 using this
- * function:
- *               n
- * erf(x) = x * sum (p_j * x^(2j)) / (q_j * x^(2j))
- *              j=0
- */
+// Approximates the error function erf() for x <= 0.46875 using this
+// function:
+//               n
+// erf(x) = x * sum (p_j * x^(2j)) / (q_j * x^(2j))
+//              j=0
 function erf1(y: number) {
   const ysq = y * y;
   let xnum = P[0][4] * ysq;
@@ -226,13 +223,12 @@ function erf1(y: number) {
 
   return y * (xnum + P[0][3]) / (xden + Q[0][3]);
 }
-/**
- * Approximates the complement of the error function erfc() for
- * 0.46875 <= x <= 4.0 using this function:
- *                       n
- * erfc(x) = e^(-x^2) * sum (p_j * x^j) / (q_j * x^j)
- *                      j=0
- */
+
+// Approximates the complement of the error function erfc() for
+// 0.46875 <= x <= 4.0 using this function:
+//                       n
+// erfc(x) = e^(-x^2) * sum (p_j * x^j) / (q_j * x^j)
+//                      j=0
 function erfc2(y: number) {
   let xnum = P[1][8] * y;
   let xden = y;
@@ -248,15 +244,13 @@ function erfc2(y: number) {
   return Math.exp(-ysq * ysq) * Math.exp(-del) * result;
 }
 
-/**
- * Approximates the complement of the error function erfc() for x > 4.0
- * using this function:
- *
- * erfc(x) = (e^(-x^2) / x) * [ 1/sqrt(pi) +
- *               n
- *    1/(x^2) * sum (p_j * x^(-2j)) / (q_j * x^(-2j)) ]
- *              j=0
- */
+// Approximates the complement of the error function erfc() for x > 4.0
+// using this function:
+//
+// erfc(x) = (e^(-x^2) / x) * [ 1/sqrt(pi) +
+//               n
+//    1/(x^2) * sum (p_j * x^(-2j)) / (q_j * x^(-2j)) ]
+//              j=0
 function erfc3(y: number) {
   let ysq = 1 / (y * y);
   let xnum = P[2][5] * ysq;

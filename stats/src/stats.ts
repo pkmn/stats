@@ -199,8 +199,8 @@ function updateStats(
     const i = p.items.get(set.item);
     p.items.set(set.item, (i || 0) + weights.m);
 
-    const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
     // FIXME: batchMovesetCounter is actually outputing 'Serious' instead of 'Hardy'...
+    // const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
     const nature = data.getNature(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
     const spread = getSpread(nature, util.getSpecies(pokemon.species, data).baseStats, pokemon.set);
     const s = p.spreads.get(spread);
@@ -263,7 +263,7 @@ function updateTeammates(
   }
 }
 
-// lookup table for the outcomes if poke1 and poke2 were exchanged
+// Lookup table for the outcomes if poke1 and poke2 were exchanged
 // clang-format off
 const INVERSE_OUTCOMES: Outcome[] = [
   Outcome.POKE2_KOED, Outcome.POKE1_KOED,
