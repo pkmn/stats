@@ -28,12 +28,14 @@ const MAX_FILES = 256;
 const WORKER = path.resolve(__dirname, 'worker.js');
 
 export async function process(month: string, reports: string, options: Options = {}) {
+  console.log(new Date());
   // Set up out report output directory structure
   await rmrf(reports);
   await fs.mkdir(reports, {recursive: true});
   const monotype = path.resolve(reports, 'monotype');
   await fs.mkdir(monotype);
   await Promise.all([...mkdirs(reports), ...mkdirs(monotype)]);
+  console.log(new Date());
 
   // We read several million filenames into memory to partition the formats and then process their
   // contents. Depending on the length of the path to each file, at 2 bytes per character in ES6
@@ -64,6 +66,8 @@ export async function process(month: string, reports: string, options: Options =
     reportsPath: reports,
     maxFiles: Math.floor(maxFiles / numWorkers),
   });
+  console.log(new Date());
+  debug(partitions);
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options: opts, num: i + 1};
     workers.push([
@@ -154,4 +158,30 @@ async function rmrf(dir: string) {
     await Promise.all(rms);
     await fs.rmdir(dir);
   }
+}
+
+function numberWithCommas(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function humanFileSize(size: number) {
+    var i = Math.floor(Math.log(size) / Math.log(1024));
+    return (size / Math.pow(1024, i)).toFixed(2) + ' ' + ['B', 'KiB', 'MiB', 'GiB', 'TiB'][i];
+}
+
+function debug(partitions: FormatData[][]) {
+  const total = {files: 0, ram: 0};
+  
+
+  for (const [i, formats] of partitions.entries()) {
+    for (const {format, size, files} of formats) {
+      total.files += size;
+      const ram = files.reduce((a, b) => a + b.length, 0);
+      total.ram += ram;
+      console.log(`${i + 1}: [${format}] = ${numberWithCommas(size)} (${humanFileSize(ram)})`);
+    }
+  }
+
+  console.log(`TOTAL: ${numberWithCommas(total.files)} (${humanFileSize(total.ram)})`);
+  throw new Error('end');
 }
