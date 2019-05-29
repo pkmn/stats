@@ -46,4 +46,4 @@ if (process.argv.length < 3 || process.argv.length > 4) {
     process.exit(1);
 }
 // tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(process.argv[2], process.argv[3], {debug: true})))();
+(async () => process.exit(await stats.process(process.argv[2], process.argv[3])))();
