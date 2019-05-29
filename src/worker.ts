@@ -35,6 +35,7 @@ const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono
 
 interface Options extends main.Options {
   reportsPath: string;
+  maxFiles: number;
 }
 
 async function process(formats: main.FormatData[], options: Options) {
@@ -43,10 +44,10 @@ async function process(formats: main.FormatData[], options: Options) {
     const data = Data.forFormat(format);
     const stats = Stats.create();
 
-    // We could potentially optimize here by using a semaphore/throttle to enforce the maxFiles limit
-    // but for simplicity and to save on the memory creating a bunch of promises would need we instead
-    // just wait for each batch, hoping that the async reads (and multiple workers processes) are still
-    // going to keep our disk busy the whole time anyway.
+    // We could potentially optimize here by using a semaphore/throttle to enforce the maxFiles
+    // limit but for simplicity and to save on the memory creating a bunch of promises would need we
+    // instead just wait for each batch, hoping that the async reads (and multiple workers
+    // processes) are still going to keep our disk busy the whole time anyway.
     // TODO: add periodic checkpointing
     for (const file of files) {
       const logs: Array<Promise<void>> = [];
@@ -59,7 +60,7 @@ async function process(formats: main.FormatData[], options: Options) {
     const b = stats.battles;
     let writes: Array<Promise<void>> = [];
     for (const [c, s] of stats.total.entries()) {
-      if (write.length + REPORTS > options.maxFiles) {
+      if (writes.length + REPORTS > options.maxFiles) {
         await Promise.all(writes);
         writes = [];
       }

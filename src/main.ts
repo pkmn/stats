@@ -6,13 +6,6 @@ import {Worker} from 'worker_threads';
 
 import * as fs from './fs';
 
-// `ulimit -n` on most systems should be at least 1024 by default, but we'll set a more
-// more conservative limit to avoid running into EMFILE errors. Each worker will be able
-// to open (maxFiles / numWorkers) files which is also more conservative, but coordinating
-// the exact number of files open across processes is more likely not worth the complexity
-// or coordination overhead.
-export MAX_FILES = 256;
-
 export interface Options {
   maxFiles?: number;
   numWorkers?: number;
@@ -24,6 +17,13 @@ export interface FormatData {
   size: number;
   files: string[];
 }
+
+// `ulimit -n` on most systems should be at least 1024 by default, but we'll set a more
+// more conservative limit to avoid running into EMFILE errors. Each worker will be able
+// to open (maxFiles / numWorkers) files which is also more conservative, but coordinating
+// the exact number of files open across processes is more likely not worth the complexity
+// or coordination overhead.
+const MAX_FILES = 256;
 
 const WORKER = path.resolve(__dirname, 'worker.js');
 
@@ -46,6 +46,7 @@ export async function process(month: string, reports: string, options: Options =
     formatData.push(listLogs(dir).then(files => ({format, size: files.length, files})));
   }
 
+  const maxFiles = options.maxFiles || MAX_FILES;
   const numWorkers = options.debug ? 1 : (options.numWorkers || (os.cpus().length - 1));
   const partitions = partition(await Promise.all(formatData), numWorkers);
   const workers: Array<[ID[], Promise<void>]> = [];
