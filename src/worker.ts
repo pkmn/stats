@@ -28,6 +28,9 @@ const CUTOFFS = {
   popular: [0, 1500, 1695, 1825],
 };
 
+// The number of report files written by `writeReports` (usage, leads, moveset, chaos, metagame).
+const REPORTS = 5;
+
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
 interface Options extends main.Options {
@@ -35,31 +38,45 @@ interface Options extends main.Options {
 }
 
 async function process(formats: main.FormatData[], options: Options) {
-  // All of the reports we're writing from this worker
-  const writes: Array<Promise<void>> = [];
   for (const {format, size, files} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
-    // TODO: chunk the number of files we read instead of all at once
-    const logs: Array<Promise<void>> = [];
+
+    // We could potentially optimize here by using a semaphore/throttle to enforce the maxFiles limit
+    // but for simplicity and to save on the memory creating a bunch of promises would need we instead
+    // just wait for each batch, hoping that the async reads (and multiple workers processes) are still
+    // going to keep our disk busy the whole time anyway.
+    // TODO: add periodic checkpointing
     for (const file of files) {
-      logs.push(processLog(data, file, cutoffs, stats));
+      const logs: Array<Promise<void>> = [];
+      for (let n = 0; n < options.maxFiles; n++) {
+        logs.push(processLog(data, file, cutoffs, stats));
+      }
+      await Promise.all(logs);
     }
-    await Promise.all(logs);
 
     const b = stats.battles;
+    let writes: Array<Promise<void>> = [];
     for (const [c, s] of stats.total.entries()) {
+      if (write.length + REPORTS > options.maxFiles) {
+        await Promise.all(writes);
+        writes = [];
+      }
       writes.push(...writeReports(options, format, c, s, b));
     }
 
     for (const [t, ts] of stats.tags.entries()) {
       for (const [c, s] of ts.entries()) {
+        if (writes.length + REPORTS > options.maxFiles) {
+          await Promise.all(writes);
+          writes = [];
+        }
         writes.push(...writeReports(options, format, c, s, b, t));
       }
     }
+    await Promise.all(writes);
   }
-  await Promise.all(writes);
 }
 
 async function processLog(data: Data, file: string, cutoffs: number[], stats: TaggedStatistics) {
