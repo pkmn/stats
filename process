@@ -75,13 +75,18 @@ function usage(code) {
 if (process.argv.length < 3) usage(1);
 if (['help', '-help', '--help', 'h', '-h', '--help', '?', '-?', '--?'].includes(process.argv[2])) usage(0);
 if (missing('minimist')) shell('npm install minimist');
-const argv = require('minimist')(process.argv.slice(2));
+const argv = require('minimist')(process.argv.slice(2), {
+  alias: {
+    numWorkers: ['n', 'workers', 'maxWorkers', 'processes', 'maxProcesses', 'numProcesses'],
+    maxFiles: ['N', 'files', 'numFiles'],
+  },
+  unknown: (arg) => {
+    if (!arg.startsWith('-')) return true;
+    console.error(`Unexpected argument '${arg}'\n`);
+    usage(1);
+  }
+});
 if (argv._.length !== 2) usage(1);
 
-// Hella aliases because who can be bothered to rememeber what the flag names are?
-argv.numWorkers = argv.numWorkers || argv.workers || argv.maxWorkers || argv.n ||
-  argv.processes || argv.maxProcess || argv.numProcesses;
-argv.maxFiles = argv.maxFiles || argv.N || argv.files || argv.numFiles;
-
 // tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(argv._[0], process.argv._[1], argv)))();
+(async () => process.exit(await stats.process(argv._[0], argv._[1], argv)))();
