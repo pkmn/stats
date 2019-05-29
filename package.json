@@ -12,15 +12,18 @@
   "author": "Kirk Scheibelhut",
   "license": "MIT",
   "dependencies": {
-    "stats": "file:stats",
     "@types/node": "^11.13.4",
-    "ps": "file:ps"
+    "ps": "file:ps",
+    "stats": "file:stats"
   },
   "devDependencies": {
     "gts": "^0.9.0",
     "source-map-support": "^0.5.12",
     "subpackage": "^1.1.0",
     "typescript": "^3.4.3"
+  },
+  "optionalDependencies": {
+    "minimist": "^1.2.0"
   },
   "scripts": {
     "check": "subpkg run check && gts check",

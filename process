@@ -40,10 +40,48 @@
 
 require('source-map-support').install();
 const stats = require('./build/index');
+const child_process = require('child_process');
+const path = require('path');
+const shell = cmd => child_process.execSync(cmd, {stdio: 'inherit', cwd: __dirname});
 
-if (process.argv.length < 3 || process.argv.length > 4) {
-    console.error('process path/to/logs path/to/output/reports');
-    process.exit(1);
+function missing(dep) {
+  try {
+    require.resolve(dep);
+    return false;
+  } catch (err) {
+    if (err.code !== 'MODULE_NOT_FOUND') throw err;
+    return true;
+  }
 }
+
+function usage(code) {
+  const out = !code ? console.log : console.error;
+  out('process path/to/logs path/to/output/reports');
+  out('');
+  out(' Produces the standard Smogon reports in an output directory specified by the');
+  out(' second argument based on data from a logs directory provided by the first argument.')
+  out('');
+  out(' Options:');
+  out('');
+  out('   --numWorkers=N: process the logs using N worker processes (default: NUM_CORES-1)');
+  out('');
+  out('   --maxFiles=N: only open up to N files (should be `ulimit -n`, default: 256)');
+  out('');
+  out('   --debug: whether or not run in in "debug" mode (default: false)');
+  out('');
+  process.exit(code);
+}
+
+if (process.argv.length < 3) usage(1);
+if (['help', '-help', '--help', 'h', '-h', '--help', '?', '-?', '--?'].includes(process.argv[2])) usage(0);
+if (missing('minimist')) shell('npm install minimist');
+const argv = require('minimist')(process.argv.slice(2));
+if (argv._.length !== 2) usage(1);
+
+// Hella aliases because who can be bothered to rememeber what the flag names are?
+argv.numWorkers = argv.numWorkers || argv.workers || argv.maxWorkers || argv.n ||
+  argv.processes || argv.maxProcess || argv.numProcesses;
+argv.maxFiles = argv.maxFiles || argv.N || argv.files || argv.numFiles;
+
 // tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(process.argv[2], process.argv[3])))();
+(async () => process.exit(await stats.process(argv._[0], process.argv._[1], argv)))();
