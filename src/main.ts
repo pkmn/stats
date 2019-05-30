@@ -35,6 +35,16 @@ export async function process(month: string, reports: string, options: Options =
   await fs.mkdir(monotype);
   await Promise.all([...mkdirs(reports), ...mkdirs(monotype)]);
 
+  // We read several million filenames into memory to partition the formats and then process their
+  // contents. Depending on the length of the path to each file, at 2 bytes per character in ES6
+  // this ends up amounting to an appreciable amount of memory overhead (1-2GiB) which we could
+  // potentially improve by only reading in a few formats at a time (or sharding a format in the
+  // case of something like current gen OU which amounts to ~35-40% of the total data...), but for
+  // now we're simply going to eat the overhead. Our other memory usage comes from actually reading
+  // and parsing the logs (some multiple of ~10KB * maxFiles), as well as keeping the Stats objects
+  // in memory (which are mostly sums, save for gxes and team stalliness which also requires memory
+  // proportional to the number of battles and which we bounded through checkpointing).
+  // TODO: revisit whether we want to limit the number of filenames we read at this stage
   const formatData: Array<Promise<FormatData>> = [];
   for (const f of await fs.readdir(month)) {
     const format = canonicalizeFormat(toID(f));
