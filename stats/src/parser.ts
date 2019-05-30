@@ -333,8 +333,10 @@ export const Parser = new class {
 };
 
 // FIXME: meloettapiroutte? darmanitanzen?
-const FORMES =
-    new Set(['greninjaash', 'zygardecomplete', 'mimikyubusted', 'shayminsky', 'necrozmaultra']);
+const FORMES = new Set([
+  'greninjaash', 'zygardecomplete', 'mimikyubusted', 'mimikyubustedtotem', 'shayminsky',
+  'necrozmaultra'
+]);
 
 function identify(
     name: string, side: 'p1'|'p2', battle: Battle, idents: {p1: string[], p2: string[]},
