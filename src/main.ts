@@ -93,14 +93,21 @@ export async function process(month: string, reports: string, options: Options =
     formatData.push(listLogs(dir).then(files => ({format, size: files.length, files})));
   }
 
-  const maxFiles = options.maxFiles || MAX_FILES;
   const numWorkers = options.debug ? 1 : (options.numWorkers || (os.cpus().length - 1));
+  const opts: Options&{reportsPath: string} = {reportsPath: reports};
+  opts.maxFiles = (options.maxFiles && options.maxFiles > 0) ?
+      Math.floor((options.maxFiles || MAX_FILES) / numWorkers) :
+      Infinity;
+  if (options.checkpoint) {
+    opts.batchSize =
+        (options.batchSize && options.batchSize > 0) ? (options.batchSize || BATCH_SIZE) : Infinity;
+    opts.timeBucket = (options.timeBucket && options.timeBucket > 0) ?
+        (options.timeBucket || TIME_BUCKET) :
+        Infinity;
+  }
+
   const partitions = partition(await Promise.all(formatData), numWorkers);
   const workers: Array<[ID[], Promise<void>]> = [];
-  const opts = Object.assign({}, options, {
-    reportsPath: reports,
-    maxFiles: Math.floor(maxFiles / numWorkers),
-  });
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options: opts, num: i + 1};
     workers.push([
