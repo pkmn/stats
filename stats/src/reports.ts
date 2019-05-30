@@ -367,6 +367,7 @@ export const Reports = new class {
     return s;
   }
 
+  // TODO: Add support for OM (other metagames)
   async tierUpdateReport(
       months: [string]|[string, string]|[string, string, string],
       read: (month: string, format: string) => Promise<string|undefined>) {

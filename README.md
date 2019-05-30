@@ -52,6 +52,9 @@ The resulting reports will be written out in the following directory structure:
     └── moveset
         └── format-N.txt
 
+`process --help` can be used to provide insight into which flags are offered for
+tweaking the runtime overhead and behavior.
+
 A Tier Update report based on past usage reports can also be produced:
 
     $ ./updates path/to/month1 <path/to/month2> <path/to/month3>

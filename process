@@ -59,16 +59,29 @@ function usage(code) {
   out('process path/to/logs path/to/output/reports');
   out('');
   out(' Produces the standard Smogon reports in an output directory specified by the');
-  out(' second argument based on data from a logs directory provided by the first argument.')
+  out(' second argument based on data from a logs directory provided by the first argument.');
   out('');
   out(' Options:');
   out('');
-  out('   --numWorkers=N: process the logs using N worker processes (default: NUM_CORES-1)');
+  out('   -i/--input=PATH: process logs found under PATH');
   out('');
-  out('   --maxFiles=N: only open up to N files (should be `ulimit -n`, default: 256)');
+  out('   -o/--output=PATH: output reports to PATH');
   out('');
-  out('   --debug: whether or not run in in "debug" mode (default: false)');
+  out('   -p/--numWorkers=N: process the logs using N workers (default: NUM_CORES-1)');
   out('');
+  out('   -n/--maxFiles=N: open up to N files across all workers (should be `ulimit -n`, default: 256)');
+  out('');
+  out('   -d/--debug: whether or not run in in \'debug\' mode (default: false)');
+  out('');
+  out('   -w/--workingSet=N: work with at most N filenames at once (default: 1048576)');
+  out('');
+  out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
+  out('');
+  out('   -b/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
+  out('');
+  out('   -t/--timeBucket=N: if checkpointing, write checkpoints after each \'N-second time bucket\' (default: 86400)');
+  out('');
+  out ('NOTE: A negative value can be used to disable specific default sizes/limits.');
   process.exit(code);
 }
 
@@ -77,8 +90,15 @@ if (['help', '-help', '--help', 'h', '-h', '--help', '?', '-?', '--?'].includes(
 if (missing('minimist')) shell('npm install minimist');
 const argv = require('minimist')(process.argv.slice(2), {
   alias: {
-    numWorkers: ['n', 'workers', 'maxWorkers', 'processes', 'maxProcesses', 'numProcesses'],
-    maxFiles: ['N', 'files', 'numFiles'],
+    input: ['i', 'in', 'l', 'logs', 'src'],
+    output: ['o', 'out', 'r', 'reports', 'dest'],
+    numWorkers: ['p', 'parallel', 'workers', 'maxWorkers', 't', 'threads'],
+    maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
+    workingSet: ['w', 'ws', 'wss', 'workingSetSize'],
+    checkpoint: ['c', 'checkpoints'],
+    batchSize: ['b', 'batchSize', 'perBatch', 'maxBatch', 'maxBatchSize'],
+    timeBucket: ['t', 'tb', 'time', 'timeBuckets', 'tw', 'timeWindow', 'window'],
+    debug: ['d'],
   },
   unknown: (arg) => {
     if (!arg.startsWith('-')) return true;
@@ -86,7 +106,12 @@ const argv = require('minimist')(process.argv.slice(2), {
     usage(1);
   }
 });
-if (argv._.length !== 2) usage(1);
+if (argv._.length) {
+  argv.input = argv._[0];
+  if (argv._.length > 1) argv.output = argv._[1];
+}
+if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
+
 
 // tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(argv._[0], argv._[1], argv)))();
+(async () => process.exit(await stats.process(argv.input, argv.output, argv)))();

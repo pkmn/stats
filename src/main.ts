@@ -9,6 +9,10 @@ import * as fs from './fs';
 export interface Options {
   maxFiles?: number;
   numWorkers?: number;
+  workingSet?: number;
+  checkpoint?: string;
+  batchSize?: number;
+  timeBucket?: number;
   debug?: boolean;
 }
 
@@ -18,12 +22,45 @@ export interface FormatData {
   files: string[];
 }
 
-// `ulimit -n` on most systems should be at least 1024 by default, but we'll set a more
-// more conservative limit to avoid running into EMFILE errors. Each worker will be able
-// to open (maxFiles / numWorkers) files which is also more conservative, but coordinating
-// the exact number of files open across processes is more likely not worth the complexity
-// or coordination overhead.
+// The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
+// should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
+// into EMFILE errors. Each worker will be able to open (maxFiles / numWorkers) files which is also
+// more conservative, but coordinating the exact number of files open across processes is more
+// likely not worth the complexity or coordination overhead.
 const MAX_FILES = 256;
+
+// The 'working set' contains the names of all the files we're read in for processing. This
+// most matters when processing millions of files, as even holding each filename in memory
+// begins to take up an appreciable amount of memory. Each filename looks like:
+//
+//   2018-02/gen2ou/gen2ou/2018-02-15/battle-gen2ou-704864953.log.json
+//
+// But could be considerably longer (consider 'gen7balancedhackmonssuspecttest'). At 2 bytes
+// per character (ES6), this amounts to ~130-280+ (though 'genNou' is likely to be the most
+// popular, so the lower end is more likely). The default of 1048576 (2**20) means we will
+// be allocating up to ~128-256MiB for the working set of file names before accounting for
+// any of the memory requiring for reading in files and aggregating statistics. Tweaking this in
+// addition to the batch size and number of workers (below) allows for reigning in the amount of
+// memory required for proceses
+const WORKING_SET_SIZE = 1048576;
+
+// The maximum number of logs ('batch') for a particular format that will be aggregated into a
+// single intermediate Stats object before it will persisted as a checkppint written during
+// processing. Batches may be smaller than this due to working set restrictions, the number of logs
+// present for a particular format, or when time based checkpointing is enabled, but this value
+// allows rough bounds on the total amount of memory consumed (in addition the the number of workers
+// and working set size). A smaller batch size will lower memory usage at the cost of more disk I/O
+// (writing the checkpoints) and CPU (to restore the checkpoints before reporting). Stats objects
+// mostly contain sums bounded by the number of possible combinations of options available, though
+// in Pokemon this can be quite large. Furthermore, each additional battle processed usually
+// requires unbounded growth of GXEs (player name + max GXE) and team stalliness (score and weight).
+const BATCH_SIZE = 8192;
+
+// Each log file contains a timestamp field, and whenever we see that 'time bucket' seconds has
+// passed since the beginning of the time period (ie. month) we write a checkpoint, independent of
+// the configured max batch size. This setting is less relevant for bounding memory behavior than
+// for providing the ability to compute statistics/reports over meaningful subranges of checkpoints.
+const TIME_BUCKET = 86400;
 
 const WORKER = path.resolve(__dirname, 'worker.js');
 
