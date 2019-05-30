@@ -5,6 +5,38 @@ import {workerData} from 'worker_threads';
 
 import * as fs from './fs';
 import * as main from './main';
+import * as state from './state';
+
+// TODO: Make sure checkpoints respects MAX_FILES (not WORKING_SET_SIZE)
+interface Checkpoint {
+  begin: number;  // TODO: timestamp number of string?
+  end: number;
+  stats: TaggedStatistics;
+}
+
+// If we are configured to use checkpoints we will check to see if a checkpoints directory
+// already exists - if so we need to resume from the checkpoint, otherwise we need to
+// create the checkpoint directory setup and write the checkpoints as we process the logs.
+
+// The checkpoints directory is to be structured as follows:
+//
+//     <checkpoints>
+//     └── format
+//         └── timestamp.json(.gz)
+
+function writeCheckpoint(file: string, checkpoint: Checkpoint) {
+  // TODO: filename should be based on checkpoint.end!
+  return fs.writeGzipFile(file, JSON.stringify({
+    begin: checkpoint.begin,
+    end: checkpoint.end,
+    stats: state.serializeTagged(checkpoint.stats),
+  }));
+}
+
+async function readCheckpoint(file: string) {
+  const json = JSON.parse(await fs.readFile(file, 'utf8'));
+  return {begin: json.begin, end: json.end, checkpoint: state.deserializeTagged(json.stats)};
+}
 
 const POPULAR = new Set([
   'ou',

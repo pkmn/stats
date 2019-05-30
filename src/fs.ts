@@ -48,6 +48,16 @@ export function writeFile(path: string, data: string): Promise<void> {
   });
 }
 
+export function writeGzipFile(path: string, data: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    zlib.gzip(data, (err, buf) => {
+      err ? reject(err) : fs.writeFile(path, buf, err => {
+        err ? reject(err) : resolve();
+      });
+    });
+  });
+}
+
 export function appendFile(path: string, data: string): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.appendFile(path, data, err => {
