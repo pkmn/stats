@@ -71,13 +71,17 @@ function usage(code) {
   out('');
   out('   -n/--maxFiles=N: open up to N files across all workers (should be < `ulimit -n`, default: 256)');
   out('');
-  out('   -d/--debug: whether or not run in in \'debug\' mode (default: false)');
-  out('');
   out('   -w/--workingSet=N: work with at most N logs at once (default: 1048576)');
   out('');
   out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
   out('');
   out('   -b/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
+  out('');
+  out('   -d/--dryRun: skip actually performing any processing (default: false)');
+  out('');
+  out('   -v/--verbose: log output while processing (default: false)');
+  out('');
+  out('   -a/--all: include all checks and counters in moveset reports (default: false)');
   out('');
   out ('NOTE: A negative value can be used to disable specific default sizes/limits.');
   process.exit(code);
@@ -95,7 +99,9 @@ const argv = require('minimist')(process.argv.slice(2), {
     workingSet: ['w', 'ws', 'wss', 'workingSetSize'],
     checkpoint: ['c', 'checkpoints'],
     batchSize: ['b', 'batchSize', 'perBatch', 'maxBatch', 'maxBatchSize'],
-    debug: ['d'],
+    dryRun: ['d', 'dry'],
+    verbose: ['v'],
+    all: ['a'],
   },
   unknown: (arg) => {
     if (!arg.startsWith('-')) return true;

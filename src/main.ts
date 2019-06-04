@@ -1,7 +1,9 @@
 import * as os from 'os';
 import * as path from 'path';
+import {performance} from 'perf_hooks';
 import {ID, toID} from 'ps';
 import {canonicalizeFormat} from 'stats';
+import * as util from 'util';
 import {Worker} from 'worker_threads';
 
 import {Checkpoints, Offset} from './checkpoint';
@@ -48,11 +50,14 @@ export interface Options {
   numWorkers?: number;
   workingSet?: number;
 
-  debug?: boolean;
   maxFiles?: number;
 
   checkpoint?: string;
   batchSize?: number;
+
+  dryRun?: boolean;
+  verbose?: boolean;
+  all?: boolean;
 }
 
 export interface WorkerOptions extends Options {
@@ -66,14 +71,19 @@ export interface FormatData {
   logs: string[];
 }
 
+const mainData: any = undefined;
+
 export async function process(input: string, output: string, options: Options = {}) {
+  mainData.options = options;
   const storage = Storage.connect({dir: input});
 
-  const numWorkers = options.debug ? 1 : (options.numWorkers || (os.cpus().length - 1));
+  const numWorkers = options.numWorkers || (os.cpus().length - 1);
   const workingSetSize = options.workingSet || WORKING_SET_SIZE;
   const workerOptions = createWorkerOptions(input, output, numWorkers, options);
+  debug('Creating reports directory structure');
   await createReportsDirectoryStructure(output);
 
+  debug('Determining formats');
   const formats: Map<ID, {raw: string, offset: Offset}> = new Map();
   for (const raw of await storage.listFormats()) {
     const format = canonicalizeFormat(toID(raw));
@@ -84,7 +94,10 @@ export async function process(input: string, output: string, options: Options = 
     formats.set(format, {raw, offset: {day: '', log: ''}});
   }
 
-  if (options.checkpoint) await Checkpoints.restore(options.checkpoint, formats);
+  if (options.checkpoint) {
+    debug('Restoring formats from checkpoints');
+    await Checkpoints.restore(options.checkpoint, formats);
+  }
 
   let failures = 0;
   // Without checkpointing, we can't handle only processing part of a format, so we have to attempt
@@ -95,6 +108,7 @@ export async function process(input: string, output: string, options: Options = 
       options.checkpoint ? Math.floor(workingSetSize / numWorkers) : Infinity;
   for (let left = Array.from(formats.entries()); left.length > 0;
        left = Array.from(formats.entries())) {
+    debug(`Building working set (${left.length} formats remaining)`);
     // Build up a 'working set' of logs to process. Note: the working set size is not considered
     // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
     const workingSet: FormatData[] = [];
@@ -102,11 +116,16 @@ export async function process(input: string, output: string, options: Options = 
       const [next, logs] = await storage.listLogs(raw, offset, formatWorkingSetSize);
       workingSet.push({format: format as ID, logs});
       if (next) {
+        debug(`Only able to partially process ${format}, will begin from ${offset} next iteration`);
         formats.get(format)!.offset = next;
       } else {
+        debug(`All of ${format} has been read into the working set`);
         formats.delete(format);
       }
-      if (workingSet.length >= workingSetSize) break;
+      if (workingSet.length >= workingSetSize) {
+        debug(`Working set of size ${workingSet.length} >= ${workingSetSize}`);
+        break;
+      }
     }
 
     // TODO: Consider leaving the worker processes running and posting work each iteration - if we
@@ -131,7 +150,9 @@ function createWorkerOptions(input: string, output: string, numWorkers: number, 
     opts.batchSize =
         (options.batchSize && options.batchSize > 0) ? (options.batchSize || BATCH_SIZE) : Infinity;
   }
-  opts.debug = options.debug;
+  opts.dryRun = options.dryRun;
+  opts.verbose = options.verbose;
+  opts.all = options.all;
   return opts;
 }
 
@@ -145,16 +166,19 @@ async function createReportsDirectoryStructure(output: string) {
 
 async function processWorkingSet(
     workingSet: FormatData[], numWorkers: number, options: WorkerOptions) {
+  debug(`Partitioning working set of size ${workingSet.length} into ${numWorkers} partitions`);
   const partitions = partition(await Promise.all(workingSet), numWorkers);
   const workers: Array<[ID[], Promise<void>]> = [];
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options, num: i + 1};
+    debug(`Creating worker ${i + 1} to handle ${formats.length} formats`);
     workers.push([
       formats.map(f => f.format), new Promise((resolve, reject) => {
         const worker = new Worker(WORKER, {workerData});
         worker.on('error', reject);
         worker.on('exit', (code) => {
           if (code === 0) {
+            debug(`Worker ${workerData.num} exited cleanly`);
             // We need to wait for the worker to exit before resolving (as opposed to having
             // the worker message us when it is finished) so that we know it is safe to
             // terminate the main process (which will kill all the workers and result in
@@ -226,4 +250,10 @@ async function rmrf(dir: string) {
     await Promise.all(rms);
     await fs.rmdir(dir);
   }
+}
+
+function debug(...args: any[]) {
+  if (!mainData.options.verbose) return;
+  const tag = util.format('[%s] \x1b[31m%s\x1b[0m', Math.round(performance.now()), 'main');
+  console.log(tag, ...args);
 }
