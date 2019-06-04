@@ -4,10 +4,9 @@ import {ID, toID} from 'ps';
 import {canonicalizeFormat} from 'stats';
 import {Worker} from 'worker_threads';
 
-import {Checkpoint} from './checkpoints';
+import {Checkpoints, Offset} from './checkpoint';
 import * as fs from './fs';
 import {Storage} from './storage';
-
 
 export interface Options {
   numWorkers?: number;
@@ -82,21 +81,20 @@ export async function process(input: string, output: string, options: Options = 
   const workerOptions = createWorkerOptions(input, output, numWorkers, options);
   await createReportsDirectoryStructure(output);
 
-  const formats: {[format: string]: {raw: string, start: string}} = {};
+  const formats: Map<ID, {raw: string, offset: Offset}> = new Map();
   for (const f of await storage.listFormats()) {
     const format = canonicalizeFormat(toID(f));
     if (format.startsWith('seasonal') || format.includes('random') ||
         format.includes('metronome' || format.includes('superstaff'))) {
       continue;
     }
-    formats[format] = {raw: f, start: ''};
+    formats.set(format, {raw: f, offset: {day: '', log: ''}});
   }
 
-  const checkpoints = options.checkpoint ? await Checkpoints.restore(options.checkpoint, formats) : {};
+  if (options.checkpoint) await Checkpoints.restore(options.checkpoint, formats);
 
   // Build up a 'working set' of logs to process. Note: the working set size is not considered
   // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
-  // TODO: needs to consider restoring from checkpoints
   let failures = 0;
   // Without checkpointing, we can't handle only processing part of a format, so we have to attempt
   // to read in the entire thing. This may force us to only use a single process to keep memory
@@ -104,15 +102,15 @@ export async function process(input: string, output: string, options: Options = 
   // can do here without dramatically increasing complexity.
   const formatWorkingSetSize =
       options.checkpoint ? Math.floor(workingSetSize / numWorkers) : Infinity;
-  for (let left = Object.entries(formats); left.length > 0; left = Object.entries(formats)) {
+  for (let left = Array.from(formats.entries()); left.length > 0; left = Array.from(formats.entries())) {
     const workingSet: FormatData[] = [];
-    for (const [format, {raw, start}] of left) {
-      const [next, logs] = await storage.listLogs(raw, start, formatWorkingSetSize);
+    for (const [format, {raw, offset}] of left) {
+      const [next, logs] = await storage.listLogs(raw, offset, formatWorkingSetSize);
       workingSet.push({format: format as ID, logs});
       if (next) {
-        formats[format].start = next;
+        formats.get(format)!.offset = next;
       } else {
-        delete formats[format];
+        formats.delete(format);
       }
       if (workingSet.length >= workingSetSize) break;
     }

@@ -1,10 +1,11 @@
 import * as path from 'path';
 
 import * as fs from './fs';
+import {Offset} from './checkpoint';
 
 export interface Storage {
   listFormats(): Promise<string[]>;
-  listLogs(format: string, start?: string, max?: number): Promise<[string, string[]]>;
+  listLogs(format: string, offset?: Offset, max?: number): Promise<[Offset|undefined, string[]]>;
   readLog(log: string): Promise<string>;
 }
 
@@ -26,20 +27,21 @@ class FileStorage implements Storage {
     return (await fs.readdir(this.dir)).sort();
   }
 
-  async listLogs(format: string, start = '', max = Infinity): Promise<[string, string[]]> {
+  async listLogs(format: string, offset?: Offset, max = Infinity): Promise<[Offset|undefined, string[]]> {
     const logs: string[] = [];
     const formatDir = path.resolve(this.dir, format);
-    let last = '';
+    let last: Offset|undefined = undefined;
     for (const day of (await fs.readdir(formatDir)).sort()) {
-      if (start && day < start) continue;
+      if (offset && day < offset.day) continue;
       const dayDir = path.resolve(formatDir, day);
-      for (const file of (await fs.readdir(dayDir)).sort()) {
+      for (const log of (await fs.readdir(dayDir)).sort()) {
+        if (offset && log < offset.log) continue;
         if (logs.length > max) return [last, logs.sort()];
-        logs.push(path.join(format, day, file));
-        last = day;
+        logs.push(path.join(format, day, log));
+        last = {day, log};
       }
     }
-    return ['', logs.sort()];
+    return [undefined, logs.sort()];
   }
 
   readLog(log: string) {
