@@ -1,6 +1,6 @@
 import * as path from 'path';
 import {ID} from 'ps';
-import {TaggedStatistics} from 'stats';
+import {Stats, TaggedStatistics} from 'stats';
 
 import * as fs from './fs';
 import * as state from './state';
@@ -26,8 +26,8 @@ export interface Checkpoint {
 //     └── format
 //         └── timestamp.json(.gz)
 
+// TODO: consider adding verification option to ensure correctness/no missing data
 export const Checkpoints = new class {
-  // TODO: consider adding verification when restoring from checkpoints to ensure correctness
   async restore(dir: string, formats: Map<ID, {raw: string, offset: Offset}>) {
     if (!(await fs.exists(dir))) await fs.mkdir(dir);
     const existing = new Set(await fs.readdir(dir));
@@ -46,6 +46,30 @@ export const Checkpoints = new class {
     }
 
     await Promise.all([...reads, ...writes]);
+  }
+
+  async combine(dir: string, format: ID, max: number, stats?: TaggedStatistics): TaggedStatistics {
+    stats = stats || Stats.create();
+    const formatDir = path.resolve(dir, format);
+
+    let n = 0;
+    let checkpoints: Array<Promise<Checkpoint>> = [];
+    for (const file of await fs.readdir(formatDir)) {
+      if (n >= max) {
+        for (const checkpoint of await Promise.all(checkpoints)) {
+          stats = combineStats(stats, checkpoint.stats);
+        }
+        n = 0;
+        checkpoints = [];
+      }
+
+      checkpoints.push(readCheckpoint(path.resolve(formatDir, file)));
+      n++;
+    }
+    for (const checkpoint of await Promise.all(checkpoints)) {
+      stats = combineStats(stats, checkpoint.stats);
+    }
+    return stats;
   }
 
   writeCheckpoint(file: string, checkpoint: Checkpoint) {
