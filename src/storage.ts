@@ -32,17 +32,18 @@ class FileStorage implements Storage {
     const logs: string[] = [];
     const formatDir = path.resolve(this.dir, format);
     let last: Offset|undefined = undefined;
-    for (const day of (await fs.readdir(formatDir)).sort()) {
+    const cmp = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
+    for (const day of (await fs.readdir(formatDir)).sort(cmp)) {
       if (offset && day < offset.day) continue;
       const dayDir = path.resolve(formatDir, day);
-      for (const log of (await fs.readdir(dayDir)).sort()) {
+      for (const log of (await fs.readdir(dayDir)).sort(cmp)) {
         if (offset && log < offset.log) continue;
-        if (logs.length > max) return [last, logs.sort()];
+        if (logs.length > max) return [last, logs.sort(cmp)];
         logs.push(path.join(format, day, log));
         last = {day, log};
       }
     }
-    return [undefined, logs.sort()];
+    return [undefined, logs.sort(cmp)];
   }
 
   readLog(log: string) {

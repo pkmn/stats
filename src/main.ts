@@ -71,17 +71,17 @@ export interface FormatData {
   logs: string[];
 }
 
-const mainData: any = undefined;
+let mainData: any = undefined;
 
 export async function process(input: string, output: string, options: Options = {}) {
-  mainData.options = options;
+  mainData = {options};
   const storage = Storage.connect({dir: input});
 
   const numWorkers = options.numWorkers || (os.cpus().length - 1);
   const workingSetSize = options.workingSet || WORKING_SET_SIZE;
   const workerOptions = createWorkerOptions(input, output, numWorkers, options);
   debug('Creating reports directory structure');
-  await createReportsDirectoryStructure(output);
+  if (!options.dryRun) await createReportsDirectoryStructure(output);
 
   debug('Determining formats');
   const formats: Map<ID, {raw: string, offset: Offset}> = new Map();
@@ -96,7 +96,7 @@ export async function process(input: string, output: string, options: Options = 
 
   if (options.checkpoint) {
     debug('Restoring formats from checkpoints');
-    await Checkpoints.restore(options.checkpoint, formats);
+    await Checkpoints.restore(options.checkpoint, formats, options.dryRun);
   }
 
   let failures = 0;
@@ -113,10 +113,12 @@ export async function process(input: string, output: string, options: Options = 
     // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
     const workingSet: FormatData[] = [];
     for (const [format, {raw, offset}] of left) {
+      debug(`Attempting to include ${format} from ${util.inspect(offset)} in the working set`);
       const [next, logs] = await storage.listLogs(raw, offset, formatWorkingSetSize);
       workingSet.push({format: format as ID, logs});
       if (next) {
-        debug(`Only able to partially process ${format}, will begin from ${offset} next iteration`);
+        debug(`Only able to partially process ${format}, will begin from ${
+            util.inspect(next)} next iteration`);
         formats.get(format)!.offset = next;
       } else {
         debug(`All of ${format} has been read into the working set`);
@@ -171,7 +173,7 @@ async function processWorkingSet(
   const workers: Array<[ID[], Promise<void>]> = [];
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options, num: i + 1};
-    debug(`Creating worker ${i + 1} to handle ${formats.length} formats`);
+    debug(`Creating worker ${i + 1} to handle ${formats.length} format(s)`);
     workers.push([
       formats.map(f => f.format), new Promise((resolve, reject) => {
         const worker = new Worker(WORKER, {workerData});

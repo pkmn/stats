@@ -28,9 +28,14 @@ export interface Checkpoint {
 
 // TODO: consider adding verification option to ensure correctness/no missing data
 export const Checkpoints = new class {
-  async restore(dir: string, formats: Map<ID, {raw: string, offset: Offset}>) {
-    if (!(await fs.exists(dir))) await fs.mkdir(dir);
-    const existing = new Set(await fs.readdir(dir));
+  async restore(dir: string, formats: Map<ID, {raw: string, offset: Offset}>, dryRun?: boolean) {
+    if (!(await fs.exists(dir) && !dryRun)) await fs.mkdir(dir, {recursive: true});
+    let existing: Set<string> = new Set();
+    try {
+      existing = new Set(await fs.readdir(dir));
+    } catch (err) {
+      if (!dryRun) throw err;
+    }
 
     const reads = [];
     const writes = [];
@@ -40,7 +45,7 @@ export const Checkpoints = new class {
         reads.push(restoreCheckpoint(formatDir).then(offset => {
           data.offset = offset;
         }));
-      } else {
+      } else if (!dryRun) {
         writes.push(fs.mkdir(formatDir));
       }
     }

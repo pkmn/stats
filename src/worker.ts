@@ -64,7 +64,8 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
         if (shouldCheckpoint) {
           const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length]);
           const end = getOffset(log);
-          debug(`Writing checkpoint ${filename} from ${begin} to ${end}`);
+          debug(
+              `Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
           if (!options.dryRun) {
             await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
             stats = Stats.create();
@@ -85,7 +86,7 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     if (options.checkpoint) {
       const filename = Checkpoints.filename(options.checkpoint, format, done[done.length]);
       const end = getOffset(log);
-      debug(`Writing checkpoint ${filename} from ${begin} to ${end}`);
+      debug(`Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
       if (!options.dryRun) {
         await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
         debug(`Combining checkpoints`);
@@ -120,7 +121,7 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
 }
 
 function getOffset(full: string): Offset {
-  const [month, format, day, log] = full.split(path.sep);
+  const [format, day, log] = full.split(path.sep);
   return {day, log};
 }
 
@@ -142,8 +143,8 @@ async function processLog(
 function writeReports(
     options: main.WorkerOptions, format: ID, cutoff: number, stats: Statistics, battles: number,
     tag?: ID) {
-  debug(`Writing reports for ${format} for cutoff ${cutoff} and tag ${tag}`);
-  if (options.dryRun) return [Promise.resolve()];
+  debug(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? tag : ''));
+  if (options.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
