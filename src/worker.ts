@@ -6,6 +6,7 @@ import {workerData} from 'worker_threads';
 import * as fs from './fs';
 import * as main from './main';
 import * as state from './state';
+import {Storage} from './storage';
 
 // TODO: Make sure checkpoints respects MAX_FILES (not WORKING_SET_SIZE)
 interface Checkpoint {
@@ -65,13 +66,10 @@ const REPORTS = 5;
 
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
-interface Options extends main.Options {
-  reportsPath: string;
-  maxFiles: number;
-}
+async function process(formats: main.FormatData[], options: main.WorkerOptions) {
+  const storage = Storage.connect(options);
 
-async function process(formats: main.FormatData[], options: Options) {
-  for (const {format, size, files} of formats) {
+  for (const {format, logs} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
@@ -81,12 +79,12 @@ async function process(formats: main.FormatData[], options: Options) {
     // instead just wait for each batch, hoping that the async reads (and multiple workers
     // processes) are still going to keep our disk busy the whole time anyway.
     // TODO: add periodic checkpointing
-    for (const file of files) {
-      const logs: Array<Promise<void>> = [];
+    for (const log of logs) {
+      const processed: Array<Promise<void>> = [];
       for (let n = 0; n < options.maxFiles; n++) {
-        logs.push(processLog(data, file, cutoffs, stats));
+        processed.push(processLog(storage, data, log, cutoffs, stats));
       }
-      await Promise.all(logs);
+      await Promise.all(processed);
     }
 
     const b = stats.battles;
@@ -112,20 +110,22 @@ async function process(formats: main.FormatData[], options: Options) {
   }
 }
 
-async function processLog(data: Data, file: string, cutoffs: number[], stats: TaggedStatistics) {
+async function processLog(
+    storage: Storage, data: Data, log: string, cutoffs: number[], stats: TaggedStatistics) {
   try {
-    const raw = JSON.parse(await fs.readFile(file, 'utf8'));
+    const raw = JSON.parse(await storage.readLog(log));
     // TODO: save checkpoints/IR (by chunk)
     const battle = Parser.parse(raw, data);
     const tags = data.format === 'gen7monotype' ? monotypes(data) : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);
   } catch (err) {
-    console.error(`${file}: ${err.message}`);
+    console.error(`${log}: ${err.message}`);
   }
 }
 
 function writeReports(
-    options: Options, format: ID, cutoff: number, stats: Statistics, battles: number, tag?: ID) {
+    options: main.WorkerOptions, format: ID, cutoff: number, stats: Statistics, battles: number,
+    tag?: ID) {
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
 

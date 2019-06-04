@@ -69,11 +69,11 @@ function usage(code) {
   out('');
   out('   -p/--numWorkers=N: process the logs using N workers (default: NUM_CORES-1)');
   out('');
-  out('   -n/--maxFiles=N: open up to N files across all workers (should be `ulimit -n`, default: 256)');
+  out('   -n/--maxFiles=N: open up to N files across all workers (should be < `ulimit -n`, default: 256)');
   out('');
   out('   -d/--debug: whether or not run in in \'debug\' mode (default: false)');
   out('');
-  out('   -w/--workingSet=N: work with at most N filenames at once (default: 1048576)');
+  out('   -w/--workingSet=N: work with at most N logs at once (default: 1048576)');
   out('');
   out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
   out('');
@@ -111,7 +111,6 @@ if (argv._.length) {
   if (argv._.length > 1) argv.output = argv._[1];
 }
 if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
-
 
 // tslint:disable-next-line: no-floating-promises
 (async () => process.exit(await stats.process(argv.input, argv.output, argv)))();
