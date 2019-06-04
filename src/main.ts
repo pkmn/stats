@@ -4,8 +4,10 @@ import {ID, toID} from 'ps';
 import {canonicalizeFormat} from 'stats';
 import {Worker} from 'worker_threads';
 
+import {Checkpoint} from './checkpoints';
 import * as fs from './fs';
 import {Storage} from './storage';
+
 
 export interface Options {
   numWorkers?: number;
@@ -89,6 +91,8 @@ export async function process(input: string, output: string, options: Options = 
     }
     formats[format] = {raw: f, start: ''};
   }
+
+  const checkpoints = options.checkpoint ? await Checkpoints.restore(options.checkpoint, formats) : {};
 
   // Build up a 'working set' of logs to process. Note: the working set size is not considered
   // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
