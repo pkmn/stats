@@ -25,10 +25,10 @@ export interface Checkpoint {
 //     <checkpoints>
 //     └── format
 //         └── timestamp.json(.gz)
-//
+
 export const Checkpoints = new class {
   // TODO: consider adding verification when restoring from checkpoints to ensure correctness
-  async restore(dir: string, formats: Map<ID,  {raw: string, offset: Offset}>) {
+  async restore(dir: string, formats: Map<ID, {raw: string, offset: Offset}>) {
     if (!(await fs.exists(dir))) await fs.mkdir(dir);
     const existing = new Set(await fs.readdir(dir));
 

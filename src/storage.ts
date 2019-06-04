@@ -1,11 +1,11 @@
 import * as path from 'path';
 
-import * as fs from './fs';
 import {Offset} from './checkpoint';
+import * as fs from './fs';
 
 export interface Storage {
   listFormats(): Promise<string[]>;
-  listLogs(format: string, offset?: Offset, max?: number): Promise<[Offset|undefined, string[]]>;
+  listLogs(format: string, offset?: Offset, max?: number): Promise<[Offset | undefined, string[]]>;
   readLog(log: string): Promise<string>;
 }
 
@@ -27,7 +27,8 @@ class FileStorage implements Storage {
     return (await fs.readdir(this.dir)).sort();
   }
 
-  async listLogs(format: string, offset?: Offset, max = Infinity): Promise<[Offset|undefined, string[]]> {
+  async listLogs(format: string, offset?: Offset, max = Infinity):
+      Promise<[Offset | undefined, string[]]> {
     const logs: string[] = [];
     const formatDir = path.resolve(this.dir, format);
     let last: Offset|undefined = undefined;
