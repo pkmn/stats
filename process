@@ -79,8 +79,6 @@ function usage(code) {
   out('');
   out('   -b/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
   out('');
-  out('   -t/--timeBucket=N: if checkpointing, write checkpoints after each \'N-second time bucket\' (default: 86400)');
-  out('');
   out ('NOTE: A negative value can be used to disable specific default sizes/limits.');
   process.exit(code);
 }
@@ -97,7 +95,6 @@ const argv = require('minimist')(process.argv.slice(2), {
     workingSet: ['w', 'ws', 'wss', 'workingSetSize'],
     checkpoint: ['c', 'checkpoints'],
     batchSize: ['b', 'batchSize', 'perBatch', 'maxBatch', 'maxBatchSize'],
-    timeBucket: ['t', 'tb', 'time', 'timeBuckets', 'tw', 'timeWindow', 'window'],
     debug: ['d'],
   },
   unknown: (arg) => {

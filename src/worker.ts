@@ -3,10 +3,10 @@ import {Data, ID, toID} from 'ps';
 import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
 import {workerData} from 'worker_threads';
 
+import {Checkpoints, Offset} from './checkpoint';
 import * as fs from './fs';
 import * as main from './main';
 import {Storage} from './storage';
-import {Checkpoints} from './checkpoint';
 
 const POPULAR = new Set([
   'ou',
@@ -38,7 +38,7 @@ const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono
 async function process(formats: main.FormatData[], options: main.WorkerOptions) {
   const storage = Storage.connect(options);
 
-  for (const {format, logs} of formats) { // TODO logs should be logs + offsets!
+  for (const {format, logs} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     let stats = Stats.create();
@@ -48,36 +48,35 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     // instead just wait for each batch, hoping that the async reads (and multiple workers
     // processes) are still going to keep our disk busy the whole time anyway.
     let n = 0;
-    let processed: Array<Promise<void>> = [];
-    let begin: Offset|undefined;
-    for (const [log, offset] of logs) {
-      if (!begin) begin = offset;
-      const shouldCheckpoint = options.checkpoint && false; // FIXME: DON'T KNOW UNTIL WE READ THE FILE :(
+    let processed = [];
+    let begin: Offset = undefined!;
+    let log = '';
+    for (log of logs) {
+      if (!begin) begin = getOffset(log);
+      const shouldCheckpoint = options.checkpoint && process.length >= options.batchSize!;
       if (n >= options.maxFiles || shouldCheckpoint) {
-        await Promise.all(processed);
+        const done = await Promise.all(processed);
         n = 0;
         processed = [];
         if (shouldCheckpoint) {
-          await Checkpoints.writeCheckpoint(path.resolve(options.checkpoint, format, {
-            begin, end: offset
-            
-          })); // FIXME
+          const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length]);
+          await Checkpoints.writeCheckpoint(filename, {begin, end: getOffset(log), stats});
+          stats = Stats.create();
         }
       }
 
       processed.push(processLog(storage, data, log, cutoffs, stats));
       n++;
     }
-    await Promise.all(processed);
+    const done = await Promise.all(processed);
     if (options.checkpoint) {
-
-      // TODO write checkpoint, then restore from all checkpoints for 
-      await Checkpoints.writeCheckpoint(path.resolve(options.checkpoint, format, TODO)); // FIXME
-      stats = Checkpoints.combine(options.checkpoint, format, options.maxFiles);
+      const filename = Checkpoints.filename(options.checkpoint, format, done[done.length]);
+      await Checkpoints.writeCheckpoint(filename, {begin, end: getOffset(log), stats});
+      stats = await Checkpoints.combine(options.checkpoint, format, options.maxFiles);
     }
 
     const b = stats.battles;
-    let writes: Array<Promise<void>> = [];
+    let writes = [];
     for (const [c, s] of stats.total.entries()) {
       if (writes.length + REPORTS >= options.maxFiles) {
         await Promise.all(writes);
@@ -99,6 +98,11 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
   }
 }
 
+function getOffset(full: string): Offset {
+  const [month, format, day, log] = full.split(path.sep);
+  return {day, log};
+}
+
 async function processLog(
     storage: Storage, data: Data, log: string, cutoffs: number[], stats: TaggedStatistics) {
   try {
@@ -106,9 +110,11 @@ async function processLog(
     const battle = Parser.parse(raw, data);
     const tags = data.format === 'gen7monotype' ? monotypes(data) : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);
+    return Date.parse(raw.timestamp);
   } catch (err) {
     console.error(`${log}: ${err.message}`);
   }
+  return 0;
 }
 
 function writeReports(
@@ -119,7 +125,7 @@ function writeReports(
 
   const reports = options.reportsPath;
   const min = options.debug ? [0, -Infinity] : [20, 0.5];
-  const writes: Array<Promise<void>> = [];
+  const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
   const leads = Reports.leadsReport(format, stats, battles);
   writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));

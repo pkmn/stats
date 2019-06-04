@@ -34,21 +34,15 @@ const WORKING_SET_SIZE = 1048576;
 
 // The maximum number of logs ('batch') for a particular format that will be aggregated into a
 // single intermediate Stats object before it will persisted as a checkppint written during
-// processing. Batches may be smaller than this due to working set restrictions, the number of logs
-// present for a particular format, or when time based checkpointing is enabled, but this value
-// allows rough bounds on the total amount of memory consumed (in addition the the number of workers
-// and working set size). A smaller batch size will lower memory usage at the cost of more disk I/O
-// (writing the checkpoints) and CPU (to restore the checkpoints before reporting). Stats objects
-// mostly contain sums bounded by the number of possible combinations of options available, though
-// in Pokemon this can be quite large. Furthermore, each additional battle processed usually
-// requires unbounded growth of GXEs (player name + max GXE) and team stalliness (score and weight).
+// processing. Batches may be smaller than this due to working set restrictions or the number of
+// logs present for a particular format but this value allows rough bounds on the total amount of
+// memory consumed (in addition the the number of workers and working set size). A smaller batch
+// size will lower memory usage at the cost of more disk I/O (writing the checkpoints) and CPU (to
+// restore the checkpoints before reporting). Stats objects mostly contain sums bounded by the
+// number of possible combinations of options available, though in Pokemon this can be quite large.
+// Furthermore, each additional battle processed usually requires unbounded growth of GXEs (player
+// name + max GXE) and team stalliness (score and weight).
 const BATCH_SIZE = 8192;
-
-// Each log file contains a timestamp field, and whenever we see that 'time bucket' seconds has
-// passed since the beginning of the time period (ie. month) we write a checkpoint, independent of
-// the configured max batch size. This setting is less relevant for bounding memory behavior than
-// for providing the ability to compute statistics/reports over meaningful subranges of checkpoints.
-const TIME_BUCKET = 86400;
 
 export interface Options {
   numWorkers?: number;
@@ -59,7 +53,6 @@ export interface Options {
 
   checkpoint?: string;
   batchSize?: number;
-  timeBucket?: number;
 }
 
 export interface WorkerOptions extends Options {
@@ -137,9 +130,6 @@ function createWorkerOptions(input: string, output: string, numWorkers: number, 
     opts.checkpoint = options.checkpoint;
     opts.batchSize =
         (options.batchSize && options.batchSize > 0) ? (options.batchSize || BATCH_SIZE) : Infinity;
-    opts.timeBucket = (options.timeBucket && options.timeBucket > 0) ?
-        (options.timeBucket || TIME_BUCKET) :
-        Infinity;
   }
   opts.debug = options.debug;
   return opts;

@@ -2,7 +2,7 @@ import {ID, PokemonSet} from 'ps';
 import * as stats from 'stats';
 
 // TODO: we can avoid copies by just mutating directly
-interface TaggedStatistics {
+export interface TaggedStatistics {
   battles: number;
   total: WeightedStatistics;
   tags: {[id: string]: WeightedStatistics};

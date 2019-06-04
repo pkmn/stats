@@ -32,8 +32,8 @@ export const Checkpoints = new class {
     if (!(await fs.exists(dir))) await fs.mkdir(dir);
     const existing = new Set(await fs.readdir(dir));
 
-    const reads: Array<Promise<void>> = [];
-    const writes: Array<Promise<void>> = [];
+    const reads = [];
+    const writes = [];
     for (const [format, data] of formats.entries()) {
       const formatDir = path.resolve(dir, format);
       if (existing.has(format)) {
@@ -48,32 +48,32 @@ export const Checkpoints = new class {
     await Promise.all([...reads, ...writes]);
   }
 
-  async combine(dir: string, format: ID, max: number, stats?: TaggedStatistics): TaggedStatistics {
-    stats = stats || Stats.create();
+  async combine(dir: string, format: ID, max: number): Promise<TaggedStatistics> {
     const formatDir = path.resolve(dir, format);
 
+    let stats: state.TaggedStatistics|undefined = undefined;
     let n = 0;
-    let checkpoints: Array<Promise<Checkpoint>> = [];
+    let checkpoints = [];
     for (const file of await fs.readdir(formatDir)) {
       if (n >= max) {
         for (const checkpoint of await Promise.all(checkpoints)) {
-          stats = combineStats(stats, checkpoint.stats);
+          stats = state.combineTagged(checkpoint.stats, stats);
         }
         n = 0;
         checkpoints = [];
       }
 
-      checkpoints.push(readCheckpoint(path.resolve(formatDir, file)));
+      checkpoints.push(readRawCheckpoint(path.resolve(formatDir, file)));
       n++;
     }
     for (const checkpoint of await Promise.all(checkpoints)) {
-      stats = combineStats(stats, checkpoint.stats);
+      stats = state.combineTagged(checkpoint.stats, stats);
     }
-    return stats;
+
+    return state.deserializeTagged(stats!);
   }
 
   writeCheckpoint(file: string, checkpoint: Checkpoint) {
-    // TODO: filename should be based on timestamp in checkpoint.end!
     return fs.writeGzipFile(file, JSON.stringify({
       begin: checkpoint.begin,
       end: checkpoint.end,
@@ -82,12 +82,16 @@ export const Checkpoints = new class {
   }
 
   async readCheckpoint(file: string): Promise<Checkpoint> {
-    const json = JSON.parse(await fs.readFile(file, 'utf8'));
+    const raw = await readRawCheckpoint(file);
     return {
-      begin: json.begin as Offset,
-      end: json.end as Offset,
-      stats: state.deserializeTagged(json.stats),
+      begin: raw.begin,
+      end: raw.end,
+      stats: state.deserializeTagged(raw.stats),
     };
+  }
+
+  filename(dir: string, format: ID, timestamp: number) {
+    return `${path.resolve(dir, format, `${timestamp}`)}.json.gz`;
   }
 };
 
@@ -97,4 +101,13 @@ async function restoreCheckpoint(formatDir: string): Promise<Offset> {
   // NOTE: We're just assuming max files is not relevant here (ie. num formats < max files)
   const checkpoint = path.resolve(formatDir, checkpoints[checkpoints.length - 1]);
   return (await Checkpoints.readCheckpoint(checkpoint)).end;
+}
+
+async function readRawCheckpoint(file: string) {
+  const json = JSON.parse(await fs.readFile(file, 'utf8'));
+  return {
+    begin: json.begin as Offset,
+    end: json.end as Offset,
+    stats: json.stats as state.TaggedStatistics,
+  };
 }
