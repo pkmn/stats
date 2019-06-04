@@ -100,25 +100,36 @@ export async function process(input: string, output: string, options: Options = 
   }
 
   let failures = 0;
-  // Without checkpointing, we can't handle only processing part of a format, so we have to attempt
-  // to read in the entire thing. This may force us to only use a single process to keep memory
-  // down, and we may still be over the requested total working set size, but there's not a ton we
-  // can do here without dramatically increasing complexity.
-  const formatWorkingSetSize =
-      options.checkpoint ? Math.floor(workingSetSize / numWorkers) : Infinity;
   for (let left = Array.from(formats.entries()); left.length > 0;
        left = Array.from(formats.entries())) {
     debug(`Building working set (${left.length} formats remaining)`);
+
+    // We read in all the remaining formats first so that we can prioritize the largest formats
+    // TODO: must only read in enough to determine largest
+    const workingSuperset: Array<Promise<FormatData>> = [];
+    for (const [format, {raw, offset}] of left) {
+      workingSuperset.push(storage.listLogs(raw, offset).then(logs => ({format, logs})));
+    }
+    const sorted =
+        (await Promise.all(workingSuperset)).sort((a, b) => b.logs.length - a.logs.length);
+
+    // Without checkpointing, we can't handle only processing part of a format, so we have to
+    // attempt to read in the entire thing. This may force us to only use a single process to keep
+    // memory down, and we may still be over the requested total working set size, but there's not a
+    // ton we can do here without dramatically increasing complexity.
+    const formatWorkingSetSize = options.checkpoint ?
+        Math.floor(workingSetSize / Math.min(left.length, numWorkers)) :
+        Infinity;
     // Build up a 'working set' of logs to process. Note: the working set size is not considered
     // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
     const workingSet: FormatData[] = [];
-    for (const [format, {raw, offset}] of left) {
-      debug(`Attempting to include ${format} from ${util.inspect(offset)} in the working set`);
-      const [next, logs] = await storage.listLogs(raw, offset, formatWorkingSetSize);
-      workingSet.push({format: format as ID, logs});
+    for (const {format, logs} of sorted) {
+      const [next, trimmed] = getMaxLogs(logs, formatWorkingSetSize);
+      workingSet.push({format: format as ID, logs: trimmed});
       if (next) {
-        debug(`Only able to partially process ${format}, will begin from ${
-            util.inspect(next)} next iteration`);
+        debug(
+            `Only able to include part of ${format} in the working set, will begin from ` +
+            `${util.inspect(next)} next iteration`);
         formats.get(format)!.offset = next;
       } else {
         debug(`All of ${format} has been read into the working set`);
@@ -130,6 +141,10 @@ export async function process(input: string, output: string, options: Options = 
       }
     }
 
+    // If we have fewer formats remaining than the number of workers each can open more files.
+    if (workerOptions.maxFiles !== Infinity && left.length < numWorkers) {
+      workerOptions.maxFiles = Math.floor((options.maxFiles || MAX_FILES) / left.length);
+    }
     // TODO: Consider leaving the worker processes running and posting work each iteration - if we
     // are able post to the same worker process a format was previously handled by we could get
     // around the not being able to partially process formats without checkpointing.
@@ -139,18 +154,29 @@ export async function process(input: string, output: string, options: Options = 
   return failures;
 }
 
+export function getOffset(full: string): Offset {
+  const [format, day, log] = full.split(path.sep);
+  return {day, log};
+}
+
+function getMaxLogs(logs: string[], max: number): [Offset|undefined, string[]] {
+  if (logs.length < max) return [undefined, logs];
+  return [getOffset(logs[max - 1]), logs.slice(0, max)];
+}
+
 function createWorkerOptions(input: string, output: string, numWorkers: number, options: Options) {
   const opts: WorkerOptions = {
     dir: input,
     reportsPath: output,
-    maxFiles: (options.maxFiles && options.maxFiles > 0) ?
+    maxFiles: (!options.maxFiles || options.maxFiles > 0) ?
         Math.floor((options.maxFiles || MAX_FILES) / numWorkers) :
         Infinity,
   };
   if (options.checkpoint) {
     opts.checkpoint = options.checkpoint;
-    opts.batchSize =
-        (options.batchSize && options.batchSize > 0) ? (options.batchSize || BATCH_SIZE) : Infinity;
+    opts.batchSize = (!options.batchSize || options.batchSize > 0) ?
+        (options.batchSize || BATCH_SIZE) :
+        Infinity;
   }
   opts.dryRun = options.dryRun;
   opts.verbose = options.verbose;

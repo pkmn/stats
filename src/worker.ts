@@ -54,7 +54,7 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     let begin: Offset = undefined!;
     let log = '';
     for (log of logs) {
-      if (!begin) begin = getOffset(log);
+      if (!begin) begin = main.getOffset(log);
       const shouldCheckpoint = options.checkpoint && processed.length >= options.batchSize!;
       if (n >= options.maxFiles || shouldCheckpoint) {
         debug(`Waiting for ${processed.length} logs to be parsed`);
@@ -63,7 +63,7 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
         processed = [];
         if (shouldCheckpoint) {
           const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length]);
-          const end = getOffset(log);
+          const end = main.getOffset(log);
           debug(
               `Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
           if (!options.dryRun) {
@@ -85,7 +85,7 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     const done = await Promise.all(processed);
     if (options.checkpoint) {
       const filename = Checkpoints.filename(options.checkpoint, format, done[done.length]);
-      const end = getOffset(log);
+      const end = main.getOffset(log);
       debug(`Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
       if (!options.dryRun) {
         await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
@@ -118,11 +118,6 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     debug(`Waiting for ${writes.length} reports to be written`);
     await Promise.all(writes);
   }
-}
-
-function getOffset(full: string): Offset {
-  const [format, day, log] = full.split(path.sep);
-  return {day, log};
 }
 
 async function processLog(

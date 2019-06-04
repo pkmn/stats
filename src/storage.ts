@@ -5,7 +5,7 @@ import * as fs from './fs';
 
 export interface Storage {
   listFormats(): Promise<string[]>;
-  listLogs(format: string, offset?: Offset, max?: number): Promise<[Offset | undefined, string[]]>;
+  listLogs(format: string, offset?: Offset): Promise<string[]>;
   readLog(log: string): Promise<string>;
 }
 
@@ -27,23 +27,19 @@ class FileStorage implements Storage {
     return (await fs.readdir(this.dir)).sort();
   }
 
-  async listLogs(format: string, offset?: Offset, max = Infinity):
-      Promise<[Offset | undefined, string[]]> {
+  async listLogs(format: string, offset?: Offset, max = Infinity): Promise<string[]> {
     const logs: string[] = [];
     const formatDir = path.resolve(this.dir, format);
-    let last: Offset|undefined = undefined;
     const cmp = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
     for (const day of (await fs.readdir(formatDir)).sort(cmp)) {
       if (offset && day < offset.day) continue;
       const dayDir = path.resolve(formatDir, day);
       for (const log of (await fs.readdir(dayDir)).sort(cmp)) {
         if (offset && log < offset.log) continue;
-        if (logs.length > max) return [last, logs.sort(cmp)];
         logs.push(path.join(format, day, log));
-        last = {day, log};
       }
     }
-    return [undefined, logs.sort(cmp)];
+    return logs.sort(cmp);
   }
 
   readLog(log: string) {
