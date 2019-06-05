@@ -2,7 +2,6 @@ import * as os from 'os';
 import * as path from 'path';
 import {ID, toID} from 'ps';
 import {canonicalizeFormat} from 'stats';
-import * as util from 'util';
 import {Worker} from 'worker_threads';
 
 import {Checkpoints, Offset} from './checkpoint';
@@ -69,15 +68,22 @@ export interface WorkerOptions extends Options {
 export interface FormatData {
   format: ID;
   logs: string[];
+  complete?: boolean;
 }
 
 let mainData: {options: Options} = undefined!;
 
-export async function process(input: string, output: string, options: Options = {}) {
+export async function processLogs(input: string, output: string, options: Options = {}) {
   mainData = {options};
-  const storage = Storage.connect({dir: input});
 
+  const storage = Storage.connect({dir: input});
   const numWorkers = options.numWorkers || (os.cpus().length - 1);
+  // Per nodejs/node#27687, before v12.3.0 multiple threads logging to the console
+  // will cause EventEmitter warnings because each thread unncessarily attaches its
+  // own error handler around each write.
+  if (options.verbose && Number(process.version.match(/^v(\d+\.\d+)/)![1]) < 12.3) {
+    process.setMaxListeners(numWorkers + 1);
+  }
   const workingSetSize = options.workingSet || WORKING_SET_SIZE;
   const workerOptions = createWorkerOptions(input, output, numWorkers, options);
   vlog('Creating reports directory structure');
@@ -128,11 +134,12 @@ export async function process(input: string, output: string, options: Options = 
     for (const [format, metadata] of sorted) {
       const [next, trimmed] =
           await storage.listLogs(metadata.raw, metadata.offset, formatWorkingSetSize);
-      workingSet.push({format: format as ID, logs: trimmed});
+      workingSet.push({format: format as ID, logs: trimmed, complete: !next});
       if (next) {
-        vlog(
-            `Only able to include part of ${format} in the working set, will begin from ` +
-            `${util.inspect(next)} next iteration`);
+        if (options.verbose) {
+          const range = formatOffsets(metadata.offset, next);
+          vlog(`Only able to include part of ${format} in the working set (${range})`);
+        }
         // NOTE: we're mutating the underlying metadata object in order to mutate `formats`.
         metadata.offset = next;
         metadata.size -= trimmed.length;
@@ -152,7 +159,9 @@ export async function process(input: string, output: string, options: Options = 
     }
     // TODO: Consider leaving the worker processes running and posting work each iteration - if we
     // are able post to the same worker process a format was previously handled by we could get
-    // around the not being able to partially process formats without checkpointing.
+    // around the not being able to partially process formats without checkpointing. Furthermore,
+    // we could keep all cores active throughout the process by feeding them more work as they
+    // complete as opposed to having to wait for all workers to complete each iteration.
     failures += await processWorkingSet(workingSet, numWorkers, workerOptions);
   }
 
@@ -162,6 +171,10 @@ export async function process(input: string, output: string, options: Options = 
 export function getOffset(full: string): Offset {
   const [format, day, log] = full.split(path.sep);
   return {day, log};
+}
+
+export function formatOffsets(begin: Offset, end: Offset) {
+  return `${begin.day}/${begin.log} - ${end.day}/${end.log}`;
 }
 
 function createWorkerOptions(input: string, output: string, numWorkers: number, options: Options) {

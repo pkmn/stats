@@ -203,6 +203,10 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics|undefined) {
   a.saved.count += b.saved.count;
   for (const [k, v] of Object.entries(b.encounters)) {
     const ae = a.encounters[k];
+    if (!ae) {
+      a.encounters[k] = v;
+      continue;
+    }
     for (let i = 0; i < ae.length; i++) {
       ae[i] += v[i];
     }

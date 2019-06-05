@@ -98,7 +98,7 @@ const argv = require('minimist')(process.argv.slice(2), {
     maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
     workingSet: ['w', 'ws', 'wss', 'workingSetSize'],
     checkpoint: ['c', 'checkpoints'],
-    batchSize: ['b', 'batchSize', 'perBatch', 'maxBatch', 'maxBatchSize'],
+    batchSize: ['b', 'perBatch', 'maxBatch', 'maxBatchSize'],
     dryRun: ['d', 'dry'],
     verbose: ['v'],
     all: ['a'],

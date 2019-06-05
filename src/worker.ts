@@ -40,7 +40,7 @@ const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono
 async function process(formats: main.FormatData[], options: main.WorkerOptions) {
   const storage = Storage.connect(options);
 
-  for (const {format, logs} of formats) {
+  for (const {format, logs, complete} of formats) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     let stats = Stats.create();
@@ -50,26 +50,27 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     // instead just wait for each batch, hoping that the async reads (and multiple workers
     // processes) are still going to keep our disk busy the whole time anyway.
     let n = 0;
+    let batch = 0;
     let processed = [];
     let begin: Offset = undefined!;
     let log = '';
     for (log of logs) {
       if (!begin) begin = main.getOffset(log);
-      const shouldCheckpoint = options.checkpoint && processed.length >= options.batchSize!;
+      const shouldCheckpoint = options.checkpoint && batch >= options.batchSize!;
       if (n >= options.maxFiles || shouldCheckpoint) {
         vlog(`Waiting for ${processed.length} logs to be parsed`);
         const done = await Promise.all(processed);
         n = 0;
         processed = [];
         if (shouldCheckpoint) {
-          const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length]);
+          const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length - 1]);
           const end = main.getOffset(log);
-          vlog(
-              `Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
+          vlog(`Writing batch checkpoint ${filename} (${main.formatOffsets(begin, end)})`);
           if (!options.dryRun) {
             await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
             stats = Stats.create();
           }
+          batch = 0;
         }
       }
 
@@ -80,19 +81,24 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
         processed.push(processLog(storage, data, log, cutoffs, stats));
       }
       n++;
+      batch++;
     }
     vlog(`Waiting for ${processed.length} logs to be parsed`);
     const done = await Promise.all(processed);
     if (options.checkpoint) {
-      const filename = Checkpoints.filename(options.checkpoint, format, done[done.length]);
+      const filename = Checkpoints.filename(options.checkpoint, format, done[done.length - 1]);
       const end = main.getOffset(log);
-      vlog(`Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
+      vlog(`Writing checkpoint ${filename} (${main.formatOffsets(begin, end)})`);
       if (!options.dryRun) {
         await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
-        vlog(`Combining checkpoints`);
-        stats = await Checkpoints.combine(options.checkpoint, format, options.maxFiles);
+        if (complete) {
+          vlog(`Combining checkpoints`);
+          stats = await Checkpoints.combine(options.checkpoint, format, options.maxFiles);
+        }
       }
     }
+    // If we haven't completed processing on this format we don't need to write reports yet.
+    if (!complete) return;
 
     const b = stats.battles;
     let writes = [];
@@ -138,7 +144,7 @@ async function processLog(
 function writeReports(
     options: main.WorkerOptions, format: ID, cutoff: number, stats: Statistics, battles: number,
     tag?: ID) {
-  vlog(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? tag : ''));
+  vlog(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? ` (${tag})` : ''));
   if (options.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;

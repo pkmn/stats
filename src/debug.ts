@@ -3,7 +3,7 @@ import * as util from 'util';
 
 export function log(title: string, num: number, ...args: any[]) {
   const color = num ? (num % 5) + 2 : 1;
-  const tag = util.format(`[%s] \x1b[3${color}m%s\x1b[0m`, millis(performance.now()), title);
+  const tag = util.format(`\x1b[90m[%s] \x1b[3${color}m%s\x1b[0m`, millis(performance.now()), title);
   console.log(tag, ...args);
 }
 

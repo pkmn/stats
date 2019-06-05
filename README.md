@@ -21,6 +21,11 @@ logs in batch, run:
 
     $ ./process path/to/logs path/to/output/reports
 
+If you are using a Node version <= 11.7.0, you will need to update (eg. `npm install -g n
+&& n stable` or `nvm install stable`), or run with the `--experimental-worker` flag:
+
+    $ node --experimental-worker process path/to/logs path/to/output/reports
+
 `process` expects the `logs` directory to be structured as follows (ie. the default
 for Pokémon Showdown servers):
 
@@ -53,7 +58,9 @@ The resulting reports will be written out in the following directory structure:
         └── format-N.txt
 
 `process --help` can be used to provide insight into which flags are offered for
-tweaking the runtime overhead and behavior.
+tweaking the runtime overhead and behavior. To handle large amount of data, you
+will probably need to increase Node's heap size using `--max-old-space-size` and/or
+tweak the applications `--batchSize` and `--workingSetSize`.
 
 A Tier Update report based on past usage reports can also be produced:
 

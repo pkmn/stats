@@ -1,1 +1,1 @@
-export {process} from './main';
+export {processLogs as process} from './main';
