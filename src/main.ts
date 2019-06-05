@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import * as os from 'os';
 import * as path from 'path';
 import {ID, toID} from 'ps';

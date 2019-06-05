@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import * as path from 'path';
 import {Data, ID, toID} from 'ps';
 import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
@@ -37,7 +39,7 @@ const REPORTS = 5;
 
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
-async function process(formats: main.FormatData[], options: main.WorkerOptions) {
+async function processLogs(formats: main.FormatData[], options: main.WorkerOptions) {
   const storage = Storage.connect(options);
 
   for (const {format, logs, complete} of formats) {
@@ -175,4 +177,4 @@ function vlog(...args: any[]) {
 }
 
 // tslint:disable-next-line: no-floating-promises
-(async () => await process(workerData.formats, workerData.options))();
+(async () => await processLogs(workerData.formats, workerData.options))();
