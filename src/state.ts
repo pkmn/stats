@@ -233,7 +233,10 @@ function deserializeMetagame(meta: MetagameStatistics) {
 function combineMetagame(a: MetagameStatistics, b: MetagameStatistics|undefined) {
   if (!b) return a;
   a.tags = combineMap(a.tags, b.tags);
-  a.stalliness.push(...b.stalliness);
+  // NOTE: a.stalliness.push(...b.stalliness) can exceed Node's call stack...
+  for (const s of b.stalliness) {
+    a.stalliness.push(s);
+  }
   return a;
 }
 
