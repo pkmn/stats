@@ -1,12 +1,12 @@
 import * as os from 'os';
 import * as path from 'path';
-import {performance} from 'perf_hooks';
 import {ID, toID} from 'ps';
 import {canonicalizeFormat} from 'stats';
 import * as util from 'util';
 import {Worker} from 'worker_threads';
 
 import {Checkpoints, Offset} from './checkpoint';
+import * as debug from './debug';
 import * as fs from './fs';
 import {Storage} from './storage';
 
@@ -56,7 +56,7 @@ export interface Options {
   batchSize?: number;
 
   dryRun?: boolean;
-  verbose?: boolean;
+  verbose?: boolean|number;
   all?: boolean;
 }
 
@@ -71,7 +71,7 @@ export interface FormatData {
   logs: string[];
 }
 
-let mainData: any = undefined;
+let mainData: {options: Options} = undefined!;
 
 export async function process(input: string, output: string, options: Options = {}) {
   mainData = {options};
@@ -80,38 +80,40 @@ export async function process(input: string, output: string, options: Options = 
   const numWorkers = options.numWorkers || (os.cpus().length - 1);
   const workingSetSize = options.workingSet || WORKING_SET_SIZE;
   const workerOptions = createWorkerOptions(input, output, numWorkers, options);
-  debug('Creating reports directory structure');
+  vlog('Creating reports directory structure');
   if (!options.dryRun) await createReportsDirectoryStructure(output);
 
-  debug('Determining formats');
-  const formats: Map<ID, {raw: string, offset: Offset}> = new Map();
-  for (const raw of await storage.listFormats()) {
+  vlog('Determining formats');
+  const formats: Map<ID, {raw: string, size: number, offset: Offset}> = new Map();
+  const formatSizes = await storage.formatSizes();
+  for (const [raw, size] of Object.entries(formatSizes)) {
     const format = canonicalizeFormat(toID(raw));
     if (format.startsWith('seasonal') || format.includes('random') ||
         format.includes('metronome' || format.includes('superstaff'))) {
       continue;
     }
-    formats.set(format, {raw, offset: {day: '', log: ''}});
+    formats.set(format, {raw, size, offset: {day: '', log: ''}});
   }
 
   if (options.checkpoint) {
-    debug('Restoring formats from checkpoints');
+    vlog('Restoring formats from checkpoints');
+    // The 'size' field should really be updated when restoring from checkpoint so that we
+    // prioritize processing the formats with the most *remaining* logs as opposed to the formats
+    // with the most logs in *total*, however, in practical terms this is unlikely to matter and
+    // results in more complex code.
     await Checkpoints.restore(options.checkpoint, formats, options.dryRun);
   }
 
   let failures = 0;
   for (let left = Array.from(formats.entries()); left.length > 0;
        left = Array.from(formats.entries())) {
-    debug(`Building working set (${left.length} formats remaining)`);
-
-    // We read in all the remaining formats first so that we can prioritize the largest formats
-    // TODO: must only read in enough to determine largest
-    const workingSuperset: Array<Promise<FormatData>> = [];
-    for (const [format, {raw, offset}] of left) {
-      workingSuperset.push(storage.listLogs(raw, offset).then(logs => ({format, logs})));
+    // We sort formats by total size (which potentially should be remaining size, see above) to make
+    // sure the formats which are going to take the most iterations get scheduled first.
+    const sorted = left.sort((a, b) => b[1].size - a[1].size);
+    if (options.verbose) {
+      const sizes = sorted.map(e => `  ${e[0]}: ${e[1].size}`).join('\n');
+      vlog(`Building working set (${left.length} remaining)\n\n${sizes}\n`);
     }
-    const sorted =
-        (await Promise.all(workingSuperset)).sort((a, b) => b.logs.length - a.logs.length);
 
     // Without checkpointing, we can't handle only processing part of a format, so we have to
     // attempt to read in the entire thing. This may force us to only use a single process to keep
@@ -123,20 +125,23 @@ export async function process(input: string, output: string, options: Options = 
     // Build up a 'working set' of logs to process. Note: the working set size is not considered
     // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
     const workingSet: FormatData[] = [];
-    for (const {format, logs} of sorted) {
-      const [next, trimmed] = getMaxLogs(logs, formatWorkingSetSize);
+    for (const [format, metadata] of sorted) {
+      const [next, trimmed] =
+          await storage.listLogs(metadata.raw, metadata.offset, formatWorkingSetSize);
       workingSet.push({format: format as ID, logs: trimmed});
       if (next) {
-        debug(
+        vlog(
             `Only able to include part of ${format} in the working set, will begin from ` +
             `${util.inspect(next)} next iteration`);
-        formats.get(format)!.offset = next;
+        // NOTE: we're mutating the underlying metadata object in order to mutate `formats`.
+        metadata.offset = next;
+        metadata.size -= trimmed.length;
       } else {
-        debug(`All of ${format} has been read into the working set`);
+        vlog(`All of ${format} has been read into the working set`);
         formats.delete(format);
       }
       if (workingSet.length >= workingSetSize) {
-        debug(`Working set of size ${workingSet.length} >= ${workingSetSize}`);
+        vlog(`Working set of size ${workingSet.length} >= ${workingSetSize}`);
         break;
       }
     }
@@ -157,11 +162,6 @@ export async function process(input: string, output: string, options: Options = 
 export function getOffset(full: string): Offset {
   const [format, day, log] = full.split(path.sep);
   return {day, log};
-}
-
-function getMaxLogs(logs: string[], max: number): [Offset|undefined, string[]] {
-  if (logs.length < max) return [undefined, logs];
-  return [getOffset(logs[max - 1]), logs.slice(0, max)];
 }
 
 function createWorkerOptions(input: string, output: string, numWorkers: number, options: Options) {
@@ -194,19 +194,19 @@ async function createReportsDirectoryStructure(output: string) {
 
 async function processWorkingSet(
     workingSet: FormatData[], numWorkers: number, options: WorkerOptions) {
-  debug(`Partitioning working set of size ${workingSet.length} into ${numWorkers} partitions`);
+  vlog(`Partitioning working set of size ${workingSet.length} into ${numWorkers} partitions`);
   const partitions = partition(await Promise.all(workingSet), numWorkers);
   const workers: Array<[ID[], Promise<void>]> = [];
   for (const [i, formats] of partitions.entries()) {
     const workerData = {formats, options, num: i + 1};
-    debug(`Creating worker ${i + 1} to handle ${formats.length} format(s)`);
+    vlog(`Creating worker ${i + 1} to handle ${formats.length} format(s)`);
     workers.push([
       formats.map(f => f.format), new Promise((resolve, reject) => {
         const worker = new Worker(WORKER, {workerData});
         worker.on('error', reject);
         worker.on('exit', (code) => {
           if (code === 0) {
-            debug(`Worker ${workerData.num} exited cleanly`);
+            vlog(`Worker ${workerData.num} exited cleanly`);
             // We need to wait for the worker to exit before resolving (as opposed to having
             // the worker message us when it is finished) so that we know it is safe to
             // terminate the main process (which will kill all the workers and result in
@@ -280,8 +280,7 @@ async function rmrf(dir: string) {
   }
 }
 
-function debug(...args: any[]) {
+function vlog(...args: any[]) {
   if (!mainData.options.verbose) return;
-  const tag = util.format('[%s] \x1b[31m%s\x1b[0m', Math.round(performance.now()), 'main');
-  console.log(tag, ...args);
+  debug.log(`main`, 0, ...args);
 }

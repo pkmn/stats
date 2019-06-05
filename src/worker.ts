@@ -1,11 +1,11 @@
 import * as path from 'path';
-import {performance} from 'perf_hooks';
 import {Data, ID, toID} from 'ps';
 import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
 import * as util from 'util';
 import {workerData} from 'worker_threads';
 
 import {Checkpoints, Offset} from './checkpoint';
+import * as debug from './debug';
 import * as fs from './fs';
 import * as main from './main';
 import {Storage} from './storage';
@@ -57,14 +57,14 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
       if (!begin) begin = main.getOffset(log);
       const shouldCheckpoint = options.checkpoint && processed.length >= options.batchSize!;
       if (n >= options.maxFiles || shouldCheckpoint) {
-        debug(`Waiting for ${processed.length} logs to be parsed`);
+        vlog(`Waiting for ${processed.length} logs to be parsed`);
         const done = await Promise.all(processed);
         n = 0;
         processed = [];
         if (shouldCheckpoint) {
           const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length]);
           const end = main.getOffset(log);
-          debug(
+          vlog(
               `Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
           if (!options.dryRun) {
             await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
@@ -74,22 +74,22 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
       }
 
       if (options.dryRun) {
-        debug(`Processing ${log}`);
+        vvlog(`Processing ${log}`);
         processed.push(Promise.resolve(0));
       } else {
         processed.push(processLog(storage, data, log, cutoffs, stats));
       }
       n++;
     }
-    debug(`Waiting for ${processed.length} logs to be parsed`);
+    vlog(`Waiting for ${processed.length} logs to be parsed`);
     const done = await Promise.all(processed);
     if (options.checkpoint) {
       const filename = Checkpoints.filename(options.checkpoint, format, done[done.length]);
       const end = main.getOffset(log);
-      debug(`Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
+      vlog(`Writing checkpoint ${filename} from ${util.inspect(begin)} to ${util.inspect(end)}`);
       if (!options.dryRun) {
         await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
-        debug(`Combining checkpoints`);
+        vlog(`Combining checkpoints`);
         stats = await Checkpoints.combine(options.checkpoint, format, options.maxFiles);
       }
     }
@@ -98,7 +98,7 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     let writes = [];
     for (const [c, s] of stats.total.entries()) {
       if (writes.length + REPORTS >= options.maxFiles) {
-        debug(`Waiting for ${writes.length} reports to be written`);
+        vlog(`Waiting for ${writes.length} reports to be written`);
         await Promise.all(writes);
         writes = [];
       }
@@ -108,21 +108,21 @@ async function process(formats: main.FormatData[], options: main.WorkerOptions) 
     for (const [t, ts] of stats.tags.entries()) {
       for (const [c, s] of ts.entries()) {
         if (writes.length + REPORTS >= options.maxFiles) {
-          debug(`Waiting for ${writes.length} reports to be written`);
+          vlog(`Waiting for ${writes.length} reports to be written`);
           await Promise.all(writes);
           writes = [];
         }
         writes.push(...writeReports(options, format, c, s, b, t));
       }
     }
-    debug(`Waiting for ${writes.length} reports to be written`);
+    vlog(`Waiting for ${writes.length} reports to be written`);
     await Promise.all(writes);
   }
 }
 
 async function processLog(
     storage: Storage, data: Data, log: string, cutoffs: number[], stats: TaggedStatistics) {
-  debug(`Processing ${log}`);
+  vvlog(`Processing ${log}`);
   try {
     const raw = JSON.parse(await storage.readLog(log));
     const battle = Parser.parse(raw, data);
@@ -138,7 +138,7 @@ async function processLog(
 function writeReports(
     options: main.WorkerOptions, format: ID, cutoff: number, stats: Statistics, battles: number,
     tag?: ID) {
-  debug(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? tag : ''));
+  vlog(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? tag : ''));
   if (options.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
@@ -158,12 +158,14 @@ function writeReports(
   return writes;
 }
 
-function debug(...args: any[]) {
+function vvlog(...args: any[]) {
+  if (+workerData.options.verbose < 2) return;
+  vlog(...args);
+}
+
+function vlog(...args: any[]) {
   if (!workerData.options.verbose) return;
-  const color = (workerData.num % 5) + 2;
-  const tag = util.format(
-      `[%s] \x1b[3${color}m%s\x1b[0m`, Math.round(performance.now()), `worker:${workerData.num}`);
-  console.log(tag, ...args);
+  debug.log(`worker:${workerData.num}`, workerData.num, ...args);
 }
 
 // tslint:disable-next-line: no-floating-promises
