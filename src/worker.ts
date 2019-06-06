@@ -58,7 +58,7 @@ async function apply(batches: Batch[], config: Configuration) {
       await Promise.all(processed);
     }
     const filename = Checkpoints.filename(config.checkpoint, format, begin, end);
-    LOG(`Writing checkpoint ${filename} (${Checkpoints.formatOffsets(begin, end)})`);
+    LOG(`Writing checkpoint for ${format}: ${filename}`);
     if (!config.dryRun) await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
   }
 }
@@ -81,7 +81,7 @@ async function processLog(
 async function combine(formats: ID[], config: Configuration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
-    stats = await Checkpoints.combine(config.checkpoints, format, config.maxFiles);
+    stats = await Checkpoints.combine(config, format);
 
     const b = stats.battles;
     let writes = [];

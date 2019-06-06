@@ -4,8 +4,8 @@ import {Offset} from './checkpoint';
 import * as fs from './fs';
 
 export interface Storage {
-  formatSizes(): Promise<{[format: string]: number}>;
-  listLogs(format: string, offset?: Offset, max?: number): Promise<[Offset | undefined, string[]]>;
+  listFormats(): Promise<string[]>;
+  listLogs(format: string, offset?: Offset, end?: Offset): Promise<string[]>;
   readLog(log: string): Promise<string>;
 }
 
@@ -26,17 +26,21 @@ class FileStorage implements Storage {
     this.dir = dir;
   }
 
-  // async formatSizes() {
-  // const sizes: {[format: string]: number} = {};
-  // for (const format of await fs.readdir(this.dir)) {
-  // const formatDir = path.resolve(this.dir, format);
-  // for (const day of await fs.readdir(formatDir)) {
-  // const dayDir = path.resolve(formatDir, day);
-  // sizes[format] = (sizes[format] || 0) + (await fs.readdir(dayDir)).length;
-  //}
-  //}
-  // return sizes;
-  //}
+  listFormats() {
+    return fs.readdir(this.dir);
+  }
+
+  async formatSizes() {
+    const sizes: {[format: string]: number} = {};
+    for (const format of await) {
+      const formatDir = path.resolve(this.dir, format);
+      for (const day of await fs.readdir(formatDir)) {
+        const dayDir = path.resolve(formatDir, day);
+        sizes[format] = (sizes[format] || 0) + (await fs.readdir(dayDir)).length;
+      }
+    }
+    return sizes;
+  }
 
   async listLogs(format: string, begin?: Offset, end?: Offset): Promise<string[]> {
     const logs: string[] = [];
