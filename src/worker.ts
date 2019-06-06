@@ -152,7 +152,8 @@ function writeReports(
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
 
-  const reports = options.reportsPath;
+  const reports = (format === 'gen7monotype' && tag) ? path.join(options.reportsPath, 'monotype') :
+                                                       options.reportsPath;
   const min = options.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
