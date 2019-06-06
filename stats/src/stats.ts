@@ -101,7 +101,10 @@ export const Stats = new class {
     if (!short) {
       let leads = true;
       if (!short && singles) {
-        const playerTags = {p1: battle.p1.team.classification.tags, p2: battle.p2.team.classification.tags};
+        const playerTags = {
+          p1: battle.p1.team.classification.tags,
+          p2: battle.p2.team.classification.tags
+        };
         const mins = playerWeights[0].map((w, i) => Math.min(w, playerWeights[1][i]));
         for (const [i, weight] of mins.entries()) {
           const pw = {p1: playerWeights[0][i], p2: playerWeights[1][i]};
@@ -311,7 +314,9 @@ function updateEncounters(stats: Statistics, matchups: Array<[ID, ID, Outcome]>,
   }
 }
 
-function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2: number}, tags: {p1: Set<ID>, p2: Set<ID>}, tag?: ID) {
+function updateLeads(
+    stats: Statistics, battle: Battle, weights: {p1: number, p2: number},
+    tags: {p1: Set<ID>, p2: Set<ID>}, tag?: ID) {
   const sides: Array<'p1'|'p2'> = ['p1', 'p2'];
   const leads = {p1: 'empty' as ID, p2: 'empty' as ID};
   const matchups = battle.matchups;

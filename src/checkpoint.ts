@@ -4,10 +4,12 @@ import {Stats, TaggedStatistics} from 'stats';
 
 import * as fs from './fs';
 import * as state from './state';
+import {Storage} from './storage';
 
 export interface Offset {
   day: string;
   log: string;
+  index: number;
 }
 
 export interface Checkpoint {
@@ -28,54 +30,69 @@ export interface Checkpoint {
 
 // TODO: consider adding verification option to ensure correctness/no missing data
 export const Checkpoints = new class {
-  async restore(dir: string, formats: Map<ID, {raw: string, offset: Offset}>, dryRun?: boolean) {
-    if (!(await fs.exists(dir) && !dryRun)) await fs.mkdir(dir, {recursive: true});
-    let existing: Set<string> = new Set();
-    try {
-      existing = new Set(await fs.readdir(dir));
-    } catch (err) {
-      if (!dryRun) throw err;
-    }
+  formatOffsets(begin: Offset, end: Offset) {
+    return `${begin.day}/${begin.log} (${begin.index}) - ${end.day}/${end.log} (${end.index})`;
+  }
 
-    const reads = [];
-    const writes = [];
-    for (const [format, data] of formats.entries()) {
-      const formatDir = path.resolve(dir, format);
-      if (existing.has(format)) {
-        reads.push(restoreCheckpoint(formatDir).then(offset => {
-          data.offset = offset;
-        }));
-      } else if (!dryRun) {
-        writes.push(fs.mkdir(formatDir));
-      }
-    }
+  async ensureDir(dir?: string) {
+    if (!dir) return await fs.mkdtemp('checkpoints-');
+    await fs.mkdir(dir, {recursive: true});
+    return dir;
+  }
 
-    await Promise.all([...reads, ...writes]);
+  // TODO: only if chekcpoint files exist! LOG('Restoring formats from checkpoints');
+  // TODO remove return fvalue
+  async restore(config: Configuration, apply: (raw: string) => ID | undefined):
+      Map<ID, {size: number, batches: Batch[]}> {
+    // const storage = Storage.connect({dir: config.logs});
+
+    // if (!(await fs.exists(dir) && !dryRun)) await fs.mkdir(dir, {recursive: true});
+    // let existing: Set<string> = new Set();
+    // try {
+    // existing = new Set(await fs.readdir(dir));
+    //} catch (err) {
+    // if (!dryRun) throw err;
+    //}
+
+    // const reads = [];
+    // const writes = [];
+    // for (const [format, data] of formats.entries()) {
+    // const formatDir = path.resolve(dir, format);
+    // if (existing.has(format)) {
+    // reads.push(restoreCheckpoint(formatDir).then(offset => {
+    // data.offset = offset;
+    //}));
+    //} else if (!dryRun) {
+    // writes.push(fs.mkdir(formatDir));
+    //}
+    //}
+
+    // await Promise.all([...reads, ...writes]);
   }
 
   async combine(dir: string, format: ID, max: number): Promise<TaggedStatistics> {
-    const formatDir = path.resolve(dir, format);
+    // const formatDir = path.resolve(dir, format);
 
-    let stats: state.TaggedStatistics|undefined = undefined;
-    let n = 0;
-    let checkpoints = [];
-    for (const file of await fs.readdir(formatDir)) {
-      if (n >= max) {
-        for (const checkpoint of await Promise.all(checkpoints)) {
-          stats = state.combineTagged(checkpoint.stats, stats);
-        }
-        n = 0;
-        checkpoints = [];
-      }
+    // let stats: state.TaggedStatistics|undefined = undefined;
+    // let n = 0;
+    // let checkpoints = [];
+    // for (const file of await fs.readdir(formatDir)) {
+    // if (n >= max) {
+    // for (const checkpoint of await Promise.all(checkpoints)) {
+    // stats = state.combineTagged(checkpoint.stats, stats);
+    //}
+    // n = 0;
+    // checkpoints = [];
+    //}
 
-      checkpoints.push(readRawCheckpoint(path.resolve(formatDir, file)));
-      n++;
-    }
-    for (const checkpoint of await Promise.all(checkpoints)) {
-      stats = state.combineTagged(checkpoint.stats, stats);
-    }
+    // checkpoints.push(readRawCheckpoint(path.resolve(formatDir, file)));
+    // n++;
+    //}
+    // for (const checkpoint of await Promise.all(checkpoints)) {
+    // stats = state.combineTagged(checkpoint.stats, stats);
+    //}
 
-    return state.deserializeTagged(stats!);
+    // return state.deserializeTagged(stats!);
   }
 
   writeCheckpoint(file: string, checkpoint: Checkpoint) {

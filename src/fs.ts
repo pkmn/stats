@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as os from 'os';
 import * as zlib from 'zlib';
 
 export function exists(path: string): Promise<boolean> {
@@ -10,6 +11,14 @@ export function exists(path: string): Promise<boolean> {
   });
 }
 
+export function mkdtemp(prefix: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fs.mkdtemp(path.join(os.tmpdir(), prefix), (err, dir) => {
+      err ? reject(err) : resolve(dir);
+    });
+  });
+}
+
 export function mkdir(path: string, options?: {recursive?: boolean, mode?: number}): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.mkdir(path, Object.assign({mode: 0o755}, options), err => {
@@ -17,6 +26,7 @@ export function mkdir(path: string, options?: {recursive?: boolean, mode?: numbe
     });
   });
 }
+
 export function readdir(path: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     fs.readdir(path, (err, data) => {

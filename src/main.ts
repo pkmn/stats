@@ -9,28 +9,31 @@ import {Worker} from 'worker_threads';
 import {Checkpoints, Offset} from './checkpoint';
 import * as debug from './debug';
 import * as fs from './fs';
-import {Storage} from './storage';
-
-export interface Offset {
-  day: string;
-  log: string;
-  index: number;
-}
 
 interface Batch {
-  format: ID;
+  format: string;  // FIXME: raw
   begin: Offset;
   end: Offset;
+  size: number;
 }
 
-interface Processor() {
-  init(): Promise<void>;
+export interface Configuration {
+  logs: string;
+  reports: string;
+  checkpoints: string;
+  numWorkers: number;
+  maxFiles: number;
+  batchSize: number;
+  verbose: number;
+  dryRun: boolean;
+  verify: boolean;
+  all: boolean;
+}
 
-  split() Promise<Batch[][]>; // TODO main?
-  apply(Batch[]): Promise<void>;
-  combine(): Promise<void>;
-
-  cleanup(): Promise<void>;
+interface Options extends Partial<Configuration> {
+  logs: string;
+  reports: string;
+  verbose?: boolean|number;
 }
 
 const WORKER = path.resolve(__dirname, 'worker.js');
@@ -42,238 +45,130 @@ const WORKER = path.resolve(__dirname, 'worker.js');
 // likely not worth the complexity or coordination overhead.
 const MAX_FILES = 256;
 
-// The 'working set' contains the names of all the logs we're read in for processing. This
-// most matters when processing millions of lohgs, as even holding each name in memory
-// begins to take up an appreciable amount of memory. With filesystem logs, each log looks like:
-//
-//   2018-02/gen2ou/2018-02-15/battle-gen2ou-704864953.log.json
-//
-// But could be considerably longer (consider 'gen7balancedhackmonssuspecttest'). At 2 bytes
-// per character (ES6), this amounts to ~120-220+ (though 'genNou' is likely to be the most
-// popular, so the lower end is more likely). The default of 1048576 (2**20) means we will
-// be allocating up to ~128MiB for the working set of log names before accounting for any of the
-// memory requiring for reading in the logs and aggregating statistics. Tweaking this in addition to
-// the batch size and number of workers (below) allows for reigning in the amount of memory required
-// for proceses
-const WORKING_SET_SIZE = 1048576;
-
 // The maximum number of logs ('batch') for a particular format that will be aggregated into a
-// single intermediate Stats object before it will persisted as a checkppint written during
-// processing. Batches may be smaller than this due to working set restrictions or the number of
-// logs present for a particular format but this value allows rough bounds on the total amount of
-// memory consumed (in addition the the number of workers and working set size). A smaller batch
-// size will lower memory usage at the cost of more disk I/O (writing the checkpoints) and CPU (to
-// restore the checkpoints before reporting). Stats objects mostly contain sums bounded by the
-// number of possible combinations of options available, though in Pokemon this can be quite large.
-// Furthermore, each additional battle processed usually requires unbounded growth of GXEs (player
-// name + max GXE) and team stalliness (score and weight).
+// single intermediate Stats object before it will persisted as a checkpoint written during
+// processing. Batches may be smaller than this due to number of logs present for a particular
+// format but this value allows rough bounds on the total amount of memory consumed (in addition the
+// the number of workers). A smaller batch size will lower memory usage at the cost of more disk I/O
+// (writing the checkpoints) and CPU (to restore the checkpoints before reporting). Stats objects
+// mostly contain sums bounded by the number of possible combinations of options available, though
+// in Pokemon this can be quite large. Furthermore, each additional battle processed usually
+// requires unbounded growth of GXEs (player name + max GXE) and team stalliness (score and weight).
 const BATCH_SIZE = 8192;
 
-export interface Options {
-  numWorkers?: number;
-  workingSet?: number;
+let mainData: {config: Configuration} = undefined!;
 
-  maxFiles?: number;
-
-  checkpoint?: string;
-  batchSize?: number;
-
-  dryRun?: boolean;
-  verbose?: boolean|number;
-  all?: boolean;
-}
-
-export interface WorkerOptions extends Options {
-  dir: string;
-  reportsPath: string;
-  maxFiles: number;
-}
-
-export interface FormatData {
-  format: ID;
-  logs: string[];
-  complete?: boolean;
-}
-
-let mainData: {options: Options} = undefined!;
-
-export async function processLogs(input: string, output: string, options: Options = {}) {
+export async function main(options: Options) {
   mainData = {options};
+  const config = init(options);
 
-  const storage = Storage.connect({dir: input});
-  const numWorkers = options.numWorkers || (os.cpus().length - 1);
   // Per nodejs/node#27687, before v12.3.0 multiple threads logging to the console
   // will cause EventEmitter warnings because each thread unncessarily attaches its
   // own error handler around each write.
-  if (options.verbose && Number(process.version.match(/^v(\d+\.\d+)/)![1]) < 12.3) {
-    process.setMaxListeners(numWorkers + 1);
-  }
-  const workingSetSize = options.workingSet || WORKING_SET_SIZE;
-  const workerOptions = createWorkerOptions(input, output, numWorkers, options);
-  vlog('Creating reports directory structure');
-  if (!options.dryRun) await createReportsDirectoryStructure(output);
-
-  vlog('Determining formats');
-  const formats: Map<ID, {raw: string, size: number, offset: Offset}> = new Map();
-  const formatSizes = await storage.formatSizes();
-  for (const [raw, size] of Object.entries(formatSizes)) {
-    const format = canonicalizeFormat(toID(raw));
-    if (format.startsWith('seasonal') || format.includes('random') ||
-        format.includes('metronome' || format.includes('superstaff'))) {
-      continue;
-    }
-    formats.set(format, {raw, size, offset: {day: '', log: ''}});
+  if (config.verbose && Number(process.version.match(/^v(\d+\.\d+)/)![1]) < 12.3) {
+    process.setMaxListeners(config.numWorkers + 1);
   }
 
-  if (options.checkpoint) {
-    vlog('Restoring formats from checkpoints');
-    // The 'size' field should really be updated when restoring from checkpoint so that we
-    // prioritize processing the formats with the most *remaining* logs as opposed to the formats
-    // with the most logs in *total*, however, in practical terms this is unlikely to matter and
-    // results in more complex code.
-    await Checkpoints.restore(options.checkpoint, formats, options.dryRun);
+  LOG('Splitting formats into batches');
+  const formats = await Checkpoints.restore(config, accept);
+  const sizes = formats.entries().map(e => ({format: e[0], size: e[1].size}));
+  if (LOG()) {
+    const sorted = sizes.sort((a, b) => b.size - a.size);
+    LOG(`\n${sorted.map(e => `  ${e.format}: ${e.size}`).join('\n')}\n`);
   }
 
-  let failures = 0;
-  for (let left = Array.from(formats.entries()); left.length > 0;
-       left = Array.from(formats.entries())) {
-    // We sort formats by total size (which potentially should be remaining size, see above) to make
-    // sure the formats which are going to take the most iterations get scheduled first.
-    const sorted = left.sort((a, b) => b[1].size - a[1].size);
-    if (options.verbose) {
-      const sizes = sorted.map(e => `  ${e[0]}: ${e[1].size}`).join('\n');
-      vlog(`Building working set (${left.length} remaining)\n\n${sizes}\n`);
-    }
+  const workerConfig = Object.assign({}, config);
+  // If we fewer formats remaining than the number of workers each can open more files.
+  workerConfig.maxFiles = Math.floor(config.maxFiles / Math.min(formats.size, config.numWorkers));
 
-    // Without checkpointing, we can't handle only processing part of a format, so we have to
-    // attempt to read in the entire thing. This may force us to only use a single process to keep
-    // memory down, and we may still be over the requested total working set size, but there's not a
-    // ton we can do here without dramatically increasing complexity.
-    const formatWorkingSetSize = options.checkpoint ?
-        Math.floor(workingSetSize / Math.min(left.length, numWorkers)) :
-        Infinity;
-    // Build up a 'working set' of logs to process. Note: the working set size is not considered
-    // to be a hard max, as we may exceed by a day's worth of logs from whatever format we end on.
-    const workingSet: FormatData[] = [];
-    for (const [format, metadata] of sorted) {
-      const [next, trimmed] =
-          await storage.listLogs(metadata.raw, metadata.offset, formatWorkingSetSize);
-      workingSet.push({format: format as ID, logs: trimmed, complete: !next});
-      if (next) {
-        if (options.verbose) {
-          const range = formatOffsets(metadata.offset, next);
-          vlog(`Only able to include part of ${format} in the working set (${range})`);
-        }
-        // NOTE: we're mutating the underlying metadata object in order to mutate `formats`.
-        metadata.offset = next;
-        metadata.size -= trimmed.length;
-      } else {
-        vlog(`All of ${format} has been read into the working set`);
-        formats.delete(format);
-      }
-      if (workingSet.length >= workingSetSize) {
-        vlog(`Working set of size ${workingSet.length} >= ${workingSetSize}`);
-        break;
-      }
-    }
-
-    // If we have fewer formats remaining than the number of workers each can open more files.
-    if (workerOptions.maxFiles !== Infinity && left.length < numWorkers) {
-      workerOptions.maxFiles = Math.floor((options.maxFiles || MAX_FILES) / left.length);
-    }
-    // TODO: Consider leaving the worker processes running and posting work each iteration - if we
-    // are able post to the same worker process a format was previously handled by we could get
-    // around the not being able to partially process formats without checkpointing. Furthermore,
-    // we could keep all cores active throughout the process by feeding them more work as they
-    // complete as opposed to having to wait for all workers to complete each iteration.
-    failures += await processWorkingSet(workingSet, numWorkers, workerOptions);
-  }
+  const failures = await spawn('apply', partition(formats.values(), config.numWorkers).entries());
+  // TODO: We could be immediately creating combine workers immediately after all batches for
+  // the particular format have finished processing.
+  failues += await spawn('combine', partition(sizes, config.numWorkers).entries());
 
   return failures;
 }
 
-export function getOffset(full: string): Offset {
-  const [format, day, log] = full.split(path.sep);
-  return {day, log};
-}
+async function spawn(type: 'apply'|'combine', batches: Array<Array<Batch|ID>>) {
+  const workers: Array<Promise<void>> = [];
 
-export function formatOffsets(begin: Offset, end: Offset) {
-  return `${begin.day}/${begin.log} - ${end.day}/${end.log}`;
-}
-
-function createWorkerOptions(input: string, output: string, numWorkers: number, options: Options) {
-  const opts: WorkerOptions = {
-    dir: input,
-    reportsPath: output,
-    maxFiles: (!options.maxFiles || options.maxFiles > 0) ?
-        Math.floor((options.maxFiles || MAX_FILES) / numWorkers) :
-        Infinity,
-  };
-  if (options.checkpoint) {
-    opts.checkpoint = options.checkpoint;
-    opts.batchSize = (!options.batchSize || options.batchSize > 0) ?
-        (options.batchSize || BATCH_SIZE) :
-        Infinity;
-  }
-  opts.dryRun = options.dryRun;
-  opts.verbose = options.verbose;
-  opts.all = options.all;
-  return opts;
-}
-
-
-
-async function processWorkingSet(
-    workingSet: FormatData[], numWorkers: number, options: WorkerOptions) {
-  vlog(`Partitioning working set of size ${workingSet.length} into ${numWorkers} partitions`);
-  const partitions = partition(await Promise.all(workingSet), numWorkers);
-  const workers: Array<[ID[], Promise<void>]> = [];
-  for (const [i, formats] of partitions.entries()) {
-    const workerData = {formats, options, num: i + 1};
-    vlog(`Creating worker ${i + 1} to handle ${formats.length} format(s)`);
-    workers.push([
-      formats.map(f => f.format), new Promise((resolve, reject) => {
-        const worker = new Worker(WORKER, {workerData});
-        worker.on('error', reject);
-        worker.on('exit', (code) => {
-          if (code === 0) {
-            vlog(`Worker ${workerData.num} exited cleanly`);
-            // We need to wait for the worker to exit before resolving (as opposed to having
-            // the worker message us when it is finished) so that we know it is safe to
-            // terminate the main process (which will kill all the workers and result in
-            // strange behavior where `console` output from the workers goes missing).
-            resolve();
-          } else {
-            reject(new Error(`Worker stopped with exit code ${code}`));
-          }
-        });
-      })
-    ]);
+  for (const [i, formats]: batches) {
+    const workerData = {type, formats, config: workerConfig, num: i + 1};
+    LOG(`Creating ${type} worker:${workerData.num} to handle ${batches.length} format(s)`);
+    workers.push(new Promise((resolve, reject) => {
+      const worker = new Worker(WORKER, {workerData});
+      worker.on('error', reject);
+      worker.on('exit', (code) => {
+        if (code === 0) {
+          LOG(`${capitalize(type)} worker:${workerData.num} exited cleanly`);
+          // We need to wait for the worker to exit before resolving (as opposed to having
+          // the worker message us when it is finished) so that we know it is safe to
+          // terminate the main process (which will kill all the workers and result in
+          // strange behavior where `console` output from the workers goes missing).
+          resolve();
+        } else {
+          reject(new Error(
+              `${capitalize(type)} worker:${workerData.num} stopped with exit code ${code}`));
+        }
+      });
+    }));
   }
 
   let failures = 0;
-  for (const [formats, worker] of workers) {
+  for (const [i, worker] of workers.entries()) {
     try {
       await worker;
     } catch (err) {
-      console.error(`Error occurred when processing formats: ${formats.join(', ')}`, err);
+      console.error(err);
       failures++;
     }
   }
-
   return failures;
 }
 
+function capitalize(s: string) {
+  return `${s.charAt(0).toUpperCase()}${s.slice(1)}`;
+}
+
+function init(options: Options) {
+  options.checkpoints = Checkpoints.ensureDir(options.checkpoints);
+  const config = toConfiguration(config);
+  if (!config.dryRun) await createReportsDirectoryStructure(config.reports);
+}
+
+function toConfiguration(options: Options) {
+  const numWorkers = options.numWorkers || (os.cpus().length - 1);
+  const maxFiles = (!options.maxFiles || options.maxFiles > 0) ?
+      Math.floor((options.maxFiles || MAX_FILES) / numWorkers) :
+      Infinity;
+  const batchSize =
+      (!options.batchSize || options.batchSize > 0) ? (options.batchSize || BATCH_SIZE) : Infinity;
+  return {
+    logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!;
+    numWorkers, maxFiles, batchSize, verbose: +option.verbose, dryRun: !!options.dryRun,
+        verbose: !!option.verify, all: !!options.all,
+  };
+}
+
+function accept(raw: string) {
+  const format = canonicalizeFormat(toID(raw));
+  return (format.startsWith('seasonal') || format.includes('random') ||
+          format.includes('metronome' || format.includes('superstaff'))) ?
+      undefined :
+      format;
+}
+
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
-function partition(formatData: FormatData[], partitions: number) {
-  formatData.sort((a, b) => b.logs.length - a.logs.length || a.format.localeCompare(b.format));
+function partition(batches: Array<{format: string, size: number}>, partitions: number) {
+  LOG(`Partitioning ${batches.length} batches into ${partitions} partitions`);
+  batches.sort((a, b) => b.size - a.size || a.format.localeCompare(b.format));
 
   // Given partitions is expected to be small, using a priority queue here shouldn't be necessary
-  const ps: Array<{total: number, formats: FormatData[]}> = [];
-  for (const data of formatData) {
-    let min: {total: number, formats: FormatData[]}|undefined;
+  const ps: Array<{total: number, batches: Batch[]}> = [];
+  for (const batch of batches) {
+    let min: {total: number, batches: Batch[]}|undefined;
     if (ps.length < partitions) {
-      ps.push({total: data.logs.length, formats: [data]});
+      ps.push({total: batch.size, batches: [batch]});
       continue;
     }
 
@@ -283,15 +178,15 @@ function partition(formatData: FormatData[], partitions: number) {
       }
     }
     // We must have a min here provided partitions > 0
-    min!.total += data.logs.length;
-    min!.formats.push(data);
+    min!.total += batch.size;
+    min!.batches.push(batch);
   }
 
   return ps.map(p => p.formats);
 }
 
-function vlog(...args: any[]) {
+function LOG(...args: any[]) {
+  if (!args.length) return mainData.options.verbose;
   if (!mainData.options.verbose) return;
   debug.log(`main`, 0, ...args);
 }
-

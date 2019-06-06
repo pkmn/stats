@@ -1,15 +1,12 @@
 import 'source-map-support/register';
 
-import * as path from 'path';
 import {Data, ID, toID} from 'ps';
-import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
-import * as util from 'util';
 import {workerData} from 'worker_threads';
 
-import {Checkpoints, Offset} from './checkpoint';
+import {Batch, Checkpoints, Offset} from './checkpoint';
 import * as debug from './debug';
 import * as fs from './fs';
-import * as main from './main';
+import {Configuration} from './main';
 import {Storage} from './storage';
 
 const POPULAR = new Set([
@@ -39,122 +36,91 @@ const REPORTS = 5;
 
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
-async function processLogs(formats: main.FormatData[], options: main.WorkerOptions) {
-  const storage = Storage.connect(options);
-
-  for (const {format, logs, complete} of formats) {
+async function apply(batches: Batch[], config: Configuration) {
+  const storage = Storage.connect(config);
+  for (const {format, begin, end, size} of batches {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
-    let stats = Stats.create();
+    const stats = Stats.create();
 
-    // We could potentially optimize here by using a semaphore/throttle to enforce the maxFiles
-    // limit but for simplicity and to save on the memory creating a bunch of promises would need we
-    // instead just wait for each batch, hoping that the async reads (and multiple workers
-    // processes) are still going to keep our disk busy the whole time anyway.
-    let n = 0;
-    let batch = 0;
-    let processed = [];
-    let begin: Offset = undefined!;
-    let log = '';
-    for (log of logs) {
-      if (!begin) begin = main.getOffset(log);
-      const shouldCheckpoint = options.checkpoint && batch >= options.batchSize!;
-      if (n >= options.maxFiles || shouldCheckpoint) {
-        vlog(`Waiting for ${processed.length} logs to be parsed`);
-        const done = await Promise.all(processed);
-        n = 0;
+    LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
+    for (const log of storage.listLogs(format, begin, end)) {
+      if (processed.length >= config.maxFiles) {
+        LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
+        await Promise.all(processed);
         processed = [];
-        if (shouldCheckpoint) {
-          const filename = Checkpoints.filename(options.checkpoint!, format, done[done.length - 1]);
-          const end = main.getOffset(log);
-          vlog(`Writing batch checkpoint ${filename} (${main.formatOffsets(begin, end)})`);
-          if (!options.dryRun) {
-            await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
-            stats = Stats.create();
-          }
-          batch = 0;
-        }
       }
 
-      if (options.dryRun) {
-        vvlog(`Processing ${log}`);
-        processed.push(Promise.resolve(0));
-      } else {
-        processed.push(processLog(storage, data, log, cutoffs, stats));
-      }
-      n++;
-      batch++;
+      processed.push(processLog(storage, data, log, cutoffs, stats, config.dryRun));
     }
-    vlog(`Waiting for ${processed.length} logs to be parsed`);
-    const done = await Promise.all(processed);
-    if (options.checkpoint) {
-      const filename = Checkpoints.filename(options.checkpoint, format, done[done.length - 1]);
-      const end = main.getOffset(log);
-      vlog(`Writing checkpoint ${filename} (${main.formatOffsets(begin, end)})`);
-      if (!options.dryRun) {
-        await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
-        if (complete) {
-          vlog(`Combining checkpoints`);
-          stats = await Checkpoints.combine(options.checkpoint, format, options.maxFiles);
-        }
-      }
+    if (processed.length) {
+      LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
+      await Promise.all(processed);
     }
-    // If we haven't completed processing on this format we don't need to write reports yet.
-    if (!complete) return;
-
-    const b = stats.battles;
-    let writes = [];
-    for (const [c, s] of stats.total.entries()) {
-      if (writes.length + REPORTS >= options.maxFiles) {
-        vlog(`Waiting for ${writes.length} reports to be written`);
-        await Promise.all(writes);
-        writes = [];
-      }
-      writes.push(...writeReports(options, format, c, s, b));
-    }
-
-    for (const [t, ts] of stats.tags.entries()) {
-      for (const [c, s] of ts.entries()) {
-        if (writes.length + REPORTS >= options.maxFiles) {
-          vlog(`Waiting for ${writes.length} reports to be written`);
-          await Promise.all(writes);
-          writes = [];
-        }
-        writes.push(...writeReports(options, format, c, s, b, t));
-      }
-    }
-    vlog(`Waiting for ${writes.length} reports to be written`);
-    await Promise.all(writes);
+    const filename = Checkpoints.filename(config.checkpoint, format, begin, end);
+    LOG(`Writing checkpoint ${filename} (${Checkpoints.formatOffsets(begin, end)})`);
+    if (!config.dryRun) await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
   }
 }
 
 async function processLog(
-    storage: Storage, data: Data, log: string, cutoffs: number[], stats: TaggedStatistics) {
-  vvlog(`Processing ${log}`);
+    storage: Storage, data: Data, log: string, cutoffs: number[], stats: TaggedStatistics,
+    dryRun?: boolean) {
+  VLOG(`Processing ${log}`);
+  if (dryRun) return;
   try {
     const raw = JSON.parse(await storage.readLog(log));
     const battle = Parser.parse(raw, data);
     const tags = data.format === 'gen7monotype' ? monotypes(data) : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);
-    return Date.parse(raw.timestamp);
   } catch (err) {
     console.error(`${log}: ${err.message}`);
   }
-  return 0;
+}
+
+async function combine(formats: ID[], config: Configuration) {
+  for (const format of formats) {
+    LOG(`Combining checkpoint(s) for ${format}`);
+    stats = await Checkpoints.combine(config.checkpoints, format, config.maxFiles);
+
+    const b = stats.battles;
+    let writes = [];
+    for (const [c, s] of stats.total.entries()) {
+      if (writes.length + REPORTS >= config.maxFiles) {
+        LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
+        await Promise.all(writes);
+        writes = [];
+      }
+      writes.push(...writeReports(config, format, c, s, b));
+    }
+
+    for (const [t, ts] of stats.tags.entries()) {
+      for (const [c, s] of ts.entries()) {
+        if (writes.length + REPORTS >= config.maxFiles) {
+          LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
+          await Promise.all(writes);
+          writes = [];
+        }
+        writes.push(...writeReports(config, format, c, s, b, t));
+      }
+    }
+    LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
+    await Promise.all(writes);
+  }
 }
 
 function writeReports(
-    options: main.WorkerOptions, format: ID, cutoff: number, stats: Statistics, battles: number,
+    config: Configuration, format: ID, cutoff: number, stats: Statistics, battles: number,
     tag?: ID) {
-  vlog(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? ` (${tag})` : ''));
-  if (options.dryRun) return new Array(REPORTS).fill(Promise.resolve());
+  LOG(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? ` (${tag})` : ''));
+  if (config.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
   const usage = Reports.usageReport(format, stats, battles);
 
-  const reports = (format === 'gen7monotype' && tag) ? path.join(options.reportsPath, 'monotype') :
-                                                       options.reportsPath;
-  const min = options.all ? [0, -Infinity] : [20, 0.5];
+  const reports =
+      (format === 'gen7monotype' && tag) ? path.join(config.reports, 'monotype') : config.reports;
+  const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
   const leads = Reports.leadsReport(format, stats, battles);
@@ -167,15 +133,20 @@ function writeReports(
   return writes;
 }
 
-function vvlog(...args: any[]) {
-  if (+workerData.options.verbose < 2) return;
-  vlog(...args);
+function LOG(...args: any[]) {
+  if (!args.length) return workerData.config.verbose;
+  if (!workerData.config.verbose) return false;
+  debug.log(`worker:${workerData.num}`, workerData.num, ...args);
+  return true;
 }
 
-function vlog(...args: any[]) {
-  if (!workerData.options.verbose) return;
-  debug.log(`worker:${workerData.num}`, workerData.num, ...args);
+function VLOG(...args: any[]) {
+  if (!args.length) return +workerData.config.verbose < 2;
+  if (+workerData.config.verbose < 2) return false;
+  LOG(...args);
+  return true;
 }
 
 // tslint:disable-next-line: no-floating-promises
-(async () => await processLogs(workerData.formats, workerData.options))();
+(async () => workerData.type === 'apply' ? await apply(workerData.formats, workerData.config) :
+                                           await combine(workerData.formats, workerData.config))();
