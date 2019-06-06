@@ -63,13 +63,13 @@ export const Stats = new class {
     const short =
         !util.isNon6v6Format(format) && (battle.turns < 2 || (battle.turns < 3 && singles));
 
-    const weights: number[][] = [];
+    const playerWeights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
       const [ws, save] = getWeights(player, cutoffs);
       const gxe = player.rating ?
           Math.round(100 * util.victoryChance(player.rating.rpr, player.rating.rprd, 1500, 130)) :
           undefined;
-      weights.push(ws.map(w => w.s));
+      playerWeights.push(ws.map(w => w.s));
       for (const [i, cutoff] of cutoffs.entries()) {
         const wsm = ws[i];
 
@@ -101,18 +101,21 @@ export const Stats = new class {
     if (!short) {
       let leads = true;
       if (!short && singles) {
-        const mins = weights[0].map((w, i) => Math.min(w, weights[1][i]));
+        const playerTags = {p1: battle.p1.team.classification.tags, p2: battle.p2.team.classification.tags};
+        const mins = playerWeights[0].map((w, i) => Math.min(w, playerWeights[1][i]));
         for (const [i, weight] of mins.entries()) {
-          const pw = {p1: weights[0][i], p2: weights[1][i]};
+          const pw = {p1: playerWeights[0][i], p2: playerWeights[1][i]};
           const cutoff = cutoffs[i];
           const s = stats.total.get(cutoff)!;
           updateEncounters(s, battle.matchups, weight);
-          leads = updateLeads(s, battle, pw);
+          if (!updateLeads(s, battle, pw, playerTags)) {
+            leads = false;
+          }
 
           for (const tag of tags) {
             const s = stats.tags.get(tag)!.get(cutoff)!;
             updateEncounters(s, battle.matchups, weight);
-            leads = updateLeads(s, battle, pw);
+            updateLeads(s, battle, pw, playerTags, tag);
           }
         }
       }
@@ -308,7 +311,7 @@ function updateEncounters(stats: Statistics, matchups: Array<[ID, ID, Outcome]>,
   }
 }
 
-function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2: number}) {
+function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2: number}, tags: {p1: Set<ID>, p2: Set<ID>}, tag?: ID) {
   const sides: Array<'p1'|'p2'> = ['p1', 'p2'];
   const leads = {p1: 'empty' as ID, p2: 'empty' as ID};
   const matchups = battle.matchups;
@@ -330,6 +333,7 @@ function updateLeads(stats: Statistics, battle: Battle, weights: {p1: number, p2
   if (leads.p1 === 'empty' || leads.p2 === 'empty') return false;
 
   for (const side of sides) {
+    if (tag && !tags[side].has(tag)) continue;
     const usage = stats.pokemon.get(leads[side])!.lead;
     usage.raw++;
     stats.leads.raw++;
