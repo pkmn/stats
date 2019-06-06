@@ -11,6 +11,28 @@ import * as debug from './debug';
 import * as fs from './fs';
 import {Storage} from './storage';
 
+export interface Offset {
+  day: string;
+  log: string;
+  index: number;
+}
+
+interface Batch {
+  format: ID;
+  begin: Offset;
+  end: Offset;
+}
+
+interface Processor() {
+  init(): Promise<void>;
+
+  split() Promise<Batch[][]>; // TODO main?
+  apply(Batch[]): Promise<void>;
+  combine(): Promise<void>;
+
+  cleanup(): Promise<void>;
+}
+
 const WORKER = path.resolve(__dirname, 'worker.js');
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
@@ -199,13 +221,7 @@ function createWorkerOptions(input: string, output: string, numWorkers: number, 
   return opts;
 }
 
-async function createReportsDirectoryStructure(output: string) {
-  await rmrf(output);
-  await fs.mkdir(output, {recursive: true});
-  const monotype = path.resolve(output, 'monotype');
-  await fs.mkdir(monotype);
-  await Promise.all([...mkdirs(output), ...mkdirs(monotype)]);
-}
+
 
 async function processWorkingSet(
     workingSet: FormatData[], numWorkers: number, options: WorkerOptions) {
@@ -274,28 +290,8 @@ function partition(formatData: FormatData[], partitions: number) {
   return ps.map(p => p.formats);
 }
 
-function mkdirs(dir: string) {
-  const mkdir = (d: string) => fs.mkdir(path.resolve(dir, d));
-  return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
-}
-
-async function rmrf(dir: string) {
-  if (await fs.exists(dir)) {
-    const rms: Array<Promise<void>> = [];
-    for (const file of await fs.readdir(dir)) {
-      const f = path.resolve(dir, file);
-      if ((await fs.lstat(f)).isDirectory()) {
-        rms.push(rmrf(f));
-      } else {
-        rms.push(fs.unlink(f));
-      }
-    }
-    await Promise.all(rms);
-    await fs.rmdir(dir);
-  }
-}
-
 function vlog(...args: any[]) {
   if (!mainData.options.verbose) return;
   debug.log(`main`, 0, ...args);
 }
+
