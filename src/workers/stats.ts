@@ -25,7 +25,7 @@ class StatsCheckpoint extends Checkpoint {
   }
 
   static async read(file: string) {
-    const [dir, format, begin, end] = Checkpoints.parseFilename(file);
+    const [dir, format, begin, end] = Checkpoint.parseFilename(file);
     const stats = state.deserializeTagged(StatsCheckpoint.raw(file));
     return new StatsCheckpoint(dir, format, begin, end, stats);
   }
@@ -64,13 +64,13 @@ const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono
 
 async function apply(batches: Batch[], config: Configuration) {
   const storage = Storage.connect(config);
-  for (const {format, begin, end, size} of batches {
+  for (const {raw, format, begin, end, size} of batches) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
 
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
-    for (const log of storage.listLogs(format, begin, end)) {
+    for (const log of storage.select(raw, begin, end)) {
       if (processed.length >= config.maxFiles) {
         LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
         await Promise.all(processed);
@@ -95,7 +95,7 @@ async function processLog(
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   try {
-    const raw = JSON.parse(await storage.readLog(log));
+    const raw = JSON.parse(await storage.read(log));
     const battle = Parser.parse(raw, data);
     const tags = data.format === 'gen7monotype' ? monotypes(data) : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);

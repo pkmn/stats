@@ -38,6 +38,17 @@
 //
 //   $ ./process ../Pokemon-Showdown{logs,Stats}/2019-05
 
+
+// TODO talk about checkpoints, update args
+
+// The checkpoints directory is to be structured as follows:
+//
+//     <checkpoints>
+//     └── format
+//         └── YYYYMMDD_N_i-YYYYMMDD-M_j.json.gz
+//
+
+
 require('source-map-support').install();
 const stats = require('./build/index');
 const child_process = require('child_process');

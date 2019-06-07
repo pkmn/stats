@@ -3,12 +3,13 @@ import * as path from 'path';
 import {Offset} from './checkpoint';
 import * as fs from './fs';
 
+const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
+
 export interface Storage {
-  list(): Promise<string[]>;
-  range(format: string, offset?: Offset, end?: Offset): Promise<string[]>;
+  list(raw?: string, day?: string): Promise<string[]>;
+  select(raw: string, offset?: Offset, end?: Offset): Promise<string[]>;
   read(log: string): Promise<string>;
 }
-
 
 export class Storage {
   static connect(options: {dir: string}): Storage {
@@ -17,8 +18,6 @@ export class Storage {
   }
 }
 
-const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
-
 class FileStorage implements Storage {
   dir: string;
 
@@ -26,42 +25,40 @@ class FileStorage implements Storage {
     this.dir = dir;
   }
 
-  list(format?: string, day?: string) {
-    if (!format) return fs.readdir(this.dir);
-    const formatDir = path.resolve(this.dir, format);
-    if (!day) return fs.readdir(formatDir);
+  list(raw?: string, day?: string) {
+    if (!raw) return fs.readdir(this.dir).sort(CMP);
+    const formatDir = path.resolve(this.dir, raw);
+    if (!day) return fs.readdir(formatDir).sort(CMP);
     const dayDir = path.resolve(formatDir, day);
-    return fs.readdir(dayDir);
+    return fs.readdir(dayDir).sort(CMP);
   }
 
-  async range(format: string, begin?: Offset, end?: Offset): Promise<string[]> {
-    const logs: string[] = [];
+  async select(raw: string, begin?: Offset, end?: Offset): Promise<string[]> {
+    const range: string[] = [];
 
-    const formatDir = path.resolve(this.dir, format);
-    for (const day of (await fs.readdir(formatDir)).sort(CMP)) {
+    for (const day of await this.list(raw)) {
       if (begin && day < end.day) continue;
       if (end && day > end.day) break;
 
-      const dayDir = path.resolve(formatDir, day);
-      const all = (await fs.readdir(dayDir)).sort(CMP));
+      const logs = await this.list(raw, day);
       if (begin && day === begin.day) {
-        const n = day === end.day ? end.index : all.length;
+        const n = day === end.day ? end.index : logs.length;
         for (let i = begin.index; i < n; i++) {
-          logs.push(path.join(format, day, log));
+          range.push(path.join(raw, day, log));
         }
       } else if (end && day === end.day) {
         // NOTE: If begin is for the same day we would handle it above.
         for (let i = 0; i < end.index; i++) {
-          logs.push(path.join(format, day, log));
+          range.push(path.join(raw, day, log));
         }
       } else {
-        for (const log of all) {
-          logs.push(path.join(format, day, log));
+        for (const log of logs) {
+          range.push(path.join(raw, day, log));
         }
       }
     }
 
-    return logs;
+    return range;
   }
 
   read(log: string) {
