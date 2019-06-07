@@ -29,7 +29,7 @@ const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compa
 //
 //     <checkpoints>
 //     └── format
-//         └── YYYYMMDD_N-YYYYMMDD-M.json.gz
+//         └── YYYYMMDD_N_i-YYYYMMDD-M_j.json.gz
 
 export const Checkpoints = new class {
   formatOffsets(begin: Offset, end: Offset) {
@@ -118,23 +118,28 @@ export const Checkpoints = new class {
   }
 
   filename(dir: string, format: ID, begin: Offset, end: Offset) {
-    let index = begin.log.length - 9;
-    const b = begin.day.replace(/-/g, '') + '_' +
-        begin.log.slice(begin.log.lastIndexOf('-', index) + 1, index);
-    index = end.log.length - 1;
-    const e =
-        end.day.replace(/-/g, '') + '_' + end.log.slice(end.log.lastIndexOf('-', index) + 1, index);
-    return `${path.resolve(dir, format, `${b}-${e}`)}.json.gz`;
+    return `${path.resolve(dir, format, `${offsetToname(begin)}-${offsetToName(end)}`)}.json.gz`;
+  }
+
+  filenameToOffsets(filename: string, raw: string): [Offset, Offset] {
+    const [b, e] = filename.slice(0, -8).split('-');
+    return [nameToOffset(b), nameToOffset(e)];
   }
 };
 
-// TODO: need to read in ALL checkpoints to find gaps :(
-async function restoreCheckpoint(formatDir: string): Promise<Offset> {
-  const checkpoints = (await fs.readdir(formatDir)).sort(CMP);
-  if (!checkpoints.length) return {day: '', log: ''};
-  // NOTE: We're just assuming max files is not relevant here (ie. num formats < max files)
-  const checkpoint = path.resolve(formatDir, checkpoints[checkpoints.length - 1]);
-  return (await Checkpoints.readCheckpoint(checkpoint)).end;
+function offsetToName(offset: Offset) {
+  const {log, day, index} = offset;
+  const i = log.length - 9;
+  return day.replace(/-/g, '') + '_' + log.slice(log.lastIndexOf('-', i) + 1, i) + `_${index}`;
+}
+
+function nameToOffset(name: string, raw: string) {
+  const [day, log, index] = name.split('_');
+  return {
+    day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8}`,
+    log: `battle-${raw}-${log}.log.json`,
+    index: Number(index),
+  };
 }
 
 async function readRawCheckpoint(file: string) {
