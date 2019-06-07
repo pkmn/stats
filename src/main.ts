@@ -9,14 +9,13 @@ import {Worker} from 'worker_threads';
 import {Batch, Checkpoints} from './checkpoint';
 import {Configuration, Options} from './config';
 import * as debug from './debug';
-import * as fs from './fs';
 
 const WORKERS = path.resolve(__dirname, 'workers');
 
 let mainData: {config: Configuration} = undefined!;
 
 export async function main(options: Options) {
-  const config = init(options);
+  const config = await init(options);
   mainData = {config};
 
   // Per nodejs/node#27687, before v12.3.0 multiple threads logging to the console
@@ -27,7 +26,7 @@ export async function main(options: Options) {
   }
 
   LOG('Splitting formats into batches');
-  const formats = await Checkpoints.restore(config, accept);
+  const formats = await Checkpoints.restore(config, config.accept);
   const sizes = formats.entries().map(e => ({format: e[0], size: e[1].size}));
   if (LOG()) {
     const sorted = sizes.sort((a, b) => b.size - a.size);
@@ -87,18 +86,13 @@ function capitalize(s: string) {
   return `${s.charAt(0).toUpperCase()}${s.slice(1)}`;
 }
 
-function init(options: Options) {
+async function init(options: Options) {
   options.checkpoints = Checkpoints.ensureDir(options.checkpoints);
   const config = Options.toConfiguration(config);
-  if (!config.dryRun) await createReportsDirectoryStructure(config.reports);
-}
-
-function accept(raw: string) {
-  const format = canonicalizeFormat(toID(raw));
-  return (format.startsWith('seasonal') || format.includes('random') ||
-          format.includes('metronome' || format.includes('superstaff'))) ?
-      undefined :
-      format;
+  const worker = await import(path.join(WORKERS, `${config.worker}.js`));
+  if (worker.init) await worker.init(config);
+  if (worker.accept) config.accept = worker.accept;
+  return config;
 }
 
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm

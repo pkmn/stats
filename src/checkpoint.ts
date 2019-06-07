@@ -1,11 +1,7 @@
-import * as path from 'path';
 import {ID} from 'ps';
 
-import * as fs from './fs';
 import {Configuration} from './main';
-import {Storage} from './storage';
-
-const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
+import {CheckpointStorage, LogStorage} from './storage';
 
 export interface Offset {
   day: string;
@@ -22,74 +18,62 @@ export interface Batch {
 }
 
 export abstract class Checkpoint {
+  readonly format: ID;
   readonly begin: Offset;
   readonly end: Offset;
-  readonly filename: string;
 
-  constructor(dir: string, format: ID, begin: Offset, end: Offset) {
+  constructor(format: ID, begin: Offset, end: Offset) {
+    this.format = format;
     this.begin = begin;
     this.end = end;
-
-    const b = Checkpoint.offsetToName(begin);
-    const e = Checkpoint.offsetToName(end);
-    this.filename = path.resolve(dir, format, `${b}-${e}.json.gz`);
-  }
-
-  write() {
-    return fs.writeGzipFile(this.filename, this.serialize());
   }
 
   abstract serialize(): string;
 
-  static offsetToName(offset: Offset) {
+  static encodeOffset(offset: Offset) {
     const {log, day, index} = offset;
     const i = log.length - 9;
     return day.replace(/-/g, '') + '_' + log.slice(log.lastIndexOf('-', i) + 1, i) + `_${index}`;
   }
 
-  static parseFilename(filename: string, raw: string): [string, ID, Offset, Offset] {
-    let dir = path.dirname(filename);
-    dir = path.dirname(dir);
-    const format = path.basename(dir) as ID;
-    filename = path.basename(filename, '.json.gz');
-    const [b, e] = filename.split('-');
-    return [dir, format, nameToOffset(b), nameToOffset(e)];
+  static decodeOffset(name: string, raw: string) {
+    const [day, log, index] = name.split('_');
+    return {
+      day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8}`,
+      log: `battle-${raw}-${log}.log.json`,
+      index: Number(index),
+    };
   }
 }
 
 export const Checkpoints = new class {
-  async ensureDir(dir?: string) {
-    if (!dir) return await fs.mkdtemp('checkpoints-');
-    await fs.mkdir(dir, {recursive: true});
-    return dir;
-  }
-
   async restore(config: Configuration, accept: (raw: string) => ID | undefined) {
+    const logStorage = LogStorage.connect(config);
+    const checkpointStorage = CheckpointStorage.connect(config);
+
     const formats: Map<ID, {size: number, batches: Batch[]}> = new Map();
 
     let existing: Map<ID, Offset[]> = new Map();
     try {
-      existing = await getOffsets(config);
+      existing = await checkpointStorage.offsets();
     } catch (err) {
       if (!config.dryRun) throw err;
     }
 
-    const storage = Storage.connect({dir: config.logs});
-
     const reads: Array<Promise<void>> = [];
     const writes: Array<Promise<void>> = [];
-    for (const raw of (await storage.list())) {
+    for (const raw of (await logStorage.list())) {
       const format = accept(raw);
       if (!format) continue;
 
       const checkpoints = existing.get(format);
       if (checkpoints) {
-        reads.push(restore(storage, config.batchSize, raw, format, checkpoints).then(data => {
+        reads.push(restore(logStorage, config.batchSize, raw, format, checkpoints).then(data => {
           formats.set(format, data);
         });
       } else {
-        if (!config.dryRun) writes.push(fs.mkdir(path.resolve(config.checkpoints, format)));
-        reads.push(restore(storage, config.batchSize, raw, format)).then(data => {
+        if (!config.dryRun) writes.push(checkpointStorage.prepare(format));
+        reads.push(restore(logStorage, config.batchSize, raw, format)).then(data => {
           formats.set(format, data);
         });
       }
@@ -104,35 +88,14 @@ export const Checkpoints = new class {
   }
 };
 
-async function getOffsets(config: Configuration) {
-  const checkpoints: Map<ID, Offset[]> = new Map();
-  for (const format of await fs.readdir(config.checkpoints)) {
-    const offsets: Offset[] = [];
-    const dir = path.resolve(config.checkpoints, format);
-    for (const name of (await fs.readdir(dir)).sort(CMP)) {
-      offsets.push(nameToOffset(name));
-    }
-    checkpoints.set(format as ID, offsets);
-  }
-  return checkpoints;
-}
-
-function nameToOffset(name: string, raw: string) {
-  const [day, log, index] = name.split('_');
-  return {
-    day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8}`,
-    log: `battle-${raw}-${log}.log.json`,
-    index: Number(index),
-  };
-}
-
-async function restore(storage: Storage, n: number, raw: string, format: ID, offsets?: Offset[]) {
+async function restore(
+    logStorage: Storage, n: number, raw: string, format: ID, offsets?: Offset[]) {
   let size = 0;
   const batches: Batch[] = [];
   let o = 0;
 
-  for (const day of (await storage.list(raw))) {
-    const logs = await storage.list(raw, day);
+  for (const day of (await logStorage.list(raw))) {
+    const logs = await logStorage.list(raw, day);
 
     let i = 0;
     if (offsets) {

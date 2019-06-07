@@ -1,3 +1,5 @@
+import {ID, toID} from 'ps';
+
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
 // should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
 // into EMFILE errors. Each worker will be able to open (maxFiles / numWorkers) files which is also
@@ -29,6 +31,7 @@ export interface Configuration {
   dryRun: boolean;
   all: boolean;
   worker: 'stats';
+  accept: (raw: string) => (ID | undefined);
 }
 
 export class Options extends Partial<Configuration> {
@@ -56,7 +59,7 @@ export class Options extends Partial<Configuration> {
     return {
       logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!;
       numWorkers, maxFiles, batchSize, verbose: +options.verbose, dryRun: !!options.dryRun,
-          all: !!options.all, worker: 'stats',
+          all: !!options.all, worker: 'stats', accept: toID,
     };
   }
 }

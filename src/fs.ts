@@ -100,3 +100,19 @@ export function rmdir(path: string): Promise<void> {
     });
   });
 }
+
+export async function rmrf(dir: string) {
+  if (await exists(dir)) {
+    const rms: Array<Promise<void>> = [];
+    for (const file of await readdir(dir)) {
+      const f = path.resolve(dir, file);
+      if ((await lstat(f)).isDirectory()) {
+        rms.push(rmrf(f));
+      } else {
+        rms.push(unlink(f));
+      }
+    }
+    await Promise.all(rms);
+    await rmdir(dir);
+  }
+}
