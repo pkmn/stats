@@ -34,20 +34,17 @@
 //     └── moveset
 //         └── format-N.txt
 //
-// Usage:
-//
-//   $ ./process ../Pokemon-Showdown{logs,Stats}/2019-05
-
-
-// TODO talk about checkpoints, update args
-
-// The checkpoints directory is to be structured as follows:
+// Makes use of an internal checkpoints directory which is structured as follows:
 //
 //     <checkpoints>
 //     └── format
 //         └── YYYYMMDD_N_i-YYYYMMDD-M_j.json.gz
 //
-
+// By default, <checkpoints> is a temp directory, but may be specified with a flag.
+//
+// Usage:
+//
+//   $ ./process ../Pokemon-Showdown{logs,Stats}/2019-05
 
 require('source-map-support').install();
 const stats = require('./build/index');
@@ -78,13 +75,11 @@ function usage(code) {
   out('');
   out('   -o/--output=PATH: output reports to PATH');
   out('');
+  out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
+  out('');
   out('   -p/--numWorkers=N: process the logs using N workers (default: NUM_CORES-1)');
   out('');
   out('   -n/--maxFiles=N: open up to N files across all workers (should be < `ulimit -n`, default: 256)');
-  out('');
-  out('   -w/--workingSet=N: work with at most N logs at once (default: 1048576)');
-  out('');
-  out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
   out('');
   out('   -b/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
   out('');
@@ -103,15 +98,14 @@ if (['help', '-help', '--help', 'h', '-h', '--help', '?', '-?', '--?'].includes(
 if (missing('minimist')) shell('npm install minimist');
 const argv = require('minimist')(process.argv.slice(2), {
   alias: {
-    input: ['i', 'in', 'l', 'logs', 'src'],
-    output: ['o', 'out', 'r', 'reports', 'dest'],
+    logs: ['i', 'in', 'input', 'l', 'logs', 'src'],
+    reports: ['o', 'out', 'output', 'r', 'dest'],
+    checkpoints: ['c', 'checkpoint'],
     numWorkers: ['p', 'parallel', 'workers', 'maxWorkers', 't', 'threads'],
     maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
-    workingSet: ['w', 'ws', 'wss', 'workingSetSize'],
-    checkpoint: ['c', 'checkpoints'],
     batchSize: ['b', 'perBatch', 'maxBatch', 'maxBatchSize'],
-    dryRun: ['d', 'dry'],
     verbose: ['v'],
+    dryRun: ['d', 'dry'],
     all: ['a'],
   },
   unknown: (arg) => {

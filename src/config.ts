@@ -55,7 +55,7 @@ export class Options extends Partial<Configuration> {
         Infinity;
     return {
       logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!;
-      numWorkers, maxFiles, batchSize, verbose: +option.verbose, dryRun: !!options.dryRun,
+      numWorkers, maxFiles, batchSize, verbose: +options.verbose, dryRun: !!options.dryRun,
           all: !!options.all, worker: 'stats',
     };
   }
