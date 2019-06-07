@@ -1,13 +1,39 @@
 import 'source-map-support/register';
 
 import {Data, ID, toID} from 'ps';
+import {Stats, TaggedStatistics} from 'stats';
 import {workerData} from 'worker_threads';
 
-import {Batch, Checkpoints, Offset} from './checkpoint';
-import * as debug from './debug';
-import * as fs from './fs';
-import {Configuration} from './main';
-import {Storage} from './storage';
+import {Batch, Checkpoint, Checkpoints, Offset} from '../checkpoint';
+import {Configuration} from '../config';
+import * as debug from '../debug';
+import * as fs from '../fs';
+import {Storage} from '../storage';
+
+import * as state from './state';
+
+class StatsCheckpoint extends Checkpoint {
+  readonly stats: TaggedStatistics;
+
+  constructor(dir: string, format: ID, begin: Offset, end: Offset, stats: TaggedStatistics) {
+    super(dir, format, begin, end);
+    this.stats = stats;
+  }
+
+  serialize(): string {
+    return JSON.stringify(state.serializeTagged(this.stats));
+  }
+
+  static async read(file: string) {
+    const [dir, format, begin, end] = Checkpoints.parseFilename(file);
+    const stats = state.deserializeTagged(StatsCheckpoint.raw(file));
+    return new StatsCheckpoint(dir, format, begin, end, stats);
+  }
+
+  static async raw(file: string) {
+    return JSON.parse(await fs.readFile(file, 'utf8'));)
+  }
+}
 
 const POPULAR = new Set([
   'ou',
@@ -57,9 +83,9 @@ async function apply(batches: Batch[], config: Configuration) {
       LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
       await Promise.all(processed);
     }
-    const filename = Checkpoints.filename(config.checkpoint, format, begin, end);
-    LOG(`Writing checkpoint for ${format}: ${filename}`);
-    if (!config.dryRun) await Checkpoints.writeCheckpoint(filename, {begin, end, stats});
+    const checkpoint = new StatsCheckpoint(config.checkpoint, format, begin, end, stats);
+    LOG(`Writing checkpoint for ${format}: ${checkpoint.filename}`);
+    if (!config.dryRun) await checkpoint.write();
   }
 }
 
@@ -81,7 +107,7 @@ async function processLog(
 async function combine(formats: ID[], config: Configuration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
-    stats = await Checkpoints.combine(config, format);
+    stats = await aggregate(config, format);
 
     const b = stats.battles;
     let writes = [];
@@ -107,6 +133,32 @@ async function combine(formats: ID[], config: Configuration) {
     LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
     await Promise.all(writes);
   }
+}
+
+async function aggregate(config: Configuration, format: ID): Promise<TaggedStatistics> {
+  const formatDir = path.resolve(config.checkpoints, format);
+
+  let n = 0;
+  let checkpoints = [];
+  let stats: state.TaggedStatistics|undefined = undefined;
+  // NOTE: Stats aggregation is commutative
+  for (const file of await fs.readdir(formatDir)) {
+    if (n >= config.maxFiles) {
+      for (const checkpoint of await Promise.all(checkpoints)) {
+        stats = state.combineTagged(checkpoint.stats, stats);
+      }
+      n = 0;
+      checkpoints = [];
+    }
+
+    checkpoints.push(StatsCheckpoint.raw(path.resolve(formatDir, file)));
+    n++;
+  }
+  for (const checkpoint of await Promise.all(checkpoints)) {
+    stats = state.combineTagged(checkpoint.stats, stats);
+  }
+
+  return state.deserializeTagged(stats!);
 }
 
 function writeReports(

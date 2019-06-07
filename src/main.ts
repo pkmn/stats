@@ -6,61 +6,18 @@ import {ID, toID} from 'ps';
 import {canonicalizeFormat} from 'stats';
 import {Worker} from 'worker_threads';
 
-import {Checkpoints, Offset} from './checkpoint';
+import {Batch, Checkpoints} from './checkpoint';
+import {Configuration, Options} from './config';
 import * as debug from './debug';
 import * as fs from './fs';
 
-interface Batch {
-  format: string;  // FIXME: raw
-  begin: Offset;
-  end: Offset;
-  size: number;
-}
-
-export interface Configuration {
-  logs: string;
-  reports: string;
-  checkpoints: string;
-  numWorkers: number;
-  maxFiles: number;
-  batchSize: number;
-  verbose: number;
-  dryRun: boolean;
-  verify: boolean;
-  all: boolean;
-}
-
-interface Options extends Partial<Configuration> {
-  logs: string;
-  reports: string;
-  verbose?: boolean|number;
-}
-
-const WORKER = path.resolve(__dirname, 'worker.js');
-
-// The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
-// should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
-// into EMFILE errors. Each worker will be able to open (maxFiles / numWorkers) files which is also
-// more conservative, but coordinating the exact number of files open across processes is more
-// likely not worth the complexity or coordination overhead.
-const MAX_FILES = 256;
-
-// The maximum number of logs ('batch') for a particular format that will be aggregated into a
-// single intermediate Stats object before it will persisted as a checkpoint written during
-// processing. Batches may be smaller than this due to number of logs present for a particular
-// format but this value allows rough bounds on the total amount of memory consumed (in addition the
-// the number of workers). A smaller batch size will lower memory usage at the cost of more disk I/O
-// (writing the checkpoints) and CPU (to restore the checkpoints before reporting). Stats objects
-// mostly contain sums bounded by the number of possible combinations of options available, though
-// in Pokemon this can be quite large. Furthermore, each additional battle processed usually
-// requires unbounded growth of GXEs (player name + max GXE) and team stalliness (score and weight).
-const BATCH_SIZE = 8192;
+const WORKERS = path.resolve(__dirname, 'workers');
 
 let mainData: {config: Configuration} = undefined!;
 
 export async function main(options: Options) {
-  mainData = {options};
   const config = init(options);
+  mainData = {config};
 
   // Per nodejs/node#27687, before v12.3.0 multiple threads logging to the console
   // will cause EventEmitter warnings because each thread unncessarily attaches its
@@ -96,7 +53,7 @@ async function spawn(type: 'apply'|'combine', batches: Array<Array<Batch|ID>>) {
     const workerData = {type, formats, config: workerConfig, num: i + 1};
     LOG(`Creating ${type} worker:${workerData.num} to handle ${batches.length} format(s)`);
     workers.push(new Promise((resolve, reject) => {
-      const worker = new Worker(WORKER, {workerData});
+      const worker = new Worker(path.join(WORKERS, `${config.worker}.js`), {workerData});
       worker.on('error', reject);
       worker.on('exit', (code) => {
         if (code === 0) {
@@ -132,22 +89,8 @@ function capitalize(s: string) {
 
 function init(options: Options) {
   options.checkpoints = Checkpoints.ensureDir(options.checkpoints);
-  const config = toConfiguration(config);
+  const config = Options.toConfiguration(config);
   if (!config.dryRun) await createReportsDirectoryStructure(config.reports);
-}
-
-function toConfiguration(options: Options) {
-  const numWorkers = options.numWorkers || (os.cpus().length - 1);
-  const maxFiles = (!options.maxFiles || options.maxFiles > 0) ?
-      Math.floor((options.maxFiles || MAX_FILES) / numWorkers) :
-      Infinity;
-  const batchSize =
-      (!options.batchSize || options.batchSize > 0) ? (options.batchSize || BATCH_SIZE) : Infinity;
-  return {
-    logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!;
-    numWorkers, maxFiles, batchSize, verbose: +option.verbose, dryRun: !!options.dryRun,
-        verbose: !!option.verify, all: !!options.all,
-  };
 }
 
 function accept(raw: string) {
