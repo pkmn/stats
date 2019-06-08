@@ -1,6 +1,6 @@
 import {ID} from 'ps';
 
-import {Configuration} from './main';
+import {Configuration} from './config';
 import {CheckpointStorage, LogStorage} from './storage';
 
 export interface Offset {
@@ -39,7 +39,7 @@ export abstract class Checkpoint {
   static decodeOffset(name: string, raw: string) {
     const [day, log, index] = name.split('_');
     return {
-      day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8}`,
+      day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}`,
       log: `battle-${raw}-${log}.log.json`,
       index: Number(index),
     };
@@ -70,12 +70,12 @@ export const Checkpoints = new class {
       if (checkpoints) {
         reads.push(restore(logStorage, config.batchSize, raw, format, checkpoints).then(data => {
           formats.set(format, data);
-        });
+        }));
       } else {
         if (!config.dryRun) writes.push(checkpointStorage.prepare(format));
-        reads.push(restore(logStorage, config.batchSize, raw, format)).then(data => {
+        reads.push(restore(logStorage, config.batchSize, raw, format).then(data => {
           formats.set(format, data);
-        });
+        }));
       }
     }
 
@@ -89,9 +89,10 @@ export const Checkpoints = new class {
 };
 
 async function restore(
-    logStorage: Storage, n: number, raw: string, format: ID, offsets?: Offset[]) {
+    logStorage: LogStorage, n: number, raw: string, format: ID, offsets?: Offset[]) {
   let size = 0;
   const batches: Batch[] = [];
+  /*
   let o = 0;
 
   for (const day of (await logStorage.list(raw))) {
@@ -120,13 +121,14 @@ async function restore(
     const last = batches.length ? batches[batches.length - 1] : undefined;
     batches.push(...chunk(raw, format, logs, n, last, i));
   }
+  */
 
   return {size, batches};
 }
 
 function chunk(
     raw: string, format: ID, logs: string[], n: number, last?: Batch, start = 0, finish?: number) {
-  const batches: Batches[] = [];
+  const batches: Batch[] = [];
   if (!finish) finish = logs.length;
   if (!logs.length || start >= finish) return batches;
 
@@ -136,24 +138,25 @@ function chunk(
     const i = n - last.size;
     if (i < finish) {
       last.size = n;
-      last.end = nameToOffset(logs[i]);
+      last.end = Checkpoint.decodeOffset(logs[i], raw);
       start = i;
     } else {
       last.size = finish;
-      last.end = nameToOffset(logs[finish - 1]);
+      last.end = Checkpoint.decodeOffset(logs[finish - 1], raw);
       return batches;
     }
   }
 
-  let begin = nameToOffset(logs[start]);
-  for (let i = start + n; i < finish; i += n) {
-    const end = nameToOffset(logs[i]);
+  let begin = Checkpoint.decodeOffset(logs[start], raw);
+  let i = start + n;
+  for (; i < finish; i += n) {
+    const end = Checkpoint.decodeOffset(logs[i], raw);
     batches.push({raw, format, begin, end, size: n});
-    begin = offset;
+    begin = end;
   }
 
   if (i < finish) {
-    const end = nameToOffset(logs[finish - 1]);
+    const end = Checkpoint.decodeOffset(logs[finish - 1], raw);
     batches.push({raw, format, begin, end, size: finish - i});
   }
 

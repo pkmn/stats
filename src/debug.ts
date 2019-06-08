@@ -2,15 +2,18 @@ import {performance} from 'perf_hooks';
 import {workerData} from 'worker_threads';
 import * as util from 'util';
 
-// TODO GLOBAL
 declare global {
-  function LOG(...args: any[]): boolean;
-  function VLOG(...args: any[]): boolean;
+  namespace NodeJS {
+    interface Global {
+      LOG(...args: any[]): boolean;
+      VLOG(...args: any[]): boolean;
+    }
+  }
 }
 
 function LOG(...args: any[]) {
-  if (!args.length) return process.env.DEBUG;
-  if (!process.env.DEBUG) return false;
+  const debug = !!process.env.DEBUG;
+  if (!args.length || !debug) return debug;
   if (workerData) {
     log(`worker:${workerData.num}`, workerData.num, ...args);
   } else {
@@ -20,8 +23,9 @@ function LOG(...args: any[]) {
 }
 
 function VLOG(...args: any[]) {
-  if (!args.length) return +process.env.DEBUG < 2;
-  if (+process.env.DEBUG < 2) return false;
+  const debug = +(process.env.DEBUG || 0);
+  if (!args.length) return debug < 2;
+  if (debug < 2) return false;
   LOG(...args);
   return true;
 }

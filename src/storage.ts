@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {ID} from 'ps';
 
 import {Checkpoint, Offset} from './checkpoint';
 import * as fs from './fs';
@@ -12,9 +13,9 @@ export interface LogStorage {
 }
 
 export class LogStorage {
-  static connect(configuration: {logs: string}): LogStorage {
+  static connect(config: {logs: string}): LogStorage {
     // TODO: support DatabaseStorage as well
-    return new LogFileStorage(options.logs);
+    return new LogFileStorage(config.logs);
   }
 }
 
@@ -25,31 +26,31 @@ class LogFileStorage implements LogStorage {
     this.dir = dir;
   }
 
-  list(raw?: string, day?: string) {
-    if (!raw) return fs.readdir(this.dir).sort(CMP);
+  async list(raw?: string, day?: string) {
+    if (!raw) return (await fs.readdir(this.dir)).sort(CMP);
     const formatDir = path.resolve(this.dir, raw);
-    if (!day) return fs.readdir(formatDir).sort(CMP);
+    if (!day) return (await fs.readdir(formatDir)).sort(CMP);
     const dayDir = path.resolve(formatDir, day);
-    return fs.readdir(dayDir).sort(CMP);
+    return (await fs.readdir(dayDir)).sort(CMP);
   }
 
   async select(raw: string, begin?: Offset, end?: Offset): Promise<string[]> {
     const range: string[] = [];
 
     for (const day of await this.list(raw)) {
-      if (begin && day < end.day) continue;
+      if (begin && day < begin.day) continue;
       if (end && day > end.day) break;
 
       const logs = await this.list(raw, day);
       if (begin && day === begin.day) {
-        const n = day === end.day ? end.index : logs.length;
+        const n = (end && day ===  end.day) ? end.index : logs.length;
         for (let i = begin.index; i < n; i++) {
-          range.push(path.join(raw, day, log));
+          range.push(path.join(raw, day, logs[i]));
         }
       } else if (end && day === end.day) {
         // NOTE: If begin is for the same day we would handle it above.
         for (let i = 0; i < end.index; i++) {
-          range.push(path.join(raw, day, log));
+          range.push(path.join(raw, day, logs[i]));
         }
       } else {
         for (const log of logs) {
@@ -76,9 +77,9 @@ export interface CheckpointStorage {
 }
 
 export class CheckpointStorage {
-  static connect(config: {checkpoints?: string}): LogStorage {
-    return config.checkpoints === 'memory' ? new MemoryCheckpointFileSystem() :
-                                             new CheckpointFileStorage(options.checkpoints);
+  static connect(config: {checkpoints?: string}): CheckpointStorage {
+    return config.checkpoints === 'memory' ? new CheckpointMemoryStorage() :
+                                             new CheckpointFileStorage(config.checkpoints);
   }
 }
 
@@ -98,12 +99,12 @@ export class CheckpointFileStorage implements CheckpointStorage {
   }
 
   async prepare(format: ID) {
-    return fs.mkdir(path.resolve(this.dir, format);
+    return fs.mkdir(path.resolve(this.dir, format));
   }
 
-  list(format: ID) {
-    const filenames = fs.readdir(path.resolve(this.dir, format)).sort(CMP);
-    return filenames.map(name => this.fromName(name));
+  async list(format: ID) {
+    const filenames = (await fs.readdir(path.resolve(this.dir, format))).sort(CMP);
+    return filenames.map(name => this.fromName(name, format)); // FIXME: needs to be raw :(
   }
 
   async offsets() {
@@ -112,7 +113,7 @@ export class CheckpointFileStorage implements CheckpointStorage {
       const offsets: Offset[] = [];
       const dir = path.resolve(this.dir, format);
       for (const name of (await fs.readdir(dir)).sort(CMP)) {
-        offsets.push(Checkpoint.decodeOffset(name));
+        offsets.push(Checkpoint.decodeOffset(name, format)); // FIXME: needs to be raw :(
       }
       checkpoints.set(format as ID, offsets);
     }
@@ -131,13 +132,13 @@ export class CheckpointFileStorage implements CheckpointStorage {
   private toName(format: ID, begin: Offset, end: Offset) {
     const b = Checkpoint.encodeOffset(begin);
     const e = Checkpoint.encodeOffset(end);
-    return = path.resolve(this.dir, format, `${b}-${e}.json.gz`);
+    return path.resolve(this.dir, format, `${b}-${e}.json.gz`);
   }
 
-  private fromName(filename: string): [Offset, Offset] {
+  private fromName(filename: string, raw: string): [Offset, Offset] {
     filename = path.basename(filename, '.json.gz');
     const [b, e] = filename.split('-');
-    return [Checkpoint.decodeOffset(b), Checkpoint.decodeOffset(e)];
+    return [Checkpoint.decodeOffset(b, raw), Checkpoint.decodeOffset(e, raw)];
   }
 }
 
@@ -152,25 +153,26 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
 
   async list(format: ID) {
     const names = Object.values(this.checkpoints.get(format)!).sort(CMP);
-    return names.map(name => this.fromName(name));
+    return names.map(name => this.fromName(name, format)); // FIXME: needs to be raw :(
   }
 
   async offsets() {
     const checkpoints: Map<ID, Offset[]> = new Map();
     for (const [format, data] of this.checkpoints.entries()) {
-      const offsets = Object.keys(data).sort(CMP).map(name => Checkpoint.decodeOffset(name));
+      // FIXME: needs to be raw :(
+      const offsets = Object.keys(data).sort(CMP).map(name => Checkpoint.decodeOffset(name, format)); 
       checkpoints.set(format, offsets);
     }
     return checkpoints;
   }
 
   async read(format: ID, begin: Offset, end: Offset) {
-    this.checkpoints.get(format)!.get(this.toName(begin, end));
+    return this.checkpoints.get(format)!.get(this.toName(begin, end));
   }
 
   async write(checkpoint: Checkpoint) {
     const checkpoints = this.checkpoints.get(checkpoint.format)!;
-    checkpoints.set(this.toName(begin, end), checkpoint.serialize());
+    checkpoints.set(this.toName(checkpoint.begin, checkpoint.end), checkpoint.serialize());
   }
 
   private toName(begin: Offset, end: Offset) {
@@ -179,8 +181,8 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
     return `${b}-${e}`;
   }
 
-  private fromName(name: string): [Offset, Offset] {
+  private fromName(raw: string, name: string): [Offset, Offset] {
     const [b, e] = name.split('-');
-    return [Checkpoint.decodeOffset(b), Checkpoint.decodeOffset(e)];
+    return [Checkpoint.decodeOffset(b, raw), Checkpoint.decodeOffset(e, raw)];
   }
 }

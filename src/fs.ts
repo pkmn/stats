@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as zlib from 'zlib';
+import {join} from 'path';
 
 export function exists(path: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
@@ -13,7 +14,7 @@ export function exists(path: string): Promise<boolean> {
 
 export function mkdtemp(prefix: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    fs.mkdtemp(path.join(os.tmpdir(), prefix), (err, dir) => {
+    fs.mkdtemp(join(os.tmpdir(), prefix), (err, dir) => {
       err ? reject(err) : resolve(dir);
     });
   });

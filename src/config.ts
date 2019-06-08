@@ -1,3 +1,4 @@
+import * as os from 'os';
 import {ID, toID} from 'ps';
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
@@ -27,17 +28,21 @@ export interface Configuration {
   numWorkers: number;
   maxFiles: number;
   batchSize: number;
-  verbose: number;
+  verbose: boolean|number;
   dryRun: boolean;
   all: boolean;
   worker: 'stats';
   accept: (raw: string) => (ID | undefined);
 }
 
-export class Options extends Partial<Configuration> {
+export interface Options extends Partial<Configuration> {
   logs: string;
   reports: string;
-  verbose?: boolean|number;
+}
+
+export class Options {
+  logs: string;
+  reports: string;
 
   constructor(logs: string, reports: string) {
     this.logs = logs;
@@ -57,8 +62,8 @@ export class Options extends Partial<Configuration> {
         (options.batchSize || BATCH_SIZE) :
         Infinity;
     return {
-      logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!;
-      numWorkers, maxFiles, batchSize, verbose: +options.verbose, dryRun: !!options.dryRun,
+      logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!,
+      numWorkers, maxFiles, batchSize, verbose: +(options.verbose || 0), dryRun: !!options.dryRun,
           all: !!options.all, worker: 'stats', accept: toID,
     };
   }

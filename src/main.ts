@@ -45,7 +45,7 @@ export async function main(options: Options) {
 async function spawn(type: 'apply'|'combine', batches: Array<Array<Batch|ID>>) {
   const workers: Array<Promise<void>> = [];
 
-  for (const [i, formats]: batches) {
+  for (const [i, formats] of batches.entries()) {
     const workerData = {type, formats, config: workerConfig, num: i + 1};
     LOG(`Creating ${type} worker:${workerData.num} to handle ${batches.length} format(s)`);
     workers.push(new Promise((resolve, reject) => {
