@@ -1,8 +1,9 @@
 import 'source-map-support/register';
 import '../debug';
 
+import * as path from 'path';
 import {Data, ID, toID} from 'ps';
-import {Stats, TaggedStatistics} from 'stats';
+import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
 import {workerData} from 'worker_threads';
 
 import {Batch, Checkpoint, Checkpoints, Offset} from '../checkpoint';
@@ -25,9 +26,9 @@ class StatsCheckpoint extends Checkpoint {
   }
 
   static async read(storage: CheckpointStorage, format: ID, begin: Offset, end: Offset) {
-    const serialized = storage.read(format, begin, end);
+    const serialized = await storage.read(format, begin, end);
     const stats = state.deserializeTagged(JSON.parse(serialized));
-    return new StatsCheckpoint(dir, format, begin, end, stats);
+    return new StatsCheckpoint(format, begin, end, stats);
   }
 }
 
@@ -73,13 +74,9 @@ export async function init(config: WorkerConfiguration) {
 }
 
 export function accept(config: WorkerConfiguration) {
-  return (raw: string) => {
-    const format = canonicalizeFormat(toID(raw));
-    return (format.startsWith('seasonal') || format.includes('random') ||
-            format.includes('metronome' || format.includes('superstaff'))) ?
-        undefined :
-        format;
-  };
+  return (format: ID) =>
+             !(format.startsWith('seasonal') || format.includes('random') ||
+               format.includes('metronome' || format.includes('superstaff')));
 }
 
 function mkdirs(dir: string) {
@@ -90,13 +87,15 @@ function mkdirs(dir: string) {
 async function apply(batches: Batch[], config: WorkerConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
-  for (const {raw, format, begin, end, size} of batches) {
+
+  for (const {format, begin, end, size} of batches) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
 
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
-    for (const log of logStorage.select(raw, begin, end)) {
+    let processed: Array<Promise<void>> = [];
+    for (const log of await logStorage.select(format, begin, end)) {
       if (processed.length >= config.maxFiles) {
         LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
         await Promise.all(processed);
@@ -110,7 +109,7 @@ async function apply(batches: Batch[], config: WorkerConfiguration) {
       await Promise.all(processed);
     }
     const checkpoint = new StatsCheckpoint(format, begin, end, stats);
-    LOG(`Writing checkpoint for ${format}: ${checkpoint.filename}`);
+    LOG(`Writing checkpoint for ${format}: ${checkpoint}`);
     if (!config.dryRun) await checkpointStorage.write(checkpoint);
   }
 }
@@ -133,7 +132,7 @@ async function processLog(
 async function combine(formats: ID[], config: WorkerConfiguration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
-    stats = await aggregate(config, format);
+    const stats = await aggregate(config, format);
 
     const b = stats.battles;
     let writes = [];
@@ -162,11 +161,13 @@ async function combine(formats: ID[], config: WorkerConfiguration) {
 }
 
 async function aggregate(config: WorkerConfiguration, format: ID): Promise<TaggedStatistics> {
+  const checkpointStorage = CheckpointStorage.connect(config);
+
   let n = 0;
   let checkpoints = [];
   let stats: state.TaggedStatistics|undefined = undefined;
   // NOTE: Stats aggregation is commutative
-  for (const [format, begin, end] of await checkpointStorage.list(format)) {
+  for (const [begin, end] of await checkpointStorage.list(format)) {
     if (n >= config.maxFiles) {
       for (const checkpoint of await Promise.all(checkpoints)) {
         stats = state.combineTagged(checkpoint.stats, stats);
@@ -175,7 +176,7 @@ async function aggregate(config: WorkerConfiguration, format: ID): Promise<Tagge
       checkpoints = [];
     }
 
-    checkpoints.push(JSON.parse(checkpointStorage.read(format, begin, end)));
+    checkpoints.push(checkpointStorage.read(format, begin, end).then(c => JSON.parse(c)));
     n++;
   }
   for (const checkpoint of await Promise.all(checkpoints)) {

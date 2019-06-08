@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import * as zlib from 'zlib';
 import {join} from 'path';
+import * as zlib from 'zlib';
 
 export function exists(path: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
@@ -106,7 +106,7 @@ export async function rmrf(dir: string) {
   if (await exists(dir)) {
     const rms: Array<Promise<void>> = [];
     for (const file of await readdir(dir)) {
-      const f = path.resolve(dir, file);
+      const f = join(dir, file);
       if ((await lstat(f)).isDirectory()) {
         rms.push(rmrf(f));
       } else {

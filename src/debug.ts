@@ -1,15 +1,14 @@
 import {performance} from 'perf_hooks';
-import {workerData} from 'worker_threads';
 import * as util from 'util';
+import {workerData} from 'worker_threads';
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      LOG(...args: any[]): boolean;
-      VLOG(...args: any[]): boolean;
-    }
-  }
+  function LOG(...args: any[]): boolean;
+  function VLOG(...args: any[]): boolean;
 }
+const GLOBAL = global as any;
+GLOBAL.LOG = LOG;
+GLOBAL.VLOG = VLOG;
 
 function LOG(...args: any[]) {
   const debug = !!process.env.DEBUG;
@@ -52,6 +51,3 @@ function dec(n: number) {
   if (abs < 100) return n.toFixed(1);
   return n.toFixed();
 }
-
-global.LOG = LOG;
-global.VLOG = VLOG;

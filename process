@@ -104,7 +104,7 @@ const argv = require('minimist')(process.argv.slice(2), {
     numWorkers: ['p', 'parallel', 'workers', 'maxWorkers', 't', 'threads'],
     maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
     batchSize: ['b', 'perBatch', 'maxBatch', 'maxBatchSize'],
-    verbose: ['v'],
+    debug: ['v', 'verbose'],
     dryRun: ['d', 'dry'],
     all: ['a'],
   },
@@ -119,6 +119,7 @@ if (argv._.length) {
   if (argv._.length > 1) argv.output = argv._[1];
 }
 if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
+if (argv.debug) process.env.DEBUG = +argv.verbose;
 
 // tslint:disable-next-line: no-floating-promises
 (async () => process.exit(await stats.process(argv.input, argv.output, argv)))();

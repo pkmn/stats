@@ -9,17 +9,19 @@ import {Configuration} from '../config';
 import * as fs from '../fs';
 import {CheckpointStorage, LogStorage} from '../storage';
 
-class AnonymizeCheckpoint extends Checkpoint {
-  serialize() { return ''; }
-} 
+class AnonCheckpoint extends Checkpoint {
+  serialize() {
+    return '';
+  }
+}
 
-interface AnonymizeOptions {
+interface AnonOptions {
   // TODO
 }
 
 interface WorkerConfiguration extends Configuration {
   formats: ID[];
-  options: AnonymizeOptions;
+  options: AnonOptions;
 }
 
 export async function init(config: WorkerConfiguration) {
@@ -28,20 +30,19 @@ export async function init(config: WorkerConfiguration) {
 }
 
 export function accept(config: WorkerConfiguration) {
-  return (raw: string) => {
-    const format = toID(raw);
-    return config.formats.includes(format) ? format : undefined;
-  };
+  return (format: ID) => config.formats.includes(format);
 }
 
-async function apply(batches: Batch[], config: AnonymizationConfiguration) {
+async function apply(batches: Batch[], config: WorkerConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
-  for (const {raw, format, begin, end, size} of batches) {
+  for (const {format, begin, end, size} of batches) {
     const data = Data.forFormat(format);
 
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
-    for (const log of logStorage.select(raw, begin, end)) {
+    let processed: Array<Promise<void>> = [];
+
+    for (const log of await logStorage.select(format, begin, end)) {
       if (processed.length >= config.maxFiles) {
         LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
         await Promise.all(processed);
@@ -54,13 +55,14 @@ async function apply(batches: Batch[], config: AnonymizationConfiguration) {
       LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
       await Promise.all(processed);
     }
-    const checkpoint = new StatsCheckpoint(config.checkpoint, format, begin, end, stats);
-    LOG(`Writing checkpoint for ${format}: ${checkpoint.filename}`);
+    const checkpoint = new AnonCheckpoint(format, begin, end);
+    LOG(`Writing checkpoint for ${format}: ${checkpoint}`);
     if (!config.dryRun) await checkpointStorage.write(checkpoint);
   }
 }
 
-async function processLog(logStorage: LogStorage, data: Data, options: AnonymizeOptions, log: string, dryRun?: boolean) {
+async function processLog(
+    logStorage: LogStorage, data: Data, log: string, options: AnonOptions, dryRun?: boolean) {
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   try {
@@ -72,4 +74,6 @@ async function processLog(logStorage: LogStorage, data: Data, options: Anonymize
 }
 
 // tslint:disable-next-line: no-floating-promises
-(async () => {if (workerData.type === 'apply') await apply(workerData.formats, workerData.config)})();
+(async () => {
+  if (workerData.type === 'apply') await apply(workerData.formats, workerData.config);
+})();

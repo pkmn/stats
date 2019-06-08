@@ -1,5 +1,5 @@
 import * as os from 'os';
-import {ID, toID} from 'ps';
+import {ID} from 'ps';
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
 // should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
@@ -23,21 +23,23 @@ const BATCH_SIZE = 8192;
 
 export interface Configuration {
   logs: string;
-  reports: string;
-  checkpoints: string;
+  worker: 'stats'|'anon';
+  checkpoints?: string|Symbol;
   numWorkers: number;
   maxFiles: number;
   batchSize: number;
-  verbose: boolean|number;
   dryRun: boolean;
   all: boolean;
-  worker: 'stats';
-  accept: (raw: string) => (ID | undefined);
+
+  reports: string;  // FIXME
+
+  accept: (format: ID) => boolean;
 }
 
 export interface Options extends Partial<Configuration> {
   logs: string;
   reports: string;
+  worker: 'stats'|'anon';
 }
 
 export class Options {
@@ -62,9 +64,16 @@ export class Options {
         (options.batchSize || BATCH_SIZE) :
         Infinity;
     return {
-      logs: options.logs, reports: options.reports, checkpoints: options.checkpoints!,
-      numWorkers, maxFiles, batchSize, verbose: +(options.verbose || 0), dryRun: !!options.dryRun,
-          all: !!options.all, worker: 'stats', accept: toID,
+      logs: options.logs,
+      reports: options.reports,  // FIXME
+      checkpoints: options.checkpoints,
+      numWorkers,
+      maxFiles,
+      batchSize,
+      dryRun: !!options.dryRun,
+      all: !!options.all,
+      worker: options.worker || 'stats',
+      accept: () => true,
     };
   }
 }
