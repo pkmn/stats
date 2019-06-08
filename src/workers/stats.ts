@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import '../debug';
 
 import {Data, ID, toID} from 'ps';
 import {Stats, TaggedStatistics} from 'stats';
@@ -6,7 +7,6 @@ import {workerData} from 'worker_threads';
 
 import {Batch, Checkpoint, Checkpoints, Offset} from '../checkpoint';
 import {Configuration} from '../config';
-import * as debug from '../debug';
 import * as fs from '../fs';
 import {CheckpointStorage, LogStorage} from '../storage';
 
@@ -15,12 +15,12 @@ import * as state from './state';
 class StatsCheckpoint extends Checkpoint {
   readonly stats: TaggedStatistics;
 
-  constructor(dir: string, format: ID, begin: Offset, end: Offset, stats: TaggedStatistics) {
-    super(dir, format, begin, end);
+  constructor(format: ID, begin: Offset, end: Offset, stats: TaggedStatistics) {
+    super(format, begin, end);
     this.stats = stats;
   }
 
-  serialize(): string {
+  serialize() {
     return JSON.stringify(state.serializeTagged(this.stats));
   }
 
@@ -58,7 +58,11 @@ const REPORTS = 5;
 
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
-export async function init(config: Configuration) {
+interface WorkerConfiguration extends Configuration {
+  reports: string;
+}
+
+export async function init(config: WorkerConfiguration) {
   if (config.dryRun) return;
 
   await fs.rmrf(config.reports);
@@ -68,12 +72,14 @@ export async function init(config: Configuration) {
   await Promise.all([...mkdirs(config.reports), ...mkdirs(monotype)]);
 }
 
-export function accept(raw: string) {
-  const format = canonicalizeFormat(toID(raw));
-  return (format.startsWith('seasonal') || format.includes('random') ||
-          format.includes('metronome' || format.includes('superstaff'))) ?
-      undefined :
-      format;
+export function accept(config: WorkerConfiguration) {
+  return (raw: string) => {
+    const format = canonicalizeFormat(toID(raw));
+    return (format.startsWith('seasonal') || format.includes('random') ||
+            format.includes('metronome' || format.includes('superstaff'))) ?
+        undefined :
+        format;
+  };
 }
 
 function mkdirs(dir: string) {
@@ -81,7 +87,7 @@ function mkdirs(dir: string) {
   return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
 }
 
-async function apply(batches: Batch[], config: Configuration) {
+async function apply(batches: Batch[], config: WorkerConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
   for (const {raw, format, begin, end, size} of batches) {
@@ -103,7 +109,7 @@ async function apply(batches: Batch[], config: Configuration) {
       LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
       await Promise.all(processed);
     }
-    const checkpoint = new StatsCheckpoint(config.checkpoint, format, begin, end, stats);
+    const checkpoint = new StatsCheckpoint(format, begin, end, stats);
     LOG(`Writing checkpoint for ${format}: ${checkpoint.filename}`);
     if (!config.dryRun) await checkpointStorage.write(checkpoint);
   }
@@ -124,7 +130,7 @@ async function processLog(
   }
 }
 
-async function combine(formats: ID[], config: Configuration) {
+async function combine(formats: ID[], config: WorkerConfiguration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
     stats = await aggregate(config, format);
@@ -155,7 +161,7 @@ async function combine(formats: ID[], config: Configuration) {
   }
 }
 
-async function aggregate(config: Configuration, format: ID): Promise<TaggedStatistics> {
+async function aggregate(config: WorkerConfiguration, format: ID): Promise<TaggedStatistics> {
   let n = 0;
   let checkpoints = [];
   let stats: state.TaggedStatistics|undefined = undefined;
@@ -201,20 +207,6 @@ function writeReports(
   const metagame = Reports.metagameReport(stats);
   writes.push(fs.writeFile(path.resolve(reports, 'metagame', `${file}.txt`), metagame));
   return writes;
-}
-
-function LOG(...args: any[]) {
-  if (!args.length) return workerData.config.verbose;
-  if (!workerData.config.verbose) return false;
-  debug.log(`worker:${workerData.num}`, workerData.num, ...args);
-  return true;
-}
-
-function VLOG(...args: any[]) {
-  if (!args.length) return +workerData.config.verbose < 2;
-  if (+workerData.config.verbose < 2) return false;
-  LOG(...args);
-  return true;
 }
 
 // tslint:disable-next-line: no-floating-promises

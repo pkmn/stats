@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import './debug';
 
 import * as os from 'os';
 import * as path from 'path';
@@ -8,15 +9,11 @@ import {Worker} from 'worker_threads';
 
 import {Batch, Checkpoints} from './checkpoint';
 import {Configuration, Options} from './config';
-import * as debug from './debug';
 
 const WORKERS = path.resolve(__dirname, 'workers');
 
-let mainData: {config: Configuration} = undefined!;
-
 export async function main(options: Options) {
   const config = await init(options);
-  mainData = {config};
 
   // Per nodejs/node#27687, before v12.3.0 multiple threads logging to the console
   // will cause EventEmitter warnings because each thread unncessarily attaches its
@@ -91,7 +88,7 @@ async function init(options: Options) {
   const config = Options.toConfiguration(config);
   const worker = await import(path.join(WORKERS, `${config.worker}.js`));
   if (worker.init) await worker.init(config);
-  if (worker.accept) config.accept = worker.accept;
+  if (worker.accept) config.accept = worker.accept(config);
   return config;
 }
 
@@ -120,10 +117,4 @@ function partition(batches: Array<{format: string, size: number}>, partitions: n
   }
 
   return ps.map(p => p.formats);
-}
-
-function LOG(...args: any[]) {
-  if (!args.length) return mainData.options.verbose;
-  if (!mainData.options.verbose) return;
-  debug.log(`main`, 0, ...args);
 }

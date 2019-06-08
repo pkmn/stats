@@ -1,5 +1,30 @@
 import {performance} from 'perf_hooks';
+import {workerData} from 'worker_threads';
 import * as util from 'util';
+
+// TODO GLOBAL
+declare global {
+  function LOG(...args: any[]): boolean;
+  function VLOG(...args: any[]): boolean;
+}
+
+function LOG(...args: any[]) {
+  if (!args.length) return process.env.DEBUG;
+  if (!process.env.DEBUG) return false;
+  if (workerData) {
+    log(`worker:${workerData.num}`, workerData.num, ...args);
+  } else {
+    log(`main`, 0, ...args);
+  }
+  return true;
+}
+
+function VLOG(...args: any[]) {
+  if (!args.length) return +process.env.DEBUG < 2;
+  if (+process.env.DEBUG < 2) return false;
+  LOG(...args);
+  return true;
+}
 
 export function log(title: string, num: number, ...args: any[]) {
   const color = num ? (num % 5) + 2 : 1;
@@ -23,3 +48,6 @@ function dec(n: number) {
   if (abs < 100) return n.toFixed(1);
   return n.toFixed();
 }
+
+global.LOG = LOG;
+global.VLOG = VLOG;
