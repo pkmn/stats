@@ -80,9 +80,3 @@ License
 Pokémon Showdown's stats processing library is distributed under the terms of the [MIT License][6].
 
   [6]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/blob/master/LICENSE
-
-Credits
-------------------------------------------------------------------------
-This code is based on a rewrite of [Smogon-Usage-Stats][7], written by Antar Iliev.
-
-  [7]: https://github.com/Antar1011/Smogon-Usage-Stats
