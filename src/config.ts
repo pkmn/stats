@@ -30,25 +30,19 @@ export interface Configuration {
   batchSize: number;
   dryRun: boolean;
   all: boolean;
-
-  reports: string;  // FIXME
-
   accept: (format: ID) => boolean;
 }
 
 export interface Options extends Partial<Configuration> {
   logs: string;
-  reports: string;
   worker: 'stats'|'anon';
 }
 
 export class Options {
   logs: string;
-  reports: string;
 
-  constructor(logs: string, reports: string) {
+  constructor(logs: string) {
     this.logs = logs;
-    this.reports = reports;
   }
 
   toOptions() {
@@ -63,17 +57,13 @@ export class Options {
     const batchSize = (!options.batchSize || options.batchSize > 0) ?
         (options.batchSize || BATCH_SIZE) :
         Infinity;
-    return {
-      logs: options.logs,
-      reports: options.reports,  // FIXME
-      checkpoints: options.checkpoints,
+    return Object.assign({}, options, {
       numWorkers,
       maxFiles,
       batchSize,
       dryRun: !!options.dryRun,
       all: !!options.all,
-      worker: options.worker || 'stats',
       accept: () => true,
-    };
+    });
   }
 }

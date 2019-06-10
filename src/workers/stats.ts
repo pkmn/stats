@@ -59,11 +59,11 @@ const REPORTS = 5;
 
 const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
 
-interface WorkerConfiguration extends Configuration {
+interface StatsConfiguration extends Configuration {
   reports: string;
 }
 
-export async function init(config: WorkerConfiguration) {
+export async function init(config: StatsConfiguration) {
   if (config.dryRun) return;
 
   await fs.rmrf(config.reports);
@@ -73,7 +73,7 @@ export async function init(config: WorkerConfiguration) {
   await Promise.all([...mkdirs(config.reports), ...mkdirs(monotype)]);
 }
 
-export function accept(config: WorkerConfiguration) {
+export function accept(config: StatsConfiguration) {
   return (format: ID) =>
              !(format.startsWith('seasonal') || format.includes('random') ||
                format.includes('metronome' || format.includes('superstaff')));
@@ -84,7 +84,7 @@ function mkdirs(dir: string) {
   return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
 }
 
-async function apply(batches: Batch[], config: WorkerConfiguration) {
+async function apply(batches: Batch[], config: StatsConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
 
@@ -129,7 +129,7 @@ async function processLog(
   }
 }
 
-async function combine(formats: ID[], config: WorkerConfiguration) {
+async function combine(formats: ID[], config: StatsConfiguration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
     const stats = await aggregate(config, format);
@@ -160,7 +160,7 @@ async function combine(formats: ID[], config: WorkerConfiguration) {
   }
 }
 
-async function aggregate(config: WorkerConfiguration, format: ID): Promise<TaggedStatistics> {
+async function aggregate(config: StatsConfiguration, format: ID): Promise<TaggedStatistics> {
   const checkpointStorage = CheckpointStorage.connect(config);
 
   let n = 0;
@@ -193,7 +193,7 @@ async function aggregate(config: WorkerConfiguration, format: ID): Promise<Tagge
 }
 
 function writeReports(
-    config: Configuration, format: ID, cutoff: number, stats: Statistics, battles: number,
+    config: StatsConfiguration, format: ID, cutoff: number, stats: Statistics, battles: number,
     tag?: ID) {
   LOG(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? ` (${tag})` : ''));
   if (config.dryRun) return new Array(REPORTS).fill(Promise.resolve());
