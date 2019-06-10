@@ -45,7 +45,8 @@ export abstract class Checkpoint {
   }
 
   toString() {
-    return `${this.format}: ${Checkpoints.formatOffsets(this.begin, this.end)}`;
+    return 
+    // FIXME!
   }
 }
 

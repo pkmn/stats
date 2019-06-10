@@ -109,7 +109,7 @@ async function apply(batches: Batch[], config: WorkerConfiguration) {
       await Promise.all(processed);
     }
     const checkpoint = new StatsCheckpoint(format, begin, end, stats);
-    LOG(`Writing checkpoint for ${format}: ${checkpoint}`);
+    LOG(`Writing checkpoint '${checkpoint}'`);
     if (!config.dryRun) await checkpointStorage.write(checkpoint);
   }
 }
