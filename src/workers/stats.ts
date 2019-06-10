@@ -166,7 +166,13 @@ async function aggregate(config: WorkerConfiguration, format: ID): Promise<Tagge
   let n = 0;
   let checkpoints = [];
   let stats: state.TaggedStatistics|undefined = undefined;
-  // NOTE: Stats aggregation is commutative
+  // Floating point math is commutative but *not* necessarily associative, meaning that we can
+  // potentially get different results depending on the order we add the Stats in. The sorting
+  // CheckpointStorage#list does helps with stability, but there is no guarantee runs with 
+  // different batch sizes/checkpoints will return the same results or that they will be equivalent
+  // to arbitrary precision with a run which does not use batches at all. For the best accuracy we
+  // should be adding up the smallest values first, but this requires deeper architectural changes
+  // and has performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
   for (const [begin, end] of await checkpointStorage.list(format)) {
     if (n >= config.maxFiles) {
       for (const checkpoint of await Promise.all(checkpoints)) {
