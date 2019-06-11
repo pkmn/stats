@@ -23,30 +23,32 @@ export async function main(options: Options) {
   }
 
   LOG('Splitting formats into batches');
-  const formats = await Checkpoints.restore(config, config.accept);
+  const formatBatches = await Checkpoints.restore(config, config.accept);
 
-  const batches: Array<{data: Batch, size: number}> = [];
-  for (const format of formats.values()) {
-    batches.push(...format.batches.map(
+  const allBatches: Array<{data: Batch, size: number}> = [];
+  for (const batches of formatBatches.values()) {
+    allBatches.push(...batches.map(
         batch => ({data: batch, size: batch.end.index.global - batch.begin.index.global})));
   }
-  const sizes: Array<{data: ID, size: number}> = [];
-  for (const [format, {size}] of formats.entries()) {
-    sizes.push({data: format, size});
+  const allSizes: Array<{data: ID, size: number}> = [];
+  for (const [format, batches] of formatBatches.entries()) {
+    const size = batches.reduce((a, b) => a + (b.end.index.global - b.begin.index.global), 0);
+    allSizes.push({data: format, size});
   }
   if (LOG()) {
-    const sorted = sizes.sort((a, b) => b.size - a.size);
+    const sorted = allSizes.sort((a, b) => b.size - a.size);
     LOG(`\n${sorted.map(e => `  ${e.data}: ${e.size}`).join('\n')}\n`);
   }
 
   const workerConfig = Object.assign({}, config);
   // If we have fewer formats remaining than the number of workers each can open more files.
-  workerConfig.maxFiles = Math.floor(config.maxFiles / Math.min(formats.size, config.numWorkers));
+  workerConfig.maxFiles =
+      Math.floor(config.maxFiles / Math.min(formatBatches.size, config.numWorkers));
 
-  let failures = await spawn('apply', workerConfig, partition(batches, config.numWorkers));
+  let failures = await spawn('apply', workerConfig, partition(allBatches, config.numWorkers));
   // TODO: We could be immediately creating combine workers immediately after all batches for
   // the particular format have finished processing.
-  failures += await spawn('combine', workerConfig, partition(sizes, config.numWorkers));
+  failures += await spawn('combine', workerConfig, partition(allSizes, config.numWorkers));
 
   return failures;
 }

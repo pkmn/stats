@@ -55,9 +55,9 @@ export const Checkpoints = new class {
     const logStorage = LogStorage.connect(config);
     const checkpointStorage = CheckpointStorage.connect(config);
 
-    const formats: Map<ID, {size: number, batches: Batch[]}> = new Map();
+    const formats: Map<ID, Batch[]> = new Map();
 
-    let existing: Map<ID, Offset[]> = new Map();
+    let existing: Map<ID, Batch[]> = new Map();
     try {
       existing = await checkpointStorage.offsets();
     } catch (err) {
@@ -70,17 +70,11 @@ export const Checkpoints = new class {
       const format = raw as ID;
       if (accept(format)) continue;
 
-      const checkpoints = existing.get(format);
-      if (checkpoints) {
-        reads.push(restore(logStorage, config.batchSize, format, checkpoints).then(data => {
-          formats.set(format, data);
-        }));
-      } else {
-        if (!config.dryRun) writes.push(checkpointStorage.prepare(format));
-        reads.push(restore(logStorage, config.batchSize, format).then(data => {
-          formats.set(format, data);
-        }));
-      }
+      const checkpoints = existing.get(format) || [];
+      if (!checkpoints.length && !config.dryRun) writes.push(checkpointStorage.prepare(format));
+      reads.push(restore(logStorage, config.batchSize, format, checkpoints).then(data => {
+        formats.set(format, data);
+      }));
     }
 
     await Promise.all([...reads, ...writes]);
@@ -93,41 +87,43 @@ export const Checkpoints = new class {
   }
 };
 
-async function restore(logStorage: LogStorage, n: number, format: ID, offsets?: Offset[]) {
-  const size = 0;
+async function restore(logStorage: LogStorage, n: number, format: ID, offsets: Batch[] = []) {
   const batches: Batch[] = [];
-  /*
   let o = 0;
 
-  for (const day of (await logStorage.list(format))) {
+  for (const day of await logStorage.list(format)) {
     const logs = await logStorage.list(format, day);
 
     let i = 0;
-    if (offsets) {
-      for (; o < offsets.length && offsets[o].begin.day <= day && day < offsets[o].end.day; o++) {
-        // This shouldn't really happen, as it indicates that some logs were deleted...
-        if (offsets[i].begin.day < day) continue;
+    // If we have existing offsets from checkpoints, iterate through until we find the ones
+    // from this day's logs, and then fill in any gaps that may exist.
+    for (; o < offsets.length && offsets[o].begin.day <= day && day < offsets[o].end.day; o++) {
+      // This shouldn't really happen, as it would indicate that some logs were deleted...
+      if (offsets[i].begin.day < day) continue;
 
-        // TODO what about gaps BEFORE!
-        const current = offsets[o];
-        if (o + 1 < offsets.length) {
-          // TODO maybe don't increment o!
-          const next = offsets[o + 1];
-        } else {
-          // If there's no 'next' offset, this is the last offset so we leave the loop and
-          // try to fill in batches starting from this index onward. current.end.index + 1
-          // may not exist, but `chunk` should already handle that for us.
-          i = current.end.index + 1;
-        }
+      // Now we're looking at an offset for the current day - we could need to process logs before
+      // or after it and before the next offset (gated by previous and next offsets as well as day
+      // boundaries)
+      const current = offsets[o];
+      if (o > 0 && offsets[o - 1].end.day === day) {
+        const prev = offsets[o - 1];
+        const last = batches.length ? batches[batches.length - 1] : undefined;
+        batches.push(...chunk(
+            format, day, logs, n, last, prev.end.index.local + 1, current.begin.index.local));
+      }
+      i = current.end.index.local + 1;  // TODO make sure dont go too far
+      if (o < offsets.length - 1 && offsets[o + 1].begin.day === day) {
+        const next = offsets[o + 1];
+        const last = batches.length ? batches[batches.length - 1] : undefined;
+        batches.push(...chunk(format, day, logs, n, last, i, next.begin.index.local));
+        i = next.end.index.local + 1;  // TODO make sure dont go too far
       }
     }
-    size += logs.length - i;
     const last = batches.length ? batches[batches.length - 1] : undefined;
-    batches.push(...chunk(format, logs, n, last, i));
+    batches.push(...chunk(format, day, logs, n, last, i));
   }
-  */
 
-  return {size, batches};
+  return batches;
 }
 
 // Group the provided logs for the specified format and day into 'chunks' of at most size n,
@@ -135,8 +131,8 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets?: 
 function chunk(
     format: ID, day: string, logs: string[], n: number, last?: Batch, start = 0, finish?: number) {
   const batches: Batch[] = [];
-  if (!finish) finish = logs.length;
-  if (!logs.length || start >= finish) return batches;
+  finish = Math.min(finish || logs.length, logs.length);
+  if (start >= finish) return batches;
   const globalIndex = last ? last.end.index.global : 0;
   const lastSize = last ? globalIndex - last.begin.index.global : 0;
 

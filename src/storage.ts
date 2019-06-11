@@ -1,7 +1,7 @@
 import * as path from 'path';
 import {ID} from 'ps';
 
-import {Checkpoint, Offset,} from './checkpoint';
+import {Batch, Checkpoint, Offset,} from './checkpoint';
 import * as fs from './fs';
 
 const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
@@ -70,8 +70,8 @@ class LogFileStorage implements LogStorage {
 export interface CheckpointStorage {
   init(): Promise<void>;
   prepare(format: ID): Promise<void>;
-  list(format: ID): Promise<Array<[Offset, Offset]>>;
-  offsets(): Promise<Map<ID, Offset[]>>;
+  list(format: ID): Promise<Batch[]>;
+  offsets(): Promise<Map<ID, Batch[]>>;
   read(format: ID, begin: Offset, end: Offset): Promise<string>;
   write(checkpoint: Checkpoint): Promise<void>;
 }
@@ -113,15 +113,15 @@ export class CheckpointFileStorage implements CheckpointStorage {
   }
 
   async offsets() {
-    const checkpoints: Map<ID, Offset[]> = new Map();
-    for (const format of await fs.readdir(this.dir)) {
-      const offsets: Offset[] = [];
-      const dir = path.resolve(this.dir, format);
-      for (const name of (await fs.readdir(dir)).sort(CMP)) {
-        offsets.push(Checkpoint.decodeOffset(format as ID, name));
-      }
-      checkpoints.set(format as ID, offsets);
+    const checkpoints: Map<ID, Batch[]> = new Map();
+    const reads = [];
+    for (const raw of await fs.readdir(this.dir)) {
+      const format = raw as ID;
+      reads.push(this.list(format).then(batches => {
+        checkpoints.set(format, batches);
+      }));
     }
+    await Promise.all(reads);
     return checkpoints;
   }
 
@@ -140,10 +140,14 @@ export class CheckpointFileStorage implements CheckpointStorage {
     return path.resolve(this.dir, format, `${b}-${e}.json.gz`);
   }
 
-  private fromName(format: ID, filename: string): [Offset, Offset] {
+  private fromName(format: ID, filename: string) {
     filename = path.basename(filename, '.json.gz');
     const [b, e] = filename.split('-');
-    return [Checkpoint.decodeOffset(format, b), Checkpoint.decodeOffset(format, e)];
+    return {
+      format,
+      begin: Checkpoint.decodeOffset(format, b),
+      end: Checkpoint.decodeOffset(format, e)
+    };
   }
 }
 
@@ -164,10 +168,9 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
   }
 
   async offsets() {
-    const checkpoints: Map<ID, Offset[]> = new Map();
+    const checkpoints: Map<ID, Batch[]> = new Map();
     for (const [format, data] of this.checkpoints.entries()) {
-      const offsets =
-          Object.keys(data).sort(CMP).map(name => Checkpoint.decodeOffset(format, name));
+      const offsets = Object.keys(data).sort(CMP).map(name => this.fromName(format, name));
       checkpoints.set(format, offsets);
     }
     return checkpoints;
@@ -188,8 +191,12 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
     return `${b}-${e}`;
   }
 
-  private fromName(format: ID, name: string): [Offset, Offset] {
+  private fromName(format: ID, name: string) {
     const [b, e] = name.split('-');
-    return [Checkpoint.decodeOffset(format, b), Checkpoint.decodeOffset(format, e)];
+    return {
+      format,
+      begin: Checkpoint.decodeOffset(format, b),
+      end: Checkpoint.decodeOffset(format, e)
+    };
   }
 }

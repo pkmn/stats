@@ -174,7 +174,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   // to arbitrary precision with a run which does not use batches at all. For the best accuracy we
   // should be adding up the smallest values first, but this requires deeper architectural changes
   // and has performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
-  for (const [begin, end] of await checkpointStorage.list(format)) {
+  for (const {begin, end} of await checkpointStorage.list(format)) {
     if (n >= config.maxFiles) {
       for (const checkpoint of await Promise.all(checkpoints)) {
         stats = state.combineTagged(checkpoint.stats, stats);
