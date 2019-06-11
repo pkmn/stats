@@ -15,29 +15,50 @@ class AnonCheckpoint extends Checkpoint {
   }
 }
 
+// '--formats=gen7ou|0.7||true,gen6ou||stableSalt,gen7randombattle|||0|1,gen4uu'
+interface AnonConfiguration extends Configuration {
+  formats: string;
+}
+
 interface AnonOptions {
-  // TODO
+  sample?: number;
+  salt?: string;
+  publicOnly?: boolean;
+  teamsOnly?: boolean;
 }
 
-interface WorkerConfiguration extends Configuration {
-  formats: ID[];
-  options: AnonOptions;
+function parse(args: string) {
+  const options: Map<ID, AnonOptions> = new Map();
+  const TRUE = ['true', 'True', 'T', 't', '1'];
+  for (const arg in args.split(',')) {
+    const [format, sample, salt, publicOnly, teamsOnly] = arg.split('|');
+    options.set(toID(format), {
+      sample: Number(sample) || undefined,
+      salt,
+      publicOnly: TRUE.includes(publicOnly),
+      teamsOnly: TRUE.includes(teamsOnly),
+    });
+  }
+  return options;
 }
 
-export async function init(config: WorkerConfiguration) {
-  // if (config.dryRun) return;
+export async function init(config: AnonConfiguration) {
+  //if (config.dryRun) return;
   // TODO set up mirror directory structure...
 }
 
-export function accept(config: WorkerConfiguration) {
-  return (format: ID) => config.formats.includes(format);
+export function accept(config: AnonConfiguration) {
+  const options = parse(config.formats);
+  return (format: ID) => options.has(format);
 }
 
-async function apply(batches: Batch[], config: WorkerConfiguration) {
+async function apply(batches: Batch[], config: AnonConfiguration) {
+  const formats = parse(config.formats);
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
   for (const {format, begin, end, size} of batches) {
     const data = Data.forFormat(format);
+    const options = formats.get(format)!;
 
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
     let processed: Array<Promise<void>> = [];
@@ -49,7 +70,7 @@ async function apply(batches: Batch[], config: WorkerConfiguration) {
         processed = [];
       }
 
-      processed.push(processLog(logStorage, data, log, config.options, config.dryRun));
+      processed.push(processLog(logStorage, data, log, options, config.dryRun));
     }
     if (processed.length) {
       LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
