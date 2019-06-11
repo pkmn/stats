@@ -13,9 +13,12 @@ export interface LogStorage {
 }
 
 export class LogStorage {
-  static connect(config: {logs: string}): LogStorage {
+  static connect(config: {logs: string|LogStorage}): LogStorage {
     // TODO: support DatabaseStorage as well
-    return new LogFileStorage(config.logs);
+    if (typeof config.logs === 'string') {
+      return new LogFileStorage(config.logs);
+    }
+    return config.logs;
   }
 }
 
@@ -85,7 +88,7 @@ export class CheckpointStorage {
   }
 }
 
-export class CheckpointFileStorage implements CheckpointStorage {
+class CheckpointFileStorage implements CheckpointStorage {
   private dir: string;
 
   constructor(dir?: string) {
@@ -140,54 +143,6 @@ export class CheckpointFileStorage implements CheckpointStorage {
   private fromName(format: ID, filename: string) {
     filename = path.basename(filename, '.json.gz');
     const [b, e] = filename.split('-');
-    return {
-      format,
-      begin: Checkpoint.decodeOffset(format, b),
-      end: Checkpoint.decodeOffset(format, e)
-    };
-  }
-}
-
-export class CheckpointMemoryStorage implements CheckpointStorage {
-  readonly checkpoints: Map<ID, Map<string, string>> = new Map();
-
-  async init() {}
-
-  async prepare(format: ID) {
-    this.checkpoints.set(format, new Map());
-  }
-
-  async list(format: ID) {
-    const names = Object.values(this.checkpoints.get(format)!).sort(CMP);
-    return names.map(name => this.fromName(format, name));
-  }
-
-  async offsets() {
-    const checkpoints: Map<ID, Batch[]> = new Map();
-    for (const [format, data] of this.checkpoints.entries()) {
-      const offsets = Object.keys(data).sort(CMP).map(name => this.fromName(format, name));
-      checkpoints.set(format, offsets);
-    }
-    return checkpoints;
-  }
-
-  async read(format: ID, begin: Offset, end: Offset) {
-    return this.checkpoints.get(format)!.get(this.toName(begin, end))!;
-  }
-
-  async write(checkpoint: Checkpoint) {
-    const checkpoints = this.checkpoints.get(checkpoint.format)!;
-    checkpoints.set(this.toName(checkpoint.begin, checkpoint.end), checkpoint.serialize());
-  }
-
-  private toName(begin: Offset, end: Offset) {
-    const b = Checkpoint.encodeOffset(begin);
-    const e = Checkpoint.encodeOffset(end);
-    return `${b}-${e}`;
-  }
-
-  private fromName(format: ID, name: string) {
-    const [b, e] = name.split('-');
     return {
       format,
       begin: Checkpoint.decodeOffset(format, b),

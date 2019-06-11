@@ -68,7 +68,7 @@ export const Checkpoints = new class {
     const writes: Array<Promise<void>> = [];
     for (const raw of (await logStorage.list())) {
       const format = raw as ID;
-      if (accept(format)) continue;
+      if (!accept(format)) continue;
 
       const checkpoints = existing.get(format) || [];
       if (!checkpoints.length && !config.dryRun) writes.push(checkpointStorage.prepare(format));
