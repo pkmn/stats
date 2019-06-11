@@ -27,7 +27,8 @@ export async function main(options: Options) {
 
   const batches: Array<{data: Batch, size: number}> = [];
   for (const format of formats.values()) {
-    batches.push(...format.batches.map(batch => ({data: batch, size: batch.size})));
+    batches.push(...format.batches.map(
+        batch => ({data: batch, size: batch.end.index.global - batch.begin.index.global})));
   }
   const sizes: Array<{data: ID, size: number}> = [];
   for (const [format, {size}] of formats.entries()) {

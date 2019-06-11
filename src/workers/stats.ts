@@ -88,11 +88,12 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
 
-  for (const {format, begin, end, size} of batches) {
+  for (const {format, begin, end} of batches) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
 
+    const size = end.index.global - begin.index.global;
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
     let processed: Array<Promise<void>> = [];
     for (const log of await logStorage.select(format, begin, end)) {

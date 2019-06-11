@@ -56,10 +56,11 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
   const formats = parse(config.formats);
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
-  for (const {format, begin, end, size} of batches) {
+  for (const {format, begin, end} of batches) {
     const data = Data.forFormat(format);
     const options = formats.get(format)!;
 
+    const size = end.index.global - begin.index.global;
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
     let processed: Array<Promise<void>> = [];
 

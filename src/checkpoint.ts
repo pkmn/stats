@@ -13,7 +13,6 @@ export interface Batch {
   format: ID;
   begin: Offset;
   end: Offset;
-  size: number;
 }
 
 export abstract class Checkpoint {
@@ -131,38 +130,44 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets?: 
   return {size, batches};
 }
 
-function chunk(format: ID, logs: string[], n: number, last?: Batch, start = 0, finish?: number) {
+function chunk(
+    format: ID, day: string, logs: string[], n: number, last?: Batch, start = 0, finish?: number) {
   const batches: Batch[] = [];
   if (!finish) finish = logs.length;
   if (!logs.length || start >= finish) return batches;
+  const globalIndex = last ? last.end.index.global : 0;
 
   // If the last batch wasn't complete, we'll try to add to it provided we can make a
   // contiguous range (not always possible in the face of errors or config changes).
-  if (last && last.size < n && start === 0) {
-    const i = n - last.size;
+  if (last && batchSize(last) < n && start === 0) {
+    let i = n - batchSize(last);
     if (i < finish) {
-      last.size = n;
-      last.end = Checkpoint.decodeOffset(format, logs[i]);
+      last.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
       start = i;
     } else {
-      last.size = finish;
-      last.end = Checkpoint.decodeOffset(format, logs[finish - 1]);
+      i = finish - 1;
+      last.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
       return batches;
     }
   }
 
-  let begin = Checkpoint.decodeOffset(format, logs[start]);
+  let begin = {day, log: logs[start], index: {local: start, global: globalIndex + start}};
   let i = start + n;
   for (; i < finish; i += n) {
-    const end = Checkpoint.decodeOffset(format, logs[i]);
-    batches.push({format, begin, end, size: n});
+    const end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+    batches.push({format, begin, end});
     begin = end;
   }
 
   if (i < finish) {
-    const end = Checkpoint.decodeOffset(format, logs[finish - 1]);
-    batches.push({format, begin, end, size: finish - i});
+    i = finish - 1;
+    const end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+    batches.push({format, begin, end});
   }
 
   return batches;
+}
+
+function batchSize(b: Batch) {
+  return b.end.index.global - b.begin.index.global;
 }
