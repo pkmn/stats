@@ -130,33 +130,36 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets?: 
   return {size, batches};
 }
 
+// Group the provided logs for the specified format and day into 'chunks' of at most size n,
+// between local indices into the logs array begin (inclusive) and finish (exclusive)
 function chunk(
     format: ID, day: string, logs: string[], n: number, last?: Batch, start = 0, finish?: number) {
   const batches: Batch[] = [];
   if (!finish) finish = logs.length;
   if (!logs.length || start >= finish) return batches;
   const globalIndex = last ? last.end.index.global : 0;
+  const lastSize = last ? globalIndex - last.begin.index.global : 0;
 
   // If the last batch wasn't complete, we'll try to add to it provided we can make a
   // contiguous range (not always possible in the face of errors or config changes).
-  if (last && batchSize(last) < n && start === 0) {
-    let i = n - batchSize(last);
+  if (lastSize && lastSize < n && start === 0) {
+    let i = n - lastSize - 1;
     if (i < finish) {
-      last.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
-      start = i;
+      last!.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+      start = i + 1;
     } else {
       i = finish - 1;
-      last.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+      last!.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
       return batches;
     }
   }
 
   let begin = {day, log: logs[start], index: {local: start, global: globalIndex + start}};
-  let i = start + n;
-  for (; i < finish; i += n) {
+  let i = start + n - 1;
+  for (; i < finish - 1; i += n) {
     const end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
     batches.push({format, begin, end});
-    begin = end;
+    begin = {day, log: logs[i + 1], index: {local: i + 1, global: globalIndex + i + 1}};
   }
 
   if (i < finish) {
@@ -166,8 +169,4 @@ function chunk(
   }
 
   return batches;
-}
-
-function batchSize(b: Batch) {
-  return b.end.index.global - b.begin.index.global;
 }
