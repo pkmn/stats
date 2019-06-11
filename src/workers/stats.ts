@@ -168,7 +168,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   let stats: state.TaggedStatistics|undefined = undefined;
   // Floating point math is commutative but *not* necessarily associative, meaning that we can
   // potentially get different results depending on the order we add the Stats in. The sorting
-  // CheckpointStorage#list does helps with stability, but there is no guarantee runs with 
+  // CheckpointStorage#list does helps with stability, but there is no guarantee runs with
   // different batch sizes/checkpoints will return the same results or that they will be equivalent
   // to arbitrary precision with a run which does not use batches at all. For the best accuracy we
   // should be adding up the smallest values first, but this requires deeper architectural changes

@@ -43,7 +43,7 @@ function parse(args: string) {
 }
 
 export async function init(config: AnonConfiguration) {
-  //if (config.dryRun) return;
+  // if (config.dryRun) return;
   // TODO set up mirror directory structure...
 }
 

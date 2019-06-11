@@ -43,13 +43,13 @@ class LogFileStorage implements LogStorage {
 
       const logs = await this.list(format, day);
       if (begin && day === begin.day) {
-        const n = (end && day === end.day) ? end.index : logs.length;
-        for (let i = begin.index; i < n; i++) {
+        const n = (end && day === end.day) ? end.index.local : logs.length;
+        for (let i = begin.index.local; i < n; i++) {
           range.push(path.join(format, day, logs[i]));
         }
       } else if (end && day === end.day) {
         // NOTE: If begin is for the same day we would handle it above.
-        for (let i = 0; i < end.index; i++) {
+        for (let i = 0; i < end.index.local; i++) {
           range.push(path.join(format, day, logs[i]));
         }
       } else {

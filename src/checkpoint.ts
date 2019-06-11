@@ -6,7 +6,7 @@ import {CheckpointStorage, LogStorage} from './storage';
 export interface Offset {
   day: string;
   log: string;
-  index: number;
+  index: {local: number; global: number};
 }
 
 export interface Batch {
@@ -32,15 +32,17 @@ export abstract class Checkpoint {
   static encodeOffset(offset: Offset) {
     const {log, day, index} = offset;
     const i = log.length - 9;
-    return day.replace(/-/g, '') + '_' + log.slice(log.lastIndexOf('-', i) + 1, i) + `_${index}`;
+    return day.replace(/-/g, '') + '_' + log.slice(log.lastIndexOf('-', i) + 1, i) +
+        `_${index.local}` +
+        `_${index.global}`;
   }
 
   static decodeOffset(format: ID, name: string) {
-    const [day, log, index] = name.split('_');
+    const [day, log, il, ig] = name.split('_');
     return {
       day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}`,
       log: `battle-${format}-${log}.log.json`,
-      index: Number(index),
+      index: {local: Number(il), global: Number(ig)},
     };
   }
 
@@ -87,7 +89,8 @@ export const Checkpoints = new class {
   }
 
   formatOffsets(begin: Offset, end: Offset) {
-    return `${begin.day}/${begin.log} (${begin.index}) - ${end.day}/${end.log} (${end.index})`;
+    return `${begin.day}/${begin.log} (${begin.index.global}) ` +
+        `- ${end.day}/${end.log} (${end.index.global})`;
   }
 };
 
