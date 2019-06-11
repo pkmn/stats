@@ -17,9 +17,12 @@
     "stats": "file:stats"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "gts": "^0.9.0",
+    "jest": "^24.8.0",
     "source-map-support": "^0.5.12",
     "subpkg": "^0.0.1",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.4.3"
   },
   "optionalDependencies": {
@@ -30,7 +33,7 @@
     "clean": "subpkg run clean && gts clean",
     "compile": "subpkg run compile && tsc -p .",
     "fix": "subpkg run fix && gts fix",
-    "test": "subpkg run test",
+    "test": "subpkg run test && jest",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run check",

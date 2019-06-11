@@ -77,14 +77,11 @@ export interface CheckpointStorage {
 }
 
 export class CheckpointStorage {
-  static connect(config: {checkpoints?: string|Symbol}): CheckpointStorage {
+  static connect(config: {checkpoints?: string|CheckpointStorage}): CheckpointStorage {
     if (!config.checkpoints || typeof config.checkpoints === 'string') {
       return new CheckpointFileStorage(config.checkpoints);
     }
-    if (config.checkpoints === CheckpointMemoryStorage.MEMORY) {
-      return new CheckpointMemoryStorage();
-    }
-    throw new TypeError(`Invalid checkpoints argument: '${config.checkpoints}'`);
+    return config.checkpoints;
   }
 }
 
@@ -152,8 +149,6 @@ export class CheckpointFileStorage implements CheckpointStorage {
 }
 
 export class CheckpointMemoryStorage implements CheckpointStorage {
-  static readonly MEMORY = Symbol('memory');
-
   readonly checkpoints: Map<ID, Map<string, string>> = new Map();
 
   async init() {}

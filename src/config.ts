@@ -24,7 +24,7 @@ const BATCH_SIZE = 8192;
 export interface Configuration {
   logs: string;
   worker: 'stats'|'anon';
-  checkpoints?: string|Symbol;
+  checkpoints?: string;
   numWorkers: number;
   maxFiles: number;
   batchSize: number;
