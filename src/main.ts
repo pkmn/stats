@@ -25,14 +25,14 @@ export async function main(options: Options) {
   LOG('Splitting formats into batches');
   const formatBatches = await Checkpoints.restore(config, config.accept);
 
+  const batchSize = (b: Batch) => b.end.index.global - b.begin.index.global + 1;
   const allBatches: Array<{data: Batch, size: number}> = [];
   for (const batches of formatBatches.values()) {
-    allBatches.push(...batches.map(
-        batch => ({data: batch, size: batch.end.index.global - batch.begin.index.global})));
+    allBatches.push(...batches.map(batch => ({data: batch, size: batchSize(batch)})));
   }
   const allSizes: Array<{data: ID, size: number}> = [];
   for (const [format, batches] of formatBatches.entries()) {
-    const size = batches.reduce((a, b) => a + (b.end.index.global - b.begin.index.global), 0);
+    const size = batches.reduce((sum, batch) => sum + batchSize(batch), 0);
     allSizes.push({data: format, size});
   }
   if (LOG()) {

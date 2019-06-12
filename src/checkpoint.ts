@@ -60,6 +60,7 @@ export const Checkpoints = new class {
     let existing: Map<ID, Batch[]> = new Map();
     try {
       existing = await checkpointStorage.offsets();
+      //console.log(existing);
     } catch (err) {
       if (!config.dryRun) throw err;
     }
@@ -91,36 +92,62 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
   const batches: Batch[] = [];
   let o = 0;
 
+  let last: Batch|undefined = undefined;
+  let index = {local:0, global: 0};
+  const updateIndex = (b: Batch) => {
+    index.local = b.end.index.local + 1;
+    index.global = b.end.index.global + 1;
+    return true;
+  };
   for (const day of await logStorage.list(format)) {
     const logs = await logStorage.list(format, day);
 
-    let i = 0;
+    console.log(day, o, index);
+
+    index.local = 0;
+
     // If we have existing offsets from checkpoints, iterate through until we find the ones
     // from this day's logs, and then fill in any gaps that may exist.
-    for (; o < offsets.length && offsets[o].begin.day <= day && day < offsets[o].end.day; o++) {
-      // This shouldn't really happen, as it would indicate that some logs were deleted...
-      if (offsets[i].begin.day < day) continue;
-
+    for (; o < offsets.length && offsets[o].begin.day >= day && day <= offsets[o].end.day; o++) {
       // Now we're looking at an offset for the current day - we could need to process logs before
       // or after it and before the next offset (gated by previous and next offsets as well as day
       // boundaries)
       const current = offsets[o];
-      if (o > 0 && offsets[o - 1].end.day === day) {
+      console.log('CURRENT', current);
+      let updated = false;
+      if (o === 0) {
+        // Fill in between the start and the current offset.
+        console.log('CASE BEFORE');
+        const before = chunk(format, day, logs, n, index.global, last, 0, current.begin.index.local);
+        if (before.length) {
+          console.log(before.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
+          batches.push(...before);
+          last = before[before.length - 1];
+          updated = updateIndex(last);
+        }
+      } else if (o > 0 && offsets[o - 1].end.day === day) {
+        // Fill in between the previous and current offset.
+        console.log('CASE BETWEEN');
         const prev = offsets[o - 1];
-        const last = batches.length ? batches[batches.length - 1] : undefined;
-        batches.push(...chunk(
-            format, day, logs, n, last, prev.end.index.local + 1, current.begin.index.local));
-      }
-      i = current.end.index.local + 1;  // TODO make sure dont go too far
-      if (o < offsets.length - 1 && offsets[o + 1].begin.day === day) {
-        const next = offsets[o + 1];
-        const last = batches.length ? batches[batches.length - 1] : undefined;
-        batches.push(...chunk(format, day, logs, n, last, i, next.begin.index.local));
-        i = next.end.index.local + 1;  // TODO make sure dont go too far
-      }
+        const between = chunk(
+            format, day, logs, n, index.global, undefined, prev.end.index.local + 1, current.begin.index.local);
+        if (between.length) {
+          console.log(between.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
+          batches.push(...between);
+          last = between[between.length - 1];
+          updated = updateIndex(last);
+        }
+      } 
+
+      if (!updated) updateIndex(current);
     }
-    const last = batches.length ? batches[batches.length - 1] : undefined;
-    batches.push(...chunk(format, day, logs, n, last, i));
+    const latest = chunk(format, day, logs, n, index.global, last, index.local);
+    if (latest.length) {
+      console.log(latest.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
+      batches.push(...latest)
+      last = latest[latest.length - 1];
+      index.global = last.end.index.global + 1;
+    }
   }
 
   return batches;
@@ -129,40 +156,50 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
 // Group the provided logs for the specified format and day into 'chunks' of at most size n,
 // between local indices into the logs array begin (inclusive) and finish (exclusive)
 function chunk(
-    format: ID, day: string, logs: string[], n: number, last?: Batch, start = 0, finish?: number) {
+    format: ID, day: string, logs: string[], n: number, index: number, last?: Batch, start = 0, finish?: number) {
   const batches: Batch[] = [];
-  finish = Math.min(finish || logs.length, logs.length);
-  if (start >= finish) return batches;
-  const globalIndex = last ? last.end.index.global : 0;
-  const lastSize = last ? globalIndex - last.begin.index.global : 0;
+  finish = Math.min(typeof finish === 'number' ? finish : logs.length, logs.length);
+  console.log('CHUNK', format, day, logs.length, n, index, last, start, finish);
+  if (start >= finish) {
+    console.log('START >= FINISH', start, finish);
+    return batches;
+  }
+  const lastSize = last ? last.end.index.global - last.begin.index.global + 1 : 0;
 
   // If the last batch wasn't complete, we'll try to add to it provided we can make a
   // contiguous range (not always possible in the face of errors or config changes).
   if (lastSize && lastSize < n && start === 0) {
     let i = n - lastSize - 1;
+    console.log('HULLO', i);
     if (i < finish) {
-      last!.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+      console.log('MOD 1');
+      last!.end = {day, log: logs[i], index: {local: i, global: index + i}};
+      console.log('EXTENDED LAST', last);
       start = i + 1;
+      index = index + start;
     } else {
+      console.log('MOD 2');
       i = finish - 1;
-      last!.end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+      last!.end = {day, log: logs[i], index: {local: i, global: index + i}};
+      console.log('EXTENDED LAST', last);
       return batches;
     }
   }
+  console.log({start, finish});
+  if (start >= finish) return batches;
 
-  let begin = {day, log: logs[start], index: {local: start, global: globalIndex + start}};
+
+  let begin = {day, log: logs[start], index: {local: start, global: index}};
   let i = start + n - 1;
   for (; i < finish - 1; i += n) {
-    const end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
+    const end = {day, log: logs[i], index: {local: i, global: index + i}};
+    //console.log('NEW BATCH', begin, end);
     batches.push({format, begin, end});
-    begin = {day, log: logs[i + 1], index: {local: i + 1, global: globalIndex + i + 1}};
+    begin = {day, log: logs[i + 1], index: {local: i + 1, global: index + i + 1}};
   }
-
-  if (i < finish) {
-    i = finish - 1;
-    const end = {day, log: logs[i], index: {local: i, global: globalIndex + i}};
-    batches.push({format, begin, end});
-  }
+  i = finish - 1;
+  const end = {day, log: logs[i], index: {local: i, global: index + i}};
+  batches.push({format, begin, end});
 
   return batches;
 }
