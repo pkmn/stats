@@ -123,24 +123,44 @@ function restoreDay(
   while (o < offsets.length) {
     const offset = offsets[o];
     if (/* offset.begin.day < day && */ offset.end.day < day) {
+      // The offset exists for a day entirely before our day - this shouldn't
+      // really happen unless logs were deleted, but we can't do anything with it.
       o++;
-    } else if (offset.begin.day < day && offset.end.day === day) {
-      // TODO
-    } else if (offset.begin.day === day && offset.end.day === day) {
-      // TODO
     } else if (offset.begin.day < day && offset.end.day > day) {
+      // The offset fully covers this day, so we return immediately. We set last to
+      // undefined to make sure we don't try to extend last *through* the offset.
       return {o, last: undefined, batches};
-    } else if (offset.begin.day === day && offset.end.day > day) {
-      // TODO
+    } else if (offset.begin.day < day && offset.end.day === day) {
+      // If there is another offset for the day it will fill the gap between our
+      // end and itself, otherwise we will break and fill to the end of the day.
+      o++;
+      index = offset.end.index.global + 1; // TODO
+    } else if (offset.begin.day === day && offset.end.day >= day) {
+      // We fill in between the previous offset extending into this day *or* the start
+      // of the day. Filling in after this offset is handled either by the the next
+      // offset to end up in this branch or when we break from this loop and fill to the
+      // end of the day.
+      const start = (o > 0 && offsets[o - 1].end.day === day)
+        ? offsets[o - 1].end.index.local + 1 : 0;
+      batches.push(...chunk(format, day, logs, n, index, last, start, offset.begin.index.local));
+      // Given we end a the beginning of the checkpoint we need to unset last to make
+      // sure we don't try to extend *through* offset on the next iteration.
+      last = undefined;
+      o++;
+      index = offset.end.index.global + 1; // TODO
     } else /* if (offset.begin.day > day && offset.end.day > day) */ {
+      // If the offset overshoots our day we break and just fill to the end, taking care
+      // to not move on to the next offset so that the next day begins searching here.
       break;
     }
   }
 
   const latest = chunk(format, day, logs, n, index, last, i);
+  // last may have been mutated by chunk ('extended'), so even if we dont add to
+  // batches it should still reflect the last batch correctly.
   if (latest.length) {
     batches.push(...latest);
-    last = latest[latest.length - 1]; // TODO: when to update last?
+    last = latest[latest.length - 1];
   }
 
   return {o, last, batches};
