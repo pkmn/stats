@@ -1,0 +1,19 @@
+{
+  "extends": "gts/tslint.json",
+  "linterOptions": {
+    "exclude": ["**/*.json"]
+  },
+  "rules": {
+    "forin": false,
+    "variable-name": false,
+    "new-parens": false,
+    "switch-default": false,
+    "no-floating-promises": true,
+    "no-any": false,
+    "prefer-const": {
+      "options": {
+        "destructuring": "all"
+      }
+    }
+  }
+}

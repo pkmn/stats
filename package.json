@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^11.13.4",
+    "anon": "file:anon",
     "ps": "file:ps",
     "stats": "file:stats"
   },
@@ -40,6 +41,7 @@
     "postinstall": "subpkg install"
   },
   "subPackages": [
+    "anon",
     "ps",
     "stats"
   ]

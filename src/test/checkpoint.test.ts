@@ -145,15 +145,15 @@ describe('Checkpoints', () => {
         expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(Math.ceil(6 / batchSize));
       }
     });
-    
+
     test('with checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
-      //mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
-      //mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
-      //mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
+      // mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
+      // mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
+      // mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
       mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
-      //mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
+      // mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
 
       mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_0_0_0-20180201_6_6_6');
       mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_11_11_11-20180203_20_6_19');
@@ -166,10 +166,10 @@ describe('Checkpoints', () => {
       } as unknown as Configuration;
 
       const formatBatches = await Checkpoints.restore(config, () => true);
-      //expect(formatBatches.size).toBe(5);
-      //expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(30)); // TODO
-      //expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
-      //expect(formatBatches.get('gen5ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
+      // expect(formatBatches.size).toBe(5);
+      // expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(30)); // TODO
+      // expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
+      // expect(formatBatches.get('gen5ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
 
       const gen4ou = formatBatches.get('gen4ou' as ID)!;
       expect(gen4ou).toHaveLength(9);
@@ -178,7 +178,7 @@ describe('Checkpoints', () => {
       expect(gen4ou[1].begin.index.global).toBe(20);
       expect(gen4ou[1].end.index.global).toBe(29);
 
-      //expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(2);
+      // expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(2);
     });
   });
 

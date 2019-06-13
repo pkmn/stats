@@ -1,0 +1,35 @@
+{
+  "name": "anon",
+  "version": "0.0.1",
+  "description": "Logic for anonymizing Pokémon Showdown battle simulator logs",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkmn-cc/Pokemon-Showdown-Stats.git"
+  },
+  "author": "Kirk Scheibelhut",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^11.13.4",
+    "ps": "file:../ps"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "gts": "^0.9.0",
+    "jest": "^24.8.0",
+    "source-map-support": "^0.5.12",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.3"
+  },
+  "scripts": {
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc -p .",
+    "fix": "gts fix",
+    "test": "jest",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run check"
+  }
+}
