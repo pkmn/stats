@@ -102,6 +102,7 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
     const logs = await logStorage.list(format, day);
     index.local = 0;
 
+    /*
     // If we have existing offsets from checkpoints, iterate through until we find the ones
     // from this day's logs, and then fill in any gaps that may exist.
     for (; o < offsets.length && offsets[o].begin.day >= day && day <= offsets[o].end.day; o++) {
@@ -133,10 +134,11 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
       }
 
       if (!updated) updateIndex(current);
-    }
+    }*/
 
     const latest = chunk(format, day, logs, n, index.global, last, index.local);
     if (latest.length) {
+      console.log(latest.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
       batches.push(...latest);
       last = latest[latest.length - 1];
       index.global = last.end.index.global + 1;
@@ -153,6 +155,7 @@ function chunk(
     finish?: number) {
   const batches: Batch[] = [];
   finish = Math.min(typeof finish === 'number' ? finish : logs.length, logs.length);
+  console.log('CHUNK', {day, n, index, start, finish, last});
   if (start >= finish) return batches;
   const lastSize = last ? last.end.index.global - last.begin.index.global + 1 : 0;
 
@@ -162,16 +165,17 @@ function chunk(
     let i = n - lastSize - 1;
     if (i < finish - 1) {
       last!.end = {day, log: logs[i], index: {local: i, global: index + i}};
+      console.log('EXTEND LAST1', last!.end);
       start = i + 1;
-      index = index + start;
     } else {
       i = finish - 1;
       last!.end = {day, log: logs[i], index: {local: i, global: index + i}};
+      console.log('EXTEND LAST2', last!.end);
       return batches;
     }
   }
 
-  let begin = {day, log: logs[start], index: {local: start, global: index}};
+  let begin = {day, log: logs[start], index: {local: start, global: index + start}};
   let i = start + n - 1;
   for (; i < finish - 1; i += n) {
     const end = {day, log: logs[i], index: {local: i, global: index + i}};
