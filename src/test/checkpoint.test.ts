@@ -146,7 +146,7 @@ describe('Checkpoints', () => {
       }
     });
 
-    test.skip('with checkpoints', async () => {
+    test('with checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
       // mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});

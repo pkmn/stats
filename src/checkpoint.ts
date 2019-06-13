@@ -94,15 +94,18 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
   let last: Batch|undefined = undefined;
   const index = {local: 0, global: 0};
   const updateIndex = (b: Batch) => {
-    index.local = b.end.index.local + 1;
-    index.global = b.end.index.global + 1;
+    const i = b.end.index;
+    console.log('UPDATE INDEX', {index, i});
+    index.local = i.local + 1;
+    index.global = i.global + 1;
     return true;
   };
   for (const day of await logStorage.list(format)) {
     const logs = await logStorage.list(format, day);
     index.local = 0;
 
-    /*
+    console.log({day, o});
+
     // If we have existing offsets from checkpoints, iterate through until we find the ones
     // from this day's logs, and then fill in any gaps that may exist.
     for (; o < offsets.length && offsets[o].begin.day >= day && day <= offsets[o].end.day; o++) {
@@ -116,6 +119,7 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
         const before =
             chunk(format, day, logs, n, index.global, last, 0, current.begin.index.local);
         if (before.length) {
+          console.log('BEFORE', before.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
           batches.push(...before);
           last = before[before.length - 1];
           updated = updateIndex(last);
@@ -127,6 +131,7 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
             format, day, logs, n, index.global, undefined, prev.end.index.local + 1,
             current.begin.index.local);
         if (between.length) {
+          console.log('BETWEEN', between.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
           batches.push(...between);
           last = between[between.length - 1];
           updated = updateIndex(last);
@@ -134,11 +139,11 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
       }
 
       if (!updated) updateIndex(current);
-    }*/
+    }
 
     const latest = chunk(format, day, logs, n, index.global, last, index.local);
     if (latest.length) {
-      console.log(latest.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
+      console.log('LATEST', latest.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
       batches.push(...latest);
       last = latest[latest.length - 1];
       index.global = last.end.index.global + 1;
