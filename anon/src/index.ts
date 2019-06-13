@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import {PokemonSet} from 'ps';
+import {Data, PokemonSet} from 'ps';
 
 export interface Log {
   id: string;
@@ -57,7 +57,7 @@ export interface Rating {
 }
 
 export const Anonymizer = new class {
-  anonymize(raw: Log, salt?: string, index = 0) {
+  anonymize(raw: Log, format?: string|Data, salt?: string, index = 0) {
     const p1 = salt ? hash(raw.p1, salt) : 'Player 1';
     const p2 = salt ? hash(raw.p2, salt) : 'Player 2';
     const winner = raw.winner === raw.p1 ? p1 : raw.winner === raw.p2 ? p2 : '';
@@ -73,17 +73,18 @@ export const Anonymizer = new class {
       p1rating,
       p2rating,
       timestamp: index,
-      p1team: this.anonymizeTeam(raw.p1team, salt),
-      p2team: this.anonymizeTeam(raw.p2team, salt),
+      p1team: this.anonymizeTeam(raw.p1team, format, salt),
+      p2team: this.anonymizeTeam(raw.p2team, format, salt),
       p1,
       p2,
       winner,
     };
   }
 
-  anonymizeTeam(team: Array<PokemonSet<string>>, salt?: string) {
+  anonymizeTeam(team: Array<PokemonSet<string>>, format?: string|Data, salt?: string) {
+    const data = Data.forFormat(format);
     for (const pokemon of team) {
-      pokemon.name = salt ? hash(pokemon.name, salt) : pokemon.species;
+      pokemon.name = salt ? hash(pokemon.name, salt) : data.getSpecies(pokemon.species)!.species;
     }
     return team;
   }

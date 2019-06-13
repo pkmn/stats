@@ -60,6 +60,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
   const random = new Random(workerData.num);
   for (const {format, begin, end} of batches) {
     const options = formats.get(format)!;
+    const data = Data.forFormat(format);
 
     const size = end.index.global - begin.index.global;
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
@@ -73,7 +74,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
         processed = [];
       }
 
-      processed.push(processLog(logStorage, random, index, format, log, options, config.dryRun));
+      processed.push(processLog(logStorage, data, random, index, format, log, options, config.dryRun));
       index++;
     }
     if (processed.length) {
@@ -87,8 +88,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
 }
 
 async function processLog(
-    logStorage: LogStorage, random: Random, index: number, format: ID, log: string,
-    options: AnonOptions, dryRun?: boolean) {
+    logStorage: LogStorage, data: Data, random: Random, index: number, log: string, options: AnonOptions, dryRun?: boolean) {
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   if (options.sample && random.next() > options.sample) return;
@@ -98,12 +98,12 @@ async function processLog(
     if (options.teamsOnly) {
       for (const side of ['p1', 'p2']) {
         const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${side}team`], options.salt));
-        const name = `team-${format}-${index}.${side}.json`;
+        const name = `team-${data.format}-${index}.${side}.json`;
         // TODO: write
       }
     } else {
       const anonymized = JSON.stringify(Anonymizer.anonymize(raw, options.salt, index));
-      const name = `battle-${format}-${index}.log.json`;
+      const name = `battle-${data.format}-${index}.log.json`;
       // TODO: write
     }
   } catch (err) {
