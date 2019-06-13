@@ -74,7 +74,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
         processed = [];
       }
 
-      processed.push(processLog(logStorage, data, random, index, format, log, options, config.dryRun));
+      processed.push(processLog(logStorage, data, random, index, log, options, config.dryRun));
       index++;
     }
     if (processed.length) {
@@ -97,12 +97,12 @@ async function processLog(
     // TODO: options.publicOnly?
     if (options.teamsOnly) {
       for (const side of ['p1', 'p2']) {
-        const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${side}team`], options.salt));
+        const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt));
         const name = `team-${data.format}-${index}.${side}.json`;
         // TODO: write
       }
     } else {
-      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, options.salt, index));
+      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt, index));
       const name = `battle-${data.format}-${index}.log.json`;
       // TODO: write
     }

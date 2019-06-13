@@ -136,12 +136,14 @@ describe('Checkpoints', () => {
       const accept = (format: ID) => format !== 'gen5ou';
 
       for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
+      //for (const batchSize of [2]) {
         config.batchSize = batchSize;
         const formatBatches = await Checkpoints.restore(config, accept);
         expect(formatBatches.size).toBe(4);
         expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
         expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
         expect(formatBatches.get('gen4ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
+        //console.log(formatBatches.get('gen3ou' as ID)!.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
         expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(Math.ceil(6 / batchSize));
       }
     });
@@ -172,6 +174,7 @@ describe('Checkpoints', () => {
       // expect(formatBatches.get('gen5ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
 
       const gen4ou = formatBatches.get('gen4ou' as ID)!;
+      console.log(gen4ou.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
       expect(gen4ou).toHaveLength(9);
       expect(gen4ou[0].begin.index.global).toBe(7);
       expect(gen4ou[0].end.index.global).toBe(10);
