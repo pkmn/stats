@@ -63,7 +63,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
     const options = formats.get(format)!;
     const data = Data.forFormat(format);
 
-    const size = end.index.global - begin.index.global;
+    const size = end.index.global - begin.index.global + 1;
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
     let processed: Array<Promise<void>> = [];
 

@@ -51,9 +51,9 @@ export class Options {
 
   static toConfiguration(options: Options) {
     const numWorkers = options.numWorkers || (os.cpus().length - 1);
-    const maxFiles = (!options.maxFiles || options.maxFiles > 0) ?
-        Math.floor((options.maxFiles || MAX_FILES) / numWorkers) :
-        Infinity;
+    const maxFiles = typeof options.maxFiles !== 'number' ?
+        MAX_FILES :
+        options.maxFiles > 0 ? options.maxFiles : Infinity;
     const batchSize = (!options.batchSize || options.batchSize > 0) ?
         (options.batchSize || BATCH_SIZE) :
         Infinity;

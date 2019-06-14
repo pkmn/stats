@@ -93,7 +93,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
     const data = Data.forFormat(format);
     const stats = Stats.create();
 
-    const size = end.index.global - begin.index.global;
+    const size = end.index.global - begin.index.global + 1;
     LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
     let processed: Array<Promise<void>> = [];
     for (const log of await logStorage.select(format, begin, end)) {
@@ -111,7 +111,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
     }
     const checkpoint = new StatsCheckpoint(format, begin, end, stats);
     LOG(`Writing checkpoint <${checkpoint}>`);
-    if (!config.dryRun) await checkpointStorage.write(checkpoint);
+    await checkpointStorage.write(checkpoint);
   }
 }
 
@@ -133,7 +133,7 @@ async function processLog(
 async function combine(formats: ID[], config: StatsConfiguration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
-    const stats = await aggregate(config, format);
+    const stats = config.dryRun ? Stats.create() : await aggregate(config, format);
 
     const b = stats.battles;
     let writes = [];

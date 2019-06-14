@@ -36,7 +36,7 @@ export async function main(options: Options) {
   }
   if (LOG()) {
     const sorted = allSizes.sort((a, b) => b.size - a.size);
-    LOG(`\n${sorted.map(e => `  ${e.data}: ${e.size}`).join('\n')}\n`);
+    LOG(`\n\n${sorted.map(e => `  ${e.data}: ${e.size}`).join('\n')}\n`);
   }
 
   const workerConfig = Object.assign({}, config);
@@ -59,7 +59,7 @@ async function spawn(
 
   for (const [i, formats] of batches.entries()) {
     const workerData = {type, formats, config: workerConfig, num: i + 1};
-    LOG(`Creating ${type} worker:${workerData.num} to handle ${batches.length} format(s)`);
+    LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} format(s)`);
     workers.push(new Promise((resolve, reject) => {
       const worker = new Worker(path.join(WORKERS, `${workerConfig.worker}.js`), {workerData});
       worker.on('error', reject);
@@ -97,6 +97,7 @@ function capitalize(s: string) {
 
 async function init(options: Options) {
   const checkpoints = await CheckpointStorage.connect(options).init();
+  LOG(`Checkpoints storage: ${checkpoints}`);
   const config = Options.toConfiguration(options);
   config.checkpoints = checkpoints;
   const worker = await import(path.join(WORKERS, `${config.worker}.js`));

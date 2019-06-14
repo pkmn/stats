@@ -56,13 +56,7 @@ export const Checkpoints = new class {
     const checkpointStorage = CheckpointStorage.connect(config);
 
     const formats: Map<ID, Batch[]> = new Map();
-
-    let existing: Map<ID, Batch[]> = new Map();
-    try {
-      existing = await checkpointStorage.offsets();
-    } catch (err) {
-      if (!config.dryRun) throw err;
-    }
+    const existing: Map<ID, Batch[]> = await checkpointStorage.offsets();
 
     const reads: Array<Promise<void>> = [];
     const writes: Array<Promise<void>> = [];
@@ -70,9 +64,9 @@ export const Checkpoints = new class {
       const format = raw as ID;
       if (!accept(format)) continue;
 
-      const checkpoints = existing.get(format) || [];
-      if (!checkpoints.length && !config.dryRun) writes.push(checkpointStorage.prepare(format));
-      reads.push(restore(logStorage, config.batchSize, format, checkpoints).then(data => {
+      const checkpoints = existing.get(format);
+      if (!checkpoints) writes.push(checkpointStorage.prepare(format));
+      reads.push(restore(logStorage, config.batchSize, format, checkpoints || []).then(data => {
         formats.set(format, data);
       }));
     }

@@ -89,7 +89,7 @@ function usage(code) {
   out('');
   out('   -a/--all: include all checks and counters in moveset reports (default: false)');
   out('');
-  out('   -f/--anonymize=N: anonymize formats specified instead of processing stats (default: '')');
+  out('   -f/--anonymize=FORMATS: anonymize formats specified instead of processing stats (default: \'\')');
   out('');
   out ('NOTE: A negative value can be used to disable specific default sizes/limits.');
   process.exit(code);
@@ -103,7 +103,7 @@ const argv = require('minimist')(process.argv.slice(2), {
     logs: ['i', 'in', 'input', 'l', 'logs', 'src'],
     reports: ['o', 'out', 'output', 'r', 'dest'],
     checkpoints: ['c', 'checkpoint'],
-    numWorkers: ['p', 'parallel', 'workers', 'maxWorkers', 't', 'threads'],
+    numWorkers: ['p', 'parallel', 'w', 'workers', 'maxWorkers', 't', 'threads'],
     maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
     batchSize: ['b', 'perBatch', 'maxBatch', 'maxBatchSize'],
     debug: ['v', 'verbose'],

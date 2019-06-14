@@ -2,58 +2,9 @@ import {ID} from 'ps';
 
 import {Batch, Checkpoint, Checkpoints, Offset} from '../checkpoint';
 import {Configuration} from '../config';
-import {CheckpointStorage, LogStorage} from '../storage';
+import {CheckpointMemoryStorage, CheckpointStorage, LogStorage} from '../storage';
 
 const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
-
-class CheckpointMemoryStorage implements CheckpointStorage {
-  readonly checkpoints: Map<ID, Map<string, string>> = new Map();
-
-  async init() {
-    return '';
-  }
-
-  async prepare(format: ID) {
-    this.checkpoints.set(format, new Map());
-  }
-
-  async list(format: ID) {
-    const names = Array.from(this.checkpoints.get(format)!.values()).sort(CMP);
-    return names.map(name => this.fromName(format, name));
-  }
-
-  async offsets() {
-    const checkpoints: Map<ID, Batch[]> = new Map();
-    for (const [format, data] of this.checkpoints.entries()) {
-      const offsets = Array.from(data.keys()).sort(CMP).map(name => this.fromName(format, name));
-      checkpoints.set(format, offsets);
-    }
-    return checkpoints;
-  }
-
-  async read(format: ID, begin: Offset, end: Offset): Promise<string> {
-    throw new Error('Not supported');
-  }
-
-  async write(checkpoint: Checkpoint): Promise<void> {
-    throw new Error('Not supported');
-  }
-
-  private toName(begin: Offset, end: Offset) {
-    const b = Checkpoint.encodeOffset(begin);
-    const e = Checkpoint.encodeOffset(end);
-    return `${b}-${e}`;
-  }
-
-  private fromName(format: ID, name: string) {
-    const [b, e] = name.split('-');
-    return {
-      format,
-      begin: Checkpoint.decodeOffset(format, b),
-      end: Checkpoint.decodeOffset(format, e)
-    };
-  }
-}
 
 class LogMemoryStorage implements LogStorage {
   readonly logs: Map<ID, Map<string, string[]>> = new Map();
