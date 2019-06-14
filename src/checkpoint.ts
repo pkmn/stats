@@ -95,7 +95,7 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
   let last: Batch|undefined = undefined;
   for (const day of await logStorage.list(format)) {
     const logs = await logStorage.list(format, day);
-    
+
     const restored = restoreDay(logStorage, n, format, day, logs, i, offsets, o, last);
     batches.push(...restored.batches);
     o = restored.o;
@@ -107,19 +107,11 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
 }
 
 function restoreDay(
-  logStorage: LogStorage,
-  n: number,
-  format: ID,
-  day: string,
-  logs: string[],
-  index: number,
-  offsets: Batch[] = [],
-  o: number = 0,
-  last?: Batch
-) {
+    logStorage: LogStorage, n: number, format: ID, day: string, logs: string[], index: number,
+    offsets: Batch[] = [], o = 0, last?: Batch) {
   const batches: Batch[] = [];
 
-  let i = 0;
+  const i = 0;
   while (o < offsets.length) {
     const offset = offsets[o];
     if (/* offset.begin.day < day && */ offset.end.day < day) {
@@ -134,20 +126,20 @@ function restoreDay(
       // If there is another offset for the day it will fill the gap between our
       // end and itself, otherwise we will break and fill to the end of the day.
       o++;
-      index = offset.end.index.global + 1; // TODO
+      index = offset.end.index.global + 1;  // TODO
     } else if (offset.begin.day === day && offset.end.day >= day) {
       // We fill in between the previous offset extending into this day *or* the start
       // of the day. Filling in after this offset is handled either by the the next
       // offset to end up in this branch or when we break from this loop and fill to the
       // end of the day.
-      const start = (o > 0 && offsets[o - 1].end.day === day)
-        ? offsets[o - 1].end.index.local + 1 : 0;
+      const start =
+          (o > 0 && offsets[o - 1].end.day === day) ? offsets[o - 1].end.index.local + 1 : 0;
       batches.push(...chunk(format, day, logs, n, index, last, start, offset.begin.index.local));
       // Given we end a the beginning of the checkpoint we need to unset last to make
       // sure we don't try to extend *through* offset on the next iteration.
       last = undefined;
       o++;
-      index = offset.end.index.global + 1; // TODO
+      index = offset.end.index.global + 1;  // TODO
     } else /* if (offset.begin.day > day && offset.end.day > day) */ {
       // If the offset overshoots our day we break and just fill to the end, taking care
       // to not move on to the next offset so that the next day begins searching here.

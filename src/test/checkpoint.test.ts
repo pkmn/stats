@@ -123,10 +123,10 @@ describe('Checkpoints', () => {
     test('no checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
-      //mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
-      //mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
-      //mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
-      //mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
+      // mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
+      // mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
+      // mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
+      // mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
       mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
 
       const config = {
@@ -135,15 +135,17 @@ describe('Checkpoints', () => {
       } as unknown as Configuration;
       const accept = (format: ID) => format !== 'gen5ou';
 
-      //for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
+      // for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
       for (const batchSize of [2]) {
         config.batchSize = batchSize;
         const formatBatches = await Checkpoints.restore(config, accept);
-        //expect(formatBatches.size).toBe(4);
-        //expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
-        //expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
-        //expect(formatBatches.get('gen4ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
-        console.log(formatBatches.get('gen3ou' as ID)!.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
+        // expect(formatBatches.size).toBe(4);
+        // expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
+        // expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
+        // expect(formatBatches.get('gen4ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
+        console.log(
+            formatBatches.get('gen3ou' as ID)!.map(b => Checkpoints.formatOffsets(b.begin, b.end))
+                .join('\n'));
         expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(Math.ceil(6 / batchSize));
       }
     });

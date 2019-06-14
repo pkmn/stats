@@ -88,7 +88,8 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
 }
 
 async function processLog(
-    logStorage: LogStorage, data: Data, random: Random, index: number, log: string, options: AnonOptions, dryRun?: boolean) {
+    logStorage: LogStorage, data: Data, random: Random, index: number, log: string,
+    options: AnonOptions, dryRun?: boolean) {
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   if (options.sample && random.next() > options.sample) return;
@@ -97,7 +98,8 @@ async function processLog(
     // TODO: options.publicOnly?
     if (options.teamsOnly) {
       for (const side of ['p1', 'p2']) {
-        const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt));
+        const team =
+            JSON.stringify(Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt));
         const name = `team-${data.format}-${index}.${side}.json`;
         // TODO: write
       }
