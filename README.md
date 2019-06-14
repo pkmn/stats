@@ -11,10 +11,17 @@ Navigation: [Website][1] | [Server repository][2] | [Client repository][3] | [De
 Introduction
 ------------------------------------------------------------------------
 
-This is a repository for the code which processes input logs into usage statistics for Pokémon Showdown.
+This is a repository for the code which processes battle logs for Pokémon
+Showdown, primarily into [usage statistics reports][5]. A detailed design
+overview can be found at [pkmn.cc/stats-processing][6].
+
+  [5]: https://www.smogon.com/stats/
+  [6]: https://pkmn.cc/stats-processing
 
 Usage
 ------------------------------------------------------------------------
+
+### Stats
 
 To generate usage statistics reports from a Pokémon Showdown server's battle
 logs in batch, run:
@@ -62,6 +69,15 @@ tweaking the runtime overhead and behavior. To handle large amount of data, you
 will probably need to increase Node's heap size using `--max-old-space-size` and/or
 tweak the applications `--batchSize` and `--workingSetSize`.
 
+As outlined in the [design document][6], 'checkpoints' are periodically written
+during processing, allowing for incremental processing and for resilience in the
+face of crashes or restarts. `--checkpoints=path/to/checkpoints` can be used to
+specify where the checkpoints files should be written (or where the checkpoints
+from a previous run were written to, in the case of when you want a restart to
+restore from past progress).
+
+#### Tier Updates
+
 A Tier Update report based on past usage reports can also be produced:
 
     $ ./updates path/to/month1 <path/to/month2> <path/to/month3>
@@ -70,13 +86,36 @@ Where `updates` may be passed the paths to 1 - 3 past usage report directories,
 ordered from most recent to least recent.
 
 If you wish to construct different reports or tweak which reports are produced,
-refer to the subpackage housed under [stats/][5].
+refer to the subpackage housed under [stats/][7].
 
-  [5]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/tree/master/stats
+  [7]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/tree/master/stats
+
+### Anonymization
+
+`process` can also be used to anonymize battle logs if run with the
+`--anonymize` flag. This flag expects a comma separated list of formats to
+anonymize, potentially with additional configuration options per format
+separated with `:`:
+
+    <format>:<sample>:<salt>:<publicOnly>:<teamsOnly>
+
+Everything other than `<format>` can be left blank, and `:` is only required
+as needed to indicate which option is being changed. For example, the following
+will anoymize the `gen7ou` and `gen4uu` logs found at `path/to/logs`, only
+including 70% of the _public_ battles from `gen7ou` and writing the anonymized
+logs to `path/to/output/anonlogs`:
+
+    $ ./process path/to/logs path/to/output/anonlogs --anonymize=gen7ou:0.7::true,gen4uu
+
+The anonymization subpackage can be used separately in other programs and is
+housed under [anon/][8].
+
+  [8]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/tree/master/anon
+
 
 License
 ------------------------------------------------------------------------
 
-Pokémon Showdown's stats processing library is distributed under the terms of the [MIT License][6].
+Pokémon Showdown's stats processing library is distributed under the terms of the [MIT License][9].
 
-  [6]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/blob/master/LICENSE
+  [9]: https://github.com/pkmn-cc/Pokemon-Showdown-Stats/blob/master/LICENSE

@@ -16,7 +16,7 @@ class AnonCheckpoint extends Checkpoint {
   }
 }
 
-// '--formats=gen7ou|0.7||true,gen6ou||stableSalt,gen7randombattle|||0|1,gen4uu'
+// '--formats=gen7ou:0.7::true,gen6ou::stableSalt,gen7randombattle:::0:1,gen4uu'
 interface AnonConfiguration extends Configuration {
   formats: string;
 }
@@ -32,7 +32,7 @@ function parse(args: string) {
   const options: Map<ID, AnonOptions> = new Map();
   const TRUE = ['true', 'True', 'T', 't', '1'];
   for (const arg in args.split(',')) {
-    const [format, sample, salt, publicOnly, teamsOnly] = arg.split('|');
+    const [format, sample, salt, publicOnly, teamsOnly] = arg.split(':');
     options.set(toID(format), {
       sample: Number(sample) || undefined,
       salt,
@@ -46,6 +46,7 @@ function parse(args: string) {
 export async function init(config: AnonConfiguration) {
   // if (config.dryRun) return;
   // TODO set up mirror directory structure...
+  // NOTE: option.reports here is the output directory!
 }
 
 export function accept(config: AnonConfiguration) {

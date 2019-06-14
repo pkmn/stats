@@ -89,6 +89,8 @@ function usage(code) {
   out('');
   out('   -a/--all: include all checks and counters in moveset reports (default: false)');
   out('');
+  out('   -f/--anonymize=N: anonymize formats specified instead of processing stats (default: '')');
+  out('');
   out ('NOTE: A negative value can be used to disable specific default sizes/limits.');
   process.exit(code);
 }
@@ -107,6 +109,7 @@ const argv = require('minimist')(process.argv.slice(2), {
     debug: ['v', 'verbose'],
     dryRun: ['d', 'dry'],
     all: ['a'],
+    formats: ['f', 'anon', 'anonymize'],
   }
 });
 if (argv._.length) {
@@ -115,7 +118,6 @@ if (argv._.length) {
 }
 if (argv._.length > 2 || !argv.logs || !argv.reports) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
-
-argv.worker = 'stats';
+argv.worker = argv.formats ? 'anon' : 'stats';
 
 (async () => process.exit(await stats.process(argv)))().catch(err => console.error(err));
