@@ -187,7 +187,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     n++;
   }
   for (const checkpoint of await Promise.all(checkpoints)) {
-    stats = state.combineTagged(checkpoint.stats, stats);
+    stats = state.combineTagged(checkpoint, stats);
   }
 
   return state.deserializeTagged(stats!);
