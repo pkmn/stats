@@ -1,9 +1,8 @@
 import 'source-map-support/register';
 import './debug';
 
-import * as os from 'os';
 import * as path from 'path';
-import {ID, toID} from 'ps';
+import {ID} from 'ps';
 import {Worker} from 'worker_threads';
 
 import {Batch, Checkpoints} from './checkpoint';
@@ -44,6 +43,7 @@ export async function main(options: Options) {
   // If we have fewer formats remaining than the number of workers each can open more files.
   workerConfig.maxFiles =
       Math.floor(config.maxFiles / Math.min(formatBatches.size, config.numWorkers));
+  delete workerConfig.accept;
 
   let failures = await spawn('apply', workerConfig, partition(allBatches, config.numWorkers));
   // TODO: We could be immediately creating combine workers immediately after all batches for
@@ -80,7 +80,7 @@ async function spawn(
   }
 
   let failures = 0;
-  for (const [i, worker] of workers.entries()) {
+  for (const worker of workers) {
     try {
       await worker;
     } catch (err) {
@@ -96,8 +96,9 @@ function capitalize(s: string) {
 }
 
 async function init(options: Options) {
-  await CheckpointStorage.connect(options).init();
+  const checkpoints = await CheckpointStorage.connect(options).init();
   const config = Options.toConfiguration(options);
+  config.checkpoints = checkpoints;
   const worker = await import(path.join(WORKERS, `${config.worker}.js`));
   if (worker.init) await worker.init(config);
   if (worker.accept) config.accept = worker.accept(config);

@@ -9,7 +9,9 @@ const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compa
 class CheckpointMemoryStorage implements CheckpointStorage {
   readonly checkpoints: Map<ID, Map<string, string>> = new Map();
 
-  async init() {}
+  async init() {
+    return '';
+  }
 
   async prepare(format: ID) {
     this.checkpoints.set(format, new Map());

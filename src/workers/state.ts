@@ -1,4 +1,4 @@
-import {ID, PokemonSet} from 'ps';
+import {ID} from 'ps';
 import * as stats from 'stats';
 
 // TODO: we can avoid copies by just mutating directly

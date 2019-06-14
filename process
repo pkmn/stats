@@ -118,5 +118,4 @@ if (argv.debug) process.env.DEBUG = +argv.verbose;
 
 argv.worker = 'stats';
 
-// tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(argv)))();
+(async () => process.exit(await stats.process(argv)))().catch(err => console.error(err));

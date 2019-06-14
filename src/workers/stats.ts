@@ -110,7 +110,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
       await Promise.all(processed);
     }
     const checkpoint = new StatsCheckpoint(format, begin, end, stats);
-    LOG(`Writing checkpoint '${checkpoint}'`);
+    LOG(`Writing checkpoint <${checkpoint}>`);
     if (!config.dryRun) await checkpointStorage.write(checkpoint);
   }
 }
@@ -217,6 +217,8 @@ function writeReports(
   return writes;
 }
 
-// tslint:disable-next-line: no-floating-promises
-(async () => workerData.type === 'apply' ? await apply(workerData.formats, workerData.config) :
-                                           await combine(workerData.formats, workerData.config))();
+if (workerData) {
+  (async () => workerData.type === 'apply' ? await apply(workerData.formats, workerData.config) :
+                                             await combine(workerData.formats, workerData.config))()
+      .catch(err => console.error(err));
+}

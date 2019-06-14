@@ -82,7 +82,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
       await Promise.all(processed);
     }
     const checkpoint = new AnonCheckpoint(format, begin, end);
-    LOG(`Writing checkpoint '${checkpoint}'`);
+    LOG(`Writing checkpoint <${checkpoint}>`);
     if (!config.dryRun) await checkpointStorage.write(checkpoint);
   }
 }
@@ -136,7 +136,8 @@ class Random {
   }
 }
 
-// tslint:disable-next-line: no-floating-promises
-(async () => {
-  if (workerData.type === 'apply') await apply(workerData.formats, workerData.config);
-})();
+if (workerData) {
+  (async () => {
+    if (workerData.type === 'apply') await apply(workerData.formats, workerData.config);
+  })().catch(err => console.error(err));
+}

@@ -71,7 +71,7 @@ class LogFileStorage implements LogStorage {
 }
 
 export interface CheckpointStorage {
-  init(): Promise<void>;
+  init(): Promise<string>;
   prepare(format: ID): Promise<void>;
   list(format: ID): Promise<Batch[]>;
   offsets(): Promise<Map<ID, Batch[]>>;
@@ -101,6 +101,7 @@ class CheckpointFileStorage implements CheckpointStorage {
     } else {
       await fs.mkdir(this.dir, {recursive: true});
     }
+    return this.dir;
   }
 
   async prepare(format: ID) {
