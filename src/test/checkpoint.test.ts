@@ -123,10 +123,10 @@ describe('Checkpoints', () => {
     test('no checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
-      // mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
-      // mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
-      // mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
-      // mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
+      mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
+      mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
+      mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
+      mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
       mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
 
       const config = {
@@ -135,17 +135,13 @@ describe('Checkpoints', () => {
       } as unknown as Configuration;
       const accept = (format: ID) => format !== 'gen5ou';
 
-      // for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
-      for (const batchSize of [2]) {
+      for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
         config.batchSize = batchSize;
         const formatBatches = await Checkpoints.restore(config, accept);
-        // expect(formatBatches.size).toBe(4);
-        // expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
-        // expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
-        // expect(formatBatches.get('gen4ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
-        console.log(
-            formatBatches.get('gen3ou' as ID)!.map(b => Checkpoints.formatOffsets(b.begin, b.end))
-                .join('\n'));
+        expect(formatBatches.size).toBe(4);
+        expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
+        expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
+        expect(formatBatches.get('gen4ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
         expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(Math.ceil(6 / batchSize));
       }
     });
@@ -153,14 +149,22 @@ describe('Checkpoints', () => {
     test('with checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
-      // mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
-      // mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
-      // mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
+      mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
+      mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
+      mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
       mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
-      // mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
+      mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
 
-      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_0_0_0-20180201_6_6_6'); // BEFORE
-      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_11_11_11-20180203_19_6_19'); // OVER
+      mockCheckpoint(checkpointStorage, 'gen7ou', '20180201_8_8_8-20180201_27_27_27');
+      mockCheckpoint(checkpointStorage, 'gen7ou', '20180201_28_28_28-20180201_34_34_34');
+      mockCheckpoint(checkpointStorage, 'gen7ou', '20180201_72_72_72-20180201_84_84_84');
+      mockCheckpoint(checkpointStorage, 'gen7ou', '20180201_90_90_90-20180203_249_99_249');
+      mockCheckpoint(checkpointStorage, 'gen7ou', '20180203_290_140_290-20180203_299_149_299');
+      mockCheckpoint(checkpointStorage, 'gen6ou', '20180201_58_58_58-20180201_58_58_58');
+      mockCheckpoint(checkpointStorage, 'gen6ou', '20180201_60_60_60-20180202_89_14_89');
+      mockCheckpoint(checkpointStorage, 'gen5ou', '20180202_0_0_0-20180202_9_9_9');
+      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_0_0_0-20180201_6_6_6');
+      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_11_11_11-20180203_19_6_19');
       mockCheckpoint(checkpointStorage, 'gen3ou', '20180202_2_1_2-20180202_2_1_2');
 
       const config = {
@@ -169,21 +173,22 @@ describe('Checkpoints', () => {
         batchSize: 10,
       } as unknown as Configuration;
 
+      const indices = (bs: Batch[]) => bs.map(b => [b.begin.index.global, b.end.index.global]);
       const formatBatches = await Checkpoints.restore(config, () => true);
-      // expect(formatBatches.size).toBe(5);
-      // expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(30)); // TODO
-      // expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
-      // expect(formatBatches.get('gen5ou' as ID)!).toHaveLength(Math.ceil(10)); // TODO
-
-      const gen4ou = formatBatches.get('gen4ou' as ID)!;
-      console.log(gen4ou.map(b => Checkpoints.formatOffsets(b.begin, b.end)).join('\n'));
-      expect(gen4ou).toHaveLength(9);
-      expect(gen4ou[0].begin.index.global).toBe(7);
-      expect(gen4ou[0].end.index.global).toBe(10);
-      expect(gen4ou[1].begin.index.global).toBe(20);
-      expect(gen4ou[1].end.index.global).toBe(29);
-
-      // expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(2);
+      expect(indices(formatBatches.get('gen7ou' as ID)!)).toEqual([
+        [0, 7], [35, 44], [45, 54], [55, 64], [65, 71], [85, 89], [250, 259], [260, 269],
+        [270, 279], [280, 289]
+      ]);
+      expect(indices(formatBatches.get('gen6ou' as ID)!)).toEqual([
+        [0, 9], [10, 19], [20, 29], [30, 39], [40, 49], [50, 57], [59, 59], [90, 99]
+      ]);
+      expect(indices(formatBatches.get('gen5ou' as ID)!)).toEqual([
+        [10, 19], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99]
+      ]);
+      expect(indices(formatBatches.get('gen4ou' as ID)!)).toEqual([
+        [7, 10], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99]
+      ]);
+      expect(indices(formatBatches.get('gen3ou' as ID)!)).toEqual([[0, 1], [3, 5]]);
     });
   });
 

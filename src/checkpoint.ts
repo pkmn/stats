@@ -106,33 +106,29 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
   return batches;
 }
 
-function restoreDay(format: ID, day: string, logs: string[], n: number, index: number,
-    offsets: Batch[] = [], o: number = 0, last?: Batch) {
+function restoreDay(
+    format: ID, day: string, logs: string[], n: number, index: number, offsets: Batch[] = [], o = 0,
+    last?: Batch) {
   const batches: Batch[] = [];
 
   let i = 0;
   while (o < offsets.length) {
     const offset = offsets[o];
-    console.log('OFFSET', offset);
     if (/* offset.begin.day < day && */ offset.end.day < day) {
-      console.log('BEFORE');
       // The offset exists for a day entirely before our day - this shouldn't
       // really happen unless logs were deleted, but we can't do anything with it.
       o++;
     } else if (offset.begin.day < day && offset.end.day > day) {
-      console.log('COVER');
       // The offset fully covers this day, so we return immediately. We set last to
       // undefined to make sure we don't try to extend last *through* the offset.
       return {o, last: undefined, batches};
     } else if (offset.begin.day < day && offset.end.day === day) {
-      console.log('WAIT');
       // If there is another offset for the day it will fill the gap between our
       // end and itself, otherwise we will break and fill to the end of the day.
       o++;
       i = offset.end.index.local + 1;
       index = offset.end.index.global + 1;
     } else if (offset.begin.day === day && offset.end.day >= day) {
-      console.log('FILL');
       // We fill in between the previous offset extending into this day *or* the start
       // of the day. Filling in after this offset is handled either by the the next
       // offset to end up in this branch or when we break from this loop and fill to the
@@ -150,14 +146,11 @@ function restoreDay(format: ID, day: string, logs: string[], n: number, index: n
       i = offset.end.index.local + 1;
       index = offset.end.index.global + 1;
     } else /* if (offset.begin.day > day && offset.end.day > day) */ {
-      console.log('AFTER');
       // If the offset overshoots our day we break and just fill to the end, taking care
       // to not move on to the next offset so that the next day begins searching here.
       break;
     }
   }
-
-  console.log('REST');
 
   const latest = chunk(format, day, logs, n, index, last, i);
   // last may have been mutated by chunk ('extended'), so even if we dont add to
@@ -178,7 +171,6 @@ function chunk(
   index = index - start;
   const batches: Batch[] = [];
   finish = Math.min(typeof finish === 'number' ? finish : logs.length, logs.length);
-  console.log('CHUNK', {day, logs: logs.length, index, start, finish, last});
   if (start >= finish) return batches;
   const lastSize = last ? last.end.index.global - last.begin.index.global + 1 : 0;
 
