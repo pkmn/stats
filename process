@@ -110,11 +110,13 @@ const argv = require('minimist')(process.argv.slice(2), {
   }
 });
 if (argv._.length) {
-  argv.input = argv._[0];
-  if (argv._.length > 1) argv.output = argv._[1];
+  argv.logs = argv._[0];
+  if (argv._.length > 1) argv.reports = argv._[1];
 }
-if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
+if (argv._.length > 2 || !argv.logs || !argv.reports) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
 
+argv.worker = 'stats';
+
 // tslint:disable-next-line: no-floating-promises
-(async () => process.exit(await stats.process(argv.input, argv.output, argv)))();
+(async () => process.exit(await stats.process(argv)))();
