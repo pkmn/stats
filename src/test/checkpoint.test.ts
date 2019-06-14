@@ -159,8 +159,8 @@ describe('Checkpoints', () => {
       mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
       // mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
 
-      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_0_0_0-20180201_6_6_6');
-      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_11_11_11-20180203_20_6_19');
+      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_0_0_0-20180201_6_6_6'); // BEFORE
+      mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_11_11_11-20180203_19_6_19'); // OVER
       mockCheckpoint(checkpointStorage, 'gen3ou', '20180202_2_1_2-20180202_2_1_2');
 
       const config = {
