@@ -7,9 +7,11 @@ import {Worker} from 'worker_threads';
 
 import {Batch, Checkpoints} from './checkpoint';
 import {Configuration, Options} from './config';
+import {Random} from './random';
 import {CheckpointStorage} from './storage';
 
 const WORKERS = path.resolve(__dirname, 'workers');
+const RANDOM = new Random();
 
 export async function main(options: Options) {
   const config = await init(options);
@@ -45,6 +47,8 @@ export async function main(options: Options) {
       Math.floor(config.maxFiles / Math.min(formatBatches.size, config.numWorkers));
   delete workerConfig.accept;
 
+  // TODO: instead reduce monotype batchsizes to avoid triggering bad memory behavior.
+  RANDOM.shuffle(allBatches);
   let failures = await spawn('apply', workerConfig, partition(allBatches, config.numWorkers));
   // TODO: We could be immediately creating combine workers immediately after all batches for
   // the particular format have finished processing.
@@ -59,7 +63,7 @@ async function spawn(
 
   for (const [i, formats] of batches.entries()) {
     const workerData = {type, formats, config: workerConfig, num: i + 1};
-    LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} format(s)`);
+    LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} batch(es)`);
     workers.push(new Promise((resolve, reject) => {
       const worker = new Worker(path.join(WORKERS, `${workerConfig.worker}.js`), {workerData});
       worker.on('error', reject);

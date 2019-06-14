@@ -51,3 +51,22 @@ function dec(n: number) {
   if (abs < 100) return n.toFixed(1);
   return n.toFixed();
 }
+
+function memorySize(size: number) {
+  const o = Math.floor(Math.log(size) / Math.log(1024));
+  return `${(size / Math.pow(1024, o)).toFixed(2)} ${['B', 'KiB', 'MiB', 'GiB', 'TiB'][o]}`;
+}
+
+if (process.env.MEMORY) {
+  setInterval(() => {
+    const memory = '\n' +
+        Object.entries(process.memoryUsage())
+            .map(e => `${e[0]}: ${humanFileSize(e[1])}`)
+            .join('\n');
+    if (workerData) {
+      log(`worker:${workerData.num}`, workerData.num, memory);
+    } else {
+      log(`main`, 0, memory);
+    }
+  }, +process.env.MEMORY || 10000);
+}
