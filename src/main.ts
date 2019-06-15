@@ -34,7 +34,7 @@ export async function main(options: Options) {
   }
   const allSizes: Array<{data: ID, size: number}> = [];
   for (const [format, batches] of formatBatches.entries()) {
-    const size = batches.reduce((sum, batch) => sum + batchSize(batch), 0);
+    const size = batches.reduce((sum, batch) => sum + (batchSize(batch) || 1), 0);
     allSizes.push({data: format, size});
   }
   if (LOG()) {

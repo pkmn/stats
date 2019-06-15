@@ -35,7 +35,7 @@ function LOGMEM() {
   if (process.env.MEMORY) {
     const mem = process.memoryUsage();
     const heap = `${memsize(mem.heapUsed)}/${memsize(mem.heapTotal)}`;
-    const msg = `${heap} (${memsize(mem.rss)}, ${memsize(mem.external)})`;
+    const msg = `\x1b[90m${heap} (${memsize(mem.rss)}, ${memsize(mem.external)})\x1b[0m`;
     if (workerData) {
       log(`worker:${workerData.num}`, workerData.num, msg);
     } else {
