@@ -28,8 +28,9 @@ export async function main(options: Options) {
 
   const batchSize = (b: Batch) => b.end.index.global - b.begin.index.global + 1;
   const allBatches: Array<{data: Batch, size: number}> = [];
-  for (const batches of formatBatches.values()) {
-    allBatches.push(...batches.map(batch => ({data: batch, size: batchSize(batch)})));
+  for (const [format, batches] of formatBatches.entries()) {
+    allBatches.push(
+        ...batches.map(batch => ({data: batch, size: config.accept(format) * batchSize(batch)})));
   }
   const allSizes: Array<{data: ID, size: number}> = [];
   for (const [format, batches] of formatBatches.entries()) {
@@ -47,9 +48,15 @@ export async function main(options: Options) {
       Math.floor(config.maxFiles / Math.min(formatBatches.size, config.numWorkers));
   delete workerConfig.accept;
 
-  // TODO: instead reduce monotype batchsizes to avoid triggering bad memory behavior.
+  // We shuffle the batches so that formats will be processed more evenly. Without this shake
+  // up, all logs for a given format will be processed at approximately the same time across
+  // all workers, which can lead to issues if a format is more expensive to process than others.
   RANDOM.shuffle(allBatches);
   let failures = await spawn('apply', workerConfig, partition(allBatches, config.numWorkers));
+  // This partitioning only accounts for the number of logs handled in this processing run,
+  // which isn't necesarily equal to the size of the total logs being combined (eg. due to
+  // restarts). Given the cost of combine is generally small and that this only effects the
+  // atypical case it's not really worth bothering to try to get this to be more precise.
   // TODO: We could be immediately creating combine workers immediately after all batches for
   // the particular format have finished processing.
   failures += await spawn('combine', workerConfig, partition(allSizes, config.numWorkers));

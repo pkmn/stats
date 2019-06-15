@@ -30,7 +30,7 @@ export interface Configuration {
   batchSize: number;
   dryRun: boolean;
   all: boolean;
-  accept: (format: ID) => boolean;
+  accept: (format: ID) => number;
 }
 
 export interface Options extends Partial<Configuration> {
@@ -63,7 +63,7 @@ export class Options {
       batchSize,
       dryRun: !!options.dryRun,
       all: !!options.all,
-      accept: () => true,
+      accept: () => 1,
     });
   }
 }

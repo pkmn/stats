@@ -86,7 +86,7 @@ describe('Checkpoints', () => {
         logs: logStorage,
         checkpoints: checkpointStorage,
       } as unknown as Configuration;
-      const accept = (format: ID) => format !== 'gen5ou';
+      const accept = (format: ID) => +(format !== 'gen5ou');
 
       for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
         config.batchSize = batchSize;
@@ -127,7 +127,7 @@ describe('Checkpoints', () => {
       } as unknown as Configuration;
 
       const indices = (bs: Batch[]) => bs.map(b => [b.begin.index.global, b.end.index.global]);
-      const formatBatches = await Checkpoints.restore(config, () => true);
+      const formatBatches = await Checkpoints.restore(config, () => 1);
       expect(indices(formatBatches.get('gen7ou' as ID)!)).toEqual([
         [0, 7], [35, 44], [45, 54], [55, 64], [65, 71], [85, 89], [250, 259], [260, 269],
         [270, 279], [280, 289]

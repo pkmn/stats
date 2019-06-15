@@ -52,7 +52,7 @@ export async function init(config: AnonConfiguration) {
 
 export function accept(config: AnonConfiguration) {
   const options = parse(config.formats);
-  return (format: ID) => options.has(format);
+  return (format: ID) => +options.has(format);
 }
 
 async function apply(batches: Batch[], config: AnonConfiguration) {

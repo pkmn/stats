@@ -51,7 +51,7 @@ export abstract class Checkpoint {
 }
 
 export const Checkpoints = new class {
-  async restore(config: Configuration, accept: (format: ID) => boolean) {
+  async restore(config: Configuration, accept: (format: ID) => number) {
     const logStorage = LogStorage.connect(config);
     const checkpointStorage = CheckpointStorage.connect(config);
 
@@ -62,11 +62,13 @@ export const Checkpoints = new class {
     const writes: Array<Promise<void>> = [];
     for (const raw of (await logStorage.list())) {
       const format = raw as ID;
-      if (!accept(format)) continue;
+      const weight = accept(format);
+      if (!weight) continue;
 
       const checkpoints = existing.get(format);
       if (!checkpoints) writes.push(checkpointStorage.prepare(format));
-      reads.push(restore(logStorage, config.batchSize, format, checkpoints || []).then(data => {
+      const n = Math.ceil(config.batchSize / weight);
+      reads.push(restore(logStorage, n, format, checkpoints || []).then(data => {
         formats.set(format, data);
       }));
     }

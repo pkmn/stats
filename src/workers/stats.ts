@@ -57,7 +57,8 @@ const CUTOFFS = {
 // The number of report files written by `writeReports` (usage, leads, moveset, chaos, metagame).
 const REPORTS = 5;
 
-const monotypes = (data: Data) => new Set(Object.keys(data.Types).map(t => `mono${toID(t)}` as ID));
+const MONOTYPES =
+    new Set(Object.keys(Data.forFormat('gen7monotype').Types).map(t => `mono${toID(t)}` as ID));
 
 interface StatsConfiguration extends Configuration {
   reports: string;
@@ -74,9 +75,19 @@ export async function init(config: StatsConfiguration) {
 }
 
 export function accept(config: StatsConfiguration) {
-  return (format: ID) =>
-             !(format.startsWith('seasonal') || format.includes('random') ||
-               format.includes('metronome' || format.includes('superstaff')));
+  return (format: ID) => {
+    if (format.startsWith('seasonal') || format.includes('random') ||
+        format.includes('metronome' || format.includes('superstaff'))) {
+      return 0;
+    } else if (format === 'gen7monotype') {
+      // Given that we compute all the monotype team tags for gen7monotype, we need to
+      // weight the format to make sure a batch uses up approximately the same amount
+      // of memory during computation compared to the other formats.
+      return MONOTYPES.size + 1;
+    } else {
+      return 1;
+    }
+  };
 }
 
 function mkdirs(dir: string) {
@@ -125,7 +136,7 @@ async function processLog(
   try {
     const raw = JSON.parse(await logStorage.read(log));
     const battle = Parser.parse(raw, data);
-    const tags = data.format === 'gen7monotype' ? monotypes(data) : undefined;
+    const tags = data.format === 'gen7monotype' ? MONOTYPES : undefined;
     Stats.update(data, battle, cutoffs, stats, tags);
   } catch (err) {
     console.error(`${log}: ${err.message}`);
