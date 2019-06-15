@@ -88,13 +88,14 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
 
-  for (const {format, begin, end} of batches) {
+  for (const [i, {format, begin, end}] of batches.entries()) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
 
     const size = end.index.global - begin.index.global + 1;
-    LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
+    const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
+    LOG(`Processing ${size} log(s) from batch ${i}/${batches.length} - ${offset}`);
     let processed: Array<Promise<void>> = [];
     for (const log of await logStorage.select(format, begin, end)) {
       if (processed.length >= config.maxFiles) {
@@ -112,6 +113,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
     const checkpoint = new StatsCheckpoint(format, begin, end, stats);
     LOG(`Writing checkpoint <${checkpoint}>`);
     await checkpointStorage.write(checkpoint);
+    LOGMEM();
   }
 }
 
@@ -158,6 +160,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
     }
     LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
     await Promise.all(writes);
+    LOGMEM();
   }
 }
 

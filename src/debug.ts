@@ -5,10 +5,12 @@ import {workerData} from 'worker_threads';
 declare global {
   function LOG(...args: any[]): boolean;
   function VLOG(...args: any[]): boolean;
+  function LOGMEM(): void;
 }
 const GLOBAL = global as any;
 GLOBAL.LOG = LOG;
 GLOBAL.VLOG = VLOG;
+GLOBAL.LOGMEM = LOGMEM;
 
 function LOG(...args: any[]) {
   const debug = !!process.env.DEBUG;
@@ -27,6 +29,19 @@ function VLOG(...args: any[]) {
   if (debug < 2) return false;
   LOG(...args);
   return true;
+}
+
+function LOGMEM() {
+  if (process.env.MEMORY) {
+    const mem = process.memoryUsage();
+    const heap = `${memsize(mem.heapUsed)}/${memsize(mem.heapTotal)}`;
+    const msg =  `${heap} (${memsize(mem.rss)}, ${memsize(mem.external)})`;
+    if (workerData) {
+      log(`worker:${workerData.num}`, workerData.num, msg);
+    } else {
+      log(`main`, 0, msg);
+    }
+  }
 }
 
 export function log(title: string, num: number, ...args: any[]) {
@@ -52,19 +67,7 @@ function dec(n: number) {
   return n.toFixed();
 }
 
-function memorySize(size: number) {
+function memsize(size: number) {
   const o = Math.floor(Math.log(size) / Math.log(1024));
   return `${(size / Math.pow(1024, o)).toFixed(2)} ${['B', 'KiB', 'MiB', 'GiB', 'TiB'][o]}`;
-}
-
-if (process.env.MEMORY) {
-  setInterval(() => {
-    const memory = '\n' +
-        Object.entries(process.memoryUsage()).map(e => `${e[0]}: ${memorySize(e[1])}`).join('\n');
-    if (workerData) {
-      log(`worker:${workerData.num}`, workerData.num, memory);
-    } else {
-      log(`main`, 0, memory);
-    }
-  }, +process.env.MEMORY || 10000);
 }

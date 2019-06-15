@@ -60,12 +60,13 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
   const random = new Random(workerData.num);
-  for (const {format, begin, end} of batches) {
+  for (const [i, {format, begin, end}] of batches.entries()) {
     const options = formats.get(format)!;
     const data = Data.forFormat(format);
 
     const size = end.index.global - begin.index.global + 1;
-    LOG(`Processing ${size} log(s) from ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
+    const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
+    LOG(`Processing ${size} log(s) from batch ${i}/${batches.length} - ${offset}`);
     let processed: Array<Promise<void>> = [];
 
     let index = begin.index.global;
