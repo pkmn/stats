@@ -60,9 +60,7 @@ function memorySize(size: number) {
 if (process.env.MEMORY) {
   setInterval(() => {
     const memory = '\n' +
-        Object.entries(process.memoryUsage())
-            .map(e => `${e[0]}: ${humanFileSize(e[1])}`)
-            .join('\n');
+        Object.entries(process.memoryUsage()).map(e => `${e[0]}: ${memorySize(e[1])}`).join('\n');
     if (workerData) {
       log(`worker:${workerData.num}`, workerData.num, memory);
     } else {
