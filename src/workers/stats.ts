@@ -192,7 +192,9 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     // all processes, but a single worker won't potentially be forced to choke by reading in a large
     // batch of checkpoints for a format like gen7ou or gen7monotype.
     const checkpoint = await checkpointStorage.read(format, begin, end).then(c => JSON.parse(c));
+    LOG(`Aggregating ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
     stats = state.combineTagged(checkpoint, stats);
+    LOGMEM();
   }
   return state.deserializeTagged(stats!);
 }

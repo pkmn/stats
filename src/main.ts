@@ -69,6 +69,7 @@ async function spawn(
     type: 'apply'|'combine', workerConfig: Configuration, batches: Array<Batch[]|ID[]>) {
   const workers: Array<Promise<void>> = [];
 
+  let num = batches.length;
   for (const [i, formats] of batches.entries()) {
     const workerData = {type, formats, config: workerConfig, num: i + 1};
     LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} batch(es)`);
@@ -76,8 +77,9 @@ async function spawn(
       const worker = new Worker(path.join(WORKERS, `${workerConfig.worker}.js`), {workerData});
       worker.on('error', reject);
       worker.on('exit', (code) => {
+        num--;
         if (code === 0) {
-          LOG(`${capitalize(type)} worker:${workerData.num} exited cleanly`);
+          LOG(`${capitalize(type)} worker:${workerData.num} exited cleanly, ${num} remaining`);
           // We need to wait for the worker to exit before resolving (as opposed to having
           // the worker message us when it is finished) so that we know it is safe to
           // terminate the main process (which will kill all the workers and result in
