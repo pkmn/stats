@@ -177,9 +177,6 @@ async function combine(formats: ID[], config: StatsConfiguration) {
 
 async function aggregate(config: StatsConfiguration, format: ID): Promise<TaggedStatistics> {
   const checkpointStorage = CheckpointStorage.connect(config);
-
-  let n = 0;
-  let checkpoints = [];
   let stats: state.TaggedStatistics|undefined = undefined;
   // Floating point math is commutative but *not* necessarily associative, meaning that we can
   // potentially get different results depending on the order we add the Stats in. The sorting
@@ -189,21 +186,14 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   // should be adding up the smallest values first, but this requires deeper architectural changes
   // and has performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
   for (const {begin, end} of await checkpointStorage.list(format)) {
-    if (n >= config.maxFiles) {
-      for (const checkpoint of await Promise.all(checkpoints)) {
-        stats = state.combineTagged(checkpoint.stats, stats);
-      }
-      n = 0;
-      checkpoints = [];
-    }
-
-    checkpoints.push(checkpointStorage.read(format, begin, end).then(c => JSON.parse(c)));
-    n++;
-  }
-  for (const checkpoint of await Promise.all(checkpoints)) {
+    // Checkpoints aggregate a batch of log files into a single file and are thus be significantly
+    // larger than log files. As such, instead of reading up to config.maxFiles, we only read in
+    // one at a time to reduce memory pressure. We'll still be reading in numWorker files across
+    // all processes, but a single worker won't potentially be forced to choke by reading in a large
+    // batch of checkpoints for a format like gen7ou or gen7monotype.
+    const checkpoint = await checkpointStorage.read(format, begin, end).then(c => JSON.parse(c));
     stats = state.combineTagged(checkpoint, stats);
   }
-
   return state.deserializeTagged(stats!);
 }
 

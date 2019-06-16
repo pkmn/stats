@@ -19,7 +19,7 @@ const MAX_FILES = 256;
 // possible combinations of options available, though in Pokemon this can be quite large.
 // Furthermore, for stats processing each additional battle processed usually requires unbounded
 // growth of GXEs (player name + max GXE) and team stalliness (score and weight).
-const BATCH_SIZE = 1024;
+const BATCH_SIZE = 4096;
 
 export interface Configuration {
   logs: string;

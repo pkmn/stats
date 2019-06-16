@@ -32,6 +32,7 @@ export async function main(options: Options) {
     allBatches.push(
         ...batches.map(batch => ({data: batch, size: config.accept(format) * batchSize(batch)})));
   }
+  // TODO: fix sizes - formatBatches should store actual size, not just remaining.
   const allSizes: Array<{data: ID, size: number}> = [];
   for (const [format, batches] of formatBatches.entries()) {
     const size = batches.reduce((sum, batch) => sum + (batchSize(batch) || 1), 0);
