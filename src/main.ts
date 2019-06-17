@@ -28,23 +28,23 @@ export async function main(options: Options) {
 
   const batchSize = (b: Batch) => b.end.index.global - b.begin.index.global + 1;
   const allBatches: Array<{ data: Batch; size: number }> = [];
-  for (const [format, batches] of formatBatches.entries()) {
-    allBatches.push(
-      ...batches.map(batch => ({
-        data: batch,
-        size: config.accept(format) * batchSize(batch),
-      }))
-    );
+  const formatSizes: Map<ID, { remaining: number; total: number }> = new Map();
+  for (const [format, { batches, size }] of formatBatches.entries()) {
+    let remaining = 0;
+    for (const batch of batches) {
+      const bs = batchSize(batch);
+      allBatches.push({ data: batch, size: config.accept(format) * bs });
+      remaining += bs;
+    }
+    formatSizes.set(format, { remaining, total: size });
   }
-  // TODO: fix sizes - formatBatches should store actual size, not just remaining.
   const allSizes: Array<{ data: ID; size: number }> = [];
-  for (const [format, batches] of formatBatches.entries()) {
-    const size = batches.reduce((sum, batch) => sum + (batchSize(batch) || 1), 0);
+  for (const [format, { size }] of formatBatches.entries()) {
     allSizes.push({ data: format, size });
   }
   if (LOG()) {
-    const sorted = allSizes.sort((a, b) => b.size - a.size);
-    LOG(`\n\n${sorted.map(e => `  ${e.data}: ${e.size}`).join('\n')}\n`);
+    const sorted = Array.from(formatSizes.entries()).sort((a, b) => b[1].total - a[1].total);
+    LOG(`\n\n${sorted.map(e => `  ${e[0]}: ${e[1].remaining}/${e[1].total}`).join('\n')}\n`);
   }
 
   const workerConfig = Object.assign({}, config);

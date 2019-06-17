@@ -59,7 +59,7 @@ export const Checkpoints = new (class {
     const logStorage = LogStorage.connect(config);
     const checkpointStorage = CheckpointStorage.connect(config);
 
-    const formats: Map<ID, Batch[]> = new Map();
+    const formats: Map<ID, { batches: Batch[]; size: number }> = new Map();
     const existing: Map<ID, Batch[]> = await checkpointStorage.offsets();
 
     const reads: Array<Promise<void>> = [];
@@ -95,19 +95,19 @@ async function restore(logStorage: LogStorage, n: number, format: ID, offsets: B
   const batches: Batch[] = [];
 
   let o = 0;
-  let i = 0;
+  let size = 0;
   let last: Batch | undefined = undefined;
   for (const day of await logStorage.list(format)) {
     const logs = await logStorage.list(format, day);
 
-    const restored = restoreDay(format, day, logs, n, i, offsets, o, last);
+    const restored = restoreDay(format, day, logs, n, size, offsets, o, last);
     batches.push(...restored.batches);
     o = restored.o;
     last = restored.last;
-    i += logs.length;
+    size += logs.length;
   }
 
-  return batches;
+  return { batches, size };
 }
 
 function restoreDay(

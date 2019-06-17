@@ -144,7 +144,7 @@ describe('Checkpoints', () => {
 
       const indices = (bs: Batch[]) => bs.map(b => [b.begin.index.global, b.end.index.global]);
       const formatBatches = await Checkpoints.restore(config, () => 1);
-      expect(indices(formatBatches.get('gen7ou' as ID)!)).toEqual([
+      expect(indices(formatBatches.get('gen7ou' as ID)!.batches)).toEqual([
         [0, 7],
         [35, 44],
         [45, 54],
@@ -156,7 +156,7 @@ describe('Checkpoints', () => {
         [270, 279],
         [280, 289],
       ]);
-      expect(indices(formatBatches.get('gen6ou' as ID)!)).toEqual([
+      expect(indices(formatBatches.get('gen6ou' as ID)!.batches)).toEqual([
         [0, 9],
         [10, 19],
         [20, 29],
@@ -166,7 +166,7 @@ describe('Checkpoints', () => {
         [59, 59],
         [90, 99],
       ]);
-      expect(indices(formatBatches.get('gen5ou' as ID)!)).toEqual([
+      expect(indices(formatBatches.get('gen5ou' as ID)!.batches)).toEqual([
         [10, 19],
         [20, 29],
         [30, 39],
@@ -177,7 +177,7 @@ describe('Checkpoints', () => {
         [80, 89],
         [90, 99],
       ]);
-      expect(indices(formatBatches.get('gen4ou' as ID)!)).toEqual([
+      expect(indices(formatBatches.get('gen4ou' as ID)!.batches)).toEqual([
         [7, 10],
         [20, 29],
         [30, 39],
@@ -188,7 +188,7 @@ describe('Checkpoints', () => {
         [80, 89],
         [90, 99],
       ]);
-      expect(indices(formatBatches.get('gen3ou' as ID)!)).toEqual([[0, 1], [3, 5]]);
+      expect(indices(formatBatches.get('gen3ou' as ID)!.batches)).toEqual([[0, 1], [3, 5]]);
     });
   });
 
