@@ -15,7 +15,7 @@ export interface Batch {
   end: Offset;
 }
 
-export abstract class Checkpoint {
+export abstract class Checkpoint implements Batch {
   readonly format: ID;
   readonly begin: Offset;
   readonly end: Offset;

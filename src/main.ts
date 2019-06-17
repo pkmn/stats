@@ -49,10 +49,6 @@ export async function main(options: Options) {
       Math.floor(config.maxFiles / Math.min(formatBatches.size, config.numWorkers));
   delete workerConfig.accept;
 
-  // We shuffle the batches so that formats will be processed more evenly. Without this shake
-  // up, all logs for a given format will be processed at approximately the same time across
-  // all workers, which can lead to issues if a format is more expensive to process than others.
-  RANDOM.shuffle(allBatches);
   let failures = await spawn('apply', workerConfig, partition(allBatches, config.numWorkers));
   // This partitioning only accounts for the number of logs handled in this processing run,
   // which isn't necesarily equal to the size of the total logs being combined (eg. due to
@@ -71,6 +67,11 @@ async function spawn(
 
   let num = batches.length;
   for (const [i, formats] of batches.entries()) {
+    // We shuffle the batches so that formats will be processed more evenly. Without this shake
+    // up, all logs for a given format will be processed at approximately the same time across
+    // all workers, which can lead to issues if a format is more expensive to process than others.
+    // NOTE: This is really Batch[]|ID[] but Typescript is too dumb to realize thats still T[]...
+    RANDOM.shuffle(formats as Array<Batch|ID>);
     const workerData = {type, formats, config: workerConfig, num: i + 1};
     LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} batch(es)`);
     workers.push(new Promise((resolve, reject) => {
