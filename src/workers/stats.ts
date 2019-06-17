@@ -192,17 +192,29 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   // to arbitrary precision with a run which does not use batches at all. For the best accuracy we
   // should be adding up the smallest values first, but this requires deeper architectural changes
   // and has performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
+  let n = 0;
+  let combines = [];
+  const N = Math.min(config.maxFiles, config.batchSize.combine);
   for (const { begin, end } of await checkpointStorage.list(format)) {
-    // Checkpoints aggregate a batch of log files into a single file and are thus be significantly
-    // larger than log files. As such, instead of reading up to config.maxFiles, we only read in
-    // one at a time to reduce memory pressure. We'll still be reading in numWorker files across
-    // all processes, but a single worker won't potentially be forced to choke by reading in a large
-    // batch of checkpoints for a format like gen7ou or gen7monotype.
-    const checkpoint = await StatsCheckpoint.read(checkpointStorage, format, begin, end);
-    LOG(`Aggregating ${checkpoint}`);
-    Stats.combine(stats, checkpoint.stats);
-    LOGMEM();
+    if (n >= N) {
+      LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
+      await Promise.all(combines);
+      LOGMEM();
+      n = 0;
+      combines = [];
+    }
+
+    combines.push(StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
+      LOG(`Aggregating ${checkpoint}`);
+      Stats.combine(stats, checkpoint.stats);
+      LOGMEM();
+    }));
+    n++;
   }
+  LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
+  await Promise.all(combines);
+  LOGMEM();
+
   return stats;
 }
 
