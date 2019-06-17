@@ -1,10 +1,10 @@
-import {ID} from 'ps';
+import { ID } from 'ps';
 
-import {Batch, Checkpoint, Checkpoints, Offset} from '../checkpoint';
-import {Configuration} from '../config';
-import {CheckpointMemoryStorage, CheckpointStorage, LogStorage} from '../storage';
+import { Batch, Checkpoint, Checkpoints, Offset } from '../checkpoint';
+import { Configuration } from '../config';
+import { CheckpointMemoryStorage, CheckpointStorage, LogStorage } from '../storage';
 
-const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
+const CMP = Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
 
 class LogMemoryStorage implements LogStorage {
   readonly logs: Map<ID, Map<string, string[]>> = new Map();
@@ -35,7 +35,7 @@ function mockCheckpoint(storage: CheckpointMemoryStorage, format: string, name: 
   checkpoints.set(name, '');
 }
 
-function mockLogs(storage: LogMemoryStorage, format: string, logs: {[day: string]: number}) {
+function mockLogs(storage: LogMemoryStorage, format: string, logs: { [day: string]: number }) {
   let days = storage.logs.get(format as ID);
   if (!days) {
     days = new Map();
@@ -56,7 +56,7 @@ describe('Checkpoint', () => {
     const offset = {
       day: '2018-02-01',
       log: 'battle-gen7ou-987.log.json',
-      index: {local: 2, global: 3}
+      index: { local: 2, global: 3 },
     };
     expect(Checkpoint.encodeOffset(offset)).toEqual('20180201_987_2_3');
   });
@@ -65,7 +65,7 @@ describe('Checkpoint', () => {
     const offset = {
       day: '2018-02-01',
       log: 'battle-gen7ou-987.log.json',
-      index: {local: 2, global: 3}
+      index: { local: 2, global: 3 },
     };
     expect(Checkpoint.decodeOffset('gen7ou' as ID, '20180201_987_2_3')).toEqual(offset);
   });
@@ -76,20 +76,28 @@ describe('Checkpoints', () => {
     test('no checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
-      mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
-      mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
-      mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
-      mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
-      mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
+      mockLogs(logStorage, 'gen7ou', {
+        '2018-02-01': 100,
+        '2018-02-02': 50,
+        '2018-02-03': 150,
+      });
+      mockLogs(logStorage, 'gen6ou', { '2018-02-01': 75, '2018-02-02': 25 });
+      mockLogs(logStorage, 'gen5ou', { '2018-02-02': 10, '2018-02-03': 90 });
+      mockLogs(logStorage, 'gen4ou', { '2018-02-01': 13, '2018-02-03': 87 });
+      mockLogs(logStorage, 'gen3ou', {
+        '2018-02-01': 1,
+        '2018-02-02': 2,
+        '2018-02-03': 3,
+      });
 
-      const config = {
+      const config = ({
         logs: logStorage,
         checkpoints: checkpointStorage,
-      } as unknown as Configuration;
+      } as unknown) as Configuration;
       const accept = (format: ID) => +(format !== 'gen5ou');
 
       for (const batchSize of [100, 50, 25, 10, 5, 2, 1]) {
-        config.batchSize = batchSize;
+        config.batchSize = { apply: batchSize, combine: batchSize };
         const formatBatches = await Checkpoints.restore(config, accept);
         expect(formatBatches.size).toBe(4);
         expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
@@ -102,11 +110,19 @@ describe('Checkpoints', () => {
     test('with checkpoints', async () => {
       const checkpointStorage = new CheckpointMemoryStorage();
       const logStorage = new LogMemoryStorage();
-      mockLogs(logStorage, 'gen7ou', {'2018-02-01': 100, '2018-02-02': 50, '2018-02-03': 150});
-      mockLogs(logStorage, 'gen6ou', {'2018-02-01': 75, '2018-02-02': 25});
-      mockLogs(logStorage, 'gen5ou', {'2018-02-02': 10, '2018-02-03': 90});
-      mockLogs(logStorage, 'gen4ou', {'2018-02-01': 13, '2018-02-03': 87});
-      mockLogs(logStorage, 'gen3ou', {'2018-02-01': 1, '2018-02-02': 2, '2018-02-03': 3});
+      mockLogs(logStorage, 'gen7ou', {
+        '2018-02-01': 100,
+        '2018-02-02': 50,
+        '2018-02-03': 150,
+      });
+      mockLogs(logStorage, 'gen6ou', { '2018-02-01': 75, '2018-02-02': 25 });
+      mockLogs(logStorage, 'gen5ou', { '2018-02-02': 10, '2018-02-03': 90 });
+      mockLogs(logStorage, 'gen4ou', { '2018-02-01': 13, '2018-02-03': 87 });
+      mockLogs(logStorage, 'gen3ou', {
+        '2018-02-01': 1,
+        '2018-02-02': 2,
+        '2018-02-03': 3,
+      });
 
       mockCheckpoint(checkpointStorage, 'gen7ou', '20180201_8_8_8-20180201_27_27_27');
       mockCheckpoint(checkpointStorage, 'gen7ou', '20180201_28_28_28-20180201_34_34_34');
@@ -120,26 +136,57 @@ describe('Checkpoints', () => {
       mockCheckpoint(checkpointStorage, 'gen4ou', '20180201_11_11_11-20180203_19_6_19');
       mockCheckpoint(checkpointStorage, 'gen3ou', '20180202_2_1_2-20180202_2_1_2');
 
-      const config = {
+      const config = ({
         logs: logStorage,
         checkpoints: checkpointStorage,
-        batchSize: 10,
-      } as unknown as Configuration;
+        batchSize: { apply: 10, combine: 10 },
+      } as unknown) as Configuration;
 
       const indices = (bs: Batch[]) => bs.map(b => [b.begin.index.global, b.end.index.global]);
       const formatBatches = await Checkpoints.restore(config, () => 1);
       expect(indices(formatBatches.get('gen7ou' as ID)!)).toEqual([
-        [0, 7], [35, 44], [45, 54], [55, 64], [65, 71], [85, 89], [250, 259], [260, 269],
-        [270, 279], [280, 289]
+        [0, 7],
+        [35, 44],
+        [45, 54],
+        [55, 64],
+        [65, 71],
+        [85, 89],
+        [250, 259],
+        [260, 269],
+        [270, 279],
+        [280, 289],
       ]);
       expect(indices(formatBatches.get('gen6ou' as ID)!)).toEqual([
-        [0, 9], [10, 19], [20, 29], [30, 39], [40, 49], [50, 57], [59, 59], [90, 99]
+        [0, 9],
+        [10, 19],
+        [20, 29],
+        [30, 39],
+        [40, 49],
+        [50, 57],
+        [59, 59],
+        [90, 99],
       ]);
       expect(indices(formatBatches.get('gen5ou' as ID)!)).toEqual([
-        [10, 19], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99]
+        [10, 19],
+        [20, 29],
+        [30, 39],
+        [40, 49],
+        [50, 59],
+        [60, 69],
+        [70, 79],
+        [80, 89],
+        [90, 99],
       ]);
       expect(indices(formatBatches.get('gen4ou' as ID)!)).toEqual([
-        [7, 10], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99]
+        [7, 10],
+        [20, 29],
+        [30, 39],
+        [40, 49],
+        [50, 59],
+        [60, 69],
+        [70, 79],
+        [80, 89],
+        [90, 99],
       ]);
       expect(indices(formatBatches.get('gen3ou' as ID)!)).toEqual([[0, 1], [3, 5]]);
     });
@@ -149,15 +196,15 @@ describe('Checkpoints', () => {
     const begin = {
       day: '2018-02-01',
       log: 'battle-gen7ou-987.log.json',
-      index: {local: 2, global: 3}
+      index: { local: 2, global: 3 },
     };
     const end = {
       day: '2018-02-25',
       log: 'battle-gen7ou-1234.log.json',
-      index: {local: 56, global: 404}
+      index: { local: 56, global: 404 },
     };
-    expect(Checkpoints.formatOffsets(begin, end))
-        .toEqual(
-            '2018-02-01/battle-gen7ou-987.log.json (3) - 2018-02-25/battle-gen7ou-1234.log.json (404)');
+    expect(Checkpoints.formatOffsets(begin, end)).toEqual(
+      '2018-02-01/battle-gen7ou-987.log.json (3) - 2018-02-25/battle-gen7ou-1234.log.json (404)'
+    );
   });
 });

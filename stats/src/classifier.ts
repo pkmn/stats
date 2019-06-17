@@ -1,15 +1,15 @@
-import {calcStat, Data, ID, PokemonSet, Species, Stat, toID} from 'ps';
+import { calcStat, Data, ID, PokemonSet, Species, Stat, toID } from 'ps';
 import * as util from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
-export const Classifier = new class {
-  classifyTeam(team: Array<PokemonSet<ID>>, format: string|Data) {
+export const Classifier = new (class {
+  classifyTeam(team: Array<PokemonSet<ID>>, format: string | Data) {
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
-      const {bias, stalliness} = this.classifyPokemon(pokemon, format);
+      const { bias, stalliness } = this.classifyPokemon(pokemon, format);
       teamBias += bias;
       teamStalliness.push(stalliness);
     }
@@ -17,18 +17,18 @@ export const Classifier = new class {
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
     const tags = tag(team, stalliness, format);
 
-    return {bias: teamBias, stalliness, tags};
+    return { bias: teamBias, stalliness, tags };
   }
 
   // For stats and moveset purposes we're now counting Mega Pokemon seperately,
   // but for team analysis we still want to consider the base (which presumably
   // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(pokemon: PokemonSet<ID>, format: string|Data) {
+  classifyPokemon(pokemon: PokemonSet<ID>, format: string | Data) {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
     const species = util.getSpecies(pokemon.species, format);
-    let mega: {species: ID, ability: ID}|undefined;
+    let mega: { species: ID; ability: ID } | undefined;
     if (util.isMega(species)) {
       mega = {
         species: toID(species.species),
@@ -37,7 +37,7 @@ export const Classifier = new class {
       pokemon.species = toID(species.baseSpecies);
     }
 
-    let {bias, stalliness} = classifyForme(pokemon, format);
+    let { bias, stalliness } = classifyForme(pokemon, format);
     // FIXME: Intended behavior, but not used for compatibility:
     // if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong')) {
     //   pokemon.species = 'meloettapirouette';
@@ -63,15 +63,15 @@ export const Classifier = new class {
     pokemon.species = originalSpecies;
     pokemon.ability = originalAbility;
 
-    return {bias, stalliness};
+    return { bias, stalliness };
   }
-};
+})();
 
 const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(pokemon: PokemonSet<ID>, format: string|Data) {
+function classifyForme(pokemon: PokemonSet<ID>, format: string | Data) {
   let stalliness = baseStalliness(pokemon, format);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
@@ -87,32 +87,38 @@ function classifyForme(pokemon: PokemonSet<ID>, format: string|Data) {
   if (pokemon.ability === 'harvest' || pokemon.moves.includes('recycle' as ID)) {
     stalliness += 1.0;
   }
-  if (['sandstream', 'snowwarning'].includes(pokemon.ability) ||
-      pokemon.moves.some(m => ['sandstorm', 'hail'].includes(m))) {
+  if (
+    ['sandstream', 'snowwarning'].includes(pokemon.ability) ||
+    pokemon.moves.some(m => ['sandstorm', 'hail'].includes(m))
+  ) {
     stalliness += 0.5;
   }
 
   const bias =
-      pokemon.evs.atk + pokemon.evs.spa - pokemon.evs.hp - pokemon.evs.def - pokemon.evs.spd;
+    pokemon.evs.atk + pokemon.evs.spa - pokemon.evs.hp - pokemon.evs.def - pokemon.evs.spd;
 
   stalliness -= LOG3_LOG2;
-  return {bias, stalliness};
+  return { bias, stalliness };
 }
 
-function baseStalliness(pokemon: PokemonSet<ID>, format: string|Data) {
+function baseStalliness(pokemon: PokemonSet<ID>, format: string | Data) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
   if (pokemon.species === 'ditto') return LOG3_LOG2;
   const stats = calcStats(pokemon, format);
-  return -Math.log(
-             (Math.floor(2.0 * pokemon.level + 10) / 250 * Math.max(stats.atk, stats.spa) /
-                  Math.max(stats.def, stats.spd) * 120 +
-              2) *
-             0.925 / stats.hp) /
-      Math.log(2);
+  return (
+    -Math.log(
+      (((((Math.floor(2.0 * pokemon.level + 10) / 250) * Math.max(stats.atk, stats.spa)) /
+        Math.max(stats.def, stats.spd)) *
+        120 +
+        2) *
+        0.925) /
+        stats.hp
+    ) / Math.log(2)
+  );
 }
 
-function calcStats(pokemon: PokemonSet<ID>, format: string|Data) {
+function calcStats(pokemon: PokemonSet<ID>, format: string | Data) {
   const stats = calcFormeStats(pokemon, format);
   if (pokemon.species === 'aegislash' && pokemon.ability === 'stancechange') {
     pokemon.species = 'aegislashblade' as ID;
@@ -125,27 +131,67 @@ function calcStats(pokemon: PokemonSet<ID>, format: string|Data) {
   return stats;
 }
 
-function calcFormeStats(pokemon: PokemonSet<ID>, format: string|Data) {
+function calcFormeStats(pokemon: PokemonSet<ID>, format: string | Data) {
   const species = util.getSpecies(pokemon.species, format);
   const nature = util.dataForFormat(format).getNature(pokemon.nature);
-  const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
+  const stats = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
   let stat: Stat;
   for (stat in stats) {
     stats[stat] = calcStat(
-        stat, species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature);
+      stat,
+      species.baseStats[stat],
+      pokemon.ivs[stat],
+      pokemon.evs[stat],
+      pokemon.level,
+      nature
+    );
   }
   return stats;
 }
 
 // FIXME: Update all of these sets to be more comprehensive.
 const SETUP_MOVES = new Set([
-  'acupressure', 'bellydrum',   'bulkup',      'coil',        'curse',      'dragondance',
-  'growth',      'honeclaws',   'howl',        'meditate',    'sharpen',    'shellsmash',
-  'shiftgear',   'swordsdance', 'workup',      'calmmind',    'chargebeam', 'fierydance',
-  'nastyplot',   'tailglow',    'quiverdance', 'agility',     'autotomize', 'flamecharge',
-  'rockpolish',  'doubleteam',  'minimize',    'substitute',  'acidarmor',  'barrier',
-  'cosmicpower', 'cottonguard', 'defendorder', 'defensecurl', 'harden',     'irondefense',
-  'stockpile',   'withdraw',    'amnesia',     'charge',      'ingrain'
+  'acupressure',
+  'bellydrum',
+  'bulkup',
+  'coil',
+  'curse',
+  'dragondance',
+  'growth',
+  'honeclaws',
+  'howl',
+  'meditate',
+  'sharpen',
+  'shellsmash',
+  'shiftgear',
+  'swordsdance',
+  'workup',
+  'calmmind',
+  'chargebeam',
+  'fierydance',
+  'nastyplot',
+  'tailglow',
+  'quiverdance',
+  'agility',
+  'autotomize',
+  'flamecharge',
+  'rockpolish',
+  'doubleteam',
+  'minimize',
+  'substitute',
+  'acidarmor',
+  'barrier',
+  'cosmicpower',
+  'cottonguard',
+  'defendorder',
+  'defensecurl',
+  'harden',
+  'irondefense',
+  'stockpile',
+  'withdraw',
+  'amnesia',
+  'charge',
+  'ingrain',
 ]);
 
 const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost']);
@@ -153,27 +199,99 @@ const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'sp
 // FIXME: This is missing the latest a number of dragons (Kommo-o?) and should instead be
 // generated by iterating over all Species in Data and looking for Dragon-typed Pokemon.
 const DRAGONS = new Set([
-  'dratini',        'dragonair', 'bagon',    'shelgon',   'axew',   'fraxure', 'haxorus',
-  'druddigon',      'dragonite', 'altaria',  'salamence', 'latias', 'latios',  'rayquaza',
-  'gible',          'gabite',    'garchomp', 'reshiram',  'zekrom', 'kyurem',  'kyuremwhite',
-  'kyuremblack',    'kingdra',   'vibrava',  'flygon',    'dialga', 'palkia',  'giratina',
-  'giratinaorigin', 'deino',     'zweilous', 'hydreigon'
+  'dratini',
+  'dragonair',
+  'bagon',
+  'shelgon',
+  'axew',
+  'fraxure',
+  'haxorus',
+  'druddigon',
+  'dragonite',
+  'altaria',
+  'salamence',
+  'latias',
+  'latios',
+  'rayquaza',
+  'gible',
+  'gabite',
+  'garchomp',
+  'reshiram',
+  'zekrom',
+  'kyurem',
+  'kyuremwhite',
+  'kyuremblack',
+  'kingdra',
+  'vibrava',
+  'flygon',
+  'dialga',
+  'palkia',
+  'giratina',
+  'giratinaorigin',
+  'deino',
+  'zweilous',
+  'hydreigon',
 ]);
 
 const GRAVITY_MOVES = new Set([
-  'guillotine',   'fissure',     'sheercold',  'dynamicpunch', 'inferno',    'zapcannon',
-  'grasswhistle', 'sing',        'supersonic', 'hypnosis',     'blizzard',   'focusblast',
-  'gunkshot',     'hurricane',   'smog',       'thunder',      'clamp',      'dragonrush',
-  'eggbomb',      'irontail',    'lovelykiss', 'magmastorm',   'megakick',   'poisonpowder',
-  'slam',         'sleeppowder', 'stunspore',  'sweetkiss',    'willowisp',  'crosschop',
-  'darkvoid',     'furyswipes',  'headsmash',  'hydropump',    'kinesis',    'psywave',
-  'rocktomb',     'stoneedge',   'submission', 'boneclub',     'bonerush',   'bonemerang',
-  'bulldoze',     'dig',         'drillrun',   'earthpower',   'earthquake', 'magnitude',
-  'mudbomb',      'mudshot',     'mudslap',    'sandattack',   'spikes',     'toxicspikes'
+  'guillotine',
+  'fissure',
+  'sheercold',
+  'dynamicpunch',
+  'inferno',
+  'zapcannon',
+  'grasswhistle',
+  'sing',
+  'supersonic',
+  'hypnosis',
+  'blizzard',
+  'focusblast',
+  'gunkshot',
+  'hurricane',
+  'smog',
+  'thunder',
+  'clamp',
+  'dragonrush',
+  'eggbomb',
+  'irontail',
+  'lovelykiss',
+  'magmastorm',
+  'megakick',
+  'poisonpowder',
+  'slam',
+  'sleeppowder',
+  'stunspore',
+  'sweetkiss',
+  'willowisp',
+  'crosschop',
+  'darkvoid',
+  'furyswipes',
+  'headsmash',
+  'hydropump',
+  'kinesis',
+  'psywave',
+  'rocktomb',
+  'stoneedge',
+  'submission',
+  'boneclub',
+  'bonerush',
+  'bonemerang',
+  'bulldoze',
+  'dig',
+  'drillrun',
+  'earthpower',
+  'earthquake',
+  'magnitude',
+  'mudbomb',
+  'mudshot',
+  'mudslap',
+  'sandattack',
+  'spikes',
+  'toxicspikes',
 ]);
 
-function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string|Data) {
-  const weather = {rain: 0, sun: 0, sand: 0, hail: 0};
+function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string | Data) {
+  const weather = { rain: 0, sun: 0, sand: 0, hail: 0 };
   const style = {
     batonpass: 0,
     tailwind: 0,
@@ -191,14 +309,15 @@ function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string|Dat
     monotype: 0,
   };
 
-  let possibleTypes: string[]|undefined;
+  let possibleTypes: string[] | undefined;
   for (const pokemon of team) {
     let species = util.getSpecies(pokemon.species, format);
     if (util.isMega(species)) species = util.getBaseSpecies(species.id, format);
 
     const moves = new Set(pokemon.moves as string[]);
-    possibleTypes = possibleTypes ? possibleTypes.filter(t => species.types.includes(t)) :
-                                    species.types.slice();
+    possibleTypes = possibleTypes
+      ? possibleTypes.filter(t => species.types.includes(t))
+      : species.types.slice();
 
     if (['drizzle', 'primordialsea'].includes(pokemon.ability)) {
       weather.rain += 2;
@@ -227,8 +346,11 @@ function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string|Dat
       weather.hail += pokemon.item === 'icyrock' ? 2 : 1;
     }
 
-    if (style.batonpass < 2 && moves.has('batonpass') &&
-        (SETUP_ABILITIES.has(pokemon.ability) || pokemon.moves.some(m => SETUP_MOVES.has(m)))) {
+    if (
+      style.batonpass < 2 &&
+      moves.has('batonpass') &&
+      (SETUP_ABILITIES.has(pokemon.ability) || pokemon.moves.some(m => SETUP_MOVES.has(m)))
+    ) {
       style.batonpass++;
     }
     if (style.tailwind < 2 && moves.has('tailwind')) {
@@ -238,9 +360,12 @@ function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string|Dat
       style.trickroom++;
     }
     // TODO: use actual stats and speed factor...
-    if (style.slow < 2 && pokemon.evs.spe < 5 &&
-        (['brave', 'relaxed', 'quiet', 'sassy'].includes(pokemon.nature) ||
-         species.baseStats.spe <= 50)) {
+    if (
+      style.slow < 2 &&
+      pokemon.evs.spe < 5 &&
+      (['brave', 'relaxed', 'quiet', 'sassy'].includes(pokemon.nature) ||
+        species.baseStats.spe <= 50)
+    ) {
       style.slow++;
     }
     if (style.gravity < 2 && moves.has('gravity')) {
@@ -249,30 +374,42 @@ function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string|Dat
     if (pokemon.moves.some(m => GRAVITY_MOVES.has(m))) {
       style.gravityMoves++;
     }
-    if (style.voltturn < 3 && pokemon.item === 'ejectbutton' ||
-        pokemon.moves.some(m => ['voltswitch', 'uturn', 'batonpass'].includes(m))) {
+    if (
+      (style.voltturn < 3 && pokemon.item === 'ejectbutton') ||
+      pokemon.moves.some(m => ['voltswitch', 'uturn', 'batonpass'].includes(m))
+    ) {
       style.voltturn++;
     }
-    if (style.trappers < 3 && ['magnetpull', 'arentrap', 'shadowtag'].includes(pokemon.ability) ||
-        pokemon.moves.some(m => ['block', 'meanlook', 'spiderweb'].includes(m))) {
+    if (
+      (style.trappers < 3 && ['magnetpull', 'arentrap', 'shadowtag'].includes(pokemon.ability)) ||
+      pokemon.moves.some(m => ['block', 'meanlook', 'spiderweb'].includes(m))
+    ) {
       style.trappers++;
     }
     if (style.dragons < 2 && DRAGONS.has(pokemon.species)) {
       style.dragons++;
     }
-    if (style.clearance < 2 && pokemon.ability === 'magicbounce' || moves.has('rapidspin')) {
+    if ((style.clearance < 2 && pokemon.ability === 'magicbounce') || moves.has('rapidspin')) {
       style.clearance++;
     }
-    if (style.fear < 3 && (pokemon.ability === 'sturdy' || pokemon.item === 'focussash') &&
-        moves.has('endeavor')) {
+    if (
+      style.fear < 3 &&
+      (pokemon.ability === 'sturdy' || pokemon.item === 'focussash') &&
+      moves.has('endeavor')
+    ) {
       style.fear++;
     }
-    if (style.choice < 4 && pokemon.ability !== 'klutz' &&
-        ['choiceband', 'choicescarf', 'choicespecs'].includes(pokemon.item)) {
+    if (
+      style.choice < 4 &&
+      pokemon.ability !== 'klutz' &&
+      ['choiceband', 'choicescarf', 'choicespecs'].includes(pokemon.item)
+    ) {
       style.choice++;
     }
-    if (style.swagplay < 2 &&
-        pokemon.moves.filter(m => m === 'foulplay' || m === 'swagger').length > 1) {
+    if (
+      style.swagplay < 2 &&
+      pokemon.moves.filter(m => m === 'foulplay' || m === 'swagger').length > 1
+    ) {
       style.swagplay++;
     }
   }
@@ -364,33 +501,57 @@ function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string|Dat
   return tags as Set<ID>;
 }
 
-const GREATER_OFFENSIVE_ABILITIES = new Set([
-  'purepower',
-  'hugepower',
-  'speedboost',
-  'moody',
-]);
+const GREATER_OFFENSIVE_ABILITIES = new Set(['purepower', 'hugepower', 'speedboost', 'moody']);
 
 const LESSER_OFFENSIVE_ABILITIES = new Set([
-  'chlorophyll', 'download',     'hustle',     'moxie',       'reckless',  'sandrush',
-  'solarpower',  'swiftswim',    'technician', 'tintedlens',  'darkaura',  'fairyaura',
-  'infiltrator', 'parentalbond', 'protean',    'strongjaw',   'sweetveil', 'toughclaws',
-  'aerilate',    'normalize',    'pixilate',   'refrigerate',
+  'chlorophyll',
+  'download',
+  'hustle',
+  'moxie',
+  'reckless',
+  'sandrush',
+  'solarpower',
+  'swiftswim',
+  'technician',
+  'tintedlens',
+  'darkaura',
+  'fairyaura',
+  'infiltrator',
+  'parentalbond',
+  'protean',
+  'strongjaw',
+  'sweetveil',
+  'toughclaws',
+  'aerilate',
+  'normalize',
+  'pixilate',
+  'refrigerate',
 ]);
 
 const LESSER_DEFENSIVE_ABILITITIES = new Set([
-  'dryskin',   'filter',      'hydration',   'icebody',    'intimidate',
-  'ironbarbs', 'marvelscale', 'naturalcure', 'magicguard', 'multiscale',
-  'raindish',  'roughskin',   'solidrock',   'thickfat',   'unaware',
-  'aromaveil', 'bulletproof', 'cheekpouch',  'gooey',      'regenerator',
+  'dryskin',
+  'filter',
+  'hydration',
+  'icebody',
+  'intimidate',
+  'ironbarbs',
+  'marvelscale',
+  'naturalcure',
+  'magicguard',
+  'multiscale',
+  'raindish',
+  'roughskin',
+  'solidrock',
+  'thickfat',
+  'unaware',
+  'aromaveil',
+  'bulletproof',
+  'cheekpouch',
+  'gooey',
+  'regenerator',
 ]);
 
-const GREATER_DEFENSIVE_ABILITIES = new Set([
-  'slowstart',
-  'truant',
-  'furcoat',
-  'harvest',
-]);
+const GREATER_DEFENSIVE_ABILITIES = new Set(['slowstart', 'truant', 'furcoat', 'harvest']);
 
 function abilityStallinessModifier(pokemon: PokemonSet<ID>) {
   const ability = pokemon.ability;
@@ -402,28 +563,123 @@ function abilityStallinessModifier(pokemon: PokemonSet<ID>) {
 }
 
 const LESSER_BOOSTING_ITEM = new Set([
-  'expertbelt', 'wiseglasses',  'muscleband',  'dracoplate',   'dreadplate',   'earthplate',
-  'fistplate',  'flameplate',   'icicleplate', 'insectplate',  'ironplate',    'meadowplate',
-  'mindplate',  'skyplate',     'splashplate', 'spookyplate',  'stoneplate',   'toxicplate',
-  'zapplate',   'blackglasses', 'charcoal',    'dragonfang',   'hardstone',    'magnet',
-  'metalcoat',  'miracleseed',  'mysticwater', 'nevermeltice', 'poisonbarb',   'sharpbeak',
-  'silkscarf',  'silverpowder', 'softsand',    'spelltag',     'twistedspoon', 'pixieplate',
+  'expertbelt',
+  'wiseglasses',
+  'muscleband',
+  'dracoplate',
+  'dreadplate',
+  'earthplate',
+  'fistplate',
+  'flameplate',
+  'icicleplate',
+  'insectplate',
+  'ironplate',
+  'meadowplate',
+  'mindplate',
+  'skyplate',
+  'splashplate',
+  'spookyplate',
+  'stoneplate',
+  'toxicplate',
+  'zapplate',
+  'blackglasses',
+  'charcoal',
+  'dragonfang',
+  'hardstone',
+  'magnet',
+  'metalcoat',
+  'miracleseed',
+  'mysticwater',
+  'nevermeltice',
+  'poisonbarb',
+  'sharpbeak',
+  'silkscarf',
+  'silverpowder',
+  'softsand',
+  'spelltag',
+  'twistedspoon',
+  'pixieplate',
 ]);
 
 const GREATER_BOOSTING_ITEM = new Set([
-  'firegem',      'watergem',    'electricgem', 'grassgem',    'icegem',      'fightinggem',
-  'posiongem',    'groundgem',   'groundgem',   'flyinggem',   'psychicgem',  'buggem',
-  'rockgem',      'ghostgem',    'darkgem',     'steelgem',    'normalgem',   'focussash',
-  'mentalherb',   'powerherb',   'whiteherb',   'absorbbulb',  'berserkgene', 'cellbattery',
-  'focussash',    'airballoon',  'ejectbutton', 'shedshell',   'aguavberry',  'apicotberry',
-  'aspearberry',  'babiriberry', 'chartiberry', 'cheriberry',  'chestoberry', 'chilanberry',
-  'chopleberry',  'cobaberry',   'custapberry', 'enigmaberry', 'figyberry',   'ganlonberry',
-  'habanberry',   'iapapaberry', 'jabocaberry', 'kasibberry',  'kebiaberry',  'lansatberry',
-  'leppaberry',   'liechiberry', 'lumberry',    'magoberry',   'micleberry',  'occaberry',
-  'oranberry',    'passhoberry', 'payapaberry', 'pechaberry',  'persimberry', 'petayaberry',
-  'rawstberry',   'rindoberry',  'rowapberry',  'salacberry',  'shucaberry',  'sitrusberry',
-  'starfberry',   'tangaberry',  'wacanberry',  'wikiberry',   'yacheberry',  'keeberry',
-  'marangaberry', 'roseliberry', 'snowball',    'choiceband',  'choicescarf', 'choicespecs',
+  'firegem',
+  'watergem',
+  'electricgem',
+  'grassgem',
+  'icegem',
+  'fightinggem',
+  'posiongem',
+  'groundgem',
+  'groundgem',
+  'flyinggem',
+  'psychicgem',
+  'buggem',
+  'rockgem',
+  'ghostgem',
+  'darkgem',
+  'steelgem',
+  'normalgem',
+  'focussash',
+  'mentalherb',
+  'powerherb',
+  'whiteherb',
+  'absorbbulb',
+  'berserkgene',
+  'cellbattery',
+  'focussash',
+  'airballoon',
+  'ejectbutton',
+  'shedshell',
+  'aguavberry',
+  'apicotberry',
+  'aspearberry',
+  'babiriberry',
+  'chartiberry',
+  'cheriberry',
+  'chestoberry',
+  'chilanberry',
+  'chopleberry',
+  'cobaberry',
+  'custapberry',
+  'enigmaberry',
+  'figyberry',
+  'ganlonberry',
+  'habanberry',
+  'iapapaberry',
+  'jabocaberry',
+  'kasibberry',
+  'kebiaberry',
+  'lansatberry',
+  'leppaberry',
+  'liechiberry',
+  'lumberry',
+  'magoberry',
+  'micleberry',
+  'occaberry',
+  'oranberry',
+  'passhoberry',
+  'payapaberry',
+  'pechaberry',
+  'persimberry',
+  'petayaberry',
+  'rawstberry',
+  'rindoberry',
+  'rowapberry',
+  'salacberry',
+  'shucaberry',
+  'sitrusberry',
+  'starfberry',
+  'tangaberry',
+  'wacanberry',
+  'wikiberry',
+  'yacheberry',
+  'keeberry',
+  'marangaberry',
+  'roseliberry',
+  'snowball',
+  'choiceband',
+  'choicescarf',
+  'choicespecs',
   'lifeorb',
 ]);
 
@@ -484,34 +740,89 @@ const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']
 
 const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
 
-const CONFUSION_MOVES =
-    new Set(['supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn']);
+const CONFUSION_MOVES = new Set([
+  'supersonic',
+  'confuseray',
+  'swagger',
+  'flatter',
+  'teeterdance',
+  'yawn',
+]);
 
-const SLEEP_MOVES =
-    new Set(['darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore']);
+const SLEEP_MOVES = new Set([
+  'darkvoid',
+  'grasswhistle',
+  'hypnosis',
+  'lovelykiss',
+  'sing',
+  'sleeppowder',
+  'spore',
+]);
 
 const LESSER_OFFENSIVE_MOVES = new Set([
-  'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage', 'volttackle',
-  'closecombat', 'flareblitz', 'bravebird', 'woodhammer', 'headsmash', 'headcharge', 'wildcharge',
-  'takedown', 'dragonascent'
+  'jumpkick',
+  'doubleedge',
+  'submission',
+  'petaldance',
+  'hijumpkick',
+  'outrage',
+  'volttackle',
+  'closecombat',
+  'flareblitz',
+  'bravebird',
+  'woodhammer',
+  'headsmash',
+  'headcharge',
+  'wildcharge',
+  'takedown',
+  'dragonascent',
 ]);
 
 const GREATER_OFFENSIVE_MOVES = new Set([
-  'selfdestruct', 'explosion', 'destinybond', 'perishsong', 'memento', 'healingwish', 'lunardance',
-  'finalgambit'
+  'selfdestruct',
+  'explosion',
+  'destinybond',
+  'perishsong',
+  'memento',
+  'healingwish',
+  'lunardance',
+  'finalgambit',
 ]);
 
 const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold']);
 
 const GREATER_SETUP_MOVES = new Set([
-  'curse', 'dragondance', 'growth', 'shiftgear', 'swordsdance', 'fierydance', 'nastyplot',
-  'tailglow', 'quiverdance', 'geomancy'
+  'curse',
+  'dragondance',
+  'growth',
+  'shiftgear',
+  'swordsdance',
+  'fierydance',
+  'nastyplot',
+  'tailglow',
+  'quiverdance',
+  'geomancy',
 ]);
 
 const LESSER_SETUP_MOVES = new Set([
-  'acupressure', 'bulkup', 'coil', 'howl', 'workup', 'meditate', 'sharpen', 'calmmind',
-  'chargebeam', 'agility', 'autotomize', 'flamecharge', 'rockpolish', 'doubleteam', 'minimize',
-  'tailwind', 'poweruppunch', 'rototiller'
+  'acupressure',
+  'bulkup',
+  'coil',
+  'howl',
+  'workup',
+  'meditate',
+  'sharpen',
+  'calmmind',
+  'chargebeam',
+  'agility',
+  'autotomize',
+  'flamecharge',
+  'rockpolish',
+  'doubleteam',
+  'minimize',
+  'tailwind',
+  'poweruppunch',
+  'rototiller',
 ]);
 
 function movesStallinessModifier(pokemon: PokemonSet<ID>) {

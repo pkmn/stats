@@ -1,15 +1,15 @@
 import 'source-map-support/register';
 import '../debug';
 
-import {Anonymizer} from 'anon';
-import {Data, ID, toID} from 'ps';
-import {workerData} from 'worker_threads';
+import { Anonymizer } from 'anon';
+import { Data, ID, toID } from 'ps';
+import { workerData } from 'worker_threads';
 
-import {Batch, Checkpoint, Checkpoints} from '../checkpoint';
-import {Configuration} from '../config';
+import { Batch, Checkpoint, Checkpoints } from '../checkpoint';
+import { Configuration } from '../config';
 import * as fs from '../fs';
-import {Random} from '../random';
-import {CheckpointStorage, LogStorage} from '../storage';
+import { Random } from '../random';
+import { CheckpointStorage, LogStorage } from '../storage';
 
 class AnonCheckpoint extends Checkpoint {
   serialize() {
@@ -60,7 +60,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
   const random = new Random(workerData.num);
-  for (const [i, {format, begin, end}] of batches.entries()) {
+  for (const [i, { format, begin, end }] of batches.entries()) {
     const options = formats.get(format)!;
     const data = Data.forFormat(format);
 
@@ -91,8 +91,14 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
 }
 
 async function processLog(
-    logStorage: LogStorage, data: Data, random: Random, index: number, log: string,
-    options: AnonOptions, dryRun?: boolean) {
+  logStorage: LogStorage,
+  data: Data,
+  random: Random,
+  index: number,
+  log: string,
+  options: AnonOptions,
+  dryRun?: boolean
+) {
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   if (options.sample && random.next() > options.sample) return;
@@ -101,8 +107,9 @@ async function processLog(
     // TODO: options.publicOnly?
     if (options.teamsOnly) {
       for (const side of ['p1', 'p2']) {
-        const team =
-            JSON.stringify(Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt));
+        const team = JSON.stringify(
+          Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt)
+        );
         const name = `team-${data.format}-${index}.${side}.json`;
         // TODO: write
       }
@@ -118,6 +125,8 @@ async function processLog(
 
 if (workerData) {
   (async () => {
-    if (workerData.type === 'apply') await apply(workerData.formats, workerData.config);
+    if (workerData.type === 'apply') {
+      await apply(workerData.formats, workerData.config);
+    }
   })().catch(err => console.error(err));
 }

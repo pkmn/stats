@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {Log, Parser} from '../parser';
+import { Log, Parser } from '../parser';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 const FORMAT = 'gen7anythinggoes';

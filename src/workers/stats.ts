@@ -2,14 +2,14 @@ import 'source-map-support/register';
 import '../debug';
 
 import * as path from 'path';
-import {Data, ID, toID} from 'ps';
-import {Parser, Reports, Statistics, Stats, TaggedStatistics} from 'stats';
-import {workerData} from 'worker_threads';
+import { Data, ID, toID } from 'ps';
+import { Parser, Reports, Statistics, Stats, TaggedStatistics } from 'stats';
+import { workerData } from 'worker_threads';
 
-import {Batch, Checkpoint, Checkpoints, Offset} from '../checkpoint';
-import {Configuration} from '../config';
+import { Batch, Checkpoint, Checkpoints, Offset } from '../checkpoint';
+import { Configuration } from '../config';
 import * as fs from '../fs';
-import {CheckpointStorage, LogStorage} from '../storage';
+import { CheckpointStorage, LogStorage } from '../storage';
 
 class StatsCheckpoint extends Checkpoint {
   readonly stats: TaggedStatistics;
@@ -55,8 +55,9 @@ const CUTOFFS = {
 // The number of report files written by `writeReports` (usage, leads, moveset, chaos, metagame).
 const REPORTS = 5;
 
-const MONOTYPES =
-    new Set(Object.keys(Data.forFormat('gen7monotype').Types).map(t => `mono${toID(t)}` as ID));
+const MONOTYPES = new Set(
+  Object.keys(Data.forFormat('gen7monotype').Types).map(t => `mono${toID(t)}` as ID)
+);
 
 interface StatsConfiguration extends Configuration {
   reports: string;
@@ -66,7 +67,7 @@ export async function init(config: StatsConfiguration) {
   if (config.dryRun) return;
 
   await fs.rmrf(config.reports);
-  await fs.mkdir(config.reports, {recursive: true});
+  await fs.mkdir(config.reports, { recursive: true });
   const monotype = path.resolve(config.reports, 'monotype');
   await fs.mkdir(monotype);
   await Promise.all([...mkdirs(config.reports), ...mkdirs(monotype)]);
@@ -74,8 +75,11 @@ export async function init(config: StatsConfiguration) {
 
 export function accept(config: StatsConfiguration) {
   return (format: ID) => {
-    if (format.startsWith('seasonal') || format.includes('random') ||
-        format.includes('metronome' || format.includes('superstaff'))) {
+    if (
+      format.startsWith('seasonal') ||
+      format.includes('random') ||
+      format.includes('metronome' || format.includes('superstaff'))
+    ) {
       return 0;
     } else if (format === 'gen7monotype') {
       // Given that we compute all the monotype team tags for gen7monotype, we need to
@@ -97,7 +101,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
 
-  for (const [i, {format, begin, end}] of batches.entries()) {
+  for (const [i, { format, begin, end }] of batches.entries()) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
     const stats = Stats.create();
@@ -127,8 +131,13 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
 }
 
 async function processLog(
-    logStorage: LogStorage, data: Data, log: string, cutoffs: number[], stats: TaggedStatistics,
-    dryRun?: boolean) {
+  logStorage: LogStorage,
+  data: Data,
+  log: string,
+  cutoffs: number[],
+  stats: TaggedStatistics,
+  dryRun?: boolean
+) {
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   try {
@@ -183,7 +192,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   // to arbitrary precision with a run which does not use batches at all. For the best accuracy we
   // should be adding up the smallest values first, but this requires deeper architectural changes
   // and has performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
-  for (const {begin, end} of await checkpointStorage.list(format)) {
+  for (const { begin, end } of await checkpointStorage.list(format)) {
     // Checkpoints aggregate a batch of log files into a single file and are thus be significantly
     // larger than log files. As such, instead of reading up to config.maxFiles, we only read in
     // one at a time to reduce memory pressure. We'll still be reading in numWorker files across
@@ -198,8 +207,13 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
 }
 
 function writeReports(
-    config: StatsConfiguration, format: ID, cutoff: number, stats: Statistics, battles: number,
-    tag?: ID) {
+  config: StatsConfiguration,
+  format: ID,
+  cutoff: number,
+  stats: Statistics,
+  battles: number,
+  tag?: ID
+) {
   LOG(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? ` (${tag})` : ''));
   if (config.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
@@ -207,7 +221,7 @@ function writeReports(
   const usage = Reports.usageReport(format, stats, battles);
 
   const reports =
-      (format === 'gen7monotype' && tag) ? path.join(config.reports, 'monotype') : config.reports;
+    format === 'gen7monotype' && tag ? path.join(config.reports, 'monotype') : config.reports;
   const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
@@ -222,7 +236,8 @@ function writeReports(
 }
 
 if (workerData) {
-  (async () => workerData.type === 'apply' ? await apply(workerData.formats, workerData.config) :
-                                             await combine(workerData.formats, workerData.config))()
-      .catch(err => console.error(err));
+  (async () =>
+    workerData.type === 'apply'
+      ? apply(workerData.formats, workerData.config)
+      : combine(workerData.formats, workerData.config))().catch(err => console.error(err));
 }

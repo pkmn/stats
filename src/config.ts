@@ -1,5 +1,5 @@
 import * as os from 'os';
-import {ID} from 'ps';
+import { ID } from 'ps';
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
 // should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
@@ -23,19 +23,28 @@ const BATCH_SIZE = 4096;
 
 export interface Configuration {
   logs: string;
-  worker: 'stats'|'anon';
+  worker: 'stats' | 'anon';
   checkpoints?: string;
-  numWorkers: number;
+  numWorkers: { apply: number; combine: number };
   maxFiles: number;
-  batchSize: number;
+  batchSize: { apply: number; combine: number };
   dryRun: boolean;
   all: boolean;
   accept: (format: ID) => number;
 }
 
-export interface Options extends Partial<Configuration> {
+type Option =
+  | { apply: number; combine: number }
+  | { apply?: number; combine?: number }
+  | number
+  | [number, number]
+  | string;
+
+export interface Options extends Partial<Omit<Configuration, 'batchSize' | 'numWorkers'>> {
   logs: string;
-  worker: 'stats'|'anon';
+  worker: 'stats' | 'anon';
+  batchSize: Option;
+  numWorkers: Option;
 }
 
 export class Options {
@@ -50,13 +59,14 @@ export class Options {
   }
 
   static toConfiguration(options: Options) {
-    const numWorkers = options.numWorkers || (os.cpus().length - 1);
-    const maxFiles = typeof options.maxFiles !== 'number' ?
-        MAX_FILES :
-        options.maxFiles > 0 ? options.maxFiles : Infinity;
-    const batchSize = (!options.batchSize || options.batchSize > 0) ?
-        (options.batchSize || BATCH_SIZE) :
-        Infinity;
+    const numWorkers = parse(options.numWorkers, w => w || os.cpus().length - 1);
+    const batchSize = parse(options.batchSize, bs => (!bs || bs > 0 ? bs || BATCH_SIZE : Infinity));
+    const maxFiles =
+      typeof options.maxFiles !== 'number'
+        ? MAX_FILES
+        : options.maxFiles > 0
+        ? options.maxFiles
+        : Infinity;
     return Object.assign({}, options, {
       numWorkers,
       maxFiles,
@@ -65,5 +75,20 @@ export class Options {
       all: !!options.all,
       accept: () => 1,
     });
+  }
+}
+
+function parse(opt: Option | undefined, fallback: (n?: number) => number) {
+  if (typeof opt === 'number') {
+    return { apply: fallback(opt), combine: fallback() };
+  } else if (typeof opt === 'string') {
+    const [a, c] = opt.split(',').map(n => Number(n));
+    return { apply: fallback(a), combine: fallback(c) };
+  } else if (Array.isArray(opt)) {
+    return { apply: fallback(opt[0]), combine: fallback(opt[1]) };
+  } else if (typeof opt === 'object') {
+    return { apply: fallback(opt.apply), combine: fallback(opt.combine) };
+  } else {
+    return { apply: fallback(), combine: fallback() };
   }
 }

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {ID, toID} from 'ps';
+import { ID, toID } from 'ps';
 
 import * as stats from '../index';
 
@@ -23,7 +23,7 @@ type WeightedReports = Map<number, Reports>;
 interface Reports {
   usage: string;
   leads: string;
-  movesets: {basic: string, detailed: string};
+  movesets: { basic: string; detailed: string };
   metagame: string;
 }
 type CompareFn = (file: string, actual: string, expected: string) => void;
@@ -48,7 +48,7 @@ export async function process() {
       stats.Stats.update(format, battle, CUTOFFS, taggedStats /*, TAGS */);
     }
 
-    const trs = {total: new Map, tags: new Map()};
+    const trs = { total: new Map(), tags: new Map() };
     const b = taggedStats.battles;
 
     for (const [c, s] of Object.entries(taggedStats.total)) {
@@ -58,9 +58,9 @@ export async function process() {
 
     for (const [t, ts] of Object.entries(taggedStats.tags)) {
       const wrs: WeightedReports = new Map();
-      for (const [c, s] of Object.entries(ts)) {
+      for (const [c, s] of Object.entries(ts as stats.WeightedStatistics)) {
         const cutoff = Number(c);
-        wrs.set(cutoff, createReports(format, s, b, cutoff, t as ID));
+        wrs.set(cutoff, createReports(format, s as stats.Statistics, b, cutoff, t as ID));
       }
       trs.tags.set(t, wrs);
     }
@@ -72,16 +72,18 @@ export async function process() {
     const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
     return new Promise((resolve, reject) => {
       fs.readFile(file, 'utf8', (err, data) => {
-        if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
+        if (err) {
+          return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
+        }
         resolve(data);
       });
     });
   });
 
-  return {formats, tiers};
+  return { formats, tiers };
 }
 
-export function update(reports: {formats: Map<ID, TaggedReports>, tiers: string}) {
+export function update(reports: { formats: Map<ID, TaggedReports>; tiers: string }) {
   const dir = path.resolve(TESTDATA, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
@@ -107,7 +109,10 @@ export function update(reports: {formats: Map<ID, TaggedReports>, tiers: string}
   fs.writeFileSync(UPDATE, reports.tiers);
 }
 
-export function compare(reports: {formats: Map<ID, TaggedReports>, tiers: string}, cmp: CompareFn) {
+export function compare(
+  reports: { formats: Map<ID, TaggedReports>; tiers: string },
+  cmp: CompareFn
+) {
   const dir = path.resolve(TESTDATA, 'reports');
   for (const [format, taggedReports] of reports.formats.entries()) {
     const d = path.resolve(dir, format);
@@ -129,7 +134,12 @@ export function compare(reports: {formats: Map<ID, TaggedReports>, tiers: string
 }
 
 function createReports(
-    format: ID, s: stats.Statistics, battles: number, cutoff?: number, tag: ID|null = null) {
+  format: ID,
+  s: stats.Statistics,
+  battles: number,
+  cutoff?: number,
+  tag: ID | null = null
+) {
   return {
     usage: stats.Reports.usageReport(format, s, battles),
     leads: stats.Reports.leadsReport(format, s, battles),

@@ -1,6 +1,6 @@
-import {Data, hiddenPower, ID, PokemonSet, Stat, toID} from 'ps';
+import { Data, hiddenPower, ID, PokemonSet, Stat, toID } from 'ps';
 
-import {Classifier} from './classifier';
+import { Classifier } from './classifier';
 import * as util from './util';
 
 export interface Log {
@@ -8,7 +8,7 @@ export interface Log {
   format: string;
   timestamp: string;
   winner: string;
-  endType?: 'normal'|'forced'|'forfeit';
+  endType?: 'normal' | 'forced' | 'forfeit';
   seed: [number, number, number, number];
   turns: number;
   score: [number, number];
@@ -19,8 +19,8 @@ export interface Log {
   p1team: Array<PokemonSet<string>>;
   p2team: Array<PokemonSet<string>>;
 
-  p1rating: Rating|null;
-  p2rating: Rating|null;
+  p1rating: Rating | null;
+  p2rating: Rating | null;
 
   log: string[];
   inputLog: string[];
@@ -31,19 +31,19 @@ export interface Battle {
   p2: Player;
   matchups: Array<[ID, ID, Outcome]>;
   turns: number;
-  endType?: 'normal'|'forced'|'forfeit';
+  endType?: 'normal' | 'forced' | 'forfeit';
 }
 
 export interface Player {
   name: ID;
   rating?: Rating;
-  outcome?: 'win'|'loss';
+  outcome?: 'win' | 'loss';
   team: Team;
 }
 
 export interface Team {
   pokemon: Pokemon[];
-  classification: {bias: number; stalliness: number; tags: Set<ID>;};
+  classification: { bias: number; stalliness: number; tags: Set<ID> };
 }
 
 export interface Pokemon {
@@ -71,22 +71,22 @@ export const enum Outcome {
   POKE2_UTURN_KOED = 9,
   POKE1_FODDERED = 10,
   POKE2_FODDERED = 11,
-  UNKNOWN = 12
+  UNKNOWN = 12,
 }
 
-type Slot = 0|1|2|3|4|5;
+type Slot = 0 | 1 | 2 | 3 | 4 | 5;
 
 const ROAR = new Set(['Roar', 'Whirlwind', 'Circle Throw', 'Dragon Tail']);
 const UTURN = new Set(['U-Turn', 'U-turn', 'Volt Switch', 'Baton Pass']);
 
-export const Parser = new class {
-  parse(raw: Log, format: string|Data) {
+export const Parser = new (class {
+  parse(raw: Log, format: string | Data) {
     // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
-    if (raw as unknown === '"log"') throw new Error('Log = "log"');
+    if ((raw as unknown) === '"log"') throw new Error('Log = "log"');
 
     if (raw.turns === undefined) throw new Error('No turn count');
 
-    let winner: 'tie'|'p1'|'p2' = 'tie';
+    let winner: 'tie' | 'p1' | 'p2' = 'tie';
     if (raw.log) {
       const winners = raw.log.filter(line => line.startsWith('|win|'));
       if (winners.includes(`|win|${raw.p1}`)) winner = 'p1';
@@ -97,17 +97,23 @@ export const Parser = new class {
     }
     if (raw.p1 === raw.p2) throw new Error('Player battling themself');
 
-    const idents: {p1: string[], p2: string[]} = {p1: [], p2: []};
-    const battle = ({matchups: [], turns: raw.turns, endType: raw.endType} as unknown) as Battle;
-    if (typeof format === 'string') format = util.canonicalizeFormat(toID(format));
-    for (const side of (['p1', 'p2'] as Array<'p1'|'p2'>)) {
+    const idents: { p1: string[]; p2: string[] } = { p1: [], p2: [] };
+    const battle = ({
+      matchups: [],
+      turns: raw.turns,
+      endType: raw.endType,
+    } as unknown) as Battle;
+    if (typeof format === 'string') {
+      format = util.canonicalizeFormat(toID(format));
+    }
+    for (const side of ['p1', 'p2'] as Array<'p1' | 'p2'>) {
       const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team'], format);
 
       // TODO: Stop tracking empty slots?
       const mons = [];
       for (let i = 0; i < 6; i++) {
         const pokemon = team[i];
-        idents[side].push(pokemon ? (pokemon.name || pokemon.species) : 'empty');
+        idents[side].push(pokemon ? pokemon.name || pokemon.species : 'empty');
         mons.push({
           species: pokemon ? pokemon.species : ('empty' as ID),
           set: pokemon || ({} as PokemonSet<ID>),
@@ -129,15 +135,15 @@ export const Parser = new class {
     }
     if (!raw.log || util.isNonSinglesFormat(format)) return battle;
 
-    const active: {p1?: Slot, p2?: Slot} = {};
+    const active: { p1?: Slot; p2?: Slot } = {};
     let flags = {
       roar: false,
       uturn: false,
       fodder: false,
       hazard: false,
       uturnko: false,
-      ko: {p1: false, p2: false},
-      switch: {p1: false, p2: false},
+      ko: { p1: false, p2: false },
+      switch: { p1: false, p2: false },
     };
     let turnMatchups: Array<[ID, ID, Outcome]> = [];
 
@@ -154,8 +160,8 @@ export const Parser = new class {
             fodder: false,
             hazard: false,
             uturnko: false,
-            ko: {p1: false, p2: false},
-            switch: {p1: false, p2: false},
+            ko: { p1: false, p2: false },
+            switch: { p1: false, p2: false },
           };
           turnMatchups = [];
           battle.p1.team.pokemon[active.p1!].turnsOut++;
@@ -187,7 +193,9 @@ export const Parser = new class {
           break;
         }
         case 'move':
-          if (line.length < 4) throw new Error(`Could not parse line: '${rawLine}'`);
+          if (line.length < 4) {
+            throw new Error(`Could not parse line: '${rawLine}'`);
+          }
           flags.hazard = false;
           const move = line[3];
           if (ROAR.has(move)) {
@@ -216,7 +224,9 @@ export const Parser = new class {
         case 'replace':
         case 'switch':
         case 'drag': {
-          if (line.length < 4) throw new Error(`Could not parse line: '${rawLine}'`);
+          if (line.length < 4) {
+            throw new Error(`Could not parse line: '${rawLine}'`);
+          }
           const name = line[3].split(',')[0];
           const side = line[2].startsWith('p1') ? 'p1' : 'p2';
           if (line[1] === 'replace') {
@@ -257,11 +267,13 @@ export const Parser = new class {
                 }
               } else {
                 if (flags.roar) {
-                  matchup[2] =
-                      flags.switch.p1 ? Outcome.POKE1_FORCED_OUT : Outcome.POKE2_FORCED_OUT;
+                  matchup[2] = flags.switch.p1
+                    ? Outcome.POKE1_FORCED_OUT
+                    : Outcome.POKE2_FORCED_OUT;
                 } else {
-                  matchup[2] =
-                      flags.switch.p1 ? Outcome.POKE1_SWITCHED_OUT : Outcome.POKE2_SWITCHED_OUT;
+                  matchup[2] = flags.switch.p1
+                    ? Outcome.POKE1_SWITCHED_OUT
+                    : Outcome.POKE2_SWITCHED_OUT;
                 }
               }
               turnMatchups.push(matchup);
@@ -280,7 +292,7 @@ export const Parser = new class {
     return battle;
   }
 
-  canonicalizeTeam(team: Array<PokemonSet<string>>, format: string|Data): Array<PokemonSet<ID>> {
+  canonicalizeTeam(team: Array<PokemonSet<string>>, format: string | Data): Array<PokemonSet<ID>> {
     const data = util.dataForFormat(format);
     const mray = util.isMegaRayquazaAllowed(format);
     for (const pokemon of team) {
@@ -290,11 +302,11 @@ export const Parser = new class {
       const nature = data.getNature(pokemon.nature);
       pokemon.nature = nature ? nature.id : 'hardy';
 
-      const evs = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
+      const evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
       for (const [stat, ev] of Object.entries(pokemon.evs)) {
         evs[stat as Stat] = Number(ev);
       }
-      const ivs = {hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31};
+      const ivs = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 };
       for (const [stat, iv] of Object.entries(pokemon.ivs)) {
         ivs[stat as Stat] = Number(iv);
       }
@@ -330,17 +342,25 @@ export const Parser = new class {
     }
     return team as Array<PokemonSet<ID>>;
   }
-};
+})();
 
 // FIXME: meloettapiroutte? darmanitanzen?
 const FORMES = new Set([
-  'greninjaash', 'zygardecomplete', 'mimikyubusted', 'mimikyubustedtotem', 'shayminsky',
-  'necrozmaultra'
+  'greninjaash',
+  'zygardecomplete',
+  'mimikyubusted',
+  'mimikyubustedtotem',
+  'shayminsky',
+  'necrozmaultra',
 ]);
 
 function identify(
-    name: string, side: 'p1'|'p2', battle: Battle, idents: {p1: string[], p2: string[]},
-    format: string|Data) {
+  name: string,
+  side: 'p1' | 'p2',
+  battle: Battle,
+  idents: { p1: string[]; p2: string[] },
+  format: string | Data
+) {
   const team = battle[side].team.pokemon;
   const names = idents[side];
 
@@ -353,7 +373,7 @@ function identify(
       // In the happy case we have an exact match
       if (n === name) return i as Slot;
       // Otherwise the nickname could have been truncated, track all matches
-      if (name.startsWith(n)) found.push({index: i, name: n});
+      if (name.startsWith(n)) found.push({ index: i, name: n });
     }
     if (found.length) {
       // If we found names, we assume the longest match is correct
@@ -380,8 +400,8 @@ function identify(
   }
 
   const state = {
-    p1: {team: battle.p1.team.pokemon.map(p => p.species), idents: idents.p1},
-    p2: {team: battle.p2.team.pokemon.map(p => p.species), idents: idents.p2},
+    p1: { team: battle.p1.team.pokemon.map(p => p.species), idents: idents.p1 },
+    p2: { team: battle.p2.team.pokemon.map(p => p.species), idents: idents.p2 },
   };
   // FIXME: This occurs due to interactons between Illusion and Transform/Illusion (which is
   // exclusively an issue in Hackmons formats). We don't have enough information in a single

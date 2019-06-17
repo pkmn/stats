@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import {join} from 'path';
+import { join } from 'path';
 import * as zlib from 'zlib';
 
 export function exists(path: string): Promise<boolean> {
@@ -20,9 +20,12 @@ export function mkdtemp(prefix: string): Promise<string> {
   });
 }
 
-export function mkdir(path: string, options?: {recursive?: boolean, mode?: number}): Promise<void> {
+export function mkdir(
+  path: string,
+  options?: { recursive?: boolean; mode?: number }
+): Promise<void> {
   return new Promise((resolve, reject) => {
-    fs.mkdir(path, Object.assign({mode: 0o755}, options), err => {
+    fs.mkdir(path, Object.assign({ mode: 0o755 }, options), err => {
       err ? reject(err) : resolve();
     });
   });
@@ -40,15 +43,17 @@ export function readFile(path: string, encoding: 'utf8'): Promise<string> {
   return new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
       if (err) reject(err);
-      !isGzipped(data) ? resolve(data.toString(encoding)) : zlib.gunzip(data, (err, buf) => {
-        err ? reject(err) : resolve(buf.toString(encoding));
-      });
+      !isGzipped(data)
+        ? resolve(data.toString(encoding))
+        : zlib.gunzip(data, (err, buf) => {
+            err ? reject(err) : resolve(buf.toString(encoding));
+          });
     });
   });
 }
 
 function isGzipped(buf: Buffer) {
-  return (buf.length >= 3 && buf[0] === 0x1F && buf[1] === 0x8B && buf[2] === 0x08);
+  return buf.length >= 3 && buf[0] === 0x1f && buf[1] === 0x8b && buf[2] === 0x08;
 }
 
 export function writeFile(path: string, data: string): Promise<void> {
@@ -62,9 +67,11 @@ export function writeFile(path: string, data: string): Promise<void> {
 export function writeGzipFile(path: string, data: string): Promise<void> {
   return new Promise((resolve, reject) => {
     zlib.gzip(data, (err, buf) => {
-      err ? reject(err) : fs.writeFile(path, buf, err => {
-        err ? reject(err) : resolve();
-      });
+      err
+        ? reject(err)
+        : fs.writeFile(path, buf, err => {
+            err ? reject(err) : resolve();
+          });
     });
   });
 }

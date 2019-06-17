@@ -1,10 +1,10 @@
 import * as path from 'path';
-import {ID} from 'ps';
+import { ID } from 'ps';
 
-import {Batch, Checkpoint, Offset,} from './checkpoint';
+import { Batch, Checkpoint, Offset } from './checkpoint';
 import * as fs from './fs';
 
-const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
+const CMP = Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
 
 export interface LogStorage {
   list(format?: ID, day?: string): Promise<string[]>;
@@ -13,7 +13,7 @@ export interface LogStorage {
 }
 
 export class LogStorage {
-  static connect(config: {logs: string|LogStorage}): LogStorage {
+  static connect(config: { logs: string | LogStorage }): LogStorage {
     // TODO: support DatabaseStorage as well
     if (typeof config.logs === 'string') {
       return new LogFileStorage(config.logs);
@@ -46,7 +46,7 @@ class LogFileStorage implements LogStorage {
 
       const logs = await this.list(format, day);
       if (begin && day === begin.day) {
-        const n = (end && day === end.day) ? end.index.local + 1 : logs.length;
+        const n = end && day === end.day ? end.index.local + 1 : logs.length;
         for (let i = begin.index.local; i < n; i++) {
           range.push(path.join(format, day, logs[i]));
         }
@@ -80,8 +80,10 @@ export interface CheckpointStorage {
 }
 
 export class CheckpointStorage {
-  static connect(config: {checkpoints?: string|CheckpointStorage, dryRun?: boolean}):
-      CheckpointStorage {
+  static connect(config: {
+    checkpoints?: string | CheckpointStorage;
+    dryRun?: boolean;
+  }): CheckpointStorage {
     if (config.dryRun) return new CheckpointMemoryStorage();
     if (!config.checkpoints || typeof config.checkpoints === 'string') {
       return new CheckpointFileStorage(config.checkpoints);
@@ -102,7 +104,7 @@ class CheckpointFileStorage implements CheckpointStorage {
       this.dir = await fs.mkdtemp('checkpoints-');
     } else {
       try {
-        await fs.mkdir(this.dir, {recursive: true});
+        await fs.mkdir(this.dir, { recursive: true });
       } catch (err) {
         if (err.code !== 'EEXIST') throw err;
       }
@@ -124,9 +126,11 @@ class CheckpointFileStorage implements CheckpointStorage {
     const reads = [];
     for (const raw of await fs.readdir(this.dir)) {
       const format = raw as ID;
-      reads.push(this.list(format).then(batches => {
-        checkpoints.set(format, batches);
-      }));
+      reads.push(
+        this.list(format).then(batches => {
+          checkpoints.set(format, batches);
+        })
+      );
     }
     await Promise.all(reads);
     return checkpoints;
@@ -153,7 +157,7 @@ class CheckpointFileStorage implements CheckpointStorage {
     return {
       format,
       begin: Checkpoint.decodeOffset(format, b),
-      end: Checkpoint.decodeOffset(format, e)
+      end: Checkpoint.decodeOffset(format, e),
     };
   }
 }
@@ -177,7 +181,9 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
   async offsets() {
     const checkpoints: Map<ID, Batch[]> = new Map();
     for (const [format, data] of this.checkpoints.entries()) {
-      const offsets = Array.from(data.keys()).sort(CMP).map(name => this.fromName(format, name));
+      const offsets = Array.from(data.keys())
+        .sort(CMP)
+        .map(name => this.fromName(format, name));
       checkpoints.set(format, offsets);
     }
     return checkpoints;
@@ -208,7 +214,7 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
     return {
       format,
       begin: Checkpoint.decodeOffset(format, b),
-      end: Checkpoint.decodeOffset(format, e)
+      end: Checkpoint.decodeOffset(format, e),
     };
   }
 }

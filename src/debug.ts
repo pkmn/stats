@@ -1,6 +1,6 @@
-import {performance} from 'perf_hooks';
+import { performance } from 'perf_hooks';
 import * as util from 'util';
-import {workerData} from 'worker_threads';
+import { workerData } from 'worker_threads';
 
 declare global {
   function LOG(...args: any[]): boolean;
@@ -46,8 +46,11 @@ function LOGMEM() {
 
 export function log(title: string, num: number, ...args: any[]) {
   const color = num ? (num % 5) + 2 : 1;
-  const tag =
-      util.format(`\x1b[90m[%s] \x1b[3${color}m%s\x1b[0m`, millis(performance.now()), title);
+  const tag = util.format(
+    `\x1b[90m[%s] \x1b[3${color}m%s\x1b[0m`,
+    millis(performance.now()),
+    title
+  );
   console.log(tag, ...args);
 }
 

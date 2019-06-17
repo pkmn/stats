@@ -1,1 +1,1 @@
-export {main as process} from './main';
+export { main as process } from './main';
