@@ -56,14 +56,14 @@ function millis(ms: number) {
   if (abs < 0.001) return `${dec(ms * 1000 * 1000)}ns`;
   if (abs < 1) return `${dec(ms * 1000)}\u03BCs`;
   if (abs < 1000) return `${dec(ms)}ms`;
-  return `${dec(ms / 1000)}s`;
+  return `${dec(ms / 1000, 60)}s`;
 }
 
-function dec(n: number) {
+function dec(n: number, c = 100) {
   const abs = Math.abs(n);
   if (abs < 1) return n.toFixed(3);
   if (abs < 10) return n.toFixed(2);
-  if (abs < 100) return n.toFixed(1);
+  if (abs < c) return n.toFixed(1);
   return n.toFixed();
 }
 
