@@ -438,17 +438,17 @@ function combineTagged(a: TaggedStatistics, b: TaggedStatistics | undefined) {
 
 function combineWeighted(a: WeightedStatistics, b: WeightedStatistics | undefined) {
   if (!b) return a;
-  for (const [c, stats] of Object.entries(a)) {
+  for (const [c, stats] of Object.entries(b)) {
     const cutoff = Number(c);
-    a[cutoff] = combineStats(stats, b[cutoff]);
+    a[cutoff] = combineStats(stats, a[cutoff]);
   }
   return a;
 }
 
 function combineStats(a: Statistics, b: Statistics | undefined) {
   if (!b) return a;
-  for (const [pokemon, usage] of Object.entries(a.pokemon)) {
-    a.pokemon[pokemon] = combineUsage(usage, b.pokemon[pokemon]);
+  for (const [pokemon, usage] of Object.entries(b.pokemon)) {
+    a.pokemon[pokemon] = combineUsage(a.pokemon[pokemon], usage);
   }
   a.leads = combineCounts(a.leads, b.leads);
   a.usage = combineCounts(a.usage, b.usage);
