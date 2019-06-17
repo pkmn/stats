@@ -176,8 +176,10 @@ async function combine(formats: ID[], config: StatsConfiguration) {
         writes.push(...writeReports(config, format, Number(c), s, b, t as ID));
       }
     }
-    LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
-    await Promise.all(writes);
+    if (writes.length) {
+      LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
+      await Promise.all(writes);
+    }
     LOGMEM();
   }
 }
@@ -187,11 +189,12 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   const stats = Stats.create();
   // Floating point math is commutative but *not* necessarily associative, meaning that we can
   // potentially get different results depending on the order we add the Stats in. The sorting
-  // CheckpointStorage#list does helps with stability, but there is no guarantee runs with
-  // different batch sizes/checkpoints will return the same results or that they will be equivalent
-  // to arbitrary precision with a run which does not use batches at all. For the best accuracy we
-  // should be adding up the smallest values first, but this requires deeper architectural changes
-  // and has performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
+  // CheckpointStorage#list *could* be used to help with stability, but we are letting the reads
+  // race here to improve performance. Furthermore, there is no guarantee runs with different batch
+  // sizes/checkpoints will return the same results or that they will be equivalent to arbitrary
+  // precision with a run which does not use batches at all. For the best accuracy we should be
+  // adding up the smallest values first, but this requires deeper architectural changes and has
+  // performance implications. https://en.wikipedia.org/wiki/Floating-point_arithmetic
   let n = 0;
   let combines = [];
   const N = Math.min(config.maxFiles, config.batchSize.combine);
@@ -204,15 +207,19 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
       combines = [];
     }
 
-    combines.push(StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
-      LOG(`Aggregating ${checkpoint}`);
-      Stats.combine(stats, checkpoint.stats);
-      LOGMEM();
-    }));
+    combines.push(
+      StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
+        LOG(`Aggregating ${checkpoint}`);
+        Stats.combine(stats, checkpoint.stats);
+        LOGMEM();
+      })
+    );
     n++;
   }
-  LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
-  await Promise.all(combines);
+  if (combines.length) {
+    LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
+    await Promise.all(combines);
+  }
   LOGMEM();
 
   return stats;
