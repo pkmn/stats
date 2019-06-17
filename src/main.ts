@@ -80,7 +80,7 @@ async function spawn(
   const workers: Array<Promise<void>> = [];
 
   // If we have fewer formats remaining than the number of workers each can open more files.
-  workerConfig.maxFiles = Math.min(Math.floor(maxFiles / batches.length), 1);
+  workerConfig.maxFiles = Math.max(Math.floor(maxFiles / batches.length), 1);
   let num = batches.length;
   for (const [i, formats] of batches.entries()) {
     // We shuffle the batches so that formats will be processed more evenly. Without this shake
