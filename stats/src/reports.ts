@@ -50,7 +50,7 @@ const MIN = [20, 0.5];
 
 export const Reports = new (class {
   usageReport(format: ID, stats: Statistics, battles: number) {
-    const sorted = Object.entries(stats.pokemon);
+    const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
     if (['challengecup1v1', '1v1'].includes(format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
     } else {
@@ -98,12 +98,14 @@ export const Reports = new (class {
     total.raw = Math.max(1.0, stats.leads.raw);
     total.weighted = Math.max(1.0, stats.leads.weighted);
 
-    const sorted = Object.entries(stats.pokemon).sort(
-      (a, b) =>
-        b[1].lead.weighted - a[1].lead.weighted ||
-        b[1].lead.raw - a[1].lead.raw ||
-        a[0].localeCompare(b[0])
-    );
+    const sorted = Object.entries(stats.pokemon)
+      .filter(p => p[0] !== 'empty')
+      .sort(
+        (a, b) =>
+          b[1].lead.weighted - a[1].lead.weighted ||
+          b[1].lead.raw - a[1].lead.raw ||
+          a[0].localeCompare(b[0])
+      );
     for (const [i, entry] of sorted.entries()) {
       const species = entry[0];
       const usage = entry[1].lead;
