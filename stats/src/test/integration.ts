@@ -51,14 +51,16 @@ export async function process() {
     const trs = {total: new Map, tags: new Map()};
     const b = taggedStats.battles;
 
-    for (const [c, s] of taggedStats.total.entries()) {
-      trs.total.set(c, createReports(format, s, b, c));
+    for (const [c, s] of Object.entries(taggedStats.total)) {
+      const cutoff = Number(c);
+      trs.total.set(cutoff, createReports(format, s as stats.Statistics, b, cutoff));
     }
 
-    for (const [t, ts] of taggedStats.tags.entries()) {
+    for (const [t, ts] of Object.entries(taggedStats.tags)) {
       const wrs: WeightedReports = new Map();
-      for (const [c, s] of ts.entries()) {
-        wrs.set(c, createReports(format, s, b, c, t));
+      for (const [c, s] of Object.entries(ts)) {
+        const cutoff = Number(c);
+        wrs.set(cutoff, createReports(format, s, b, cutoff, t as ID));
       }
       trs.tags.set(t, wrs);
     }

@@ -50,7 +50,7 @@ const MIN = [20, 0.5];
 
 export const Reports = new class {
   usageReport(format: ID, stats: Statistics, battles: number) {
-    const sorted = Array.from(stats.pokemon.entries());
+    const sorted = Object.entries(stats.pokemon);
     if (['challengecup1v1', '1v1'].includes(format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
     } else {
@@ -98,7 +98,7 @@ export const Reports = new class {
     total.raw = Math.max(1.0, stats.leads.raw);
     total.weighted = Math.max(1.0, stats.leads.weighted);
 
-    const sorted = Array.from(stats.pokemon.entries())
+    const sorted = Object.entries(stats.pokemon)
                        .sort(
                            (a, b) => b[1].lead.weighted - a[1].lead.weighted ||
                                b[1].lead.raw - a[1].lead.raw || a[0].localeCompare(b[0]));
@@ -148,7 +148,7 @@ export const Reports = new class {
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break;  // 1/100th of a percent
 
-      const p = stats.pokemon.get(species)!;
+      const p = stats.pokemon[species]!;
 
       s += sep;
       s += ` | ${displaySpecies(species, data)}`.padEnd(WIDTH + 2) + '| \n';
@@ -251,7 +251,7 @@ export const Reports = new class {
     return s;
   }
 
-  // FIXME: Just Use names everywhere instead of a hybrid of names and IDs.
+  // FIXME: Just use names everywhere instead of a hybrid of names and IDs.
   detailedMovesetReport(
       format: ID, stats: Statistics, battles: number, cutoff = 1500, tag: ID|null = null,
       movesetStats?: Map<ID, MovesetStatistics>, min = 20) {
@@ -282,7 +282,7 @@ export const Reports = new class {
     const W = Math.max(1.0, stats.usage.weighted);
 
     const tags =
-        Array.from(metagame.tags.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+        Object.entries(metagame.tags).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     let s = '';
     for (const [tag, weight] of tags) {
       s += ` ${tag}`.padEnd(31, '.');
@@ -527,7 +527,7 @@ function fmod(a: number, b: number, f = 1e3) {
 }
 
 function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
-  const sorted = Array.from(stats.pokemon.entries());
+  const sorted = Object.entries(stats.pokemon);
   const real = ['challengecup1v1', '1v1'].includes(format);
   const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
   // FIXME: Sort without this stupid rounding to avoid incorrect ordering
@@ -549,33 +549,33 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
   for (const entry of sorted) {
     const species = entry[0];
     const pokemon = entry[1];
-    const gxes = Array.from(pokemon.gxes.values()).sort((a, b) => b - a);
+    const gxes = Object.values(pokemon.gxes).sort((a, b) => b - a);
     const viability: [number, number, number, number] = gxes.length ?
         [
           gxes.length, gxes[0], gxes[Math.ceil(0.01 * gxes.length) - 1],
           gxes[Math.ceil(0.2 * gxes.length) - 1]
         ] :
         [0, 0, 0, 0];
-    movesets.set(species, {
+    movesets.set(species as ID, {
       'Raw count': pokemon.raw.count,
       'usage': usage(real ? pokemon.usage.real : pokemon.usage.weighted),
       'Viability Ceiling': viability,
-      'Abilities': toObject(
+      'Abilities': toDisplayObject(
           pokemon.abilities,
           ability => {
             const o = data.getAbility(ability);
             return (o && o.name) || ability;
           }),
-      'Items': toObject(
+      'Items': toDisplayObject(
           pokemon.items,
           item => {
             if (item === 'nothing') return 'Nothing';
             const o = data.getItem(item);
             return (o && o.name) || item;
           }),
-      'Spreads': toObject(pokemon.spreads),
-      'Happiness': toObject(pokemon.happinesses),
-      'Moves': toObject(
+      'Spreads': toDisplayObject(pokemon.spreads),
+      'Happiness': toDisplayObject(pokemon.happinesses),
+      'Moves': toDisplayObject(
           pokemon.moves,
           move => {
             if (move === '') return 'Nothing';
@@ -592,27 +592,28 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
 }
 
 function getTeammates(
-    format: ID, teammates: Map<ID, number>, count: number, total: number,
+    format: ID, teammates: {[id: string /* ID */]: number}, count: number, total: number,
     stats: Statistics): {[key: string]: number} {
   const real = ['challengecup1v1', '1v1'].includes(format);
-  const m: Map<string, number> = new Map();
-  for (const [id, w] of teammates.entries()) {
+  const m: {[species: string]: number} = {};
+  for (const [id, w] of Object.entries(teammates)) {
     const species = displaySpecies(id, format);
-    const s = stats.pokemon.get(id);
+    const s = stats.pokemon[id];
     if (!s) {
-      m.set(species, 0);
+      m[species] = 0;
       continue;
     }
     const usage = (real ? s.usage.real : s.usage.weighted) / total * 6;
-    m.set(species, w - round(count) * round(usage, 1e7));
+    m[species] = w - round(count) * round(usage, 1e7);
   }
-  return toObject(m);
+  return toDisplayObject(m);
 }
 
 function getChecksAndCounters(
-    encounters: Map<ID, number[/* Outcome */]>, display: (id: string) => string, min = 20) {
+    encounters: {[id: string /* ID */]: number[/* Outcome */]}, display: (id: string) => string,
+    min = 20) {
   const cc: Array<[string, EncounterStatistics]> = [];
-  for (const [id, outcomes] of encounters.entries()) {
+  for (const [id, outcomes] of Object.entries(encounters)) {
     // Outcome.POKE1_KOED...Outcome.DOUBLE_SWITCH
     const n = outcomes.slice(0, 6).reduce((a, b) => a + b);
     if (n <= min) continue;
@@ -641,12 +642,11 @@ function forDetailed(cc: {[key: string]: EncounterStatistics}) {
   return obj;
 }
 
-function toObject(
-    map: Map<number|string, number>, display?: (id: string) => string, p = PRECISION) {
+function toDisplayObject(
+    map: {[k: string /* number|ID */]: number}, display?: (id: string) => string, p = PRECISION) {
   const obj: {[key: string]: number} = {};
   const d = (k: number|string) => (typeof k === 'string' && display) ? display(k) : k.toString();
-  const sorted =
-      Array.from(map.entries()).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
+  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
     // FIXME: use display here for `chaos` reports as well
     obj[k.toString()] = round(v, p);

@@ -11,8 +11,6 @@ import {Configuration} from '../config';
 import * as fs from '../fs';
 import {CheckpointStorage, LogStorage} from '../storage';
 
-import * as state from './state';
-
 class StatsCheckpoint extends Checkpoint {
   readonly stats: TaggedStatistics;
 
@@ -22,12 +20,12 @@ class StatsCheckpoint extends Checkpoint {
   }
 
   serialize() {
-    return JSON.stringify(state.serializeTagged(this.stats));
+    return JSON.stringify(this.stats);
   }
 
   static async read(storage: CheckpointStorage, format: ID, begin: Offset, end: Offset) {
     const serialized = await storage.read(format, begin, end);
-    const stats = state.deserializeTagged(JSON.parse(serialized));
+    const stats = JSON.parse(serialized);
     return new StatsCheckpoint(format, begin, end, stats);
   }
 }
@@ -150,23 +148,23 @@ async function combine(formats: ID[], config: StatsConfiguration) {
 
     const b = stats.battles;
     let writes = [];
-    for (const [c, s] of stats.total.entries()) {
+    for (const [c, s] of Object.entries(stats.total)) {
       if (writes.length + REPORTS >= config.maxFiles) {
         LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
         await Promise.all(writes);
         writes = [];
       }
-      writes.push(...writeReports(config, format, c, s, b));
+      writes.push(...writeReports(config, format, Number(c), s, b));
     }
 
-    for (const [t, ts] of stats.tags.entries()) {
-      for (const [c, s] of ts.entries()) {
+    for (const [t, ts] of Object.entries(stats.tags)) {
+      for (const [c, s] of Object.entries(ts)) {
         if (writes.length + REPORTS >= config.maxFiles) {
           LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
           await Promise.all(writes);
           writes = [];
         }
-        writes.push(...writeReports(config, format, c, s, b, t));
+        writes.push(...writeReports(config, format, Number(c), s, b, t as ID));
       }
     }
     LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
@@ -177,7 +175,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
 
 async function aggregate(config: StatsConfiguration, format: ID): Promise<TaggedStatistics> {
   const checkpointStorage = CheckpointStorage.connect(config);
-  let stats: state.TaggedStatistics|undefined = undefined;
+  const stats = Stats.create();
   // Floating point math is commutative but *not* necessarily associative, meaning that we can
   // potentially get different results depending on the order we add the Stats in. The sorting
   // CheckpointStorage#list does helps with stability, but there is no guarantee runs with
@@ -191,12 +189,12 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     // one at a time to reduce memory pressure. We'll still be reading in numWorker files across
     // all processes, but a single worker won't potentially be forced to choke by reading in a large
     // batch of checkpoints for a format like gen7ou or gen7monotype.
-    const checkpoint = await checkpointStorage.read(format, begin, end).then(c => JSON.parse(c));
-    LOG(`Aggregating ${format}: ${Checkpoints.formatOffsets(begin, end)}`);
-    stats = state.combineTagged(checkpoint, stats);
+    const checkpoint = await StatsCheckpoint.read(checkpointStorage, format, begin, end);
+    LOG(`Aggregating ${checkpoint}`);
+    Stats.combine(stats, checkpoint.stats);
     LOGMEM();
   }
-  return state.deserializeTagged(stats!);
+  return stats;
 }
 
 function writeReports(

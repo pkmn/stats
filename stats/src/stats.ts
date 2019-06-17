@@ -6,13 +6,15 @@ import * as util from './util';
 export interface TaggedStatistics {
   battles: number;
   total: WeightedStatistics;
-  tags: Map<ID, WeightedStatistics>;
+  tags: {[id: string /* ID */]: WeightedStatistics};
 }
 
-export type WeightedStatistics = Map<number, Statistics>;
+export type WeightedStatistics = {
+  [num: number]: Statistics
+};
 
 export interface Statistics {
-  pokemon: Map<ID, UsageStatistics>;
+  pokemon: {[id: string /* ID */]: UsageStatistics};
   leads: Usage;
   usage: Usage;
   metagame: MetagameStatistics;
@@ -22,18 +24,18 @@ export interface UsageStatistics {
   lead: Usage;
   usage: Usage;
 
-  abilities: Map<ID, number>;
-  items: Map<ID, number>;
-  happinesses: Map<number, number>;
-  spreads: Map<string, number>;
-  moves: Map<ID, number>;
+  abilities: {[id: string /* ID */]: number};
+  items: {[id: string /* ID */]: number};
+  happinesses: {[num: number]: number};
+  spreads: {[spread: string]: number};
+  moves: {[id: string /* ID */]: number};
 
   raw: {weight: number; count: number};
   saved: {weight: number, count: number};
 
-  encounters: Map<ID, number[/* Outcome */]>;
-  teammates: Map<ID, number>;
-  gxes: Map<ID, number>;
+  encounters: {[id: string /* ID */]: number[/* Outcome */]};
+  teammates: {[id: string /* ID */]: number};
+  gxes: {[id: string /* ID */]: number};
 }
 
 export interface Usage {
@@ -43,7 +45,7 @@ export interface Usage {
 }
 
 export interface MetagameStatistics {
-  tags: Map<ID, number>;
+  tags: {[id: string /* ID */]: number};
   stalliness: Array<[number, number]>;
 }
 
@@ -51,7 +53,7 @@ const EMPTY: Set<ID> = new Set();
 
 export const Stats = new class {
   create() {
-    return {battles: 0, total: new Map(), tags: new Map()};
+    return {battles: 0, total: {}, tags: {}};
   }
 
   update(
@@ -73,23 +75,23 @@ export const Stats = new class {
       for (const [i, cutoff] of cutoffs.entries()) {
         const wsm = ws[i];
 
-        let s = stats.total.get(cutoff);
+        let s = stats.total[cutoff];
         if (!s) {
           s = newStatistics();
-          stats.total.set(cutoff, s);
+          stats.total[cutoff] = s;
         }
         updateStats(format, player, battle, wsm, gxe, save, short, s);
 
         for (const tag of tags) {
-          let t = stats.tags.get(tag);
+          let t = stats.tags[tag];
           if (!t) {
-            t = new Map();
-            stats.tags.set(tag, t);
+            t = {};
+            stats.tags[tag] = t;
           }
-          s = t.get(cutoff);
+          s = t[cutoff];
           if (!s) {
             s = newStatistics();
-            t.set(cutoff, s);
+            t[cutoff] = s;
           }
           if (player.team.classification.tags.has(tag)) {
             updateStats(format, player, battle, wsm, gxe, save, short, s, tag);
@@ -109,14 +111,14 @@ export const Stats = new class {
         for (const [i, weight] of mins.entries()) {
           const pw = {p1: playerWeights[0][i], p2: playerWeights[1][i]};
           const cutoff = cutoffs[i];
-          const s = stats.total.get(cutoff)!;
+          const s = stats.total[cutoff]!;
           updateEncounters(s, battle.matchups, weight);
           if (!updateLeads(s, battle, pw, playerTags)) {
             leads = false;
           }
 
           for (const tag of tags) {
-            const s = stats.tags.get(tag)!.get(cutoff)!;
+            const s = stats.tags[tag]![cutoff]!;
             updateEncounters(s, battle.matchups, weight);
             updateLeads(s, battle, pw, playerTags, tag);
           }
@@ -126,6 +128,18 @@ export const Stats = new class {
     }
 
     return stats;
+  }
+
+
+  combine(a: TaggedStatistics, b: TaggedStatistics|undefined): TaggedStatistics;
+  combine(a: WeightedStatistics, b: WeightedStatistics|undefined): WeightedStatistics;
+  combine(a: TaggedStatistics|WeightedStatistics, b: TaggedStatistics|WeightedStatistics|undefined):
+      TaggedStatistics|WeightedStatistics {
+    if ('battles' in a) {
+      return combineTagged(a as TaggedStatistics, b as TaggedStatistics | undefined);
+    } else {
+      return combineWeighted(a as WeightedStatistics, b as WeightedStatistics | undefined);
+    }
   }
 };
 
@@ -167,22 +181,22 @@ function updateStats(
       stats.usage.weighted += weights.s;
 
       for (const tag of player.team.classification.tags) {
-        stats.metagame.tags.set(tag, (stats.metagame.tags.get(tag) || 0) + weights.s);
+        stats.metagame.tags[tag] = (stats.metagame.tags[tag] || 0) + weights.s;
       }
       stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
     }
     if (pokemon.species === 'empty') {
       // FIXME: Stop including 'empty' in teammate stats!
       if (!short) {
-        updateTeammates(player.team.pokemon, index, pokemon.species, new Map(), stats, weights.s);
+        updateTeammates(player.team.pokemon, index, pokemon.species, {}, stats, weights.s);
       }
       continue;
     }
 
-    let p = stats.pokemon.get(pokemon.species);
+    let p = stats.pokemon[pokemon.species];
     if (!p) {
       p = newUsageStatistics();
-      stats.pokemon.set(pokemon.species, p);
+      stats.pokemon[pokemon.species] = p;
     }
 
     p.raw.weight += weights.m;
@@ -193,33 +207,33 @@ function updateStats(
     }
 
     if (gxe !== undefined) {
-      const g = p.gxes.get(player.name);
-      if (!g || g < gxe) p.gxes.set(player.name, gxe);
+      const g = p.gxes[player.name];
+      if (!g || g < gxe) p.gxes[player.name] = gxe;
     }
 
     const set = pokemon.set;
     const ability = set.ability === 'unknown' ? 'illuminate' as ID : set.ability;
-    const a = p.abilities.get(ability);
-    p.abilities.set(ability, (a || 0) + weights.m);
+    const a = p.abilities[ability];
+    p.abilities[ability] = (a || 0) + weights.m;
 
-    const i = p.items.get(set.item);
-    p.items.set(set.item, (i || 0) + weights.m);
+    const i = p.items[set.item];
+    p.items[set.item] = (i || 0) + weights.m;
 
     // FIXME: batchMovesetCounter is actually outputing 'Serious' instead of 'Hardy'...
     // const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
     const nature = data.getNature(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
     const spread = getSpread(nature, util.getSpecies(pokemon.species, data).baseStats, pokemon.set);
-    const s = p.spreads.get(spread);
-    p.spreads.set(spread, (s || 0) + weights.m);
+    const s = p.spreads[spread];
+    p.spreads[spread] = (s || 0) + weights.m;
 
     for (const move of set.moves) {
       // NOTE: We're OK with triple counting 'nothing'
-      const m = p.moves.get(move);
-      p.moves.set(move, (m || 0) + weights.m);
+      const m = p.moves[move];
+      p.moves[move] = (m || 0) + weights.m;
     }
 
-    const h = p.happinesses.get(set.happiness!);
-    p.happinesses.set(set.happiness!, (h || 0) + weights.m);
+    const h = p.happinesses[set.happiness!];
+    p.happinesses[set.happiness!] = (h || 0) + weights.m;
 
     if (!short) {
       p.usage.raw++;
@@ -252,20 +266,21 @@ function getSpread<T>(nature: Nature, base: StatsTable<number>, pokemon: Pokemon
 }
 
 function updateTeammates(
-    pokemon: Pokemon[], i: number, a: ID, ta: Map<ID, number>, stats: Statistics, weight: number) {
+    pokemon: Pokemon[], i: number, a: ID, ta: {[id: string /* ID */]: number}, stats: Statistics,
+    weight: number) {
   for (let j = 0; j < i; j++) {
     const b = pokemon[j].species;
 
-    let pb = stats.pokemon.get(b);
+    let pb = stats.pokemon[b];
     if (!pb) {
       pb = newUsageStatistics();
-      stats.pokemon.set(b, pb);
+      stats.pokemon[b] = pb;
     }
     const tb = pb.teammates;
 
-    const w = (ta.get(b) || 0) + weight;
-    ta.set(b, w);
-    tb.set(a, w);
+    const w = (ta[b] || 0) + weight;
+    ta[b] = w;
+    tb[a] = w;
   }
 }
 
@@ -285,28 +300,28 @@ const INVERSE_OUTCOMES: Outcome[] = [
 
 function updateEncounters(stats: Statistics, matchups: Array<[ID, ID, Outcome]>, weight: number) {
   for (const [a, b, outcome] of matchups) {
-    let ea = stats.pokemon.get(a);
+    let ea = stats.pokemon[a];
     if (!ea) {
       ea = newUsageStatistics();
-      stats.pokemon.set(a, ea);
+      stats.pokemon[a] = ea;
     }
 
-    let eb = stats.pokemon.get(b);
+    let eb = stats.pokemon[b];
     if (!eb) {
       eb = newUsageStatistics();
-      stats.pokemon.set(b, eb);
+      stats.pokemon[b] = eb;
     }
 
-    let eab = ea.encounters.get(b);
+    let eab = ea.encounters[b];
     if (!eab) {
       eab = new Array(13).fill(0);
-      ea.encounters.set(b, eab);
+      ea.encounters[b] = eab;
     }
 
-    let eba = eb.encounters.get(a);
+    let eba = eb.encounters[a];
     if (!eba) {
       eba = new Array(13).fill(0);
-      eb.encounters.set(a, eba);
+      eb.encounters[a] = eba;
     }
 
     eab[outcome] += weight;
@@ -339,7 +354,7 @@ function updateLeads(
 
   for (const side of sides) {
     if (tag && !tags[side].has(tag)) continue;
-    const usage = stats.pokemon.get(leads[side])!.lead;
+    const usage = stats.pokemon[leads[side]]!.lead;
     usage.raw++;
     stats.leads.raw++;
 
@@ -355,10 +370,10 @@ function updateLeads(
 
 function newStatistics() {
   return {
-    pokemon: new Map(),
+    pokemon: {},
     leads: newUsage(),
     usage: newUsage(),
-    metagame: {tags: new Map(), stalliness: []},
+    metagame: {tags: {}, stalliness: []},
   };
 }
 
@@ -366,20 +381,111 @@ function newUsageStatistics() {
   return {
     lead: newUsage(),
     usage: newUsage(),
-    abilities: new Map(),
-    items: new Map(),
-    happinesses: new Map(),
-    spreads: new Map(),
-    moves: new Map(),
+    abilities: {},
+    items: {},
+    happinesses: {},
+    spreads: {},
+    moves: {},
     viability: 0,
     raw: {weight: 0, count: 0},
     saved: {weight: 0, count: 0},
-    encounters: new Map(),
-    teammates: new Map(),
-    gxes: new Map(),
+    encounters: {},
+    teammates: {},
+    gxes: {},
   };
 }
 
 function newUsage() {
   return {raw: 0, real: 0, weighted: 0};
+}
+
+
+function combineTagged(a: TaggedStatistics, b: TaggedStatistics|undefined) {
+  if (!b) return a;
+  a.battles += b.battles;
+  a.total = combineWeighted(a.total, b.total);
+  for (const [tag, weighted] of Object.entries(a.tags)) {
+    a.tags[tag] = combineWeighted(weighted, b.tags[tag]);
+  }
+  return a;
+}
+
+function combineWeighted(a: WeightedStatistics, b: WeightedStatistics|undefined) {
+  if (!b) return a;
+  for (const [c, stats] of Object.entries(a)) {
+    const cutoff = Number(c);
+    a[cutoff] = combineStats(stats, b[cutoff]);
+  }
+  return a;
+}
+
+function combineStats(a: Statistics, b: Statistics|undefined) {
+  if (!b) return a;
+  for (const [pokemon, usage] of Object.entries(a.pokemon)) {
+    a.pokemon[pokemon] = combineUsage(usage, b.pokemon[pokemon]);
+  }
+  a.leads = combineCounts(a.leads, b.leads);
+  a.usage = combineCounts(a.usage, b.usage);
+  a.metagame = combineMetagame(a.metagame, b.metagame);
+  return a;
+}
+
+function combineUsage(a: UsageStatistics, b: UsageStatistics|undefined) {
+  if (!b) return a;
+  a.lead = combineCounts(a.lead, b.lead);
+  a.usage = combineCounts(a.usage, b.usage);
+  a.abilities = combineMap(a.abilities, b.abilities);
+  a.items = combineMap(a.items, b.items);
+  for (const [k, v] of Object.entries(b.happinesses)) {
+    const n = Number(k);
+    a.happinesses[n] = (a.happinesses[n] || 0) + v;
+  }
+  a.spreads = combineMap(a.spreads, b.spreads);
+  a.moves = combineMap(a.moves, b.moves);
+  a.raw.weight += b.raw.weight;
+  a.raw.count += b.raw.count;
+  a.saved.weight += b.saved.weight;
+  a.saved.count += b.saved.count;
+  for (const [k, v] of Object.entries(b.encounters)) {
+    const ae = a.encounters[k];
+    if (!ae) {
+      a.encounters[k] = v;
+      continue;
+    }
+    for (let i = 0; i < ae.length; i++) {
+      ae[i] += v[i];
+    }
+  }
+  a.teammates = combineMap(a.teammates, b.teammates);
+  for (const [player, gxe] of Object.entries(b.gxes)) {
+    const g = a.gxes[player];
+    if (!g || g < gxe) a.gxes[player] = gxe;
+  }
+  return a;
+}
+
+function combineMetagame(a: MetagameStatistics, b: MetagameStatistics|undefined) {
+  if (!b) return a;
+  a.tags = combineMap(a.tags, b.tags);
+  // NOTE: a.stalliness.push(...b.stalliness) can exceed Node's call stack...
+  for (const s of b.stalliness) {
+    a.stalliness.push(s);
+  }
+  return a;
+}
+
+function combineMap(a: {[key: string]: number}, b: {[key: string]: number}|undefined) {
+  if (!b) return a;
+  for (const [k, v] of Object.entries(b)) {
+    a[k] = (a[k] || 0) + v;
+  }
+  return a;
+}
+
+function combineCounts(a: Usage, b: Usage|undefined) {
+  if (!b) return a;
+  a.raw += b.raw;
+  a.real += b.real;
+  a.weighted += b.weighted;
+  return a;
 }
