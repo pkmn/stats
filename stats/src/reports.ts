@@ -815,6 +815,7 @@ function displaySpecies(name: string, format: string | Data) {
   // FIXME: Seriously, we don't filter 'empty'?
   if (name === 'empty') return name;
   const species = util.getSpecies(name, format).species;
+  if (name === 'Flabébé') return 'Flabebe';
   // FIXME: remove bad display of Nidoran-M / Nidoran-F
   return species.startsWith('Nidoran') ? species.replace('-', '') : species;
 }
