@@ -80,15 +80,19 @@ export class Options {
 
 function parse(opt: Option | undefined, fallback: (n?: number) => number) {
   if (typeof opt === 'number') {
-    return { apply: fallback(opt), combine: fallback() };
+    const val = fallback(opt);
+    return { apply: val, combine: val };
   } else if (typeof opt === 'string') {
     const [a, c] = opt.split(',').map(n => Number(n));
-    return { apply: fallback(a), combine: fallback(c) };
+    const val = fallback(a);
+    return { apply: val, combine: c ? fallback(c) : val };
   } else if (Array.isArray(opt)) {
-    return { apply: fallback(opt[0]), combine: fallback(opt[1]) };
+    const val = fallback(opt[0]);
+    return { apply: val, combine: opt.length > 1 ? fallback(opt[1]) : val };
   } else if (typeof opt === 'object') {
     return { apply: fallback(opt.apply), combine: fallback(opt.combine) };
   } else {
-    return { apply: fallback(), combine: fallback() };
+    const val = fallback();
+    return { apply: val, combine: val };
   }
 }
