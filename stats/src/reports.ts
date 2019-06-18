@@ -235,7 +235,7 @@ export const Reports = new (class {
       total = 0;
       s += heading('Teammates');
       for (const [i, teammate] of Object.keys(moveset['Teammates']).entries()) {
-        if (total > 0.95 || i > 10) break;
+        if (total > 0.95 || i > 11) break;
         const w = moveset['Teammates'][teammate];
         if (w < 0.005 * p.raw.weight) break;
         const weight = w / p.raw.weight;
@@ -247,7 +247,7 @@ export const Reports = new (class {
       s += sep;
       s += heading('Checks and Counters');
       for (const [i, cc] of Object.keys(moveset['Checks and Counters']).entries()) {
-        if (i > 10) break;
+        if (i > 11) break;
         const v = moveset['Checks and Counters'][cc];
         if (v.score < min[1]) break;
 
