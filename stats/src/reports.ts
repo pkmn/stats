@@ -39,8 +39,18 @@ interface UsageTiers<T> {
   PU: T;
 }
 
+type DoublesUsageTier = 'DOU' | 'DUU';
+type DoublesTier = DoublesUsageTier | 'DUber';
+interface DoublesUsageTiers<T> {
+  DOU: T;
+  DUU: T;
+}
+
 const USAGE_TIERS: UsageTier[] = ['OU', 'UU', 'RU', 'NU', 'PU'];
 const TIERS: Tier[] = ['Uber', 'OU', 'BL', 'UU', 'BL2', 'RU', 'BL3', 'NU', 'BL4', 'PU'];
+
+const DOUBLES_USAGE_TIERS: DoublesUsageTier[] = ['DOU', 'DUU'];
+const DOUBLES_TIERS: DoublesTier[] = ['DUber', 'DOU', 'DUU'];
 
 const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
 
