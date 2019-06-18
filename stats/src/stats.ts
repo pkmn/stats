@@ -430,8 +430,8 @@ function combineTagged(a: TaggedStatistics, b: TaggedStatistics | undefined) {
   if (!b) return a;
   a.battles += b.battles;
   a.total = combineWeighted(a.total, b.total);
-  for (const [tag, weighted] of Object.entries(a.tags)) {
-    a.tags[tag] = combineWeighted(weighted, b.tags[tag]);
+  for (const [tag, weighted] of Object.entries(b.tags)) {
+    a.tags[tag] = combineWeighted(weighted, a.tags[tag]);
   }
   return a;
 }
@@ -448,7 +448,7 @@ function combineWeighted(a: WeightedStatistics, b: WeightedStatistics | undefine
 function combineStats(a: Statistics, b: Statistics | undefined) {
   if (!b) return a;
   for (const [pokemon, usage] of Object.entries(b.pokemon)) {
-    a.pokemon[pokemon] = combineUsage(a.pokemon[pokemon], usage);
+    a.pokemon[pokemon] = combineUsage(usage, a.pokemon[pokemon]);
   }
   a.leads = combineCounts(a.leads, b.leads);
   a.usage = combineCounts(a.usage, b.usage);
