@@ -430,25 +430,25 @@ function combineTagged(a: TaggedStatistics, b: TaggedStatistics | undefined) {
   if (!b) return a;
   a.battles += b.battles;
   a.total = combineWeighted(a.total, b.total);
-  for (const [tag, weighted] of Object.entries(b.tags)) {
-    a.tags[tag] = combineWeighted(weighted, a.tags[tag]);
+  for (const tag in b.tags) {
+    a.tags[tag] = combineWeighted(b.tags[tag], a.tags[tag]);
   }
   return a;
 }
 
 function combineWeighted(a: WeightedStatistics, b: WeightedStatistics | undefined) {
   if (!b) return a;
-  for (const [c, stats] of Object.entries(b)) {
+  for (const c in b) {
     const cutoff = Number(c);
-    a[cutoff] = combineStats(stats, a[cutoff]);
+    a[cutoff] = combineStats(b[cutoff], a[cutoff]);
   }
   return a;
 }
 
 function combineStats(a: Statistics, b: Statistics | undefined) {
   if (!b) return a;
-  for (const [pokemon, usage] of Object.entries(b.pokemon)) {
-    a.pokemon[pokemon] = combineUsage(usage, a.pokemon[pokemon]);
+  for (const pokemon in b.pokemon) {
+    a.pokemon[pokemon] = combineUsage(b.pokemon[pokemon], a.pokemon[pokemon]);
   }
   a.leads = combineCounts(a.leads, b.leads);
   a.usage = combineCounts(a.usage, b.usage);
@@ -462,9 +462,9 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {
   a.usage = combineCounts(a.usage, b.usage);
   a.abilities = combineMap(a.abilities, b.abilities);
   a.items = combineMap(a.items, b.items);
-  for (const [k, v] of Object.entries(b.happinesses)) {
+  for (const k in b.happinesses) {
     const n = Number(k);
-    a.happinesses[n] = (a.happinesses[n] || 0) + v;
+    a.happinesses[n] = (a.happinesses[n] || 0) + b.happinesses[n];
   }
   a.spreads = combineMap(a.spreads, b.spreads);
   a.moves = combineMap(a.moves, b.moves);
@@ -472,18 +472,20 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {
   a.raw.count += b.raw.count;
   a.saved.weight += b.saved.weight;
   a.saved.count += b.saved.count;
-  for (const [k, v] of Object.entries(b.encounters)) {
+  for (const k in b.encounters) {
     const ae = a.encounters[k];
+    const be = b.encounters[k];
     if (!ae) {
-      a.encounters[k] = v;
+      a.encounters[k] = be;
       continue;
     }
     for (let i = 0; i < ae.length; i++) {
-      ae[i] += v[i];
+      ae[i] += be[i];
     }
   }
   a.teammates = combineMap(a.teammates, b.teammates);
-  for (const [player, gxe] of Object.entries(b.gxes)) {
+  for (const player in b.gxes) {
+    const gxe = b.gxes[player];
     const g = a.gxes[player];
     if (!g || g < gxe) a.gxes[player] = gxe;
   }
@@ -502,8 +504,8 @@ function combineMetagame(a: MetagameStatistics, b: MetagameStatistics | undefine
 
 function combineMap(a: { [key: string]: number }, b: { [key: string]: number } | undefined) {
   if (!b) return a;
-  for (const [k, v] of Object.entries(b)) {
-    a[k] = (a[k] || 0) + v;
+  for (const k in b) {
+    a[k] = (a[k] || 0) + b[k];
   }
   return a;
 }
