@@ -142,7 +142,7 @@ class CheckpointFileStorage implements CheckpointStorage {
 
   write(checkpoint: Checkpoint) {
     const filename = this.toName(checkpoint.format, checkpoint.begin, checkpoint.end);
-    return fs.writeGzipFile(filename, checkpoint.serialize());
+    return fs.writeFile(filename, checkpoint.serialize());
   }
 
   private toName(format: ID, begin: Offset, end: Offset) {
