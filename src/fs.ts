@@ -42,7 +42,7 @@ export function readdir(path: string): Promise<string[]> {
 export function readFile(path: string, encoding: 'utf8'): Promise<string> {
   return new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
-      if (err) reject(err);
+      if (err) return reject(err);
       !isGzipped(data)
         ? resolve(data.toString(encoding))
         : zlib.gunzip(data, (err, buf) => {
