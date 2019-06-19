@@ -156,12 +156,9 @@ async function init(options: Options) {
 }
 
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
-function partition<T>(
-  batches: Array<{ data: T; size: number }>,
-  partitions: number,
-  uneven: number
-) {
-  LOG(`Partitioning ${batches.length} batches into ${partitions} partitions (uneven=${uneven})`);
+function partition<T>(batches: Array<{ data: T; size: number }>, partitions: number, uneven = 1) {
+  const unmsg = uneven === 1 ? '' : ` (uneven=${uneven})`;
+  LOG(`Partitioning ${batches.length} batches into ${partitions} partitions${unmsg}`);
   batches.sort((a, b) => b.size - a.size);
   const total = batches.reduce((tot, b) => tot + b.size, 0);
 

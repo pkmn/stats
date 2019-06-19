@@ -74,7 +74,7 @@ export class Options {
       numWorkers,
       maxFiles,
       batchSize,
-      uneven: options.uneven || (numWorkers ? 1 / numWorkers : 1),
+      uneven: options.uneven || (numWorkers.combine ? 1 / numWorkers.combine : 1),
       dryRun: !!options.dryRun,
       all: !!options.all,
       accept: () => 1,
