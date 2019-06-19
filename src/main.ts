@@ -50,7 +50,7 @@ export async function main(options: Options) {
   const workerConfig = Object.assign({}, config);
   delete workerConfig.accept;
 
-  let failures = await spawn(
+  let failures = !allBatches.length ? 0 : await spawn(
     'apply',
     workerConfig,
     config.maxFiles,
@@ -62,11 +62,11 @@ export async function main(options: Options) {
   // atypical case it's not really worth bothering to try to get this to be more precise.
   // TODO: We could be immediately creating combine workers immediately after all batches for
   // the particular format have finished processing.
-  failures += await spawn(
+  failures += !allSizes.length ? 0 : await spawn(
     'combine',
     workerConfig,
     config.maxFiles,
-    partition(allSizes, Math.max(config.numWorkers.combine, 1))
+    partition(allSizes, Math.max(config.numWorkers.combine, 1), config.uneven)
   );
   return failures;
 }
@@ -152,14 +152,20 @@ async function init(options: Options) {
 }
 
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
-function partition<T>(batches: Array<{ data: T; size: number }>, partitions: number) {
-  LOG(`Partitioning ${batches.length} batches into ${partitions} partitions`);
+function partition<T>(batches: Array<{ data: T; size: number }>, partitions: number, uneven: number) {
+  LOG(`Partitioning ${batches.length} batches into ${partitions} partitions (uneven=${uneven})`);
   batches.sort((a, b) => b.size - a.size);
+  const total = batches.reduce((tot, b) => tot + b.size, 0);
 
   // Given partitions is expected to be small, using a priority queue here shouldn't be necessary
   const ps: Array<{ total: number; data: T[] }> = [];
   for (const batch of batches) {
     let min: { total: number; data: T[] } | undefined;
+    if (ps.length && batch.size / total > uneven) {
+      ps[0].total += batch.size;
+      ps[0].data.push(batch.data);
+      continue;
+    }
     if (ps.length < partitions) {
       ps.push({ total: batch.size, data: [batch.data] });
       continue;

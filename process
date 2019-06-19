@@ -87,6 +87,8 @@ function usage(code) {
   out('');
   out('   -v/--verbose: log output while processing (default: false)');
   out('');
+  out('   -u/--uneven=N: fraction which determines which formats can be combined concurrently (default: 1/numWorkers)');
+  out('');
   out('   -a/--all: include all checks and counters in moveset reports (default: false)');
   out('');
   out('   -f/--anonymize=FORMATS: anonymize formats specified instead of processing stats (default: \'\')');
@@ -108,6 +110,7 @@ const argv = require('minimist')(process.argv.slice(2), {
     batchSize: ['b', 'perBatch', 'maxBatch', 'maxBatchSize'],
     debug: ['v', 'verbose'],
     dryRun: ['d', 'dry'],
+    uneven: ['u'],
     all: ['a'],
     formats: ['f', 'anon', 'anonymize'],
   }

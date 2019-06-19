@@ -28,6 +28,7 @@ export interface Configuration {
   numWorkers: { apply: number; combine: number };
   maxFiles: number;
   batchSize: { apply: number; combine: number };
+  uneven: number;
   dryRun: boolean;
   all: boolean;
   accept: (format: ID) => number;
@@ -73,6 +74,7 @@ export class Options {
       numWorkers,
       maxFiles,
       batchSize,
+      uneven: options.uneven || (numWorkers ? 1 / numWorkers : 1),
       dryRun: !!options.dryRun,
       all: !!options.all,
       accept: () => 1,
