@@ -43,9 +43,9 @@ export async function process() {
 
   const formats: Map<ID, TaggedReports> = new Map();
   for (const [format, battles] of parsed.entries()) {
-    const taggedStats = stats.Stats.create();
+    const taggedStats = { total: {}, tags: {} };
     for (const battle of battles) {
-      stats.Stats.update(format, battle, CUTOFFS, taggedStats /*, TAGS */);
+      stats.Stats.updateTagged(format, battle, CUTOFFS, taggedStats /*, TAGS */);
     }
 
     const trs = { total: new Map(), tags: new Map() };

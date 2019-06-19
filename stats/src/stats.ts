@@ -53,39 +53,58 @@ const EMPTY: Set<ID> = new Set();
 
 export const Stats = new (class {
   create() {
-    return { total: {}, tags: {} };
+    return {
+      battles: 0,
+      pokemon: {},
+      leads: newUsage(),
+      usage: newUsage(),
+      metagame: { tags: {}, stalliness: [] },
+    };
   }
 
-  //update(
-  //format: string | Data,
-  //battle: Battle,
-  //cutoff: number,
-  //stats?: Statistics,
-  //tag?: ID
-  //);
-  //update(
-  //format: string | Data,
-  //battle: Battle,
-  //cutoffs: number[],
-  //stats?: WeightedStatistics,
-  //tag?: ID
-  //);
-  update(
+  update(format: string | Data, battle: Battle, cutoff: number, stats?: Statistics, tag?: ID) {
+    const tagged: TaggedStatistics = { total: {}, tags: {} };
+    if (tag) {
+      tagged.tags[tag] = {};
+      tagged.tags[tag][cutoff] = stats || this.create();
+      this.updateTagged(format, battle, [cutoff], tagged, new Set([tag]), true);
+      return tagged.tags[tag][cutoff];
+    } else {
+      tagged.total = {};
+      tagged.total[cutoff] = stats || this.create();
+      this.updateTagged(format, battle, [cutoff], tagged);
+      return tagged.total[cutoff];
+    }
+  }
+
+  updateWeighted(
+    format: string | Data,
+    battle: Battle,
+    cutoffs: number[],
+    stats?: WeightedStatistics,
+    tag?: ID
+  ) {
+    const tagged: TaggedStatistics = { total: {}, tags: {} };
+    if (tag) {
+      tagged.tags[tag] = stats || {};
+      this.updateTagged(format, battle, cutoffs, tagged, new Set([tag]), true);
+      return tagged.tags[tag];
+    } else {
+      tagged.total = stats || {};
+      this.updateTagged(format, battle, cutoffs, tagged);
+      return tagged.total;
+    }
+  }
+
+  updateTagged(
     format: string | Data,
     battle: Battle,
     cutoffs: number[],
     stats?: TaggedStatistics,
-    tags?: Set<ID>
-    //);
-    //update(
-    //format: string | Data,
-    //battle: Battle,
-    //cutoffs: number|number[],
-    //stats?: TaggedStatistics|WeightedStatistics|Statistics,
-    //tags: ID|Set<ID>
+    tags = EMPTY,
+    tagsOnly = false
   ) {
-    stats = stats || this.create();
-    tags = tags || EMPTY;
+    stats = stats || { total: {}, tags: {} };
 
     const singles = !util.isNonSinglesFormat(format);
     const short =
@@ -102,11 +121,13 @@ export const Stats = new (class {
         const wsm = ws[i];
 
         let s = stats.total[cutoff];
-        if (!s) {
-          s = newStatistics();
-          stats.total[cutoff] = s;
+        if (!tagsOnly) {
+          if (!s) {
+            s = this.create();
+            stats.total[cutoff] = s;
+          }
+          updateStats(format, player, battle, wsm, gxe, save, short, s);
         }
-        updateStats(format, player, battle, wsm, gxe, save, short, s);
 
         for (const tag of tags) {
           let t = stats.tags[tag];
@@ -116,7 +137,7 @@ export const Stats = new (class {
           }
           s = t[cutoff];
           if (!s) {
-            s = newStatistics();
+            s = this.create();
             t[cutoff] = s;
           }
           if (player.team.classification.tags.has(tag)) {
@@ -136,10 +157,12 @@ export const Stats = new (class {
         for (const [i, weight] of mins.entries()) {
           const pw = { p1: playerWeights[0][i], p2: playerWeights[1][i] };
           const cutoff = cutoffs[i];
-          const s = stats.total[cutoff]!;
-          if (updateLeads(s, battle, pw, playerTags)) {
-            updateEncounters(s, battle.matchups, weight);
-            s.battles++;
+          if (!tagsOnly) {
+            const s = stats.total[cutoff]!;
+            if (updateLeads(s, battle, pw, playerTags)) {
+              updateEncounters(s, battle.matchups, weight);
+              s.battles++;
+            }
           }
 
           for (const [j, tag] of tags.entries()) {
@@ -152,7 +175,7 @@ export const Stats = new (class {
         }
       } else {
         for (const cutoff of cutoffs) {
-          stats.total[cutoff].battles++;
+          if (!tagsOnly) stats.total[cutoff].battles++;
           for (const tag of tags) {
             stats.tags[tag][cutoff].battles++;
           }
@@ -163,20 +186,34 @@ export const Stats = new (class {
     return stats;
   }
 
-  combine(a: TaggedStatistics, b: TaggedStatistics | undefined): TaggedStatistics;
-  combine(a: WeightedStatistics, b: WeightedStatistics | undefined): WeightedStatistics;
-  combine(a: Statistics, b: Statistics | undefined): Statistics;
-  combine(
-    a: TaggedStatistics | WeightedStatistics | Statistics,
-    b: TaggedStatistics | WeightedStatistics | Statistics | undefined
-  ): TaggedStatistics | WeightedStatistics | Statistics {
-    if ('total' in a) {
-      return combineTagged(a as TaggedStatistics, b as TaggedStatistics | undefined);
-    } else if ('battles' in a) {
-      return combineStats(a as Statistics, b as Statistics | undefined);
-    } else {
-      return combineWeighted(a as WeightedStatistics, b as WeightedStatistics | undefined);
+  combineTagged(a: TaggedStatistics, b: TaggedStatistics | undefined) {
+    if (!b) return a;
+    a.total = this.combineWeighted(a.total, b.total);
+    for (const tag in b.tags) {
+      a.tags[tag] = this.combineWeighted(b.tags[tag], a.tags[tag]);
     }
+    return a;
+  }
+
+  combineWeighted(a: WeightedStatistics, b: WeightedStatistics | undefined) {
+    if (!b) return a;
+    for (const c in b) {
+      const cutoff = Number(c);
+      a[cutoff] = this.combine(b[cutoff], a[cutoff]);
+    }
+    return a;
+  }
+
+  combine(a: Statistics, b: Statistics | undefined) {
+    if (!b) return a;
+    a.battles += b.battles;
+    for (const pokemon in b.pokemon) {
+      a.pokemon[pokemon] = combineUsage(b.pokemon[pokemon], a.pokemon[pokemon]);
+    }
+    a.leads = combineCounts(a.leads, b.leads);
+    a.usage = combineCounts(a.usage, b.usage);
+    a.metagame = combineMetagame(a.metagame, b.metagame);
+    return a;
   }
 })();
 
@@ -427,16 +464,6 @@ function updateLeads(
   return true;
 }
 
-function newStatistics() {
-  return {
-    battles: 0,
-    pokemon: {},
-    leads: newUsage(),
-    usage: newUsage(),
-    metagame: { tags: {}, stalliness: [] },
-  };
-}
-
 function newUsageStatistics() {
   return {
     lead: newUsage(),
@@ -457,36 +484,6 @@ function newUsageStatistics() {
 
 function newUsage() {
   return { raw: 0, real: 0, weighted: 0 };
-}
-
-function combineTagged(a: TaggedStatistics, b: TaggedStatistics | undefined) {
-  if (!b) return a;
-  a.total = combineWeighted(a.total, b.total);
-  for (const tag in b.tags) {
-    a.tags[tag] = combineWeighted(b.tags[tag], a.tags[tag]);
-  }
-  return a;
-}
-
-function combineWeighted(a: WeightedStatistics, b: WeightedStatistics | undefined) {
-  if (!b) return a;
-  for (const c in b) {
-    const cutoff = Number(c);
-    a[cutoff] = combineStats(b[cutoff], a[cutoff]);
-  }
-  return a;
-}
-
-function combineStats(a: Statistics, b: Statistics | undefined) {
-  if (!b) return a;
-  a.battles += b.battles;
-  for (const pokemon in b.pokemon) {
-    a.pokemon[pokemon] = combineUsage(b.pokemon[pokemon], a.pokemon[pokemon]);
-  }
-  a.leads = combineCounts(a.leads, b.leads);
-  a.usage = combineCounts(a.usage, b.usage);
-  a.metagame = combineMetagame(a.metagame, b.metagame);
-  return a;
 }
 
 function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {

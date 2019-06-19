@@ -104,7 +104,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
   for (const [i, { format, begin, end }] of batches.entries()) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
     const data = Data.forFormat(format);
-    const stats = Stats.create();
+    const stats = { total: {}, tags: {} };
 
     const size = end.index.global - begin.index.global + 1;
     const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
@@ -144,7 +144,7 @@ async function processLog(
     const raw = JSON.parse(await logStorage.read(log));
     const battle = Parser.parse(raw, data);
     const tags = data.format === 'gen7monotype' ? MONOTYPES : undefined;
-    Stats.update(data, battle, cutoffs, stats, tags);
+    Stats.updateTagged(data, battle, cutoffs, stats, tags);
   } catch (err) {
     console.error(`${log}: ${err.message}`);
   }
@@ -153,9 +153,8 @@ async function processLog(
 async function combine(formats: ID[], config: StatsConfiguration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
-    const stats = config.dryRun ? Stats.create() : await aggregate(config, format);
+    const stats = config.dryRun ? { total: {}, tags: {} } : await aggregate(config, format);
 
-    const b = stats.battles;
     let writes = [];
     for (const [c, s] of Object.entries(stats.total)) {
       if (writes.length + REPORTS >= config.maxFiles) {
@@ -163,7 +162,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
         await Promise.all(writes);
         writes = [];
       }
-      writes.push(...writeReports(config, format, Number(c), s, b));
+      writes.push(...writeReports(config, format, Number(c), s));
     }
 
     for (const [t, ts] of Object.entries(stats.tags)) {
@@ -173,7 +172,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
           await Promise.all(writes);
           writes = [];
         }
-        writes.push(...writeReports(config, format, Number(c), s, b, t as ID));
+        writes.push(...writeReports(config, format, Number(c), s, t as ID));
       }
     }
     if (writes.length) {
@@ -186,7 +185,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
 
 async function aggregate(config: StatsConfiguration, format: ID): Promise<TaggedStatistics> {
   const checkpointStorage = CheckpointStorage.connect(config);
-  const stats = Stats.create();
+  const stats = { total: {}, tags: {} };
   // Floating point math is commutative but *not* necessarily associative, meaning that we can
   // potentially get different results depending on the order we add the Stats in. The sorting
   // CheckpointStorage#list *could* be used to help with stability, but we are letting the reads
@@ -211,7 +210,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     combines.push(
       StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
         LOG(`Aggregating checkpoint ${i + 1}/${size} <${checkpoint}>`);
-        Stats.combine(stats, checkpoint.stats);
+        Stats.combineTagged(stats, checkpoint.stats);
         MLOG(true);
       })
     );
@@ -232,23 +231,22 @@ function writeReports(
   format: ID,
   cutoff: number,
   stats: Statistics,
-  battles: number,
   tag?: ID
 ) {
   LOG(`Writing reports for ${format} for cutoff ${cutoff}` + (tag ? ` (${tag})` : ''));
   if (config.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
-  const usage = Reports.usageReport(format, stats, battles);
+  const usage = Reports.usageReport(format, stats);
 
   const reports =
     format === 'gen7monotype' && tag ? path.join(config.reports, 'monotype') : config.reports;
   const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
-  const leads = Reports.leadsReport(format, stats, battles);
+  const leads = Reports.leadsReport(format, stats);
   writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));
-  const movesets = Reports.movesetReports(format, stats, battles, cutoff, tag, min);
+  const movesets = Reports.movesetReports(format, stats, cutoff, tag, min);
   writes.push(fs.writeFile(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic));
   writes.push(fs.writeFile(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed));
   const metagame = Reports.metagameReport(stats);
