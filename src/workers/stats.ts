@@ -198,9 +198,11 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
   let n = 0;
   let combines = [];
   const N = Math.min(config.maxFiles, config.batchSize.combine);
-  for (const { begin, end } of await checkpointStorage.list(format)) {
+  const checkpoints = await checkpointStorage.list(format);
+  const size = checkpoints.length;
+  for (const [i, { begin, end }] of checkpoints.entries()) {
     if (n >= N) {
-      LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
+      LOG(`Waiting for ${combines.length}/${size} checkpoint(s) for ${format} to be aggregated`);
       await Promise.all(combines);
       n = 0;
       combines = [];
@@ -208,7 +210,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
 
     combines.push(
       StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
-        LOG(`Aggregating ${checkpoint}`);
+        LOG(`Aggregating checkpoint ${i}/${size} <${checkpoint}>`);
         Stats.combine(stats, checkpoint.stats);
         MLOG(true);
       })
