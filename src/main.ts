@@ -50,24 +50,28 @@ export async function main(options: Options) {
   const workerConfig = Object.assign({}, config);
   delete workerConfig.accept;
 
-  let failures = !allBatches.length ? 0 : await spawn(
-    'apply',
-    workerConfig,
-    config.maxFiles,
-    partition(allBatches, Math.max(config.numWorkers.apply, 1))
-  );
+  let failures = !allBatches.length
+    ? 0
+    : await spawn(
+        'apply',
+        workerConfig,
+        config.maxFiles,
+        partition(allBatches, Math.max(config.numWorkers.apply, 1))
+      );
   // This partitioning only accounts for the number of logs handled in this processing run,
   // which isn't necesarily equal to the size of the total logs being combined (eg. due to
   // restarts). Given the cost of combine is generally small and that this only effects the
   // atypical case it's not really worth bothering to try to get this to be more precise.
   // TODO: We could be immediately creating combine workers immediately after all batches for
   // the particular format have finished processing.
-  failures += !allSizes.length ? 0 : await spawn(
-    'combine',
-    workerConfig,
-    config.maxFiles,
-    partition(allSizes, Math.max(config.numWorkers.combine, 1), config.uneven)
-  );
+  failures += !allSizes.length
+    ? 0
+    : await spawn(
+        'combine',
+        workerConfig,
+        config.maxFiles,
+        partition(allSizes, Math.max(config.numWorkers.combine, 1), config.uneven)
+      );
   return failures;
 }
 
@@ -152,7 +156,11 @@ async function init(options: Options) {
 }
 
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
-function partition<T>(batches: Array<{ data: T; size: number }>, partitions: number, uneven: number) {
+function partition<T>(
+  batches: Array<{ data: T; size: number }>,
+  partitions: number,
+  uneven: number
+) {
   LOG(`Partitioning ${batches.length} batches into ${partitions} partitions (uneven=${uneven})`);
   batches.sort((a, b) => b.size - a.size);
   const total = batches.reduce((tot, b) => tot + b.size, 0);
