@@ -59,7 +59,7 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 const MIN = [20, 0.5];
 
 export const Reports = new (class {
-  usageReport(format: ID, stats: Statistics, battles: number) {
+  usageReport(format: ID, stats: Statistics) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
     if (['challengecup1v1', '1v1'].includes(format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
@@ -67,8 +67,8 @@ export const Reports = new (class {
       sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
     }
 
-    let s = ` Total battles: ${battles}\n`;
-    const avg = battles ? roundStr(stats.usage.weighted / battles / 12, 1e3) : '0.0';
+    let s = ` Total battles: ${stats.battles}\n`;
+    const avg = stats.battles ? roundStr(stats.usage.weighted / stats.battles / 12, 1e3) : '0.0';
     s += ` Avg. weight/team: ${avg}\n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
@@ -98,8 +98,8 @@ export const Reports = new (class {
     return s;
   }
 
-  leadsReport(format: ID, stats: Statistics, battles: number) {
-    let s = ` Total leads: ${battles * 2}\n`;
+  leadsReport(format: ID, stats: Statistics) {
+    let s = ` Total leads: ${stats.battles * 2}\n`;
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
@@ -133,25 +133,10 @@ export const Reports = new (class {
     return s;
   }
 
-  movesetReports(
-    format: ID,
-    stats: Statistics,
-    battles: number,
-    cutoff = 1500,
-    tag: ID | null = null,
-    min = MIN
-  ) {
+  movesetReports(format: ID, stats: Statistics, cutoff = 1500, tag: ID | null = null, min = MIN) {
     const movesetStats = toMovesetStatistics(format, stats, min[0]);
     const basic = this.movesetReport(format, stats, movesetStats, min);
-    const detailed = this.detailedMovesetReport(
-      format,
-      stats,
-      battles,
-      cutoff,
-      tag,
-      movesetStats,
-      min[0]
-    );
+    const detailed = this.detailedMovesetReport(format, stats, cutoff, tag, movesetStats, min[0]);
     return { basic, detailed };
   }
 
@@ -286,7 +271,6 @@ export const Reports = new (class {
   detailedMovesetReport(
     format: ID,
     stats: Statistics,
-    battles: number,
     cutoff = 1500,
     tag: ID | null = null,
     movesetStats?: Map<ID, MovesetStatistics>,
@@ -299,7 +283,7 @@ export const Reports = new (class {
       cutoff,
       'cutoff deviation': 0,
       'team type': tag,
-      'number of battles': battles,
+      'number of battles': stats.battles,
     };
 
     const d = util.dataForFormat(format);

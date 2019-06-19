@@ -4,7 +4,6 @@ import { Battle, Outcome, Player, Pokemon, Team } from './parser';
 import * as util from './util';
 
 export interface TaggedStatistics {
-  battles: number;
   total: WeightedStatistics;
   tags: { [id: string /* ID */]: WeightedStatistics };
 }
@@ -14,6 +13,7 @@ export interface WeightedStatistics {
 }
 
 export interface Statistics {
+  battles: number;
   pokemon: { [id: string /* ID */]: UsageStatistics };
   leads: Usage;
   usage: Usage;
@@ -53,17 +53,39 @@ const EMPTY: Set<ID> = new Set();
 
 export const Stats = new (class {
   create() {
-    return { battles: 0, total: {}, tags: {} };
+    return { total: {}, tags: {} };
   }
 
+  //update(
+  //format: string | Data,
+  //battle: Battle,
+  //cutoff: number,
+  //stats?: Statistics,
+  //tag?: ID
+  //);
+  //update(
+  //format: string | Data,
+  //battle: Battle,
+  //cutoffs: number[],
+  //stats?: WeightedStatistics,
+  //tag?: ID
+  //);
   update(
     format: string | Data,
     battle: Battle,
     cutoffs: number[],
     stats?: TaggedStatistics,
-    tags = EMPTY
+    tags?: Set<ID>
+    //);
+    //update(
+    //format: string | Data,
+    //battle: Battle,
+    //cutoffs: number|number[],
+    //stats?: TaggedStatistics|WeightedStatistics|Statistics,
+    //tags: ID|Set<ID>
   ) {
     stats = stats || this.create();
+    tags = tags || EMPTY;
 
     const singles = !util.isNonSinglesFormat(format);
     const short =
@@ -105,8 +127,7 @@ export const Stats = new (class {
     }
 
     if (!short) {
-      let leads = true;
-      if (!short && singles) {
+      if (singles) {
         const playerTags = {
           p1: battle.p1.team.classification.tags,
           p2: battle.p2.team.classification.tags,
@@ -116,19 +137,27 @@ export const Stats = new (class {
           const pw = { p1: playerWeights[0][i], p2: playerWeights[1][i] };
           const cutoff = cutoffs[i];
           const s = stats.total[cutoff]!;
-          updateEncounters(s, battle.matchups, weight);
-          if (!updateLeads(s, battle, pw, playerTags)) {
-            leads = false;
+          if (updateLeads(s, battle, pw, playerTags)) {
+            updateEncounters(s, battle.matchups, weight);
+            s.battles++;
           }
 
-          for (const tag of tags) {
+          for (const [j, tag] of tags.entries()) {
             const s = stats.tags[tag]![cutoff]!;
-            updateEncounters(s, battle.matchups, weight);
-            updateLeads(s, battle, pw, playerTags, tag);
+            if (updateLeads(s, battle, pw, playerTags, tag)) {
+              updateEncounters(s, battle.matchups, weight);
+              s.battles++;
+            }
+          }
+        }
+      } else {
+        for (const cutoff of cutoffs) {
+          stats.total[cutoff].battles++;
+          for (const tag of tags) {
+            stats.tags[tag][cutoff].battles++;
           }
         }
       }
-      if (leads) stats.battles++;
     }
 
     return stats;
@@ -136,12 +165,15 @@ export const Stats = new (class {
 
   combine(a: TaggedStatistics, b: TaggedStatistics | undefined): TaggedStatistics;
   combine(a: WeightedStatistics, b: WeightedStatistics | undefined): WeightedStatistics;
+  combine(a: Statistics, b: Statistics | undefined): Statistics;
   combine(
-    a: TaggedStatistics | WeightedStatistics,
-    b: TaggedStatistics | WeightedStatistics | undefined
-  ): TaggedStatistics | WeightedStatistics {
-    if ('battles' in a) {
+    a: TaggedStatistics | WeightedStatistics | Statistics,
+    b: TaggedStatistics | WeightedStatistics | Statistics | undefined
+  ): TaggedStatistics | WeightedStatistics | Statistics {
+    if ('total' in a) {
       return combineTagged(a as TaggedStatistics, b as TaggedStatistics | undefined);
+    } else if ('battles' in a) {
+      return combineStats(a as Statistics, b as Statistics | undefined);
     } else {
       return combineWeighted(a as WeightedStatistics, b as WeightedStatistics | undefined);
     }
@@ -397,6 +429,7 @@ function updateLeads(
 
 function newStatistics() {
   return {
+    battles: 0,
     pokemon: {},
     leads: newUsage(),
     usage: newUsage(),
@@ -428,7 +461,6 @@ function newUsage() {
 
 function combineTagged(a: TaggedStatistics, b: TaggedStatistics | undefined) {
   if (!b) return a;
-  a.battles += b.battles;
   a.total = combineWeighted(a.total, b.total);
   for (const tag in b.tags) {
     a.tags[tag] = combineWeighted(b.tags[tag], a.tags[tag]);
@@ -447,6 +479,7 @@ function combineWeighted(a: WeightedStatistics, b: WeightedStatistics | undefine
 
 function combineStats(a: Statistics, b: Statistics | undefined) {
   if (!b) return a;
+  a.battles += b.battles;
   for (const pokemon in b.pokemon) {
     a.pokemon[pokemon] = combineUsage(b.pokemon[pokemon], a.pokemon[pokemon]);
   }

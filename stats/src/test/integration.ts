@@ -49,18 +49,16 @@ export async function process() {
     }
 
     const trs = { total: new Map(), tags: new Map() };
-    const b = taggedStats.battles;
-
     for (const [c, s] of Object.entries(taggedStats.total)) {
       const cutoff = Number(c);
-      trs.total.set(cutoff, createReports(format, s as stats.Statistics, b, cutoff));
+      trs.total.set(cutoff, createReports(format, s as stats.Statistics, cutoff));
     }
 
     for (const [t, ts] of Object.entries(taggedStats.tags)) {
       const wrs: WeightedReports = new Map();
       for (const [c, s] of Object.entries(ts as stats.WeightedStatistics)) {
         const cutoff = Number(c);
-        wrs.set(cutoff, createReports(format, s as stats.Statistics, b, cutoff, t as ID));
+        wrs.set(cutoff, createReports(format, s as stats.Statistics, cutoff, t as ID));
       }
       trs.tags.set(t, wrs);
     }
@@ -133,17 +131,11 @@ export function compare(
   cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8'));
 }
 
-function createReports(
-  format: ID,
-  s: stats.Statistics,
-  battles: number,
-  cutoff?: number,
-  tag: ID | null = null
-) {
+function createReports(format: ID, s: stats.Statistics, cutoff?: number, tag: ID | null = null) {
   return {
-    usage: stats.Reports.usageReport(format, s, battles),
-    leads: stats.Reports.leadsReport(format, s, battles),
-    movesets: stats.Reports.movesetReports(format, s, battles, cutoff, tag, [0, -Infinity]),
+    usage: stats.Reports.usageReport(format, s),
+    leads: stats.Reports.leadsReport(format, s),
+    movesets: stats.Reports.movesetReports(format, s, cutoff, tag, [0, -Infinity]),
     metagame: stats.Reports.metagameReport(s),
   };
 }
