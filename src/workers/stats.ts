@@ -1,11 +1,11 @@
 import 'source-map-support/register';
-import '../debug';
 
 import * as path from 'path';
 import { Data, ID, toID } from 'ps';
 import { Parser, Reports, Statistics, Stats, TaggedStatistics } from 'stats';
 import { workerData } from 'worker_threads';
 
+import * as debug from '../debug';
 import { Batch, Checkpoint, Checkpoints, Offset } from '../checkpoint';
 import { Configuration } from '../config';
 import * as fs from '../fs';
@@ -126,7 +126,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
     const checkpoint = new StatsCheckpoint(format, begin, end, stats);
     LOG(`Writing checkpoint <${checkpoint}>`);
     await checkpointStorage.write(checkpoint);
-    LOGMEM();
+    MLOG(true);
   }
 }
 
@@ -180,7 +180,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
       LOG(`Waiting for ${writes.length} report(s) for ${format} to be written`);
       await Promise.all(writes);
     }
-    LOGMEM();
+    MLOG(true);
   }
 }
 
@@ -202,7 +202,6 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     if (n >= N) {
       LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
       await Promise.all(combines);
-      LOGMEM();
       n = 0;
       combines = [];
     }
@@ -210,8 +209,9 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     combines.push(
       StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
         LOG(`Aggregating ${checkpoint}`);
+        const mem = MLOG() ? debug.humanBytes(debug.sizeof(checkpoint.stats)) : '';
         Stats.combine(stats, checkpoint.stats);
-        LOGMEM();
+        MLOG(`${format} stats:`, stats, `(+${mem})`);
       })
     );
     n++;
@@ -220,11 +220,12 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
     await Promise.all(combines);
   }
-  LOGMEM();
+  MLOG(`${format} stats post aggregation:`, stats);
 
   return stats;
 }
 
+// TODO: pass in Data to all reports being written!
 function writeReports(
   config: StatsConfiguration,
   format: ID,

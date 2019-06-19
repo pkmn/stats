@@ -5,12 +5,12 @@ import { workerData } from 'worker_threads';
 declare global {
   function LOG(...args: any[]): boolean;
   function VLOG(...args: any[]): boolean;
-  function LOGMEM(): void;
+  function MLOG(...args: any[]): boolean;
 }
 const GLOBAL = global as any;
 GLOBAL.LOG = LOG;
 GLOBAL.VLOG = VLOG;
-GLOBAL.LOGMEM = LOGMEM;
+GLOBAL.MLOG = MLOG;
 
 function LOG(...args: any[]) {
   const debug = !!process.env.DEBUG;
@@ -31,17 +31,21 @@ function VLOG(...args: any[]) {
   return true;
 }
 
-function LOGMEM() {
-  if (process.env.MEMORY) {
-    const mem = process.memoryUsage();
-    const heap = `${memsize(mem.heapUsed)}/${memsize(mem.heapTotal)}`;
-    const msg = `\x1b[90m${heap} (${memsize(mem.rss)}, ${memsize(mem.external)})\x1b[0m`;
-    if (workerData) {
-      log(`worker:${workerData.num}`, workerData.num, msg);
-    } else {
-      log(`main`, 0, msg);
+function MLOG(...args: any[]) {
+  const log = process.env.MEMORY && process.env.DEBUG;
+  if (!args.length || !log) return log;
+
+  const msg = [];
+  if (args.length > 1 || args[0] !== true) {
+    for (const arg of args) {
+      msg.push(typeof arg === 'string' ? arg : humanBytes(sizeof(arg)));
     }
   }
+  const mem = process.memoryUsage();
+  const heap = `${humanBytes(mem.heapUsed)}/${humanBytes(mem.heapTotal)}`;
+  const memmsg = `${heap} (${humanBytes(mem.rss)}, ${humanBytes(mem.external)})`;
+  msg.push(msg.length ? `[${memmsg}]` : memmsg);
+  return LOG(`\x1b[90m${msg.join(' ')}\x1b[0m`);
 }
 
 export function log(title: string, num: number, ...args: any[]) {
@@ -70,7 +74,20 @@ function dec(n: number, c = 100) {
   return n.toFixed();
 }
 
-function memsize(size: number) {
+export function humanBytes(size: number) {
   const o = Math.floor(Math.log(size) / Math.log(1024));
   return `${(size / Math.pow(1024, o)).toFixed(2)} ${['B', 'KiB', 'MiB', 'GiB', 'TiB'][o]}`;
+}
+
+const TYPE_SIZES: { [type: string]: (o: any) => number } = {
+  undefined: () => 0,
+  boolean: () => 4,
+  number: () => 8,
+  string: (x: string) => 2 * x.length,
+  object: (x: object | null | undefined) =>
+    !x ? 0 : Object.keys(x).reduce((acc, k) => sizeof(k) + sizeof((x as any)[k]) + acc, 0),
+};
+
+export function sizeof(value: any) {
+  return TYPE_SIZES[typeof value](value);
 }
