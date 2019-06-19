@@ -108,7 +108,7 @@ async function apply(batches: Batch[], config: StatsConfiguration) {
 
     const size = end.index.global - begin.index.global + 1;
     const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
-    LOG(`Processing ${size} log(s) from batch ${i}/${batches.length} - ${offset}`);
+    LOG(`Processing ${size} log(s) from batch ${i + 1}/${batches.length} - ${offset}`);
     let processed: Array<Promise<void>> = [];
     for (const log of await logStorage.select(format, begin, end)) {
       if (processed.length >= config.maxFiles) {
@@ -210,7 +210,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
 
     combines.push(
       StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
-        LOG(`Aggregating checkpoint ${i}/${size} <${checkpoint}>`);
+        LOG(`Aggregating checkpoint ${i + 1}/${size} <${checkpoint}>`);
         Stats.combine(stats, checkpoint.stats);
         MLOG(true);
       })
