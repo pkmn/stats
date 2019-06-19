@@ -38,7 +38,7 @@
 //
 //     <checkpoints>
 //     └── format
-//         └── YYYYMMDD_N_i-YYYYMMDD-M_j.json.gz
+//         └── YYYYMMDD_N_i-YYYYMMDD-M_j.json.b
 //
 // By default, <checkpoints> is a temp directory, but may be specified with a flag.
 //

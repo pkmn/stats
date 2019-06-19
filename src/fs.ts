@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import { join } from 'path';
+import * as zlib from 'zlib';
 
 export function exists(path: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
@@ -46,10 +47,32 @@ export function readFile(path: string, encoding: 'utf8'): Promise<string> {
   });
 }
 
+export function readCompressedFile(path: string, encoding: 'utf8'): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, encoding, (err, data) => {
+      if (err) return reject(err);
+      zlib.brotliDecompress(data, (err, buf) => {
+        err ? reject(err) : resolve(buf.toString(encoding));
+      });
+    });
+  });
+}
+
 export function writeFile(path: string, data: string): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.writeFile(path, data, err => {
       err ? reject(err) : resolve();
+    });
+  });
+}
+
+export function writeCompressedFile(path: string, data: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    zlib.brotliCompress(data, (err, buf) => {
+      if (err) return reject(err);
+      fs.writeFile(path, buf, err => {
+        err ? reject(err) : resolve();
+      });
     });
   });
 }
