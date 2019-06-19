@@ -148,11 +148,11 @@ class CheckpointFileStorage implements CheckpointStorage {
   private toName(format: ID, begin: Offset, end: Offset) {
     const b = Checkpoint.encodeOffset(begin);
     const e = Checkpoint.encodeOffset(end);
-    return path.resolve(this.dir, format, `${b}-${e}.json.gz`);
+    return path.resolve(this.dir, format, `${b}-${e}.json`);
   }
 
   private fromName(format: ID, filename: string) {
-    filename = path.basename(filename, '.json.gz');
+    filename = path.basename(filename, '.json');
     const [b, e] = filename.split('-');
     return {
       format,
