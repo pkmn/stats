@@ -137,22 +137,22 @@ class CheckpointFileStorage implements CheckpointStorage {
   }
 
   read(format: ID, begin: Offset, end: Offset) {
-    return fs.readCompressedFile(this.toName(format, begin, end), 'utf8');
+    return fs.readFile(this.toName(format, begin, end), 'utf8');
   }
 
   write(checkpoint: Checkpoint) {
     const filename = this.toName(checkpoint.format, checkpoint.begin, checkpoint.end);
-    return fs.writeCompressedFile(filename, checkpoint.serialize());
+    return fs.writeFile(filename, checkpoint.serialize());
   }
 
   private toName(format: ID, begin: Offset, end: Offset) {
     const b = Checkpoint.encodeOffset(begin);
     const e = Checkpoint.encodeOffset(end);
-    return path.resolve(this.dir, format, `${b}-${e}.json.b`);
+    return path.resolve(this.dir, format, `${b}-${e}.json.gz`);
   }
 
   private fromName(format: ID, filename: string) {
-    filename = path.basename(filename, '.json.b');
+    filename = path.basename(filename, '.json.gz');
     const [b, e] = filename.split('-');
     return {
       format,
