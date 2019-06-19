@@ -54,7 +54,7 @@ export async function main(options: Options) {
     'apply',
     workerConfig,
     config.maxFiles,
-    partition(allBatches, config.numWorkers.apply)
+    partition(allBatches, Math.max(config.numWorkers.apply, 1))
   );
   // This partitioning only accounts for the number of logs handled in this processing run,
   // which isn't necesarily equal to the size of the total logs being combined (eg. due to
@@ -66,7 +66,7 @@ export async function main(options: Options) {
     'combine',
     workerConfig,
     config.maxFiles,
-    partition(allSizes, config.numWorkers.combine)
+    partition(allSizes, Math.max(config.numWorkers.combine, 1))
   );
   return failures;
 }
@@ -82,37 +82,46 @@ async function spawn(
   // If we have fewer formats remaining than the number of workers each can open more files.
   workerConfig.maxFiles = Math.max(Math.floor(maxFiles / batches.length), 1);
   let num = batches.length;
-  for (const [i, formats] of batches.entries()) {
-    // We shuffle the batches so that formats will be processed more evenly. Without this shake
-    // up, all logs for a given format will be processed at approximately the same time across
-    // all workers, which can lead to issues if a format is more expensive to process than others.
-    // NOTE: This is really Batch[]|ID[] but Typescript is too dumb to realize thats still T[]...
-    RANDOM.shuffle(formats as Array<Batch | ID>);
-    const workerData = { type, formats, config: workerConfig, num: i + 1 };
-    LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} batch(es)`);
-    workers.push(
-      new Promise((resolve, reject) => {
-        const worker = new Worker(path.join(WORKERS, `${workerConfig.worker}.js`), { workerData });
-        worker.on('error', reject);
-        worker.on('exit', code => {
-          num--;
-          if (code === 0) {
-            LOG(`${capitalize(type)} worker:${workerData.num} exited cleanly, ${num} remaining`);
-            // We need to wait for the worker to exit before resolving (as opposed to having
-            // the worker message us when it is finished) so that we know it is safe to
-            // terminate the main process (which will kill all the workers and result in
-            // strange behavior where `console` output from the workers goes missing).
-            resolve();
-          } else {
-            reject(
-              new Error(
-                `${capitalize(type)} worker:${workerData.num} stopped with exit code ${code}`
-              )
-            );
-          }
-        });
-      })
-    );
+  if (workerConfig.numWorkers[type]) {
+    for (const [i, formats] of batches.entries()) {
+      // We shuffle the batches so that formats will be processed more evenly. Without this shake
+      // up, all logs for a given format will be processed at approximately the same time across
+      // all workers, which can lead to issues if a format is more expensive to process than others.
+      // NOTE: This is really Batch[]|ID[] but Typescript is too dumb to realize thats still T[]...
+      RANDOM.shuffle(formats as Array<Batch | ID>);
+      const workerData = { type, formats, config: workerConfig, num: i + 1 };
+      LOG(`Creating ${type} worker:${workerData.num} to handle ${formats.length} batch(es)`);
+      workers.push(
+        new Promise((resolve, reject) => {
+          const worker = new Worker(path.join(WORKERS, `${workerConfig.worker}.js`), {
+            workerData,
+          });
+          worker.on('error', reject);
+          worker.on('exit', code => {
+            num--;
+            if (code === 0) {
+              LOG(`${capitalize(type)} worker:${workerData.num} exited cleanly, ${num} remaining`);
+              // We need to wait for the worker to exit before resolving (as opposed to having
+              // the worker message us when it is finished) so that we know it is safe to
+              // terminate the main process (which will kill all the workers and result in
+              // strange behavior where `console` output from the workers goes missing).
+              resolve();
+            } else {
+              reject(
+                new Error(
+                  `${capitalize(type)} worker:${workerData.num} stopped with exit code ${code}`
+                )
+              );
+            }
+          });
+        })
+      );
+    }
+  } else {
+    const worker = await import(path.join(WORKERS, `${workerConfig.worker}.js`));
+    for (const [i, formats] of batches.entries()) {
+      workers.push(worker[type](RANDOM.shuffle(formats as Array<Batch | ID>), workerConfig));
+    }
   }
 
   let failures = 0;

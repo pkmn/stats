@@ -59,7 +59,9 @@ export class Options {
   }
 
   static toConfiguration(options: Options) {
-    const numWorkers = parse(options.numWorkers, w => w || os.cpus().length - 1);
+    const numWorkers = parse(options.numWorkers, w =>
+      typeof w === 'number' ? w : os.cpus().length - 1
+    );
     const batchSize = parse(options.batchSize, bs => (!bs || bs > 0 ? bs || BATCH_SIZE : Infinity));
     const maxFiles =
       typeof options.maxFiles !== 'number'
