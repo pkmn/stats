@@ -1,11 +1,11 @@
 import 'source-map-support/register';
+import '../debug';
 
 import * as path from 'path';
 import { Data, ID, toID } from 'ps';
 import { Parser, Reports, Statistics, Stats, TaggedStatistics } from 'stats';
 import { workerData } from 'worker_threads';
 
-import * as debug from '../debug';
 import { Batch, Checkpoint, Checkpoints, Offset } from '../checkpoint';
 import { Configuration } from '../config';
 import * as fs from '../fs';
@@ -209,9 +209,8 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     combines.push(
       StatsCheckpoint.read(checkpointStorage, format, begin, end).then(checkpoint => {
         LOG(`Aggregating ${checkpoint}`);
-        const mem = MLOG() ? debug.humanBytes(debug.sizeof(checkpoint.stats)) : '';
         Stats.combine(stats, checkpoint.stats);
-        MLOG(`${format} stats:`, stats, `(+${mem})`);
+        MLOG(true);
       })
     );
     n++;
@@ -220,7 +219,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
     LOG(`Waiting for ${combines.length} checkpoint(s) for ${format} to be aggregated`);
     await Promise.all(combines);
   }
-  MLOG(`${format} stats post aggregation:`, stats);
+  MLOG(true);
 
   return stats;
 }
