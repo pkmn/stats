@@ -43,11 +43,14 @@ export function readFile(path: string, encoding: 'utf8'): Promise<string> {
   return new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
       if (err) return reject(err);
-      !isGzipped(data)
-        ? resolve(data.toString(encoding))
-        : zlib.gunzip(data, (err, buf) => {
-            err ? reject(err) : resolve(buf.toString(encoding));
-          });
+      if (!isGzipped(data)) return resolve(data.toString(encoding));
+      // NOTE: nodejs/node#8871
+      try {
+        const buf = zlib.gunzipSync(data);
+        resolve(buf.toString(encoding));
+      } catch (err) {
+        reject(err);
+      }
     });
   });
 }
@@ -66,13 +69,15 @@ export function writeFile(path: string, data: string): Promise<void> {
 
 export function writeGzipFile(path: string, data: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    zlib.gzip(data, (err, buf) => {
-      err
-        ? reject(err)
-        : fs.writeFile(path, buf, err => {
-            err ? reject(err) : resolve();
-          });
-    });
+    // NOTE: nodejs/node#8871
+    try {
+      const buf = zlib.gzipSync(data);
+      fs.writeFile(path, buf, err => {
+        err ? reject(err) : resolve();
+      });
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
