@@ -5,6 +5,7 @@
     "outDir": "build",
     "resolveJsonModule": true,
     "incremental": true,
+    "target": "es6",
     "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": [
