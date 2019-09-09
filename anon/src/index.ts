@@ -103,120 +103,174 @@ function anonymize(raw: string[], salt?: string) {
   // TODO: whitelist based on line type and anonymize names/nicknames
   const args: string[] = ['foo'];
   switch (args[0]) {
+    /* GENERAL */
 
-    case '': // |
-    case '-ability':
-    case '-activate':
-    case '-anim':
-    case '-block':
-    case '-boost':
-    case '-burst':
-    case '-center':
-    case '-clearallboost':
-    case '-clearboost':
-    case '-clearnegativeboost':
-    case '-clearpositiveboost':
-    case '-combine':
-    case '-copyboost':
-    case '-crit':
-    case '-curestatus':
-    case '-cureteam':
-    case '-damage':
-    case '-end':
-    case '-endability':
-    case '-enditem':
-    case '-fail':
-    case '-fieldactivate':
-    case '-fieldend':
-    case '-fieldstart':
-    case '-formechange':
-    case '-heal':
-    case '-hint':
-    case '-hitcount':
-    case '-immune':
-    case '-invertboost':
-    case '-item':
-    case '-mega':
-    case '-message':
-    case '-miss':
-    case '-mustrecharge':
-    case '-notarget':
-    case '-nothing':
-    case '-ohko':
-    case '-prepare':
-    case '-primal':
-    case '-resisted':
-    case '-setboost':
-    case '-sethp':
-    case '-sideend':
-    case '-sidestart':
-    case '-singlemove':
-    case '-singleturn':
-    case '-start':
-    case '-status':
-    case '-supereffective':
-    case '-swapboost':
-    case '-transform':
-    case '-unboost':
-    case '-waiting':
-    case '-weather':
-    case '-zbroken':
-    case '-zpower':
-    case ':':
-    case 'J':
-    case 'L':
-    case 'N':
-    case 'bigerror':
-    case 'c':
-    case 'c:':
-    case 'callback':
-    case 'cant':
+    case ':': // |:|TIMESTAMP
+
+    case 'c:': // |c:|TIMESTAMP|USER|MESSAGE
     case 'chat':
-    case 'chatmsg':
-    case 'chatmsg-raw':
-    case 'clearpoke':
-    case 'controlshtml':
-    case 'debug':
-    case 'detailschange':
-    case 'done':
-    case 'drag':
-    case 'error':
-    case 'faint':
-    case 'fieldhtml':
-    case 'gametype':
-    case 'gen':
-    case 'html':
-    case 'inactive':
-    case 'inactiveoff':
-    case 'j':
+    case 'c': // |chat|USER|MESSAGE
+
     case 'join':
-    case 'l':
+    case 'j':
+    case 'J': // |join|USER
     case 'leave':
-    case 'message':
-    case 'move':
-    case 'n':
+    case 'l':
+    case 'L': // |leave|USER
     case 'name':
-    case 'player':
-    case 'poke':
-    case 'prematureend':
-    case 'rated':
-    case 'raw':
-    case 'replace':
-    case 'rule':
-    case 'start':
-    case 'swap':
-    case 'switch':
-    case 'switchout':
-    case 'teampreview':
-    case 'teamsize':
-    case 'tie':
-    case 'tier':
-    case 'turn':
-    case 'uhtml':
-    case 'uhtmlchange':
-    case 'upkeep':
-    case 'warning':
-    case 'win':
+    case 'n':
+    case 'N': // |name|USER|OLDID
+
+    case 'raw': // |raw|HTML
+    case 'html': // |html|HTML
+    case 'uhtml': // |uhtml|NAME|HTML
+    case 'uhtmlchange': // |uhtmlchange|NAME|HTML
+
+    case 'warning': // |warning|MESSAGE
+    case 'error': // |error|MESSAGE
+    case 'bigerror': // |bigerror|MESSAGE
+
+    // ???
+    case 'chatmsg': // |chatmsg|MESSAGE
+    case 'chatmsg-raw': // |chatmsg-raw|MESSAGE
+    case 'controlshtml': // |controlshtml|MESSAGE
+    case 'fieldhtml': // |fieldhtml|MESSAGE
+
+    /* BATTLE (MAJOR) */
+
+    case 'player': // |player|PLAYER|USERNAME|AVATAR|RATING
+    case 'teamsize': // |teamsize|PLAYER|NUMBER
+    case 'gametype': // |gametype|GAMETYPE
+    case 'gen': // |gen|GENNUM
+    case 'tier': // |tier|FORMATNAME
+    case 'rated': // |rated, |rated|MESSAGE
+    case 'rule': // |rule|RULE: DESCRIPTION
+    case 'clearpoke': // |clearpoke
+    case 'poke': // |poke|PLAYER|DETAILS|ITEM
+    case 'teampreview': // |teampreview
+    case '': // |, aka done
+    case 'start': // |start
+
+    case 'inactive': // |inactive|MESSAGE
+    case 'inactiveoff': // |inactiveoff|MESSAGE
+
+    case 'upkeep': // |upkeep
+    case 'turn': // |turn|NUMBER
+
+    case 'win': // |win|USER
+    case 'tie': // |tie
+
+    case 'move': // |move|POKEMON|MOVE|TARGET
+
+    case 'switch': // |switch|POKEMON|DETAILS|HP STATUS
+    case 'drag': // |drag|POKEMON|DETAILS|HP STATUS
+    case 'replace': // |replace|POKEMON|DETAILS|HP STATUS
+
+    case 'swap': // |swap|POKEMON|POSITION
+
+    case 'detailschange': // |detailschange|POKEMON|DETAILS|HP STATUS
+    case '-formechange': // |-formechange|POKEMON|DETAILS|HP STATUS
+
+    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE
+
+    case 'faint': // |faint|POKEMON
+
+    // Deprecated
+    case 'callback':
+
+    // Should not be present...
+    case 'request': // |request|REQUEST
+
+    // ???
+    case 'debug': // |debug|MESSAGE
+    case 'message':
+    case '-message': // |-message|MESSAGE
+
+    // Client (synthetic)
+    // case 'switchout':
+    // case 'prematureend': // replay end
+    // case 'done': // '|'
+
+    /* BATTLE (MINOR) */
+
+    case '-fail': // |-fail|POKEMON|ACTION
+    case '-notarget': // |-notarget|POKEMON
+    case '-miss': // |-miss|SOURCE|TARGET
+    case '-damage': // |-damage|POKEMON|HP STATUS
+
+    case '-heal': // |-heal|POKEMON|HP STATUS
+    case '-sethp': // |-sethp|POKEMON|HP
+
+    case '-status': // |-status|POKEMON|STATUS
+    case '-curestatus': // |-curestatus|POKEMON|STATUS
+    case '-cureteam': // |-cureteam|POKEMON
+
+    case '-boost': // |-boost|POKEMON|STAT|AMOUNT
+    case '-unboost': // |-unboost|POKEMON|STAT|AMOUNT
+    case '-setboost': // |-setboost|POKEMON|STAT|AMOUNT
+    case '-swapboost': // |-swapboost|SOURCE|TARGET|STATS
+    case '-invertboost': // |-invertboost|POKEMON
+    case '-clearboost': // |-clearboost|POKEMON
+    case '-clearallboost': // |-clearallboost
+    case '-clearpositiveboost': // |-clearpositiveboost|TARGET|POKEMON|EFFECT
+    case '-clearnegativeboost': // |-clearnegativeboost|POKEMON
+    case '-copyboost': // |-copyboost|SOURCE|TARGET
+
+    case '-weather': // |-weather|WEATHER
+
+    case '-fieldstart': // |-fieldstart|CONDITION
+    case '-fieldend': // |-fieldend|CONDITION
+
+    case '-sidestart': // |-sidestart|SIDE|CONDITION
+    case '-sideend': // |-sideend|SIDE|CONDITION
+
+    case '-start': // |-start|POKEMON|EFFECT
+    case '-end': // |-end|POKEMON|EFFECT
+
+    case '-crit': // |-crit|POKEMON
+
+    case '-supereffective': // |-supereffective|POKEMON
+    case '-resisted': // |-resisted|POKEMON
+    case '-immune': // |-immune|POKEMON
+
+    case '-item': // |-item|POKEMON|ITEM
+    case '-enditem': // |-enditem|POKEMON|ITEM
+
+    case '-ability': // |-ability|POKEMON|ABILITY
+    case '-endability': // |-endability|POKEMON
+
+    case '-transform': // |-transform|POKEMON|SPECIES
+
+    case '-mega': // |-mega|POKEMON|MEGASTONE
+    case '-primal': // |-primal|POKEMON
+    case '-burst': // |-burst|POKEMON|SPECIES|ITEM
+
+    case '-zpower': // |-zpower|POKEMON
+    case '-zbroken': // |-zbroken|POKEMON
+
+    case '-activate': // |-activate|EFFECT
+
+    case '-hint': // |-hint|MESSAGE
+
+    case '-center': // |-center
+
+    case '-combine': // |-combine
+    case '-waiting': // |-waiting|SOURCE|TARGET
+    case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
+    case '-mustrecharge': // |-mustrecharge|POKEMON
+    case '-nothing': // |-nothing (DEPRECATED)
+    case '-hitcount': // |-hitcount|POKEMON|NUM
+    case '-singlemove': // |-singlemove|POKEMON|MOVE
+    case '-singleturn': // |-singleturn|POKEMON|MOVE
+
+    // ???
+    case '-fieldactivate': // |-fieldactivate|MOVE
+    case '-anim': // |-anim|POKEMON|MOVE|TARGET
+    case '-ohko': // |-ohko
+
+    // Client (synthetic)
+    // case '-block':
+
     default:
       return log;
   }
