@@ -5,7 +5,8 @@
     "outDir": "build",
     "resolveJsonModule": true,
     "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "lib": ["es2019"]
   },
   "include": [
     "**/*.ts"

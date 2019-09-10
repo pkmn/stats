@@ -66,6 +66,8 @@ export const Anonymizer = new (class {
     playerMap.set(toID(raw.p1), p1);
     playerMap.set(toID(raw.p2), p2);
 
+    const names = new Set<string>([raw.p1, raw.p2]);
+
     // Rating may actually contain more fields, we make sure to only copy over the ones we expose
     const p1rating = raw.p1rating ? { rpr: raw.p1rating.rpr, rprd: raw.p1rating.rprd } : null;
     const p2rating = raw.p2rating ? { rpr: raw.p2rating.rpr, rprd: raw.p2rating.rprd } : null;
@@ -80,46 +82,73 @@ export const Anonymizer = new (class {
       p1rating,
       p2rating,
       timestamp: index,
-      p1team: this.anonymizeTeam(raw.p1team, format, pokemonMap, 'p1: ', salt),
-      p2team: this.anonymizeTeam(raw.p2team, format, pokemonMap, 'p2: ', salt),
+      p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', names),
+      p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', names),
       p1,
       p2,
       winner,
-      log: anonymizeLog(raw.log, playerMap, pokemonMap),
+      log: anonymizeLog(raw.log, playerMap, pokemonMap, names),
     };
   }
 
   anonymizeTeam(
-    team: Array<PokemonSet<string>>,
+    team: Array<PokemonSet<string>>, // NOTE: mutated!
     format?: string | Data,
+    salt?: string,
     nameMap = new Map<string, string>(),
     prefix = '',
-    salt?: string
+    names?: Set<string>
   ) {
     const data = Data.forFormat(format);
-    // TODO: nameMap
     for (const pokemon of team) {
       const name = pokemon.name;
-      pokemon.name = salt ? hash(pokemon.name, salt) : data.getSpecies(pokemon.species)!.species;
+      if (salt) {
+        pokemon.name = hash(pokemon.name, salt);
+      } else {
+        const species = data.getSpecies(pokemon.species)!;
+        pokemon.name = species.baseSpecies || species.species;
+      }
       nameMap.set(`${prefix}${name}`, pokemon.name);
+      if (names && pokemon.name !== name) names.add(name);
     }
     return team;
   }
 })();
 
-function anonymizeLog(raw: string[], playerMap: Map<ID, string>, pokemonMap: Map<string, string>) {
+function anonymizeLog(
+  raw: string[],
+  playerMap: Map<ID, string>,
+  pokemonMap: Map<string, string>,
+  names: Set<string>
+) {
+  // We want to make sure that after anonymizing, none of the original names have leaked out.
+  // This can return false positives if someone use names or nicknames which are variants of
+  // a Pokemon species name, but this is fairly niche and its better to have false positives
+  // than negatives here.
+  const namesAndIDs = Array.from(names).flatMap(n => [n, toID(n)]);
+  const re = new RegExp(`\b(${namesAndIDs.join('|')})\b`);
   const log: string[] = [];
   for (const line of raw) {
+    // console.log(`\x1b[90m${line}\x1b[0m`); // DEBUG
     const anon = anonymize(line, playerMap, pokemonMap);
-    if (anon) log.push(anon);
+    if (anon !== undefined) {
+      // console.log(anon); // DEBUG
+      if (re.test(line)) {
+        const err = new Error(`Leaked name from {${Array.from(names)}} in log: '${line}'`);
+        // console.error(err);
+        throw err;
+      }
+      log.push(anon);
+    }
   }
   return log;
 }
 
 function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<string, string>) {
+  if (line === '') return line;
   const split = line.split('|'); // This is OK because elide messages with '|' anyway
   const cmd = split[1];
-  if (cmd === '') return line === '|' ? line : undefined; // '||MESSAGE' is not safe to display
+  if (!cmd) return line === '|' ? line : undefined; // '||MESSAGE' or 'MESSAGE' is not safe to display
   switch (cmd) {
     case 'name': // |name|USER|OLDID
     case 'n':
@@ -153,6 +182,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'inactive': // |inactive|MESSAGE
     case 'inactiveoff': // |inactiveoff|MESSAGE
     case 'debug': // |debug|MESSAGE
+    case 'seed': // |seed|SEED
     case 'message':
     case '-message': // |-message|MESSAGE
     case '-hint': // |-hint|MESSAGE
@@ -184,18 +214,23 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-center': // |-center
     case '-combine': // |-combine
     case '-nothing': // |-nothing (DEPRECATED)
-    case '-sidestart': // |-sidestart|SIDE|CONDITION
-    case '-sideend': // |-sideend|SIDE|CONDITION ([from] EFFECT, [of] POKEMON)
+    case '-activate': // |-activate|EFFECT ([from] EFFECT, [of] POKEMON, [consumed], [damage], [block] MOVE, [broken])
     case '-fieldactivate': /* |-fieldactivate|MOVE */ {
-      // FIXME: handle [of]
+      return anonymizeOf(split, pokemonMap).join('|');
+    }
+
+    case 'player': /* |player|PLAYER|, |player|PLAYER|USERNAME|AVATAR|RATING */ {
+      if (!split[3]) return line;
+      split[3] = anonymizePlayer(split[3], playerMap);
+      split[4] = '1';
+      split[5] = '';
       return split.join('|');
     }
 
-    case 'player': /* |player|PLAYER|USERNAME|AVATAR|RATING */ {
-      split[2] = anonymizePlayer(split[2], playerMap);
-      split[3] = '1';
-      split[4] = '';
-      return split.join('|');
+    case '-sidestart': // |-sidestart|SIDE|CONDITION
+    case '-sideend': /* |-sideend|SIDE|CONDITION ([from] EFFECT, [of] POKEMON) */ {
+      split[2] = `${split[2].slice(0, 4)}${anonymizePlayer(split[2].slice(4), playerMap)}`;
+      return anonymizeOf(split, pokemonMap).join('|');
     }
 
     case 'win': /* |win|USER */ {
@@ -203,10 +238,10 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
       return split.join('|');
     }
 
+    case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
     case 'move': /* |move|POKEMON|MOVE|TARGET */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
       split[4] = anonymizePokemon(split[4], pokemonMap);
-      // FIXME: handle [of]
       return split.join('|');
     }
 
@@ -224,7 +259,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-zpower': // |-zpower|POKEMON
     case '-zbroken': // |-zbroken|POKEMON
     case 'faint': // |faint|POKEMON
-    case '-notarget': // |-notarget|POKEMON
+    case '-notarget': // |-notarget, |-notarget|POKEMON TODO FIXME
     case '-damage': // |-damage|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [partiallytrapped], [silent])
     case '-heal': // |-heal|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [zeffect], [wisher] POKEMON, [silent])
     case '-sethp': // |-sethp|POKEMON|HP ([from] EFFECT, [silent])
@@ -241,6 +276,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-enditem': // |-enditem|POKEMON|ITEM ([from] EFFECT, [of] POKEMON, [move] MOVE, [silent], [weaken])
     case '-ability': // |-ability|POKEMON|ABILITY ([from] EFFECT, [of] POKEMON, [fail], [silent])
     case '-fail': // |-fail|POKEMON|ACTION ([from] EFFECT, [of]: POKEMON, [forme], [heavy], [weak], [msg])
+    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE ([of] POKEMON)
     case 'swap': // |swap|POKEMON|POSITION
     case '-boost': // |-boost|POKEMON|STAT|AMOUNT ([from] EFFECT, [silent], [zeffect])
     case '-unboost': // |-unboost|POKEMON|STAT|AMOUNT ([from] EFFECT, [silent], [zeffect])
@@ -252,25 +288,18 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'drag': // |drag|POKEMON|DETAILS|HP STATUS
     case 'replace': /* |replace|POKEMON|DETAILS|HP STATUS */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
-      // FIXME: handle [of]
-      return split.join('|');
+      return anonymizeOf(split, pokemonMap).join('|');
     }
 
     case '-miss': // |-miss|SOURCE, |-miss|SOURCE|TARGET
-    case '-copyboost': // |-copyboost|SOURCE|TARGET ([from] EFFECT)
     case '-waiting': // |-waiting|SOURCE|TARGET
+    case '-copyboost': // |-copyboost|SOURCE|TARGET ([from] EFFECT)
+    case '-clearpositiveboost': // |-clearpositiveboost|TARGET|POKEMON|EFFECT
     case '-swapboost': /* |-swapboost|SOURCE|TARGET|STATS ([from] EFFECT) */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
       if (split[3]) split[3] = anonymizePokemon(split[3], pokemonMap);
       return split.join('|');
     }
-
-    // TODO FIXME
-    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE ([of] POKEMON)
-    case '-activate': // |-activate|EFFECT ([from] EFFECT, [of] POKEMON, [consumed], [damage], [block] MOVE, [broken])
-
-    case '-clearpositiveboost': // |-clearpositiveboost|TARGET|POKEMON|EFFECT
-    case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
 
     default:
       throw new Error(`Unknown protocol message ${cmd}: '${line}'`);
@@ -289,6 +318,12 @@ function anonymizePokemon(pokemon: string, pokemonMap: Map<string, string>) {
   const anon = pokemonMap.get(qualified);
   if (anon) return `${position}: ${anon}`;
   throw new Error(`Unknown Pokemon: ${pokemon}`);
+}
+
+function anonymizeOf(split: string[], pokemonMap: Map<string, string>) {
+  return split.map(s =>
+    s.startsWith('[of] ') ? `[of] ${anonymizePokemon(s.slice(5), pokemonMap)}` : s
+  );
 }
 
 function hash(s: string, salt: string) {

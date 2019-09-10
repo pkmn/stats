@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict';
 
 // Produces the standard Smogon reports in an output directory specified by
 // its second argument based on data from a logs directory provided by its

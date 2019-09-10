@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+'use strict';
+
+require('source-map-support').install();
+const Anonymizer = require('./build/index').Anonymizer;
+const diff = require('json-diff');
+
+const path = require('path');
+const fs = require('fs');
+const raw = JSON.parse(fs.readFileSync(path.resolve(__dirname, process.argv[2]), 'utf8'));
+
+const log = JSON.parse(JSON.stringify(raw));
+const anon = Anonymizer.anonymize(raw, 'gen7ou');
+
+console.log(diff.diffString(log, anon));
