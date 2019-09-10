@@ -1,3 +1,37 @@
+-ability: [from] EFFECT, [of] POKEMON, [fail], [silent]
+-activate: [from] EFFECT, [of] POKEMON, [consumed], [damage], [block] MOVE, [broken]
+-clearnegativeboost: [silent], [zeffect]
+-copyboost: [from] EFFECT
+-curestatus: [from] EFFECT, [silent], [msg]
+-cureteam: [from] EFFECT
+-damage: [from] EFFECT, [of] POKEMON, [partiallytrapped], [silent]
+-end: [from] EFFECT, [of] POKEMON, [partiallytrapped], [silent], [interrupt]
+-endability: [from] EFFECT
+-enditem: [from] EFFECT, [of] POKEMON, [move] MOVE, [silent], [weaken]
+-fail: [from] EFFECT, [of]: POKEMON, [forme], [heavy], [weak], [msg]
+-fieldend: [of] POKEMON
+-fieldend: [from] EFFECT, [of] POKEMON
+-formechange: [from] EFFECT
+-heal: [from] EFFECT, [of] POKEMON, [zeffect], [wisher] POKEMON, [silent]
+-immune: [from] EFFECT, [ohko]
+-invertboost: [from] EFFECT
+-item: [from] EFFECT, [of] POKEMON, [identify]
+-setboost: [from] EFFECT
+-sethp: [from] EFFECT, [silent]
+-sideend: [from] EFFECT, [of] POKEMON
+-singleturn: [of] POKEMON, [zeffect]
+-start: [from] EFFECT, [of] POKEMON, [silent], [upkeep], [fatigue], [zeffect]
+-status: [from] EFFECT, [of] POKEMON, [silent]
+-swapboost: [from] EFFECT
+-transform: [from] EFFECT
+-weather: [from] EFFECT, [of] POKEMON, [upkeep]
+cant: [of] POKEMON
+-boost: [from] EFFECT, [silent], [zeffect]
+-unboost: [from] EFFECT, [silent], [zeffect]
+
+-------
+
+
 [from] = effect ('move: Foo', 'ability: Foo', 'item: Foo')
 [of] = source/target Pokemon (maybe not pokemon? TODO)
 [consumed]
@@ -19,7 +53,6 @@
 [upkeep]
 [fatigue]
 
-|| <- display raw
 
 ("-enditem", source, item.name, '[from] move: Fling');
 
@@ -297,8 +330,6 @@
 ('-sideend', source.side, this.getEffect(sideCondition).name, '[from] move: Defog', '[of] ' + source);
 ('-sideend', target.side, this.getEffect(targetCondition).name, '[from] move: Defog', '[of] ' + source);
 
-('-sidestart', side, 'move: Lucky Chant'); // "The Lucky Chant shielded [side.name]'s team from critical hits!"
-
 ('-singleturn', target, 'Helping Hand', '[of] ' + source);
 ('-singleturn', target, 'Helping Hand', '[of] ' + source);
 ('-singleturn', target, 'move: Follow Me', '[zeffect]');
@@ -375,10 +406,6 @@
 ('cant', this.effectData.target, 'ability: Damp', effect, '[of] ' + target);
 ('cant', this.effectData.target, 'ability: Dazzling', effect, '[of] ' + target);
 ('cant', this.effectData.target, 'ability: Queenly Majesty', effect, '[of] ' + target);
-
-(`|inactive|${requester.name} no longer wants the timer on, but the timer is staying on because ${[...this.timerRequesters].join(', ')} still does.`).update();
-
-(`||[${player.name} has ${player.turnSecondsLeft}s this turn / ${player.secondsLeft}s total]`);
 
 (msg, target, boostName, boostBy, '[silent]');
 (msg, target, boostName, boostBy, '[zeffect]');

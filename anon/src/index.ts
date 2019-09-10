@@ -116,10 +116,10 @@ function anonymizeLog(raw: string[], playerMap: Map<ID, string>, pokemonMap: Map
   return log;
 }
 
-// FIXME |[from] EFFECT|[of] SOURCE
 function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<string, string>) {
-  const split = line.split('|'); // This is OK because 
+  const split = line.split('|'); // This is OK because elide messages with '|' anyway
   const cmd = split[1];
+  if (cmd === '') return line === '|' ? line : undefined; // '||MESSAGE' is not safe to display
   switch (cmd) {
     case 'name': // |name|USER|OLDID
     case 'n':
@@ -163,7 +163,6 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'gametype': // |gametype|GAMETYPE
     case 'gen': // |gen|GENNUM
     case 'tier': // |tier|FORMATNAME
-    case '': // |, aka done
     case 'rule': // |rule|RULE: DESCRIPTION
     case 'teamsize': // |teamsize|PLAYER|NUMBER
     case 'clearpoke': // |clearpoke
@@ -178,15 +177,15 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     }
 
     case '-clearallboost': // |-clearallboost
-    case '-weather': // |-weather|WEATHER
+    case '-weather': // |-weather|WEATHER ([from] EFFECT, [of] POKEMON, [upkeep])
     case '-fieldstart': // |-fieldstart|CONDITION
-    case '-fieldend': // |-fieldend|CONDITION
+    case '-fieldend': // |-fieldend|CONDITION ([of] POKEMON)
     case '-ohko': // |-ohko
     case '-center': // |-center
     case '-combine': // |-combine
     case '-nothing': // |-nothing (DEPRECATED)
     case '-sidestart': // |-sidestart|SIDE|CONDITION
-    case '-sideend': // |-sideend|SIDE|CONDITION
+    case '-sideend': // |-sideend|SIDE|CONDITION ([from] EFFECT, [of] POKEMON)
     case '-fieldactivate': /* |-fieldactivate|MOVE */ {
       // FIXME: handle [of]
       return split.join('|');
@@ -195,7 +194,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'player': /* |player|PLAYER|USERNAME|AVATAR|RATING */ {
       split[2] = anonymizePlayer(split[2], playerMap);
       split[3] = '1';
-      split[4] = ''
+      split[4] = '';
       return split.join('|');
     }
 
@@ -214,40 +213,40 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-crit': // |-crit|POKEMON
     case '-supereffective': // |-supereffective|POKEMON
     case '-resisted': // |-resisted|POKEMON
-    case '-immune': // |-immune|POKEMON
-    case '-invertboost': // |-invertboost|POKEMON
+    case '-immune': // |-immune|POKEMON ([from] EFFECT, [ohko])
+    case '-invertboost': // |-invertboost|POKEMON ([from] EFFECT)
     case '-clearboost': // |-clearboost|POKEMON
-    case '-clearnegativeboost': // |-clearnegativeboost|POKEMON
-    case '-endability': // |-endability|POKEMON
-    case '-cureteam': // |-cureteam|POKEMON
+    case '-clearnegativeboost': // |-clearnegativeboost|POKEMON ([silent], [zeffect])
+    case '-endability': // |-endability|POKEMON ([from] EFFECT)
+    case '-cureteam': // |-cureteam|POKEMON ([from] EFFECT)
     case '-mustrecharge': // |-mustrecharge|POKEMON
     case '-primal': // |-primal|POKEMON
     case '-zpower': // |-zpower|POKEMON
     case '-zbroken': // |-zbroken|POKEMON
     case 'faint': // |faint|POKEMON
     case '-notarget': // |-notarget|POKEMON
-    case '-damage': // |-damage|POKEMON|HP STATUS
-    case '-heal': // |-heal|POKEMON|HP STATUS
-    case '-sethp': // |-sethp|POKEMON|HP
-    case '-status': // |-status|POKEMON|STATUS
-    case '-curestatus': // |-curestatus|POKEMON|STATUS
+    case '-damage': // |-damage|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [partiallytrapped], [silent])
+    case '-heal': // |-heal|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [zeffect], [wisher] POKEMON, [silent])
+    case '-sethp': // |-sethp|POKEMON|HP ([from] EFFECT, [silent])
+    case '-status': // |-status|POKEMON|STATUS ([from] EFFECT, [of] POKEMON, [silent])
+    case '-curestatus': // |-curestatus|POKEMON|STATUS ([from] EFFECT, [silent], [msg])
     case '-hitcount': // |-hitcount|POKEMON|NUM
     case '-singlemove': // |-singlemove|POKEMON|MOVE
-    case '-singleturn': // |-singleturn|POKEMON|MOVE
-    case '-transform': // |-transform|POKEMON|SPECIES
+    case '-singleturn': // |-singleturn|POKEMON|MOVE ([of] POKEMON, [zeffect])
+    case '-transform': // |-transform|POKEMON|SPECIES ([from] EFFECT)
     case '-mega': // |-mega|POKEMON|MEGASTONE
-    case '-start': // |-start|POKEMON|EFFECT
-    case '-end': // |-end|POKEMON|EFFECT
-    case '-item': // |-item|POKEMON|ITEM
-    case '-enditem': // |-enditem|POKEMON|ITEM
-    case '-ability': // |-ability|POKEMON|ABILITY
-    case '-fail': // |-fail|POKEMON|ACTION
+    case '-start': // |-start|POKEMON|EFFECT ([from] EFFECT, [of] POKEMON, [silent], [upkeep], [fatigue], [zeffect])
+    case '-end': // |-end|POKEMON|EFFECT ([from] EFFECT, [of] POKEMON, [partiallytrapped], [silent], [interrupt])
+    case '-item': // |-item|POKEMON|ITEM ([from] EFFECT, [of] POKEMON, [identify])
+    case '-enditem': // |-enditem|POKEMON|ITEM ([from] EFFECT, [of] POKEMON, [move] MOVE, [silent], [weaken])
+    case '-ability': // |-ability|POKEMON|ABILITY ([from] EFFECT, [of] POKEMON, [fail], [silent])
+    case '-fail': // |-fail|POKEMON|ACTION ([from] EFFECT, [of]: POKEMON, [forme], [heavy], [weak], [msg])
     case 'swap': // |swap|POKEMON|POSITION
-    case '-boost': // |-boost|POKEMON|STAT|AMOUNT
-    case '-unboost': // |-unboost|POKEMON|STAT|AMOUNT
-    case '-setboost': // |-setboost|POKEMON|STAT|AMOUNT
+    case '-boost': // |-boost|POKEMON|STAT|AMOUNT ([from] EFFECT, [silent], [zeffect])
+    case '-unboost': // |-unboost|POKEMON|STAT|AMOUNT ([from] EFFECT, [silent], [zeffect])
+    case '-setboost': // |-setboost|POKEMON|STAT|AMOUNT ([from] EFFECT)
     case 'detailschange': // |detailschange|POKEMON|DETAILS|HP STATUS
-    case '-formechange': // |-formechange|POKEMON|DETAILS|HP STATUS
+    case '-formechange': // |-formechange|POKEMON|DETAILS|HP STATUS ([from] EFFECT)
     case '-burst': // |-burst|POKEMON|SPECIES|ITEM
     case 'switch': // |switch|POKEMON|DETAILS|HP STATUS
     case 'drag': // |drag|POKEMON|DETAILS|HP STATUS
@@ -258,17 +257,17 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     }
 
     case '-miss': // |-miss|SOURCE, |-miss|SOURCE|TARGET
-    case '-copyboost': // |-copyboost|SOURCE|TARGET
+    case '-copyboost': // |-copyboost|SOURCE|TARGET ([from] EFFECT)
     case '-waiting': // |-waiting|SOURCE|TARGET
-    case '-swapboost': /* |-swapboost|SOURCE|TARGET|STATS */ {
+    case '-swapboost': /* |-swapboost|SOURCE|TARGET|STATS ([from] EFFECT) */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
       if (split[3]) split[3] = anonymizePokemon(split[3], pokemonMap);
       return split.join('|');
     }
 
-    // TODO
-    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE FIXME [of]
-    case '-activate': // |-activate|EFFECT FIXME [of]
+    // TODO FIXME
+    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE ([of] POKEMON)
+    case '-activate': // |-activate|EFFECT ([from] EFFECT, [of] POKEMON, [consumed], [damage], [block] MOVE, [broken])
 
     case '-clearpositiveboost': // |-clearpositiveboost|TARGET|POKEMON|EFFECT
     case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
