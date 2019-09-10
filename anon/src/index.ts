@@ -118,16 +118,14 @@ function anonymizeLog(raw: string[], playerMap: Map<ID, string>, pokemonMap: Map
 
 // FIXME |[from] EFFECT|[of] SOURCE
 function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<string, string>) {
-  const index = line.indexOf('|', 1);
-  const cmd = line.slice(1, index);
-
+  const split = line.split('|'); // This is OK because 
+  const cmd = split[1];
   switch (cmd) {
     case 'name': // |name|USER|OLDID
     case 'n':
     case 'N': {
-      const [, user, oldID] = line.split('|');
-      const existing = playerMap.get(oldID as ID);
-      if (existing) playerMap.set(toID(user), existing);
+      const existing = playerMap.get(split[3] as ID);
+      if (existing) playerMap.set(toID(split[2]), existing);
       return undefined;
     }
 
@@ -158,8 +156,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'message':
     case '-message': // |-message|MESSAGE
     case '-hint': // |-hint|MESSAGE
-    case '-anim': {
-      // |-anim|POKEMON|MOVE|TARGET
+    case '-anim': /* |-anim|POKEMON|MOVE|TARGET */ {
       return undefined;
     }
 
@@ -176,7 +173,10 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'rated': // |rated, |rated|MESSAGE
     case 'turn': // |turn|NUMBER
     case 'upkeep': // |upkeep
-    case 'tie': // |tie
+    case 'tie': /* |tie */ {
+      return line;
+    }
+
     case '-clearallboost': // |-clearallboost
     case '-weather': // |-weather|WEATHER
     case '-fieldstart': // |-fieldstart|CONDITION
@@ -187,26 +187,28 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-nothing': // |-nothing (DEPRECATED)
     case '-sidestart': // |-sidestart|SIDE|CONDITION
     case '-sideend': // |-sideend|SIDE|CONDITION
-    case '-fieldactivate': {
-      // |-fieldactivate|MOVE
-      return line;
+    case '-fieldactivate': /* |-fieldactivate|MOVE */ {
+      // FIXME: handle [of]
+      return split.join('|');
     }
 
-    case 'player': {
-      // |player|PLAYER|USERNAME|AVATAR|RATING
-      const [, player, username] = line.split('|');
-      return [cmd, player, anonymizePlayer(username, playerMap), 1].join('|');
+    case 'player': /* |player|PLAYER|USERNAME|AVATAR|RATING */ {
+      split[2] = anonymizePlayer(split[2], playerMap);
+      split[3] = '1';
+      split[4] = ''
+      return split.join('|');
     }
 
-    case 'win': {
-      // |win|USER
-      const [, user] = line.split('|');
-      return [cmd, anonymizePlayer(user, playerMap)].join('|');
+    case 'win': /* |win|USER */ {
+      split[2] = anonymizePlayer(split[2], playerMap);
+      return split.join('|');
     }
-    case 'move': {
-      // |move|POKEMON|MOVE|TARGET (|[miss], |[still], |[anim])
-      const [, pokemon, move, target] = line.split('|');
-      return [cmd, anonymizePokemon(pokemon, pokemonMap), move /* FIXME */].join('|');
+
+    case 'move': /* |move|POKEMON|MOVE|TARGET */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      split[4] = anonymizePokemon(split[4], pokemonMap);
+      // FIXME: handle [of]
+      return split.join('|');
     }
 
     case '-crit': // |-crit|POKEMON
@@ -223,12 +225,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-zpower': // |-zpower|POKEMON
     case '-zbroken': // |-zbroken|POKEMON
     case 'faint': // |faint|POKEMON
-    case '-notarget': {
-      // |-notarget|POKEMON
-      const [, pokemon] = line.split('|');
-      return [cmd, anonymizePokemon(pokemon, pokemonMap)].join('|');
-    }
-
+    case '-notarget': // |-notarget|POKEMON
     case '-damage': // |-damage|POKEMON|HP STATUS
     case '-heal': // |-heal|POKEMON|HP STATUS
     case '-sethp': // |-sethp|POKEMON|HP
@@ -245,12 +242,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-enditem': // |-enditem|POKEMON|ITEM
     case '-ability': // |-ability|POKEMON|ABILITY
     case '-fail': // |-fail|POKEMON|ACTION
-    case 'swap': {
-      // |swap|POKEMON|POSITION
-      const [, pokemon, arg] = line.split('|');
-      return [cmd, anonymizePokemon(pokemon, pokemonMap), arg].join('|');
-    }
-
+    case 'swap': // |swap|POKEMON|POSITION
     case '-boost': // |-boost|POKEMON|STAT|AMOUNT
     case '-unboost': // |-unboost|POKEMON|STAT|AMOUNT
     case '-setboost': // |-setboost|POKEMON|STAT|AMOUNT
@@ -259,37 +251,26 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-burst': // |-burst|POKEMON|SPECIES|ITEM
     case 'switch': // |switch|POKEMON|DETAILS|HP STATUS
     case 'drag': // |drag|POKEMON|DETAILS|HP STATUS
-    case 'replace': {
-      // |replace|POKEMON|DETAILS|HP STATUS
-      const [, pokemon, arg1, arg2] = line.split('|');
-      return [cmd, anonymizePokemon(pokemon, pokemonMap), arg1, arg2].join('|');
+    case 'replace': /* |replace|POKEMON|DETAILS|HP STATUS */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      // FIXME: handle [of]
+      return split.join('|');
     }
 
     case '-miss': // |-miss|SOURCE, |-miss|SOURCE|TARGET
     case '-copyboost': // |-copyboost|SOURCE|TARGET
-    case '-waiting': {
-      // |-waiting|SOURCE|TARGET
-      const [, source, target] = line.split('|');
-      const anonSource = anonymizePokemon(source, pokemonMap);
-      if (!target) return [cmd, anonSource].join('|');
-      return [cmd, anonSource, anonymizePokemon(target, pokemonMap)].join('|');
-    }
-    case '-swapboost': {
-      // |-swapboost|SOURCE|TARGET|STATS
-      const [, source, target, stats] = line.split('|');
-      if (!target) return [cmd, anonymizePokemon(source, pokemonMap)].join('|');
-      return [
-        cmd,
-        anonymizePokemon(source, pokemonMap),
-        anonymizePokemon(target, pokemonMap),
-        stats,
-      ].join('|');
+    case '-waiting': // |-waiting|SOURCE|TARGET
+    case '-swapboost': /* |-swapboost|SOURCE|TARGET|STATS */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      if (split[3]) split[3] = anonymizePokemon(split[3], pokemonMap);
+      return split.join('|');
     }
 
     // TODO
-    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE
+    case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE FIXME [of]
+    case '-activate': // |-activate|EFFECT FIXME [of]
+
     case '-clearpositiveboost': // |-clearpositiveboost|TARGET|POKEMON|EFFECT
-    case '-activate': // |-activate|EFFECT
     case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
 
     default:
