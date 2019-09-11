@@ -31,6 +31,8 @@ export interface AnonymizedLog {
   endType?: 'normal' | 'forced' | 'forfeit';
   turns: number;
   score: [number, number];
+
+  // Simplified
   p1rating: Rating | null;
   p2rating: Rating | null;
 
@@ -57,7 +59,13 @@ export interface Rating {
 }
 
 export const Anonymizer = new (class {
-  anonymize(raw: Log, format?: string | Data, salt?: string, index = 0): AnonymizedLog {
+  anonymize(
+    raw: Log,
+    format?: string | Data,
+    salt?: string,
+    index = 0,
+    verifier?: Verifier
+  ): AnonymizedLog {
     const p1 = salt ? hash(raw.p1, salt) : 'Player 1';
     const p2 = salt ? hash(raw.p2, salt) : 'Player 2';
     const winner = raw.winner === raw.p1 ? p1 : raw.winner === raw.p2 ? p2 : '';
@@ -66,7 +74,10 @@ export const Anonymizer = new (class {
     playerMap.set(toID(raw.p1), p1);
     playerMap.set(toID(raw.p2), p2);
 
-    const names = new Set<string>([raw.p1, raw.p2]);
+    if (verifier) {
+      verifier.names.add(raw.p1);
+      verifier.names.add(raw.p2);
+    }
 
     // Rating may actually contain more fields, we make sure to only copy over the ones we expose
     const p1rating = raw.p1rating ? { rpr: raw.p1rating.rpr, rprd: raw.p1rating.rprd } : null;
@@ -82,12 +93,12 @@ export const Anonymizer = new (class {
       p1rating,
       p2rating,
       timestamp: index,
-      p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', names),
-      p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', names),
+      p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', verifier),
+      p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', verifier),
       p1,
       p2,
       winner,
-      log: anonymizeLog(raw.log, playerMap, pokemonMap, names),
+      log: anonymizeLog(raw.log, playerMap, pokemonMap, verifier),
     };
   }
 
@@ -97,7 +108,7 @@ export const Anonymizer = new (class {
     salt?: string,
     nameMap = new Map<string, string>(),
     prefix = '',
-    names?: Set<string>
+    verifier?: Verifier
   ) {
     const data = Data.forFormat(format);
     for (const pokemon of team) {
@@ -109,7 +120,7 @@ export const Anonymizer = new (class {
         pokemon.name = species.baseSpecies || species.species;
       }
       nameMap.set(`${prefix}${name}`, pokemon.name);
-      if (names && pokemon.name !== name) names.add(name);
+      if (verifier && pokemon.name !== name) verifier.names.add(name);
     }
     return team;
   }
@@ -119,25 +130,15 @@ function anonymizeLog(
   raw: string[],
   playerMap: Map<ID, string>,
   pokemonMap: Map<string, string>,
-  names: Set<string>
+  verifier?: Verifier
 ) {
-  // We want to make sure that after anonymizing, none of the original names have leaked out.
-  // This can return false positives if someone use names or nicknames which are variants of
-  // a Pokemon species name, but this is fairly niche and its better to have false positives
-  // than negatives here.
-  const namesAndIDs = Array.from(names).flatMap(n => [n, toID(n)]);
-  const re = new RegExp(`\b(${namesAndIDs.join('|')})\b`);
   const log: string[] = [];
   for (const line of raw) {
     // console.log(`\x1b[90m${line}\x1b[0m`); // DEBUG
     const anon = anonymize(line, playerMap, pokemonMap);
     if (anon !== undefined) {
       // console.log(anon); // DEBUG
-      if (re.test(line)) {
-        const err = new Error(`Leaked name from {${Array.from(names)}} in log: '${line}'`);
-        // console.error(err);
-        throw err;
-      }
+      if (verifier) verifier.verify(line, anon);
       log.push(anon);
     }
   }
@@ -214,8 +215,12 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-center': // |-center
     case '-combine': // |-combine
     case '-nothing': // |-nothing (DEPRECATED)
-    case '-activate': // |-activate|EFFECT ([from] EFFECT, [of] POKEMON, [consumed], [damage], [block] MOVE, [broken])
     case '-fieldactivate': /* |-fieldactivate|MOVE */ {
+      return anonymizeOf(split, pokemonMap).join('|');
+    }
+
+    case '-activate': /* |-activate|EFFECT ([from] EFFECT, [of] POKEMON, [consumed], [damage], [block] MOVE, [broken]) */ {
+      if (split[2].match(/^p\d[a-d]: /)) split[2] = anonymizePokemon(split[2], pokemonMap);
       return anonymizeOf(split, pokemonMap).join('|');
     }
 
@@ -245,6 +250,11 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
       return split.join('|');
     }
 
+    case '-notarget': /* |-notarget, |-notarget|POKEMON */ {
+      if (split[2]) split[2] = anonymizePokemon(split[2], pokemonMap);
+      return split.join('|');
+    }
+
     case '-crit': // |-crit|POKEMON
     case '-supereffective': // |-supereffective|POKEMON
     case '-resisted': // |-resisted|POKEMON
@@ -259,22 +269,17 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-zpower': // |-zpower|POKEMON
     case '-zbroken': // |-zbroken|POKEMON
     case 'faint': // |faint|POKEMON
-    case '-notarget': // |-notarget, |-notarget|POKEMON TODO FIXME
     case '-damage': // |-damage|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [partiallytrapped], [silent])
-    case '-heal': // |-heal|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [zeffect], [wisher] POKEMON, [silent])
-    case '-sethp': // |-sethp|POKEMON|HP ([from] EFFECT, [silent])
     case '-status': // |-status|POKEMON|STATUS ([from] EFFECT, [of] POKEMON, [silent])
     case '-curestatus': // |-curestatus|POKEMON|STATUS ([from] EFFECT, [silent], [msg])
     case '-hitcount': // |-hitcount|POKEMON|NUM
     case '-singlemove': // |-singlemove|POKEMON|MOVE
     case '-singleturn': // |-singleturn|POKEMON|MOVE ([of] POKEMON, [zeffect])
-    case '-transform': // |-transform|POKEMON|SPECIES ([from] EFFECT)
     case '-mega': // |-mega|POKEMON|MEGASTONE
     case '-start': // |-start|POKEMON|EFFECT ([from] EFFECT, [of] POKEMON, [silent], [upkeep], [fatigue], [zeffect])
     case '-end': // |-end|POKEMON|EFFECT ([from] EFFECT, [of] POKEMON, [partiallytrapped], [silent], [interrupt])
     case '-item': // |-item|POKEMON|ITEM ([from] EFFECT, [of] POKEMON, [identify])
     case '-enditem': // |-enditem|POKEMON|ITEM ([from] EFFECT, [of] POKEMON, [move] MOVE, [silent], [weaken])
-    case '-ability': // |-ability|POKEMON|ABILITY ([from] EFFECT, [of] POKEMON, [fail], [silent])
     case '-fail': // |-fail|POKEMON|ACTION ([from] EFFECT, [of]: POKEMON, [forme], [heavy], [weak], [msg])
     case 'cant': // |cant|POKEMON|REASON, |cant|POKEMON|REASON|MOVE ([of] POKEMON)
     case 'swap': // |swap|POKEMON|POSITION
@@ -291,6 +296,41 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
       return anonymizeOf(split, pokemonMap).join('|');
     }
 
+    case '-sethp': /* |-sethp|POKEMON|HP ([from] EFFECT, [silent]) */ {
+      // '|-sethp|TARGET|TARGET HP|SOURCE|SOURCE HP' before 7e4929a39f
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      if (split[4]) split[4] = anonymizePokemon(split[4], pokemonMap);
+      return split.join('|');
+    }
+
+    case '-ability': /* |-ability|POKEMON|ABILITY, |-ability|TARGET|ABILITY|SOURCE ([from] EFFECT, [of] POKEMON, [fail], [silent]) */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      if (split[4] && split[4].match(/^p\d: /)) {
+        // Unnerve...
+        split[4] = `${split[2].slice(0, 4)}${anonymizePlayer(split[4].slice(4), playerMap)}`;
+      }
+      return anonymizeOf(split, pokemonMap).join('|');
+    }
+
+    case '-heal': /* |-heal|POKEMON|HP STATUS ([from] EFFECT, [of] POKEMON, [zeffect], [wisher] POKEMON, [silent]) */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      return split
+        .map(s => {
+          if (s.startsWith('[of] ')) {
+            return `[of] ${anonymizePokemon(s.slice(5), pokemonMap)}`;
+          } else if (s.startsWith('[wisher] ')) {
+            // Not the actual position, but we don't really care, we just need the side
+            const position = split[2].split(': ')[0];
+            const full = anonymizePokemon(`${position}: ${s.slice(9)}`, pokemonMap);
+            return `[wisher] ${full.split(': ')[1]}`;
+          } else {
+            return s;
+          }
+        })
+        .join('|');
+    }
+
+    case '-transform': // |-transform|POKEMON|SPECIES ([from] EFFECT)
     case '-miss': // |-miss|SOURCE, |-miss|SOURCE|TARGET
     case '-waiting': // |-waiting|SOURCE|TARGET
     case '-copyboost': // |-copyboost|SOURCE|TARGET ([from] EFFECT)
@@ -332,4 +372,35 @@ function hash(s: string, salt: string) {
     .update(`${s}${salt}`)
     .digest('hex')
     .slice(0, 10);
+}
+
+// We want to make sure that after anonymizing, none of the original names have leaked out.
+// This can return false positives if someone use names or nicknames which are variants of
+// a Pokemon species name, but this is fairly niche and its better to have false positives
+// than negatives here.
+export class Verifier {
+  readonly names: Set<string> = new Set();
+  readonly leaks: Array<{ input: string; output: string }> = [];
+
+  private regex: RegExp | undefined = undefined;
+
+  verify(input: string, output: string) {
+    if (!this.regex) {
+      const namesAndIDs = Array.from(this.names).flatMap(n => {
+        const safe = n.replace(/[\\.+*?()|[\]{}^$]/g, '\\$&');
+        const id = toID(n);
+        return id ? [safe, id] : [safe];
+      });
+      this.regex = new RegExp(`\\b(${namesAndIDs.join('|')})\\b`);
+    }
+    if (this.regex.test(output)) {
+      this.leaks.push({ input, output });
+      return false;
+    }
+    return true;
+  }
+
+  ok() {
+    return this.leaks.length === 0;
+  }
 }

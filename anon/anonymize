@@ -2,7 +2,7 @@
 'use strict';
 
 require('source-map-support').install();
-const Anonymizer = require('./build/index').Anonymizer;
+const {Anonymizer, Verifier} = require('./build/index');
 const diff = require('json-diff');
 
 const path = require('path');
@@ -10,6 +10,14 @@ const fs = require('fs');
 const raw = JSON.parse(fs.readFileSync(path.resolve(__dirname, process.argv[2]), 'utf8'));
 
 const log = JSON.parse(JSON.stringify(raw));
-const anon = Anonymizer.anonymize(raw, 'gen7ou');
+const verifier = new Verifier();
+const anon = Anonymizer.anonymize(raw, 'gen7ou', undefined, 0, verifier);
 
-console.log(diff.diffString(log, anon));
+if (!verifier.ok()) {
+  const msg = `Potentially leaked name from {${Array.from(verifier.names)}} in log`;
+  for (const {input, output} of verifier.leaks) {
+    console.error(`\x1b[91m${msg}:\x1b[0m\n${input}\n${output}\n`);
+  }
+}
+
+if (process.argv.length <= 3) console.log(diff.diffString(log, anon));
