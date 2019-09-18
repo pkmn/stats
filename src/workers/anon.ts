@@ -50,6 +50,12 @@ export async function init(config: AnonConfiguration) {
 
   await fs.rmrf(config.output);
   await fs.mkdir(config.output, { recursive: true });
+  const options = parse(config.formats);
+  const mkdirs = [];
+  for (const format of options.keys()) {
+    mkdirs.push(fs.mkdir(path.resolve(config.output, format)));
+  }
+  await Promise.all(mkdirs);
 }
 
 export function accept(config: AnonConfiguration) {
@@ -80,7 +86,16 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
       }
 
       processed.push(
-        processLog(logStorage, data, random, index, log, options, config.output, config.dryRun)
+        processLog(
+          logStorage,
+          data,
+          random,
+          index,
+          log,
+          options,
+          path.join(config.output, format),
+          config.dryRun
+        )
       );
       index++;
     }
@@ -107,6 +122,7 @@ async function processLog(
   VLOG(`Processing ${log}`);
   if (dryRun) return;
   if (options.sample && random.next() > options.sample) return;
+  const ordinal = `${index}`.padStart(10, '0');
   try {
     const raw = JSON.parse(await logStorage.read(log));
     // TODO: options.publicOnly?
@@ -116,14 +132,14 @@ async function processLog(
         const team = JSON.stringify(
           Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt)
         );
-        const name = `team-${data.format}-${index}.${side}.json`;
+        const name = `${ordinal}.${side}.json`;
         writes.push(fs.writeFile(path.resolve(output, name), team));
       }
       await Promise.all(writes);
     } else {
-      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt, index));
+      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt));
       // TODO: handle leaks
-      const name = `battle-${data.format}-${index}.log.json`;
+      const name = `${ordinal}.log.json`;
       await fs.writeFile(path.resolve(output, name), anonymized);
     }
   } catch (err) {

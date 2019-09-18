@@ -26,7 +26,6 @@ export interface Log {
 
 export interface AnonymizedLog {
   // Unchanged
-  id: string;
   format: string;
   endType?: 'normal' | 'forced' | 'forfeit';
   turns: number;
@@ -35,9 +34,6 @@ export interface AnonymizedLog {
   // Simplified
   p1rating: Rating | null;
   p2rating: Rating | null;
-
-  // Changed to index
-  timestamp: number;
 
   // Anonymized
   p1: string;
@@ -57,13 +53,7 @@ export interface Rating {
 }
 
 export const Anonymizer = new (class {
-  anonymize(
-    raw: Log,
-    format?: string | Data,
-    salt?: string,
-    index = 0,
-    verifier?: Verifier
-  ): AnonymizedLog {
+  anonymize(raw: Log, format?: string | Data, salt?: string, verifier?: Verifier): AnonymizedLog {
     const p1 = salt ? hash(raw.p1, salt) : 'Player 1';
     const p2 = salt ? hash(raw.p2, salt) : 'Player 2';
     const winner = raw.winner === raw.p1 ? p1 : raw.winner === raw.p2 ? p2 : '';
@@ -83,14 +73,12 @@ export const Anonymizer = new (class {
 
     const pokemonMap = new Map<string, string>();
     return {
-      id: raw.id,
       format: raw.format,
       endType: raw.endType,
       turns: raw.turns,
       score: raw.score,
       p1rating,
       p2rating,
-      timestamp: index,
       p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', verifier),
       p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', verifier),
       p1,
@@ -125,10 +113,7 @@ export const Anonymizer = new (class {
   }
 })();
 
-function anonymizeInputLog(
-  raw: string[],
-  verifier?: Verifier
-) {
+function anonymizeInputLog(raw: string[], verifier?: Verifier) {
   const log: string[] = [];
   for (const line of raw) {
     if (line.match(/^>p\d /)) {
