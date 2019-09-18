@@ -29,7 +29,6 @@ export interface AnonymizedLog {
   id: string;
   format: string;
   endType?: 'normal' | 'forced' | 'forfeit';
-  seed: [number, number, number, number];
   turns: number;
   score: [number, number];
 
@@ -88,7 +87,6 @@ export const Anonymizer = new (class {
       format: raw.format,
       endType: raw.endType,
       turns: raw.turns,
-      seed: raw.seed,
       score: raw.score,
       p1rating,
       p2rating,
@@ -99,7 +97,7 @@ export const Anonymizer = new (class {
       p2,
       winner,
       log: anonymizeLog(raw.log, playerMap, pokemonMap, verifier),
-      inputLog: anonymizeInputLog(raw.inputLog, playerMap, format, verifier),
+      inputLog: anonymizeInputLog(raw.inputLog, verifier),
     };
   }
 
@@ -126,6 +124,20 @@ export const Anonymizer = new (class {
     return team;
   }
 })();
+
+function anonymizeInputLog(
+  raw: string[],
+  verifier?: Verifier
+) {
+  const log: string[] = [];
+  for (const line of raw) {
+    if (line.match(/^>p\d /)) {
+      if (verifier) verifier.verify(line, line);
+      log.push(line);
+    }
+  }
+  return log;
+}
 
 function anonymizeLog(
   raw: string[],
@@ -186,6 +198,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'inactive': // |inactive|MESSAGE
     case 'inactiveoff': // |inactiveoff|MESSAGE
     case 'debug': // |debug|MESSAGE
+    case 'seed': // |seed|SEED
     case 'message':
     case '-message': // |-message|MESSAGE
     case '-hint': // |-hint|MESSAGE
@@ -203,7 +216,6 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'teampreview': // |teampreview
     case 'start': // |start
     case 'rated': // |rated, |rated|MESSAGE
-    case 'seed': // |seed|SEED
     case 'turn': // |turn|NUMBER
     case 'upkeep': // |upkeep
     case 'tie': /* |tie */ {
@@ -347,46 +359,6 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     default:
       throw new Error(`Unknown protocol message ${cmd}: '${line}'`);
   }
-}
-
-function anonymizeInputLog(
-  raw: string[],
-  playerMap: Map<ID, string>,
-  format?: string | Data,
-  verifier?: Verifier
-) {
-  const log: string[] = [];
-  const data = Data.forFormat(format);
-  for (const line of raw) {
-    const anon = line.startsWith('>player') ? anonymizePlayerInput(line, playerMap, data) : line;
-    if (verifier) verifier.verify(line, anon);
-    log.push(anon);
-  }
-  return log;
-}
-
-interface PlayerInput {
-  name: string;
-  avatar: string;
-  team: string;
-}
-
-function anonymizePlayerInput(line: string, playerMap: Map<ID, string>, data: Data) {
-  const prefix = line.slice(0, 11);
-  const input = JSON.parse(line.slice(11)) as PlayerInput;
-  input.name = anonymizePlayer(input.name, playerMap);
-  input.avatar = '1';
-  const team = [];
-  for (const packed of input.team.split(']')) {
-    const split = packed.split('|');
-    if (split[1]) {
-      const species = data.getSpecies(split[1])!;
-      split[0] = species.baseSpecies || species.species;
-    }
-    team.push(split.join('|'));
-  }
-  input.team = team.join(']');
-  return `${prefix}${JSON.stringify(input)}`;
 }
 
 function anonymizePlayer(name: string, playerMap: Map<ID, string>) {
