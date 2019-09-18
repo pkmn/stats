@@ -13,12 +13,12 @@ export interface LogStorage {
 }
 
 export class LogStorage {
-  static connect(config: { logs: string | LogStorage }): LogStorage {
+  static connect(config: { input: string | LogStorage }): LogStorage {
     // TODO: support DatabaseStorage as well
-    if (typeof config.logs === 'string') {
-      return new LogFileStorage(config.logs);
+    if (typeof config.input === 'string') {
+      return new LogFileStorage(config.input);
     }
-    return config.logs;
+    return config.input;
   }
 }
 

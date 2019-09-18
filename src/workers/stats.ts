@@ -59,21 +59,17 @@ const MONOTYPES = new Set(
   Object.keys(Data.forFormat('gen7monotype').Types).map(t => `mono${toID(t)}` as ID)
 );
 
-interface StatsConfiguration extends Configuration {
-  reports: string;
-}
-
-export async function init(config: StatsConfiguration) {
+export async function init(config: Configuration) {
   if (config.dryRun) return;
 
-  await fs.rmrf(config.reports);
-  await fs.mkdir(config.reports, { recursive: true });
-  const monotype = path.resolve(config.reports, 'monotype');
+  await fs.rmrf(config.output);
+  await fs.mkdir(config.output, { recursive: true });
+  const monotype = path.resolve(config.output, 'monotype');
   await fs.mkdir(monotype);
-  await Promise.all([...mkdirs(config.reports), ...mkdirs(monotype)]);
+  await Promise.all([...mkdirs(config.output), ...mkdirs(monotype)]);
 }
 
-export function accept(config: StatsConfiguration) {
+export function accept(config: Configuration) {
   return (format: ID) => {
     if (
       format.startsWith('seasonal') ||
@@ -97,7 +93,7 @@ function mkdirs(dir: string) {
   return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
 }
 
-async function apply(batches: Batch[], config: StatsConfiguration) {
+async function apply(batches: Batch[], config: Configuration) {
   const logStorage = LogStorage.connect(config);
   const checkpointStorage = CheckpointStorage.connect(config);
 
@@ -150,7 +146,7 @@ async function processLog(
   }
 }
 
-async function combine(formats: ID[], config: StatsConfiguration) {
+async function combine(formats: ID[], config: Configuration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
     const stats = config.dryRun ? { total: {}, tags: {} } : await aggregate(config, format);
@@ -183,7 +179,7 @@ async function combine(formats: ID[], config: StatsConfiguration) {
   }
 }
 
-async function aggregate(config: StatsConfiguration, format: ID): Promise<TaggedStatistics> {
+async function aggregate(config: Configuration, format: ID): Promise<TaggedStatistics> {
   const checkpointStorage = CheckpointStorage.connect(config);
   const stats = { total: {}, tags: {} };
   // Floating point math is commutative but *not* necessarily associative, meaning that we can
@@ -227,7 +223,7 @@ async function aggregate(config: StatsConfiguration, format: ID): Promise<Tagged
 
 // TODO: pass in Data to all reports being written!
 function writeReports(
-  config: StatsConfiguration,
+  config: Configuration,
   format: ID,
   cutoff: number,
   stats: Statistics,
@@ -240,7 +236,7 @@ function writeReports(
   const usage = Reports.usageReport(format, stats);
 
   const reports =
-    format === 'gen7monotype' && tag ? path.join(config.reports, 'monotype') : config.reports;
+    format === 'gen7monotype' && tag ? path.join(config.output, 'monotype') : config.output;
   const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));

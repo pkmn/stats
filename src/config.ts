@@ -22,7 +22,8 @@ const MAX_FILES = 256;
 const BATCH_SIZE = 8192;
 
 export interface Configuration {
-  logs: string;
+  input: string;
+  output: string;
   worker: 'stats' | 'anon';
   checkpoints?: string;
   numWorkers: { apply: number; combine: number };
@@ -42,17 +43,19 @@ type Option =
   | string;
 
 export interface Options extends Partial<Omit<Configuration, 'batchSize' | 'numWorkers'>> {
-  logs: string;
+  input: string;
   worker: 'stats' | 'anon';
   batchSize: Option;
   numWorkers: Option;
 }
 
 export class Options {
-  logs: string;
+  input: string;
+  output: string;
 
-  constructor(logs: string) {
-    this.logs = logs;
+  constructor(input: string, output: string) {
+    this.input = input;
+    this.output = output;
   }
 
   toOptions() {

@@ -1,6 +1,7 @@
 import 'source-map-support/register';
 import '../debug';
 
+import * as path from 'path';
 import { Anonymizer } from 'anon';
 import { Data, ID, toID } from 'ps';
 import { workerData } from 'worker_threads';
@@ -32,7 +33,7 @@ interface AnonOptions {
 function parse(args: string) {
   const options: Map<ID, AnonOptions> = new Map();
   const TRUE = ['true', 'True', 'T', 't', '1'];
-  for (const arg in args.split(',')) {
+  for (const arg of args.split(',')) {
     const [format, sample, salt, publicOnly, teamsOnly] = arg.split(':');
     options.set(toID(format), {
       sample: Number(sample) || undefined,
@@ -45,9 +46,10 @@ function parse(args: string) {
 }
 
 export async function init(config: AnonConfiguration) {
-  // if (config.dryRun) return;
-  // TODO set up mirror directory structure...
-  // NOTE: option.reports here is the output directory!
+  if (config.dryRun) return;
+
+  await fs.rmrf(config.output);
+  await fs.mkdir(config.output, { recursive: true });
 }
 
 export function accept(config: AnonConfiguration) {
@@ -77,7 +79,9 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
         processed = [];
       }
 
-      processed.push(processLog(logStorage, data, random, index, log, options, config.dryRun));
+      processed.push(
+        processLog(logStorage, data, random, index, log, options, config.output, config.dryRun)
+      );
       index++;
     }
     if (processed.length) {
@@ -97,6 +101,7 @@ async function processLog(
   index: number,
   log: string,
   options: AnonOptions,
+  output: string,
   dryRun?: boolean
 ) {
   VLOG(`Processing ${log}`);
@@ -106,17 +111,20 @@ async function processLog(
     const raw = JSON.parse(await logStorage.read(log));
     // TODO: options.publicOnly?
     if (options.teamsOnly) {
+      const writes = [];
       for (const side of ['p1', 'p2']) {
         const team = JSON.stringify(
           Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt)
         );
         const name = `team-${data.format}-${index}.${side}.json`;
-        // TODO: write
+        writes.push(fs.writeFile(path.resolve(output, name), team));
       }
+      await Promise.all(writes);
     } else {
       const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt, index));
+      // TODO: handle leaks
       const name = `battle-${data.format}-${index}.log.json`;
-      // TODO: write
+      await fs.writeFile(path.resolve(output, name), anonymized);
     }
   } catch (err) {
     console.error(`${log}: ${err.message}`);

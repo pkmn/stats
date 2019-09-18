@@ -74,7 +74,7 @@ function usage(code) {
   out('');
   out('   -i/--input=PATH: process logs found under PATH');
   out('');
-  out('   -o/--output=PATH: output reports to PATH');
+  out('   -o/--output=PATH: output to PATH');
   out('');
   out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
   out('');
@@ -103,8 +103,8 @@ if (['help', '-help', '--help', 'h', '-h', '--help', '?', '-?', '--?'].includes(
 if (missing('minimist')) shell('npm install minimist');
 const argv = require('minimist')(process.argv.slice(2), {
   alias: {
-    logs: ['i', 'in', 'input', 'l', 'logs', 'src'],
-    reports: ['o', 'out', 'output', 'r', 'dest'],
+    input: ['i', 'in', 'l', 'logs', 'src'],
+    output: ['o', 'out', 'r', 'reports', 'dest', 'dst'],
     checkpoints: ['c', 'checkpoint'],
     numWorkers: ['p', 'parallel', 'w', 'workers', 'maxWorkers', 't', 'threads'],
     maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
@@ -117,10 +117,10 @@ const argv = require('minimist')(process.argv.slice(2), {
   }
 });
 if (argv._.length) {
-  argv.logs = argv._[0];
-  if (argv._.length > 1) argv.reports = argv._[1];
+  argv.input = argv._[0];
+  if (argv._.length > 1) argv.output = argv._[1];
 }
-if (argv._.length > 2 || !argv.logs || !argv.reports) usage(1);
+if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
 argv.worker = argv.formats ? 'anon' : 'stats';
 

@@ -134,10 +134,10 @@ function anonymizeLog(
 ) {
   const log: string[] = [];
   for (const line of raw) {
-    // console.log(`\x1b[90m${line}\x1b[0m`); // DEBUG
+    //console.log(`\x1b[90m${line}\x1b[0m`); // DEBUG
     const anon = anonymize(line, playerMap, pokemonMap);
     if (anon !== undefined) {
-      // console.log(anon); // DEBUG
+      //console.log(anon); // DEBUG
       if (verifier) verifier.verify(line, anon);
       log.push(anon);
     }
@@ -147,7 +147,8 @@ function anonymizeLog(
 
 function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<string, string>) {
   if (line === '') return line;
-  const split = line.split('|'); // This is OK because elide messages with '|' anyway
+  if (!line.startsWith('|')) return undefined;
+  const split = line.split('|'); // This is OK because we elide messages with '|' anyway
   const cmd = split[1];
   if (!cmd) return line === '|' ? line : undefined; // '||MESSAGE' or 'MESSAGE' is not safe to display
   switch (cmd) {
@@ -169,6 +170,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'leave': // |leave|USER
     case 'l':
     case 'L':
+    case 'unlink': // |unlink|USER, |unlink|hide|USER
     case 'raw': // |raw|HTML
     case 'html': // |html|HTML
     case 'uhtml': // |uhtml|NAME|HTML
@@ -244,9 +246,9 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     }
 
     case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
-    case 'move': /* |move|POKEMON|MOVE|TARGET */ {
+    case 'move': /* |move|POKEMON|MOVE|TARGET, |move|POKEMON|MOVE ([notarget], [still]) */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
-      split[4] = anonymizePokemon(split[4], pokemonMap);
+      if (split[4].match(/^p\d[a-d]: /)) split[4] = anonymizePokemon(split[4], pokemonMap);
       return split.join('|');
     }
 
@@ -353,7 +355,7 @@ function anonymizePlayer(name: string, playerMap: Map<ID, string>) {
 }
 
 function anonymizePokemon(pokemon: string, pokemonMap: Map<string, string>) {
-  const [position, name] = pokemon.split(': ');
+  const [position, name] = splitFirst(pokemon, ': ');
   const qualified = position.startsWith('p1') ? `p1: ${name}` : `p2: ${name}`;
   const anon = pokemonMap.get(qualified);
   if (anon) return `${position}: ${anon}`;
@@ -372,6 +374,32 @@ function hash(s: string, salt: string) {
     .update(`${s}${salt}`)
     .digest('hex')
     .slice(0, 10);
+}
+
+/**
+ * Like string.split(delimiter), but only recognizes the first `limit`
+ * delimiters (default 1).
+ *
+ * `"1 2 3 4".split(" ", 2) => ["1", "2"]`
+ *
+ * `splitFirst("1 2 3 4", " ", 1) => ["1", "2 3 4"]`
+ *
+ * Returns an array of length exactly limit + 1.
+ */
+function splitFirst(str: string, delimiter: string, limit = 1) {
+  const splitStr: string[] = [];
+  while (splitStr.length < limit) {
+    const delimiterIndex = str.indexOf(delimiter);
+    if (delimiterIndex >= 0) {
+      splitStr.push(str.slice(0, delimiterIndex));
+      str = str.slice(delimiterIndex + delimiter.length);
+    } else {
+      splitStr.push(str);
+      str = '';
+    }
+  }
+  splitStr.push(str);
+  return splitStr;
 }
 
 // We want to make sure that after anonymizing, none of the original names have leaked out.
