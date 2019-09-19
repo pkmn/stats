@@ -13,7 +13,7 @@ for (const m of fs.readdirSync(IN)) {
   for (const f of fs.readdirSync(month)) {
     const format = path.resolve(month, f);
     const out = path.resolve(OUT, f);
-    formats[f] = 0;
+    formats[f] = (formats[f] || 0);
     if (!fs.existsSync(out)) fs.mkdirSync(out, {recursive: true});
     for (const file of fs.readdirSync(format)) {
       const ordinal = `${++formats[f]}`.padStart(10, '0');
