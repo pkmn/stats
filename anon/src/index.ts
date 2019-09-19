@@ -243,10 +243,15 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
       return split.join('|');
     }
 
-    case '-prepare': // |-prepare|ATTACKER|MOVE|DEFENDER
+    case '-prepare': /* |-prepare|ATTACKER|MOVE|DEFENDER */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      split[4] = anonymizePokemon(split[4], pokemonMap);
+      return split.join('|');
+    }
+
     case 'move': /* |move|POKEMON|MOVE|TARGET, |move|POKEMON|MOVE ([notarget], [still]) */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
-      if (split[4].match(/^p\d[a-d]: /)) split[4] = anonymizePokemon(split[4], pokemonMap);
+      if (split[4].match(/^p\d[a-d]?: /)) split[4] = anonymizePokemon(split[4], pokemonMap);
       return split.join('|');
     }
 

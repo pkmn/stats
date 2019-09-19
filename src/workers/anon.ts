@@ -2,7 +2,7 @@ import 'source-map-support/register';
 import '../debug';
 
 import * as path from 'path';
-import { Anonymizer } from 'anon';
+import { Anonymizer, Verifier } from 'anon';
 import { Data, ID, toID } from 'ps';
 import { workerData } from 'worker_threads';
 
@@ -128,17 +128,22 @@ async function processLog(
     // TODO: options.publicOnly?
     if (options.teamsOnly) {
       const writes = [];
-      for (const side of ['p1', 'p2']) {
-        const team = JSON.stringify(
-          Anonymizer.anonymizeTeam(raw[`${side}team`], data, options.salt)
-        );
-        const name = `${ordinal}.${side}.json`;
+      for (const p of ['p1', 'p2']) {
+        const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${p}team`], data, options.salt));
+        const name = `${ordinal}.${p}.json`;
         writes.push(fs.writeFile(path.resolve(output, name), team));
       }
       await Promise.all(writes);
     } else {
-      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt));
-      // TODO: handle leaks
+      const verifier = new Verifier();
+      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt, verifier));
+      if (!verifier.ok()) {
+        const msg = [log, Array.from(verifier.names)];
+        for (const { input, output } of verifier.leaks) {
+          msg.push(`'${input}' -> '${output}'`);
+        }
+        console.error(msg.join('\n') + '\n');
+      }
       const name = `${ordinal}.log.json`;
       await fs.writeFile(path.resolve(output, name), anonymized);
     }

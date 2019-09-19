@@ -11,7 +11,7 @@ const raw = JSON.parse(fs.readFileSync(path.resolve(__dirname, process.argv[2]),
 
 const log = JSON.parse(JSON.stringify(raw));
 const verifier = new Verifier();
-const anon = Anonymizer.anonymize(raw, 'gen7ou', undefined, 0, verifier);
+const anon = Anonymizer.anonymize(raw, 'gen7ou', undefined, verifier);
 
 if (!verifier.ok()) {
   const msg = `Potentially leaked name from {${Array.from(verifier.names)}} in log`;
