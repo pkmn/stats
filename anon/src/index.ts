@@ -249,10 +249,20 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
       return split.join('|');
     }
 
-    case 'move': /* |move|POKEMON|MOVE|TARGET, |move|POKEMON|MOVE ([notarget], [still]) */ {
+    case 'move': /* |move|POKEMON|MOVE|TARGET, |move|POKEMON|MOVE ([notarget], [still], [spread] POKEMON...) */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
       if (split[4].match(/^p\d[a-d]?: /)) split[4] = anonymizePokemon(split[4], pokemonMap);
-      return split.join('|');
+      return split
+        .map(s => {
+          if (!s.startsWith('[spread] ')) return s;
+          const mons = s
+            .slice(9)
+            .split(',')
+            .map(p => (p.match(/^p\d[a-d]?: /) ? anonymizePokemon(p, pokemonMap) : p))
+            .join(',');
+          return `[spread] ${mons}`;
+        })
+        .join('|');
     }
 
     case '-notarget': /* |-notarget, |-notarget|POKEMON */ {
