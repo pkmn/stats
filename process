@@ -122,6 +122,7 @@ if (argv._.length) {
 }
 if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
-argv.worker = argv.formats ? 'anon' : 'stats';
+//argv.worker = argv.formats ? 'anon' : 'stats';
+argv.worker = 'load'; // TODO
 
 (async () => process.exit(await stats.process(argv)))().catch(err => console.error(err));

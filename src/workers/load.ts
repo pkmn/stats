@@ -1,0 +1,74 @@
+import 'source-map-support/register';
+import '../debug';
+
+import * as path from 'path';
+import { Data, ID, toID } from 'ps';
+import { workerData } from 'worker_threads';
+
+import { Batch, Checkpoints } from '../checkpoint';
+import { Configuration } from '../config';
+import { LogStorage } from '../storage';
+
+import { Client } from 'pg';
+import * as Streams from 'pg-copy-streams';
+
+export async function init(config: Configuration) { }
+
+export function accept(config: Configuration) {
+  return (format: ID) => format === 'gen1ou';
+  // return (format: ID) => true;
+}
+
+
+async function apply(batches: Batch[], config: Configuration) {
+  const client = new Client();
+  await client.connect();
+  const logStorage = LogStorage.connect(config);
+  const stream = client.query(Streams.from('COPY battles FROM STDIN'));
+  for (const [i, { format, begin, end }] of batches.entries()) {
+    const size = end.index.global - begin.index.global + 1;
+    const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
+    LOG(`Processing ${size} log(s) from batch ${i + 1}/${batches.length} - ${offset}`);
+    let pending = [];
+    for (const log of await logStorage.select(format, begin, end)) {
+      if (pending.length >= config.maxFiles) {
+        LOG(`Waiting for ${pending.length} log(s) from ${format} to be copied`);
+        await Promise.all(pending);
+        pending = [];
+      }
+      pending.push(logStorage.read(log).then(d => stream.write(toTSV(d))));
+    }
+    if (pending.length) {
+      LOG(`Waiting for ${pending.length} log(s) from ${format} to be copied`);
+      await Promise.all(pending);
+    }
+  }
+  LOG(`Completed`) // DEBUG
+  return client.end();
+}
+
+function toTSV(raw: string) {
+  const data: {[key: string]: any} = JSON.parse(raw);
+  return [
+    data.id,
+    data.p1,
+    toID(data.p1),
+    data.p2,
+    toID(data.p2),
+    data.format,
+    toID(data.format),
+    +new Date(data.timestamp), // BUG: timezones? seconds vs. milliseconds?
+    data.p1rating ? JSON.stringify(data.p1rating) : '\N',
+    data.p2rating ? JSON.stringify(data.p2rating) : '\N',
+    JSON.stringify(data.log),
+    JSON.stringify(data.inputLog),
+  ].join('\t') + '\n';
+}
+
+if (workerData) {
+  (async () => {
+    if (workerData.type === 'apply') {
+      await apply(workerData.formats, workerData.config);
+    }
+  })().catch(err => console.error(err));
+}
