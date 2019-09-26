@@ -12,11 +12,13 @@ import { LogStorage } from '../storage';
 import { Client } from 'pg';
 import * as Streams from 'pg-copy-streams';
 
+import * as zlib from 'zlib';
+
 export async function init(config: Configuration) {}
 
 export function accept(config: Configuration) {
-  //return (format: ID) => format === 'gen1ou';
-  return (format: ID) => true;
+  return (format: ID) => format === 'gen7nususpecttest';
+  //return (format: ID) => true;
 }
 
 async function apply(batches: Batch[], config: Configuration) {
@@ -43,7 +45,10 @@ async function apply(batches: Batch[], config: Configuration) {
           await Promise.all(pending);
           pending = [];
         }
-        pending.push(logStorage.read(log).then(d => stream.write(toTSV(d))));
+        pending.push(logStorage.read(log).then(d => {
+          stream.write(toTSV(d));
+          VLOG(`Wrote ${log}`);
+        }));
       }
       if (pending.length) {
         LOG(`Waiting for ${pending.length} log(s) from ${format} to be copied`);
@@ -54,24 +59,31 @@ async function apply(batches: Batch[], config: Configuration) {
   });
 }
 
+function encode(d: any) {
+  //const compressed = zlib.brotliCompressSync(JSON.stringify(d), {
+    //[zlib.constants.BROTLI_PARAM_QUALITY]: 0,
+  //});
+  //return '\\x' + compressed.toString('hex');
+  return JSON.stringify(d);
+}
+
 function toTSV(raw: string) {
   const data: { [key: string]: any } = JSON.parse(raw);
-  return (
-    [
+  const esc = (s: string) => s.replace(/\\/g, '\\\\'); // TODO: better escaping?
+  return ([
       data.id,
-      data.p1,
+      esc(data.p1),
       toID(data.p1),
-      data.p2,
+      esc(data.p2),
       toID(data.p2),
-      data.format,
+      data.format, // TODO: this is also formatid :(
       toID(data.format),
       +new Date(data.timestamp), // BUG: timezones? seconds vs. milliseconds?
-      data.p1rating ? JSON.stringify(data.p1rating) : '\\N',
-      data.p2rating ? JSON.stringify(data.p2rating) : '\\N',
-      JSON.stringify(data.log),
-      JSON.stringify(data.inputLog),
-    ].join('\t') + '\n'
-  );
+      data.p1rating ? encode(data.p1rating) : '\\N',
+      data.p2rating ? encode(data.p2rating) : '\\N',
+      encode(data.log),
+      encode(data.inputLog),
+    ].join('\t') + '\n');
 }
 
 if (workerData) {
