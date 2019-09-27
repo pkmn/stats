@@ -60,10 +60,11 @@ async function apply(batches: Batch[], config: Configuration) {
 }
 
 function encode(d: any) {
-  const compressed = zlib.brotliCompressSync(JSON.stringify(d), {
-    [zlib.constants.BROTLI_PARAM_QUALITY]: 0,
-  });
-  return '\\\\x' + compressed.toString('hex');
+  return JSON.stringify(d);
+  //const compressed = zlib.brotliCompressSync(JSON.stringify(d), {
+    //[zlib.constants.BROTLI_PARAM_QUALITY]: 0,
+  //});
+  //return '\\\\x' + compressed.toString('hex');
 }
 
 function toTSV(raw: string) {
@@ -78,12 +79,12 @@ function toTSV(raw: string) {
       data.format, // TODO: this is also formatid :(
       toID(data.format),
       new Date(data.timestamp).toISOString(), // BUG: timezones? seconds vs. milliseconds?
-      encode({
+      esc(encode({
         p1rating: data.p1rating,
         p2rating: data.p2rating,
         log: data.log,
         inputLog: data.inputLog,
-      }),
+      })),
     ].join('\t') + '\n');
 }
 
