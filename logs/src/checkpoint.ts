@@ -1,6 +1,5 @@
-import { ID } from 'ps';
-
 import { Configuration } from './config';
+import { ID } from './id';
 import { CheckpointStorage, LogStorage } from './storage';
 
 export interface Offset {

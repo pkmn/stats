@@ -2,11 +2,11 @@ import 'source-map-support/register';
 import './debug';
 
 import * as path from 'path';
-import { ID } from 'ps';
 import { Worker } from 'worker_threads';
 
 import { Batch, Checkpoints } from './checkpoint';
 import { Configuration, Options } from './config';
+import { ID } from './id'
 import { Random } from './random';
 import { CheckpointStorage } from './storage';
 

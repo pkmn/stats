@@ -48,7 +48,7 @@
 //   $ ./process ../Pokemon-Showdown{logs,Stats}/2019-05
 
 require('source-map-support').install();
-const stats = require('./build/index');
+const logs = require('logs');
 const child_process = require('child_process');
 const path = require('path');
 const shell = cmd => child_process.execSync(cmd, {stdio: 'inherit', cwd: __dirname});
@@ -125,4 +125,4 @@ if (argv.debug) process.env.DEBUG = +argv.verbose;
 //argv.worker = argv.formats ? 'anon' : 'stats';
 argv.worker = 'load'; // TODO
 
-(async () => process.exit(await stats.process(argv)))().catch(err => console.error(err));
+(async () => process.exit(await logs.process(argv)))().catch(err => console.error(err));

@@ -1,5 +1,6 @@
 import * as os from 'os';
-import { ID } from 'ps';
+
+import { ID } from './id';
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
 // should be at least 1024 by default, but we'll set a more more conservative limit to avoid running

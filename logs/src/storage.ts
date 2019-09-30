@@ -1,8 +1,8 @@
 import * as path from 'path';
-import { ID } from 'ps';
 
 import { Batch, Checkpoint, Offset } from './checkpoint';
 import * as fs from './fs';
+import { ID } from './id';
 
 const CMP = Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
 

@@ -1,0 +1,35 @@
+{
+  "name": "logs",
+  "version": "0.0.1",
+  "description": "Logic for processing logs from the Pokémon Showdown battle simulator",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkmn-cc/Pokemon-Showdown-Stats.git"
+  },
+  "author": "Kirk Scheibelhut",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^12.0.8",
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "gts": "^1.0.0",
+    "jest": "^24.8.0",
+    "source-map-support": "^0.5.12",
+    "subpkg": "^0.0.1",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.2"
+  },
+  "scripts": {
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc -p .",
+    "fix": "gts fix",
+    "test": "jest",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run check"
+  }
+}
