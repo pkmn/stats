@@ -49,6 +49,35 @@ export interface MetagameStatistics {
   stalliness: Array<[number, number]>;
 }
 
+export interface DisplayStatistics {
+  battles: number;
+  pokemon: DisplayUsageStatistics; // filtered below 0.01% usage
+  metagame: DisplayMetagameStatistics;
+}
+
+export interface DisplayUsageStatistics {
+  lead: Usage; // divided by Statistics.lead
+  usage: Usage; // divided by Statistics.usage
+
+  count: number; // UsageStatistics.raw.count;
+  weight: number; // UsageStatitics.saved.weight/saved.count
+  viability: [number, number, number, number];
+
+  // filtered by Math.abs, divided by UsageStatistics.raw.weight
+  abilities: { [name: string]: number };
+  items: { [name: string]: number };
+  happinesses: { [num: number]: number };
+  spreads: { [spread: string]: number }; // TODO !!!
+  moves: { [name: string: number };
+  teammates: { [name: string]: number };
+  counters: { [name: string]: [number, number, number] };
+}
+
+export interface DisplayMetagameStatistics {
+  tags: { [id: string /* ID */]: number };
+  stalliness: Array<[number, number]>; // TODO turn into histogram
+}
+
 const EMPTY: Set<ID> = new Set();
 
 export const Stats = new (class {
@@ -214,6 +243,10 @@ export const Stats = new (class {
     a.usage = combineCounts(a.usage, b.usage);
     a.metagame = combineMetagame(a.metagame, b.metagame);
     return a;
+  }
+
+  display(stats: Statistics) {
+    // TODO: -> DisplayStatistics
   }
 })();
 
