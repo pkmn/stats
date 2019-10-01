@@ -81,8 +81,8 @@ export const Anonymizer = new (class {
       score: raw.score,
       p1rating,
       p2rating,
-      p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', verifier, !COPY),
-      p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', verifier, !COPY),
+      p1team: this.anonymizeTeam(raw.p1team, dex, salt, pokemonMap, 'p1: ', verifier, !COPY),
+      p2team: this.anonymizeTeam(raw.p2team, dex, salt, pokemonMap, 'p2: ', verifier, !COPY),
       p1,
       p2,
       winner,
@@ -93,7 +93,7 @@ export const Anonymizer = new (class {
 
   anonymizeTeam(
     team: PokemonSet[],
-    dex?: Dex.
+    dex?: Dex,
     salt?: string,
     nameMap = new Map<string, string>(),
     prefix = '',

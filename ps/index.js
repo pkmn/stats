@@ -5,11 +5,11 @@ const toID = ps.Dex.Data.Tools.getId;
 
 class Dex {
   static get() {
-    return forFormatInternal();
+    return Dex.forFormatInternal();
   }
 
   static async forFormat(format) {
-    return forFormatInternal(format);
+    return Dex.forFormatInternal(format);
   }
 
   static forFormatInternal(format) {

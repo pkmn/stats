@@ -55,10 +55,8 @@ const CUTOFFS = {
 // The number of report files written by `writeReports` (usage, leads, moveset, chaos, metagame).
 const REPORTS = 5;
 
-// TODO: won't work, fuck await
-const MONOTYPES = (async () => new Set(
-  Object.keys((await Dex.forFormat('gen7monotype')).Types).map(t => `mono${toID(t)}` as ID)
-))();
+// TODO: switch once TLA lands
+const MONOTYPES = new Set<ID>(); 
 
 export async function init(config: Configuration) {
   if (config.dryRun) return;
@@ -254,8 +252,12 @@ function writeReports(
 }
 
 if (workerData) {
-  (async () =>
+  (async () => {
+    for (const t of Object.keys((await Dex.forFormat('gen7monotype')).Types)) {
+      MONOTYPES.add(`mono${toID(t)}` as ID);
+    }
     workerData.type === 'apply'
       ? apply(workerData.formats, workerData.config)
-      : combine(workerData.formats, workerData.config))().catch(err => console.error(err));
+      : combine(workerData.formats, workerData.config)
+  })().catch(err => console.error(err));
 }
