@@ -1,20 +1,27 @@
 'use strict';
-const Dex = require('pokemon-showdown/.sim-dist').Dex;
+const ps = require('pokemon-showdown/.sim-dist');
 
-const toID = Dex.Data.Tools.getId;
+const toID = ps.Dex.Data.Tools.getId;
 
-class Data {
-  static forFormat(format) {
-    if (Data.cache === undefined) Data.cache = new Map();
-    if (format instanceof Data) return format;
+class Dex {
+  static get() {
+    return forFormatInternal();
+  }
+
+  static async forFormat(format) {
+    return forFormatInternal(format);
+  }
+
+  static forFormatInternal(format) {
+    if (Dex.cache === undefined) Dex.cache = new Map();
     format = toID(format);
-    let data = Data.cache.get(format);
-    if (!data) {
-      const f = Dex.getFormat(format);
-      data = new Data(Dex.forFormat(f), f.id);
-      Data.cache.set(format, data);
+    let dex = Dex.cache.get(format);
+    if (!dex) {
+      const f = ps.Dex.getFormat(format);
+      dex = new Dex(ps.Dex.forFormat(f), f.id);
+      Dex.cache.set(format, dex);
     }
-    return data;
+    return dex;
   }
 
   constructor(dex, format) {
@@ -133,7 +140,7 @@ function hiddenPower(ivs, gen = 7) {
 }
 
 module.exports = {
-  Data,
+  Dex,
   toID,
   calcStat,
   statToEV,

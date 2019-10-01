@@ -2,8 +2,8 @@ import 'source-map-support/register';
 import '../debug';
 
 import * as path from 'path';
-import { Data, ID, toID } from 'ps';
-import { Parser, Reports, Statistics, Stats, TaggedStatistics } from 'stats';
+import { Dex, ID, toID } from 'ps';
+import { canonicalizeFormat, Parser, Reports, Statistics, Stats, TaggedStatistics } from 'stats';
 import { workerData } from 'worker_threads';
 
 import { Batch, Checkpoint, Checkpoints, Offset } from '../checkpoint';
@@ -55,9 +55,10 @@ const CUTOFFS = {
 // The number of report files written by `writeReports` (usage, leads, moveset, chaos, metagame).
 const REPORTS = 5;
 
-const MONOTYPES = new Set(
-  Object.keys(Data.forFormat('gen7monotype').Types).map(t => `mono${toID(t)}` as ID)
-);
+// TODO: won't work, fuck await
+const MONOTYPES = (async () => new Set(
+  Object.keys((await Dex.forFormat('gen7monotype')).Types).map(t => `mono${toID(t)}` as ID)
+))();
 
 export async function init(config: Configuration) {
   if (config.dryRun) return;
@@ -99,7 +100,7 @@ async function apply(batches: Batch[], config: Configuration) {
 
   for (const [i, { format, begin, end }] of batches.entries()) {
     const cutoffs = POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
-    const data = Data.forFormat(format);
+    const dex = await Dex.forFormat(canonicalizeFormat(toID(format)));
     const stats = { total: {}, tags: {} };
 
     const size = end.index.global - begin.index.global + 1;
@@ -113,7 +114,7 @@ async function apply(batches: Batch[], config: Configuration) {
         processed = [];
       }
 
-      processed.push(processLog(logStorage, data, log, cutoffs, stats, config.dryRun));
+      processed.push(processLog(logStorage, dex, log, cutoffs, stats, config.dryRun));
     }
     if (processed.length) {
       LOG(`Waiting for ${processed.length} log(s) from ${format} to be parsed`);
@@ -128,7 +129,7 @@ async function apply(batches: Batch[], config: Configuration) {
 
 async function processLog(
   logStorage: LogStorage,
-  data: Data,
+  dex: Dex,
   log: string,
   cutoffs: number[],
   stats: TaggedStatistics,
@@ -138,9 +139,9 @@ async function processLog(
   if (dryRun) return;
   try {
     const raw = JSON.parse(await logStorage.read(log));
-    const battle = Parser.parse(raw, data);
-    const tags = data.format === 'gen7monotype' ? MONOTYPES : undefined;
-    Stats.updateTagged(data, battle, cutoffs, stats, tags);
+    const battle = Parser.parse(raw, dex);
+    const tags = dex.format === 'gen7monotype' ? MONOTYPES : undefined;
+    Stats.updateTagged(dex, battle, cutoffs, stats, tags);
   } catch (err) {
     console.error(`${log}: ${err.message}`);
   }
@@ -150,6 +151,7 @@ async function combine(formats: ID[], config: Configuration) {
   for (const format of formats) {
     LOG(`Combining checkpoint(s) for ${format}`);
     const stats = config.dryRun ? { total: {}, tags: {} } : await aggregate(config, format);
+    const dex = await Dex.forFormat(canonicalizeFormat(toID(format)));
 
     let writes = [];
     for (const [c, s] of Object.entries(stats.total)) {
@@ -158,7 +160,7 @@ async function combine(formats: ID[], config: Configuration) {
         await Promise.all(writes);
         writes = [];
       }
-      writes.push(...writeReports(config, format, Number(c), s));
+      writes.push(...writeReports(config, format, dex, Number(c), s));
     }
 
     for (const [t, ts] of Object.entries(stats.tags)) {
@@ -168,7 +170,7 @@ async function combine(formats: ID[], config: Configuration) {
           await Promise.all(writes);
           writes = [];
         }
-        writes.push(...writeReports(config, format, Number(c), s, t as ID));
+        writes.push(...writeReports(config, format, dex, Number(c), s, t as ID));
       }
     }
     if (writes.length) {
@@ -221,10 +223,10 @@ async function aggregate(config: Configuration, format: ID): Promise<TaggedStati
   return stats;
 }
 
-// TODO: pass in Data to all reports being written!
 function writeReports(
   config: Configuration,
   format: ID,
+  dex: Dex,
   cutoff: number,
   stats: Statistics,
   tag?: ID
@@ -233,16 +235,17 @@ function writeReports(
   if (config.dryRun) return new Array(REPORTS).fill(Promise.resolve());
 
   const file = tag ? `${format}-${tag}-${cutoff}` : `${format}-${cutoff}`;
-  const usage = Reports.usageReport(format, stats);
+
+  const usage = Reports.usageReport(dex, stats);
 
   const reports =
     format === 'gen7monotype' && tag ? path.join(config.output, 'monotype') : config.output;
   const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
-  const leads = Reports.leadsReport(format, stats);
+  const leads = Reports.leadsReport(dex stats);
   writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));
-  const movesets = Reports.movesetReports(format, stats, cutoff, tag, min);
+  const movesets = Reports.movesetReports(dex, stats, cutoff, tag, min);
   writes.push(fs.writeFile(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic));
   writes.push(fs.writeFile(path.resolve(reports, 'chaos', `${file}.json`), movesets.detailed));
   const metagame = Reports.metagameReport(stats);

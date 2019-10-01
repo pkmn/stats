@@ -1,4 +1,4 @@
-import { Data, hiddenPower, ID, PokemonSet, Stat, toID } from 'ps';
+import { Dex, hiddenPower, ID, PokemonSet, Stat, toID } from 'ps';
 
 import { Classifier } from './classifier';
 import * as util from './util';
@@ -80,7 +80,7 @@ const ROAR = new Set(['Roar', 'Whirlwind', 'Circle Throw', 'Dragon Tail']);
 const UTURN = new Set(['U-Turn', 'U-turn', 'Volt Switch', 'Baton Pass']);
 
 export const Parser = new (class {
-  parse(raw: Log, format: string | Data) {
+  parse(raw: Log, dex: Dex) {
     // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
     if ((raw as unknown) === '"log"') throw new Error('Log = "log"');
 
@@ -103,11 +103,8 @@ export const Parser = new (class {
       turns: raw.turns,
       endType: raw.endType,
     } as unknown) as Battle;
-    if (typeof format === 'string') {
-      format = util.canonicalizeFormat(toID(format));
-    }
     for (const side of ['p1', 'p2'] as Array<'p1' | 'p2'>) {
-      const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team'], format);
+      const team = this.canonicalizeTeam(raw[side === 'p1' ? 'p1team' : 'p2team'], dex);
 
       // TODO: Stop tracking empty slots?
       const mons = [];
@@ -127,13 +124,13 @@ export const Parser = new (class {
         rating: raw[side === 'p1' ? 'p1rating' : 'p2rating'] || undefined,
         team: {
           pokemon: mons,
-          classification: Classifier.classifyTeam(team, format),
+          classification: Classifier.classifyTeam(team, dex),
         },
       };
       if (winner !== 'tie') player.outcome = winner === side ? 'win' : 'loss';
       battle[side] = player;
     }
-    if (!raw.log || util.isNonSinglesFormat(format)) return battle;
+    if (!raw.log || util.isNonSinglesFormat(dex)) return battle;
 
     const active: { p1?: Slot; p2?: Slot } = {};
     let flags = {
@@ -231,7 +228,7 @@ export const Parser = new (class {
           const side = line[2].startsWith('p1') ? 'p1' : 'p2';
           if (line[1] === 'replace') {
             // NOTE: Ideally we'd be able to go back and fix the previously affected matchups
-            active[side] = identify(name, side, battle, idents, format);
+            active[side] = identify(name, side, battle, idents, dex);
             break;
           }
 
@@ -283,7 +280,7 @@ export const Parser = new (class {
             flags.hazard = true;
           }
 
-          active[side] = identify(name, side, battle, idents, format);
+          active[side] = identify(name, side, battle, idents, dex);
           break;
         }
       }
@@ -292,14 +289,14 @@ export const Parser = new (class {
     return battle;
   }
 
-  canonicalizeTeam(team: Array<PokemonSet<string>>, format: string | Data): Array<PokemonSet<ID>> {
-    const data = util.dataForFormat(format);
-    const mray = util.isMegaRayquazaAllowed(format);
+  canonicalizeTeam(team: Array<PokemonSet<string>>, dex: Dex): Array<PokemonSet<ID>> {
+    dex = util.dexForFormat(dex);
+    const mray = util.isMegaRayquazaAllowed(dex);
     for (const pokemon of team) {
-      const item = pokemon.item && data.getItem(pokemon.item);
+      const item = pokemon.item && dex.getItem(pokemon.item);
       pokemon.item = item ? item.id : 'nothing';
       pokemon.happiness = pokemon.happiness === undefined ? 255 : pokemon.happiness;
-      const nature = data.getNature(pokemon.nature);
+      const nature = dex.getNature(pokemon.nature);
       pokemon.nature = nature ? nature.id : 'hardy';
 
       const evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
@@ -316,23 +313,23 @@ export const Parser = new (class {
         let move = toID(pokemon.moves[i]);
         if (move === 'hiddenpower') {
           // FIXME: Use the pokemon.hpType if available
-          const type = /* pokemon.hpType ? pokemon.hpType : */ hiddenPower(ivs, data.gen)!.type;
+          const type = /* pokemon.hpType ? pokemon.hpType : */ hiddenPower(ivs, dex.gen)!.type;
           move = `${move}${toID(type)}` as ID;
         }
         pokemon.moves[i] = move;
       }
 
       pokemon.level = pokemon.forcedLevel || pokemon.level || 100;
-      const ability = pokemon.ability && data.getAbility(pokemon.ability);
+      const ability = pokemon.ability && dex.getAbility(pokemon.ability);
       pokemon.ability = ability ? ability.id : 'unknown';
-      pokemon.species = util.getSpecies(util.fromAlias(pokemon.species || pokemon.name), data).id;
+      pokemon.species = util.getSpecies(util.fromAlias(pokemon.species || pokemon.name), dex).id;
       if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
         pokemon.species = 'rayquazamega';
         pokemon.ability = 'deltastream';
       } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
         pokemon.species = 'greninjaash';
       } else {
-        const mega = util.getMegaEvolution(pokemon, data);
+        const mega = util.getMegaEvolution(pokemon, dex);
         if (mega) {
           pokemon.species = mega.species;
           pokemon.ability = mega.ability;
@@ -359,7 +356,7 @@ function identify(
   side: 'p1' | 'p2',
   battle: Battle,
   idents: { p1: string[]; p2: string[] },
-  format: string | Data
+  dex: Dex
 ) {
   const team = battle[side].team.pokemon;
   const names = idents[side];
@@ -387,13 +384,13 @@ function identify(
     }
   } else {
     // Maybe its a pokemon name (or possibly an alias)?
-    let species = util.getSpecies(util.fromAlias(name), format);
+    let species = util.getSpecies(util.fromAlias(name), dex);
     let index = team.findIndex(p => p.species === species.id);
     if (index !== -1) return index as Slot;
 
     // Try undoing a forme change to see if that solves things?
     if (util.isMega(species) || FORMES.has(species.id)) {
-      species = util.getBaseSpecies(species.id, format);
+      species = util.getBaseSpecies(species.id, dex);
     }
     index = team.findIndex(p => p.species.startsWith(species.id));
     if (index !== -1) return index as Slot;

@@ -1,4 +1,4 @@
-import { Data, ID, PokemonSet, Species, toID } from 'ps';
+import { Dex, ID, PokemonSet, Species, toID } from 'ps';
 import * as aliases from './aliases.json';
 
 const ALIASES: Readonly<{ [id: string]: string }> = aliases;
@@ -7,22 +7,22 @@ export function fromAlias(name: string) {
   return ALIASES[toID(name)] || name;
 }
 
-export function getSpecies(name: string, format: string | Data) {
-  const species = dataForFormat(format).getSpecies(name);
+export function getSpecies(name: string, dex: Dex) {
+  const species = dexForFormat(dex).getSpecies(name);
   if (!species) throw new Error(`Unknown species '${name}'`);
   return species;
 }
 
-export function getBaseSpecies(name: string, format: string | Data): Species {
-  const species = getSpecies(name, format);
+export function getBaseSpecies(name: string, dex: Dex): Species {
+  const species = getSpecies(name, dex);
   return species.baseSpecies && species.baseSpecies !== species.name
-    ? getBaseSpecies(species.baseSpecies, format)
+    ? getBaseSpecies(species.baseSpecies, dex)
     : species;
 }
 
-// TODO: Remove this function in favor of direct Data.forFormat calls once format is fixed.
-export function dataForFormat(format?: string | Data) {
-  return Data.forFormat(/* FIXME format */);
+// TODO: Remove this function in favor of using the actual dex calls once format is fixed.
+export function dexForFormat(dex?: Dex) {
+  return (/* dex || FIXME */ Dex.get());
 }
 
 const MEGA_RAYQUAZA_BANNED = new Set([
@@ -34,8 +34,8 @@ const MEGA_RAYQUAZA_BANNED = new Set([
   'gen7pokebankubers',
 ]);
 
-export function isMegaRayquazaAllowed(format?: string | Data) {
-  return !MEGA_RAYQUAZA_BANNED.has(Data.forFormat(format).format);
+export function isMegaRayquazaAllowed(dex?: Dex) {
+  return !MEGA_RAYQUAZA_BANNED.has((dex || Dex.get()).format);
 }
 
 export function isMega(species: Species) {
@@ -43,10 +43,10 @@ export function isMega(species: Species) {
   return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
 }
 
-export function getMegaEvolution(pokemon: PokemonSet<string | ID>, format: string | Data) {
-  const item = dataForFormat(format).getItem(pokemon.item);
+export function getMegaEvolution(pokemon: PokemonSet<string | ID>, dex: Dex) {
+  const item = dexForFormat(dex).getItem(pokemon.item);
   if (!item) return undefined;
-  const species = getSpecies(pokemon.species, format);
+  const species = getSpecies(pokemon.species, dex);
   if (
     item.name === 'Blue Orb' &&
     (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')
@@ -63,15 +63,15 @@ export function getMegaEvolution(pokemon: PokemonSet<string | ID>, format: strin
   if (!item.megaEvolves || item.megaEvolves !== species.species || !item.megaStone) {
     return undefined;
   }
-  const mega = getSpecies(item.megaStone, format);
+  const mega = getSpecies(item.megaStone, dex);
   if (!mega) return undefined;
   return { species: toID(mega.species), ability: toID(mega.abilities['0']) };
 }
 
-export function revertFormes(id: ID, format: string | Data) {
-  const species = getSpecies(id, format);
+export function revertFormes(id: ID, dex: Dex) {
+  const species = getSpecies(id, dex);
   if (!species.forme || isMega(species)) return id;
-  return getBaseSpecies(species.id, format).id;
+  return getBaseSpecies(species.id, dex).id;
 }
 
 // FIXME: Generate this based on gameType from config/formats.js
@@ -112,8 +112,8 @@ const NON_SINGLES_FORMATS = new Set([
   'vgc2017',
 ]);
 
-export function isNonSinglesFormat(format: string | Data) {
-  const f = Data.forFormat(format).format;
+export function isNonSinglesFormat(dex: Dex) {
+  const f = dex.format;
   return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 
@@ -139,8 +139,8 @@ const NON_6V6_FORMATS = new Set([
   'vgc2017',
 ]);
 
-export function isNon6v6Format(format: string | Data) {
-  const f = Data.forFormat(format).format;
+export function isNon6v6Format(dex: Dex) {
+  const f = dex.format;
   return NON_6V6_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
 }
 

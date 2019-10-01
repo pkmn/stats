@@ -1,4 +1,4 @@
-import { Data, ID, toID } from 'ps';
+import { Dex, ID, toID } from 'ps';
 
 import { Outcome } from './parser';
 import { MetagameStatistics, Statistics, Usage } from './stats';
@@ -59,9 +59,9 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 const MIN = [20, 0.5];
 
 export const Reports = new (class {
-  usageReport(format: ID, stats: Statistics) {
+  usageReport(dex: Dex, stats: Statistics) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
-    if (['challengecup1v1', '1v1'].includes(format)) {
+    if (['challengecup1v1', '1v1'].includes(dex.format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
     } else {
       sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
@@ -86,7 +86,7 @@ export const Reports = new (class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = displaySpecies(species, format).padEnd(18);
+      const poke = displaySpecies(species, dex).padEnd(18);
       const use = (((100 * usage.weighted) / total.weighted) * 6).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const rawp = (((100 * usage.raw) / total.raw) * 6).toFixed(3).padStart(6);
@@ -98,7 +98,7 @@ export const Reports = new (class {
     return s;
   }
 
-  leadsReport(format: ID, stats: Statistics) {
+  leadsReport(dex: Dex, stats: Statistics) {
     let s = ` Total leads: ${stats.battles * 2}\n`;
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
@@ -122,7 +122,7 @@ export const Reports = new (class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = displaySpecies(species, format).padEnd(18);
+      const poke = displaySpecies(species, dex).padEnd(18);
       const use = ((100 * usage.weighted) / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = ((100 * usage.raw) / total.raw).toFixed(3).padStart(6);
@@ -133,22 +133,22 @@ export const Reports = new (class {
     return s;
   }
 
-  movesetReports(format: ID, stats: Statistics, cutoff = 1500, tag: ID | null = null, min = MIN) {
-    const movesetStats = toMovesetStatistics(format, stats, min[0]);
-    const basic = this.movesetReport(format, stats, movesetStats, min);
-    const detailed = this.detailedMovesetReport(format, stats, cutoff, tag, movesetStats, min[0]);
+  movesetReports(dex: Dex, stats: Statistics, cutoff = 1500, tag: ID | null = null, min = MIN) {
+    const movesetStats = toMovesetStatistics(dex, stats, min[0]);
+    const basic = this.movesetReport(dex, stats, movesetStats, min);
+    const detailed = this.detailedMovesetReport(dex, stats, cutoff, tag, movesetStats, min[0]);
     return { basic, detailed };
   }
 
   movesetReport(
-    format: ID,
+    dex: Dex,
     stats: Statistics,
     movesetStats?: Map<ID, MovesetStatistics>,
     min = MIN
   ) {
-    movesetStats = movesetStats || toMovesetStatistics(format, stats, min[0]);
+    movesetStats = movesetStats || toMovesetStatistics(dex, stats, min[0]);
 
-    const data = util.dataForFormat(format);
+    dex = util.dexForFormat(dex);
     const WIDTH = 40;
 
     const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
@@ -167,7 +167,7 @@ export const Reports = new (class {
       const p = stats.pokemon[species]!;
 
       s += sep;
-      s += ` | ${displaySpecies(species, data)}`.padEnd(WIDTH + 2) + '| \n';
+      s += ` | ${displaySpecies(species, dex)}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
       const avg = p.saved.count ? roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
@@ -184,7 +184,7 @@ export const Reports = new (class {
           break;
         }
         const weight = moveset['Abilities'][ability] / p.raw.weight;
-        const o = data.getAbility(ability);
+        const o = dex.getAbility(ability);
         s += display((o && o.name) || ability, weight);
         total += weight;
       }
@@ -197,7 +197,7 @@ export const Reports = new (class {
           break;
         }
         const weight = moveset['Items'][item] / p.raw.weight;
-        const o = data.getItem(item);
+        const o = dex.getItem(item);
         s += display(item === 'nothing' ? 'Nothing' : (o && o.name) || item, weight);
         total += weight;
       }
@@ -222,7 +222,7 @@ export const Reports = new (class {
           break;
         }
         const weight = moveset['Moves'][move] / p.raw.weight;
-        const o = data.getMove(move);
+        const o = dex.getMove(move);
         s += display(move === '' ? 'Nothing' : (o && o.name) || move, weight);
         total += weight / 4;
       }
@@ -269,24 +269,24 @@ export const Reports = new (class {
 
   // FIXME: Just use names everywhere instead of a hybrid of names and IDs.
   detailedMovesetReport(
-    format: ID,
+    dex: Dex,
     stats: Statistics,
     cutoff = 1500,
     tag: ID | null = null,
     movesetStats?: Map<ID, MovesetStatistics>,
     min = 20
   ) {
-    movesetStats = movesetStats || toMovesetStatistics(format, stats, min);
+    movesetStats = movesetStats || toMovesetStatistics(dex, stats, min);
 
     const info = {
-      metagame: format,
+      metagame: dex.format,
       cutoff,
       'cutoff deviation': 0,
       'team type': tag,
       'number of battles': stats.battles,
     };
 
-    const d = util.dataForFormat(format);
+    const d = util.dexForFormat(dex);
     const data: { [key: string]: object } = {};
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
@@ -394,7 +394,7 @@ export const Reports = new (class {
     months: [string] | [string, string] | [string, string, string],
     read: (month: string, format: string) => Promise<string | undefined>
   ) {
-    const data = Data.forFormat();
+    const dex = Dex.get();
 
     const pokemon: Map<ID, UsageTiers<number>> = new Map();
     for (const [i, month] of months.entries()) {
@@ -447,19 +447,19 @@ export const Reports = new (class {
     let s = '';
     for (const tier of USAGE_TIERS) {
       const sorted = tiers[tier].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-      s += makeTable(sorted, tier, data);
+      s += makeTable(sorted, tier, dex);
     }
 
     const rise = [0.06696700846, 0.04515839608, 0.03406367107][months.length - 1];
     const drop = [0.01717940145, 0.02284003156, 0.03406367107][months.length - 1];
-    const { current, updated } = updateTiers(pokemon, rise, drop, data);
+    const { current, updated } = updateTiers(pokemon, rise, drop, dex);
 
     s += '\n';
     const sorted = Array.from(current.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     for (const [id, tier] of sorted) {
       const update = updated.get(id)!;
       if (tier !== update) {
-        const species = data.getSpecies(id)!;
+        const species = dex.getSpecies(id)!;
         if (
           species.forme &&
           (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'))
@@ -528,15 +528,15 @@ const SKIP = new Set([
   'pikachucosplay',
 ]);
 
-function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: number, data: Data) {
+function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: number, dex: Dex) {
   const current: Map<ID, Tier> = new Map();
   const updated: Map<ID, Tier> = new Map();
-  for (const name of Object.keys(data.Species)) {
-    const species = data.getSpecies(name)!;
+  for (const name of Object.keys(dex.Species)) {
+    const species = dex.getSpecies(name)!;
     if (
       SKIP.has(species.id) ||
       species.isNonstandard ||
-      !data.hasFormatsDataTier(species.id) ||
+      !dex.hasFormatsDataTier(species.id) ||
       !species.tier ||
       species.tier === 'Illegal' ||
       species.tier === 'Unreleased'
@@ -610,13 +610,13 @@ function fmod(a: number, b: number, f = 1e3) {
   return (Math.abs(a * f) % (b * f)) / f;
 }
 
-function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
+function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
   const sorted = Object.entries(stats.pokemon);
-  const real = ['challengecup1v1', '1v1'].includes(format);
+  const real = ['challengecup1v1', '1v1'].includes(dex.format);
   const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
   // FIXME: Sort without this stupid rounding to avoid incorrect ordering
   const usage = (n: number) => round((n / total) * 6, 1e7);
-  if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
+  if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(dex.format)) {
     sorted.sort((a, b) => a[0].localeCompare(b[0]));
   } else if (real) {
     sorted.sort(
@@ -627,7 +627,7 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
       (a, b) => usage(b[1].usage.weighted) - usage(a[1].usage.weighted) || a[0].localeCompare(b[0])
     );
   }
-  const data = util.dataForFormat(format);
+  dex = util.dexForFormat(dex);
 
   const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {
@@ -647,25 +647,25 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
       usage: usage(real ? pokemon.usage.real : pokemon.usage.weighted),
       'Viability Ceiling': viability,
       Abilities: toDisplayObject(pokemon.abilities, ability => {
-        const o = data.getAbility(ability);
+        const o = dex.getAbility(ability);
         return (o && o.name) || ability;
       }),
       Items: toDisplayObject(pokemon.items, item => {
         if (item === 'nothing') return 'Nothing';
-        const o = data.getItem(item);
+        const o = dex.getItem(item);
         return (o && o.name) || item;
       }),
       Spreads: toDisplayObject(pokemon.spreads),
       Happiness: toDisplayObject(pokemon.happinesses),
       Moves: toDisplayObject(pokemon.moves, move => {
         if (move === '') return 'Nothing';
-        const o = data.getMove(move);
+        const o = dex.getMove(move);
         return (o && o.name) || move;
       }),
-      Teammates: getTeammates(format, pokemon.teammates, pokemon.raw.weight, total, stats),
+      Teammates: getTeammates(dex, pokemon.teammates, pokemon.raw.weight, total, stats),
       'Checks and Counters': getChecksAndCounters(
         pokemon.encounters,
-        s => displaySpecies(s, data),
+        s => displaySpecies(s, dex),
         min
       ),
     });
@@ -675,16 +675,16 @@ function toMovesetStatistics(format: ID, stats: Statistics, min = 20) {
 }
 
 function getTeammates(
-  format: ID,
+  dex: Dex,
   teammates: { [id: string /* ID */]: number },
   count: number,
   total: number,
   stats: Statistics
 ): { [key: string]: number } {
-  const real = ['challengecup1v1', '1v1'].includes(format);
+  const real = ['challengecup1v1', '1v1'].includes(dex.format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
-    const species = displaySpecies(id, format);
+    const species = displaySpecies(id, dex);
     const s = stats.pokemon[id];
     if (!s) {
       m[species] = 0;
@@ -755,7 +755,7 @@ function roundStr(v: number, p = PRECISION) {
   return num === Math.floor(num) ? `${num.toFixed(1)}` : `${num}`;
 }
 
-function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, data: Data) {
+function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, dex: Dex) {
   let s = `[HIDE=${tier}][CODE]\n`;
   s += `Combined usage for ${tier}\n`;
   s += ' + ---- + ------------------ + ------- + \n';
@@ -765,7 +765,7 @@ function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, data: Data) {
     const [id, usage] = pair;
     if (usage < 0.001) break;
     const rank = (i + 1).toFixed().padEnd(4);
-    const poke = displaySpecies(id, data).padEnd(18);
+    const poke = displaySpecies(id, dex).padEnd(18);
     const percent = (100 * usage).toFixed(3).padStart(6);
     s += ` | ${rank} | ${poke} | ${percent}% |\n`;
   }
@@ -795,10 +795,10 @@ function parseUsageReport(report: string): [Map<ID, number>, number] {
   return [usage, battles];
 }
 
-function displaySpecies(name: string, format: string | Data) {
+function displaySpecies(name: string, dex: Dex) {
   // FIXME: Seriously, we don't filter 'empty'?
   if (name === 'empty') return name;
-  const species = util.getSpecies(name, format).species;
+  const species = util.getSpecies(name, dex).species;
   if (name === 'Flabébé') return 'Flabebe';
   // FIXME: remove bad display of Nidoran-M / Nidoran-F
   return species.startsWith('Nidoran') ? species.replace('-', '') : species;

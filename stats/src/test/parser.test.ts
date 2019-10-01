@@ -1,16 +1,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { Dex } from 'ps';
+
 import { Log, Parser } from '../parser';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
-const FORMAT = 'gen7anythinggoes';
-const LOG = path.resolve(TESTDATA, 'logs', FORMAT, 'log.1.json');
 
-const read = () => JSON.parse(fs.readFileSync(LOG, 'utf8'));
-const parse = (log: Log) => Parser.parse(log, FORMAT);
+describe('Parser', async () => {
 
-describe('Parser', () => {
+  const DEX = await Dex.forFormat('gen7anythinggoes');;
+  const LOG = path.resolve(TESTDATA, 'logs', DEX.format, 'log.1.json');
+
+  const read = () => JSON.parse(fs.readFileSync(LOG, 'utf8'));
+  const parse = (log: Log) => Parser.parse(log, DEX);
+
   test('log = "log"', () => {
     expect(() => {
       parse(('"log"' as unknown) as Log);

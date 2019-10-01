@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { ID, toID } from 'ps';
+import { Dex, ID, toID } from 'ps';
 
 import * as stats from '../index';
 
@@ -36,29 +36,31 @@ export async function process() {
     const battles: stats.Battle[] = [];
     for (const log of fs.readdirSync(path.resolve(base, dir))) {
       const raw = JSON.parse(fs.readFileSync(path.resolve(base, dir, log), 'utf8'));
-      battles.push(stats.Parser.parse(raw, format));
+      const dex = await Dex.forFormat(format);
+      battles.push(stats.Parser.parse(raw, dex));
     }
     parsed.set(format, battles);
   }
 
   const formats: Map<ID, TaggedReports> = new Map();
   for (const [format, battles] of parsed.entries()) {
+    const dex = await Dex.forFormat(format);
     const taggedStats = { total: {}, tags: {} };
     for (const battle of battles) {
-      stats.Stats.updateTagged(format, battle, CUTOFFS, taggedStats /*, TAGS */);
+      stats.Stats.updateTagged(dex, battle, CUTOFFS, taggedStats /*, TAGS */);
     }
 
     const trs = { total: new Map(), tags: new Map() };
     for (const [c, s] of Object.entries(taggedStats.total)) {
       const cutoff = Number(c);
-      trs.total.set(cutoff, createReports(format, s as stats.Statistics, cutoff));
+      trs.total.set(cutoff, createReports(dex, s as stats.Statistics, cutoff));
     }
 
     for (const [t, ts] of Object.entries(taggedStats.tags)) {
       const wrs: WeightedReports = new Map();
       for (const [c, s] of Object.entries(ts as stats.WeightedStatistics)) {
         const cutoff = Number(c);
-        wrs.set(cutoff, createReports(format, s as stats.Statistics, cutoff, t as ID));
+        wrs.set(cutoff, createReports(dex, s as stats.Statistics, cutoff, t as ID));
       }
       trs.tags.set(t, wrs);
     }
@@ -131,11 +133,11 @@ export function compare(
   cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8'));
 }
 
-function createReports(format: ID, s: stats.Statistics, cutoff?: number, tag: ID | null = null) {
+function createReports(dex: Dex, s: stats.Statistics, cutoff?: number, tag: ID | null = null) {
   return {
-    usage: stats.Reports.usageReport(format, s),
-    leads: stats.Reports.leadsReport(format, s),
-    movesets: stats.Reports.movesetReports(format, s, cutoff, tag, [0, -Infinity]),
+    usage: stats.Reports.usageReport(dex, s),
+    leads: stats.Reports.leadsReport(dex, s),
+    movesets: stats.Reports.movesetReports(dex, s, cutoff, tag, [0, -Infinity]),
     metagame: stats.Reports.metagameReport(s),
   };
 }

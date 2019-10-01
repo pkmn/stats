@@ -1,4 +1,4 @@
-import { calcStat, Data, ID, Nature, PokemonSet, Stat, StatsTable, statToEV } from 'ps';
+import { calcStat, Dex, ID, Nature, PokemonSet, Stat, StatsTable, statToEV } from 'ps';
 
 import { Battle, Outcome, Player, Pokemon, Team } from './parser';
 import * as util from './util';
@@ -68,7 +68,7 @@ export interface DisplayUsageStatistics {
   items: { [name: string]: number };
   happinesses: { [num: number]: number };
   spreads: { [spread: string]: number }; // TODO !!!
-  moves: { [name: string: number };
+  moves: { [name: string]: number };
   teammates: { [name: string]: number };
   counters: { [name: string]: [number, number, number] };
 }
@@ -91,23 +91,23 @@ export const Stats = new (class {
     };
   }
 
-  update(format: string | Data, battle: Battle, cutoff: number, stats?: Statistics, tag?: ID) {
+  update(dex: Dex, battle: Battle, cutoff: number, stats?: Statistics, tag?: ID) {
     const tagged: TaggedStatistics = { total: {}, tags: {} };
     if (tag) {
       tagged.tags[tag] = {};
       tagged.tags[tag][cutoff] = stats || this.create();
-      this.updateTagged(format, battle, [cutoff], tagged, new Set([tag]), true);
+      this.updateTagged(dex, battle, [cutoff], tagged, new Set([tag]), true);
       return tagged.tags[tag][cutoff];
     } else {
       tagged.total = {};
       tagged.total[cutoff] = stats || this.create();
-      this.updateTagged(format, battle, [cutoff], tagged);
+      this.updateTagged(dex, battle, [cutoff], tagged);
       return tagged.total[cutoff];
     }
   }
 
   updateWeighted(
-    format: string | Data,
+    dex: Dex,
     battle: Battle,
     cutoffs: number[],
     stats?: WeightedStatistics,
@@ -116,17 +116,17 @@ export const Stats = new (class {
     const tagged: TaggedStatistics = { total: {}, tags: {} };
     if (tag) {
       tagged.tags[tag] = stats || {};
-      this.updateTagged(format, battle, cutoffs, tagged, new Set([tag]), true);
+      this.updateTagged(dex, battle, cutoffs, tagged, new Set([tag]), true);
       return tagged.tags[tag];
     } else {
       tagged.total = stats || {};
-      this.updateTagged(format, battle, cutoffs, tagged);
+      this.updateTagged(dex, battle, cutoffs, tagged);
       return tagged.total;
     }
   }
 
   updateTagged(
-    format: string | Data,
+    dex: Dex,
     battle: Battle,
     cutoffs: number[],
     stats?: TaggedStatistics,
@@ -135,9 +135,9 @@ export const Stats = new (class {
   ) {
     stats = stats || { total: {}, tags: {} };
 
-    const singles = !util.isNonSinglesFormat(format);
+    const singles = !util.isNonSinglesFormat(dex);
     const short =
-      !util.isNon6v6Format(format) && (battle.turns < 2 || (battle.turns < 3 && singles));
+      !util.isNon6v6Format(dex) && (battle.turns < 2 || (battle.turns < 3 && singles));
 
     const playerWeights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
@@ -155,7 +155,7 @@ export const Stats = new (class {
             s = this.create();
             stats.total[cutoff] = s;
           }
-          updateStats(format, player, battle, wsm, gxe, save, short, s);
+          updateStats(dex, player, battle, wsm, gxe, save, short, s);
         }
 
         for (const tag of tags) {
@@ -170,7 +170,7 @@ export const Stats = new (class {
             t[cutoff] = s;
           }
           if (player.team.classification.tags.has(tag)) {
-            updateStats(format, player, battle, wsm, gxe, save, short, s, tag);
+            updateStats(dex, player, battle, wsm, gxe, save, short, s, tag);
           }
         }
       }
@@ -279,7 +279,7 @@ function getWeights(player: Player, cutoffs: number[]): [Array<{ s: number; m: n
 }
 
 function updateStats(
-  format: string | Data,
+  dex: Dex,
   player: Player,
   battle: Battle,
   weights: { s: number; m: number },
@@ -289,7 +289,7 @@ function updateStats(
   stats: Statistics,
   tag?: ID
 ) {
-  const data = util.dataForFormat(format);
+  dex = util.dexForFormat(dex);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
     if (!short) {
       stats.usage.raw++;
@@ -336,8 +336,8 @@ function updateStats(
 
     // FIXME: batchMovesetCounter is actually outputing 'Serious' instead of 'Hardy'...
     // const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
-    const nature = data.getNature(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
-    const spread = getSpread(nature, util.getSpecies(pokemon.species, data).baseStats, pokemon.set);
+    const nature = dex.getNature(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
+    const spread = getSpread(nature, util.getSpecies(pokemon.species, dex).baseStats, pokemon.set);
     const s = p.spreads[spread];
     p.spreads[spread] = (s || 0) + weights.m;
 

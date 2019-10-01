@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { Data, ID, toID, PokemonSet } from 'ps';
+import { Dex, ID, toID, PokemonSet } from 'ps';
 
 export interface Log {
   id: string;
@@ -14,8 +14,8 @@ export interface Log {
   p1: string;
   p2: string;
 
-  p1team: Array<PokemonSet<string>>;
-  p2team: Array<PokemonSet<string>>;
+  p1team: PokemonSet[];
+  p2team: PokemonSet[];
 
   p1rating: Rating | null;
   p2rating: Rating | null;
@@ -40,8 +40,8 @@ export interface AnonymizedLog {
   p2: string;
   winner: string;
 
-  p1team: Array<PokemonSet<string>>;
-  p2team: Array<PokemonSet<string>>;
+  p1team: PokemonSet[];
+  p2team: PokemonSet[];
 
   log: string[];
   inputLog: string[];
@@ -52,8 +52,10 @@ export interface Rating {
   rprd: number;
 }
 
+const COPY = true;
+
 export const Anonymizer = new (class {
-  anonymize(raw: Log, format?: string | Data, salt?: string, verifier?: Verifier): AnonymizedLog {
+  anonymize(raw: Log, dex?: Dex, salt?: string, verifier?: Verifier): AnonymizedLog {
     const p1 = salt ? hash(raw.p1, salt) : 'Player 1';
     const p2 = salt ? hash(raw.p2, salt) : 'Player 2';
     const winner = raw.winner === raw.p1 ? p1 : raw.winner === raw.p2 ? p2 : '';
@@ -79,8 +81,8 @@ export const Anonymizer = new (class {
       score: raw.score,
       p1rating,
       p2rating,
-      p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', verifier),
-      p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', verifier),
+      p1team: this.anonymizeTeam(raw.p1team, format, salt, pokemonMap, 'p1: ', verifier, !COPY),
+      p2team: this.anonymizeTeam(raw.p2team, format, salt, pokemonMap, 'p2: ', verifier, !COPY),
       p1,
       p2,
       winner,
@@ -90,26 +92,30 @@ export const Anonymizer = new (class {
   }
 
   anonymizeTeam(
-    team: Array<PokemonSet<string>>, // NOTE: mutated!
-    format?: string | Data,
+    team: PokemonSet[],
+    dex?: Dex.
     salt?: string,
     nameMap = new Map<string, string>(),
     prefix = '',
-    verifier?: Verifier
+    verifier?: Verifier,
+    copy = true
   ) {
-    const data = Data.forFormat(format);
-    for (const pokemon of team) {
+    dex = dex || Dex.get();
+    const anonymized = [];
+    for (let pokemon of team) {
+      pokemon = COPY ? copyPokemonSet(pokemon) : pokemon;
       const name = pokemon.name;
       if (salt) {
         pokemon.name = hash(pokemon.name, salt);
       } else {
-        const species = data.getSpecies(pokemon.species)!;
+        const species = dex.getSpecies(pokemon.species)!;
         pokemon.name = species.baseSpecies || species.species;
       }
       nameMap.set(`${prefix}${name}`, pokemon.name);
       if (verifier && pokemon.name !== name) verifier.names.add(name);
+      anonymized.push(pokemon);
     }
-    return team;
+    return anonymized;
   }
 })();
 
@@ -413,6 +419,27 @@ function splitFirst(str: string, delimiter: string, limit = 1) {
   }
   splitStr.push(str);
   return splitStr;
+}
+
+function copyPokemonSet(pokemon: PokemonSet) {
+  const copy: PokemonSet = {
+    name: pokemon.name,
+    species: pokemon.species,
+    item: pokemon.item,
+    ability: pokemon.ability,
+    moves: pokemon.moves.slice(),
+    nature: pokemon.nature,
+    gender: pokemon.gender,
+    evs: Object.assign({}, pokemon.evs),
+    ivs: Object.assign({}, pokemon.ivs),
+    level: pokemon.level
+  };
+  if (pokemon.forcedLevel !== undefined) copy.forcedLevel = pokemon.forcedLevel;
+  if (pokemon.shiny !== undefined) copy.shiny = pokemon.shiny;
+  if (pokemon.happiness !== undefined) copy.happiness = pokemon.happiness;
+  if (pokemon.pokeball !== undefined) copy.pokeball = pokemon.pokeball;
+  if (pokemon.hpType !== undefined) copy.hpType = pokemon.hpType;
+  return copy;
 }
 
 // We want to make sure that after anonymizing, none of the original names have leaked out.

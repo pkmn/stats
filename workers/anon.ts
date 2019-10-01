@@ -3,7 +3,7 @@ import '../debug';
 
 import * as path from 'path';
 import { Anonymizer, Verifier } from 'anon';
-import { Data, ID, toID } from 'ps';
+import { Dex, ID, toID } from 'ps';
 import { workerData } from 'worker_threads';
 
 import { Batch, Checkpoint, Checkpoints } from '../checkpoint';
@@ -70,7 +70,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
   const random = new Random(workerData.num);
   for (const [i, { format, begin, end }] of batches.entries()) {
     const options = formats.get(format)!;
-    const data = Data.forFormat(format);
+    const dex= await Dex.forFormat(format);
 
     const size = end.index.global - begin.index.global + 1;
     const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
@@ -88,7 +88,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
       processed.push(
         processLog(
           logStorage,
-          data,
+          dex,
           random,
           index,
           log,
@@ -111,7 +111,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
 
 async function processLog(
   logStorage: LogStorage,
-  data: Data,
+  dex: Dex,
   random: Random,
   index: number,
   log: string,
@@ -129,14 +129,14 @@ async function processLog(
     if (options.teamsOnly) {
       const writes = [];
       for (const p of ['p1', 'p2']) {
-        const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${p}team`], data, options.salt));
+        const team = JSON.stringify(Anonymizer.anonymizeTeam(raw[`${p}team`], dex, options.salt));
         const name = `${ordinal}.${p}.json`;
         writes.push(fs.writeFile(path.resolve(output, name), team));
       }
       await Promise.all(writes);
     } else {
       const verifier = new Verifier();
-      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, data, options.salt, verifier));
+      const anonymized = JSON.stringify(Anonymizer.anonymize(raw, dex, options.salt, verifier));
       if (!verifier.ok()) {
         const msg = [log, Array.from(verifier.names)];
         for (const { input, output } of verifier.leaks) {

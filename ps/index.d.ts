@@ -2,14 +2,14 @@ declare module 'ps' {
     type ID = '' | string & {__isID: true}
     type Stat = 'hp' | 'atk' | 'def' | 'spa' | 'spd' | 'spe'
     type Gender = 'M' | 'F' | 'N' | ''
-    type StatsTable<T> = {[stat in Stat]: T }
+    type StatsTable<T = number> = {[stat in Stat]: T }
     interface Nature {
         name: string
         plus?: Stat
         minus?: Stat
         [k: string]: any
     }
-    type PokemonSet<T> = {
+    type PokemonSet<T = string> = {
         name: string,
         species: T,
         item: T,
@@ -57,7 +57,10 @@ declare module 'ps' {
     interface DexTable<T> {
         [key: string]: T
     }
-    class Data {
+    class Dex {
+        static get(): Dex;
+        static forFormat(format?: string): Promise<Dex>
+
         Abilities: DexTable<Ability>
         Items: DexTable<Item>
         Moves: DexTable<Move>
@@ -69,8 +72,6 @@ declare module 'ps' {
         
         format: ID
         gen: 1|2|3|4|5|6|7
-
-        static forFormat(format?: string|Data): Data
 
         getAbility(name: string): Ability | undefined
         getItem(name: string): Item | undefined

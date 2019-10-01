@@ -1,21 +1,21 @@
-import { calcStat, Data, ID, PokemonSet, Species, Stat, toID } from 'ps';
+import { calcStat, Dex, ID, PokemonSet, Species, Stat, toID } from 'ps';
 import * as util from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new (class {
-  classifyTeam(team: Array<PokemonSet<ID>>, format: string | Data) {
+  classifyTeam(team: Array<PokemonSet<ID>>, dex: Dex) {
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
-      const { bias, stalliness } = this.classifyPokemon(pokemon, format);
+      const { bias, stalliness } = this.classifyPokemon(pokemon, dex);
       teamBias += bias;
       teamStalliness.push(stalliness);
     }
 
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
-    const tags = tag(team, stalliness, format);
+    const tags = tag(team, stalliness, dex);
 
     return { bias: teamBias, stalliness, tags };
   }
@@ -23,11 +23,11 @@ export const Classifier = new (class {
   // For stats and moveset purposes we're now counting Mega Pokemon seperately,
   // but for team analysis we still want to consider the base (which presumably
   // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(pokemon: PokemonSet<ID>, format: string | Data) {
+  classifyPokemon(pokemon: PokemonSet<ID>, dex: Dex) {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
-    const species = util.getSpecies(pokemon.species, format);
+    const species = util.getSpecies(pokemon.species, dex);
     let mega: { species: ID; ability: ID } | undefined;
     if (util.isMega(species)) {
       mega = {
@@ -37,26 +37,26 @@ export const Classifier = new (class {
       pokemon.species = toID(species.baseSpecies);
     }
 
-    let { bias, stalliness } = classifyForme(pokemon, format);
+    let { bias, stalliness } = classifyForme(pokemon, dex);
     // FIXME: Intended behavior, but not used for compatibility:
     // if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong')) {
     //   pokemon.species = 'meloettapirouette';
-    //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+    //   stalliness = (stalliness + classifyForme(pokemon, dex).stalliness) / 2;
     // } else if (
     //     pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
     //   pokemon.species = 'darmanitanzen' ;
-    //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+    //   stalliness = (stalliness + classifyForme(pokemon, dex).stalliness) / 2;
     // } else if (
     //     pokemon.species === 'rayquaza' &&
     //     pokemon.moves.includes('dragonascent')) {
     //   pokemon.species = 'rayquazamega';
     //   pokemon.ability = 'deltastream';
-    //   stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+    //   stalliness = (stalliness + classifyForme(pokemon, dex).stalliness) / 2;
     // } else {
     if (mega) {
       // pokemon.species = mega.species; FIXME see above
       pokemon.ability = mega.ability;
-      stalliness = (stalliness + classifyForme(pokemon, format).stalliness) / 2;
+      stalliness = (stalliness + classifyForme(pokemon, dex).stalliness) / 2;
     }
 
     // Make sure to revert back to the original values
@@ -71,8 +71,8 @@ const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(pokemon: PokemonSet<ID>, format: string | Data) {
-  let stalliness = baseStalliness(pokemon, format);
+function classifyForme(pokemon: PokemonSet<ID>, dex: Dex) {
+  let stalliness = baseStalliness(pokemon, dex);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
   stalliness += movesStallinessModifier(pokemon);
@@ -101,11 +101,11 @@ function classifyForme(pokemon: PokemonSet<ID>, format: string | Data) {
   return { bias, stalliness };
 }
 
-function baseStalliness(pokemon: PokemonSet<ID>, format: string | Data) {
+function baseStalliness(pokemon: PokemonSet<ID>, dex: Dex) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
   if (pokemon.species === 'ditto') return LOG3_LOG2;
-  const stats = calcStats(pokemon, format);
+  const stats = calcStats(pokemon, dex);
   return (
     -Math.log(
       (((((Math.floor(2.0 * pokemon.level + 10) / 250) * Math.max(stats.atk, stats.spa)) /
@@ -118,11 +118,11 @@ function baseStalliness(pokemon: PokemonSet<ID>, format: string | Data) {
   );
 }
 
-function calcStats(pokemon: PokemonSet<ID>, format: string | Data) {
-  const stats = calcFormeStats(pokemon, format);
+function calcStats(pokemon: PokemonSet<ID>, dex: Dex) {
+  const stats = calcFormeStats(pokemon, dex);
   if (pokemon.species === 'aegislash' && pokemon.ability === 'stancechange') {
     pokemon.species = 'aegislashblade' as ID;
-    const blade = calcFormeStats(pokemon, format);
+    const blade = calcFormeStats(pokemon, dex);
     pokemon.species = 'aegislash' as ID;
     blade.def = Math.floor((blade.def + stats.def) / 2);
     blade.spd = Math.floor((blade.spd + stats.spd) / 2);
@@ -131,9 +131,9 @@ function calcStats(pokemon: PokemonSet<ID>, format: string | Data) {
   return stats;
 }
 
-function calcFormeStats(pokemon: PokemonSet<ID>, format: string | Data) {
-  const species = util.getSpecies(pokemon.species, format);
-  const nature = util.dataForFormat(format).getNature(pokemon.nature);
+function calcFormeStats(pokemon: PokemonSet<ID>, dex: Dex) {
+  const species = util.getSpecies(pokemon.species, dex);
+  const nature = util.dexForFormat(dex).getNature(pokemon.nature);
   const stats = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
   let stat: Stat;
   for (stat in stats) {
@@ -197,7 +197,7 @@ const SETUP_MOVES = new Set([
 const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost']);
 
 // FIXME: This is missing the latest a number of dragons (Kommo-o?) and should instead be
-// generated by iterating over all Species in Data and looking for Dragon-typed Pokemon.
+// generated by iterating over all Species in Dex and looking for Dragon-typed Pokemon.
 const DRAGONS = new Set([
   'dratini',
   'dragonair',
@@ -290,7 +290,7 @@ const GRAVITY_MOVES = new Set([
   'toxicspikes',
 ]);
 
-function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string | Data) {
+function tag(team: Array<PokemonSet<ID>>, stalliness: number, dex: Dex) {
   const weather = { rain: 0, sun: 0, sand: 0, hail: 0 };
   const style = {
     batonpass: 0,
@@ -311,8 +311,8 @@ function tag(team: Array<PokemonSet<ID>>, stalliness: number, format: string | D
 
   let possibleTypes: string[] | undefined;
   for (const pokemon of team) {
-    let species = util.getSpecies(pokemon.species, format);
-    if (util.isMega(species)) species = util.getBaseSpecies(species.id, format);
+    let species = util.getSpecies(pokemon.species, dex);
+    if (util.isMega(species)) species = util.getBaseSpecies(species.id, dex);
 
     const moves = new Set(pokemon.moves as string[]);
     possibleTypes = possibleTypes
