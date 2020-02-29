@@ -528,7 +528,12 @@ function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
   for (const entry of sorted) {
     const species = entry[0];
     const pokemon = entry[1];
-    const viability = util.computeViability(Object.values(pokemon.gxes));
+    const gxes = [];
+    for (const player in pokemon.unique) {
+      const u = pokemon.unique[player];
+      if ('g' in u) gxes.push(u.g);
+    }
+    const viability = util.computeViability(gxes);
     movesets.set(species as ID, {
       'Raw count': pokemon.raw.count,
       usage: usage(real ? pokemon.usage.real : pokemon.usage.weighted),
