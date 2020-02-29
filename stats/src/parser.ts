@@ -117,7 +117,7 @@ export const Parser = new (class {
     }
     if (!raw.log || util.isNonSinglesFormat(dex)) return battle;
 
-    const initialFlags = {
+    const emptyFlags = () => ({
       roar: false,
       uturn: false,
       fodder: false,
@@ -125,10 +125,10 @@ export const Parser = new (class {
       uturnko: false,
       ko: { p1: false, p2: false },
       switch: { p1: false, p2: false },
-    };
+    });
 
     const active: { p1?: Slot; p2?: Slot } = {};
-    let flags = Object.assign({}, initialFlags);
+    let flags = emptyFlags();
     let turnMatchups: Array<[ID, ID, Outcome]> = [];
 
     for (const rawLine of raw.log) {
@@ -138,7 +138,7 @@ export const Parser = new (class {
       switch (line[1]) {
         case 'turn':
           battle.matchups.push(...turnMatchups);
-          flags = Object.assign({}, initialFlags);
+          flags = emptyFlags();
           turnMatchups = [];
           battle.p1.team.pokemon[active.p1!].turnsOut++;
           battle.p2.team.pokemon[active.p2!].turnsOut++;
