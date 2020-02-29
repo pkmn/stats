@@ -40,7 +40,7 @@ export interface UsageStatistics {
   encounters: { [id: string /* ID */]: number /* Outcome */[] };
   teammates: { [id: string /* ID */]: number };
   gxes: { [id: string /* ID */]: number };
-  unique: { [id: string /* ID */]: [/* real */ 0 | 1, /* weighted */ number] };
+  unique: { [id: string /* ID */]: { r: 0 | 1; w: number } };
 }
 
 export interface Usage {
@@ -454,8 +454,8 @@ function updateStats(
 
       const u = p.unique[player.name];
       p.unique[player.name] = !u
-        ? [real, weights.s]
-        : [(u[0] | real) as 0 | 1, Math.max(u[1], weights.s)];
+        ? { r: real, w: weights.s }
+        : { r: (u.r | real) as 0 | 1, w: Math.max(u.w, weights.s) };
 
       updateTeammates(player.team.pokemon, index, pokemon.species, p.teammates, stats, weights.s);
     }
@@ -668,7 +668,7 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {
   for (const player in b.unique) {
     const bu = b.unique[player];
     const au = a.unique[player];
-    a.unique[player] = !au ? bu : [(au[0] | bu[0]) as 0 | 1, Math.max(au[1], bu[1])];
+    a.unique[player] = !au ? bu : { r: (au.r | bu.r) as 0 | 1, w: Math.max(au.w, bu.w) };
   }
   return a;
 }
@@ -739,7 +739,7 @@ function getTeammates(
 
 function computeUnique(stats: { [id: string /* ID */]: UsageStatistics }) {
   const pokemon: { [id: string /* ID */]: Usage } = {};
-  const all: { [id: string /* ID */]: [/* real */ 0 | 1, /* weighted */ number] } = {};
+  const all: { [id: string /* ID */]: { r: 0 | 1; w: number } } = {};
 
   for (const p in stats) {
     const usage = newUsage();
@@ -748,11 +748,11 @@ function computeUnique(stats: { [id: string /* ID */]: UsageStatistics }) {
       const u = unique[player];
 
       usage.raw++;
-      usage.real += u[0];
-      usage.weighted += u[1];
+      usage.real += u.r;
+      usage.weighted += u.w;
 
       const au = all[player];
-      all[player] = !au ? u : [(au[0] | u[0]) as 0 | 1, Math.max(au[1], u[1])];
+      all[player] = !au ? u : { r: (au.r | u.r) as 0 | 1, w: Math.max(au.w, u.w) };
     }
     pokemon[p] = usage;
   }
@@ -762,8 +762,8 @@ function computeUnique(stats: { [id: string /* ID */]: UsageStatistics }) {
     const u = all[player];
 
     total.raw++;
-    total.real += u[0];
-    total.weighted += u[1];
+    total.real += u.r;
+    total.weighted += u.w;
   }
 
   return { pokemon, total };
