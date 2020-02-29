@@ -287,7 +287,7 @@ export const Stats = new (class {
         usage,
 
         count: p.raw.count,
-        weight: R(p.saved.weight / p.saved.count),
+        weight: p.saved.count ? R(p.saved.weight / p.saved.count) : -1,
         viability: util.computeViability(Object.values(p.gxes)),
 
         abilities: toDisplayObject(p.abilities, p.raw.weight, ability => {
