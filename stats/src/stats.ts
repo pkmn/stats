@@ -31,6 +31,7 @@ export interface UsageStatistics {
   items: { [id: string /* ID */]: number };
   happinesses: { [num: number]: number };
   spreads: { [spread: string]: number };
+  stats: { [spread: string]: number };
   moves: { [id: string /* ID */]: number };
 
   raw: { weight: number; count: number };
@@ -69,7 +70,8 @@ export interface DisplayUsageStatistics {
   abilities: { [name: string]: number };
   items: { [name: string]: number };
   happinesses: { [num: number]: number };
-  spreads: { [spread: string]: number }; // TODO !!!
+  spreads: { [spread: string]: number };
+  stats: { [spread: string]: number };
   moves: { [name: string]: number };
   teammates: { [name: string]: number };
   counters: { [name: string]: [number, number, number] };
@@ -299,6 +301,7 @@ export const Stats = new (class {
         }),
         happinesses: toDisplayObject(p.happinesses, p.raw.weight),
         spreads: toDisplayObject(p.spreads, p.raw.weight),
+        stats: toDisplayObject(p.stats, p.raw.weight),
         moves: toDisplayObject(p.moves, p.raw.weight, move => {
           if (move === '') return 'Nothing';
           const o = dex.getMove(move);
@@ -419,9 +422,12 @@ function updateStats(
     // FIXME: batchMovesetCounter is actually outputing 'Serious' instead of 'Hardy'...
     // const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
     const nature = dex.getNature(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
-    const spread = getSpread(nature, util.getSpecies(pokemon.species, dex).baseStats, pokemon.set);
+    const baseStats = util.getSpecies(pokemon.species, dex).baseStats;
+    const spread = getSpread(nature, baseStats, pokemon.set);
     const s = p.spreads[spread];
     p.spreads[spread] = (s || 0) + weights.m;
+    const computed = computeStats(nature, baseStats, pokemon.set);
+    p.stats[computed] = (s || 0) + weights.m;
 
     for (const move of set.moves) {
       // NOTE: We're OK with triple counting 'nothing'
@@ -466,6 +472,22 @@ function getSpread<T>(nature: Nature, base: StatsTable<number>, pokemon: Pokemon
     }
   }
   return `${nature.name}:${evs.join('/')}`;
+}
+
+function computeStats<T>(nature: Nature, base: StatsTable<number>, pokemon: PokemonSet<T>) {
+  const stats: number[] = [];
+  let stat: Stat;
+  for (stat in pokemon.evs) {
+    stats.push(calcStat(
+        stat,
+        base[stat],
+        pokemon.ivs[stat],
+        pokemon.evs[stat],
+        pokemon.level,
+        nature
+      ));
+  }
+  return stats.join('/');
 }
 
 function updateTeammates(
@@ -587,6 +609,7 @@ function newUsageStatistics() {
     items: {},
     happinesses: {},
     spreads: {},
+    stats: {},
     moves: {},
     viability: 0,
     raw: { weight: 0, count: 0 },
@@ -612,6 +635,7 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {
     a.happinesses[n] = (a.happinesses[n] || 0) + b.happinesses[n];
   }
   a.spreads = combineMap(a.spreads, b.spreads);
+  a.stats = combineMap(a.stats, b.stats);
   a.moves = combineMap(a.moves, b.moves);
   a.raw.weight += b.raw.weight;
   a.raw.count += b.raw.count;

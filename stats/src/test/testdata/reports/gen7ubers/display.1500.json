@@ -14,6 +14,10 @@
         "Timid:0/0/0/252/4/252": 0.768,
         "Timid:0/0/56/196/4/252": 0.232
       },
+      "stats": {
+        "341/143/190/355/293/306": 0.768,
+        "341/143/204/341/293/306": 0.232
+      },
       "moves": {
         "Focus Blast": 1,
         "Perish Song": 1,
@@ -51,6 +55,10 @@
       "spreads": {
         "Adamant:0/252/0/0/4/252": 0.768,
         "Adamant:0/180/0/0/132/196": 0.232
+      },
+      "stats": {
+        "351/438/216/302/217/289": 0.768,
+        "351/419/216/302/249/275": 0.232
       },
       "moves": {
         "Dragon Dance": 1,
@@ -92,6 +100,10 @@
         "Jolly:0/252/0/0/4/252": 0.768,
         "Timid:96/0/24/152/4/232": 0.232
       },
+      "stats": {
+        "261/309/156/248/157/339": 0.768,
+        "285/193/162/314/157/334": 0.232
+      },
       "moves": {
         "Frustration": 0.768,
         "Knock Off": 0.768,
@@ -128,6 +140,7 @@
       "items": {"Nothing": 1},
       "happinesses": {"255": 1},
       "spreads": {"Impish:248/8/252/0/0/0": 1},
+      "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
         "Greninja-Ash": 0.4912,
@@ -155,6 +168,7 @@
       "items": {"Life Orb": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"285/293/159/405/168/399": 1},
       "moves": {
         "Hidden Power Ghost": 1,
         "Spikes": 1,
@@ -187,6 +201,7 @@
       "items": {"Focus Sash": 1},
       "happinesses": {"255": 1},
       "spreads": {"Naive:0/196/0/4/0/232": 1},
+      "stats": {"1/265/126/97/86/191": 1},
       "moves": {
         "Facade": 1,
         "Hidden Power Dark": 1,
@@ -220,6 +235,10 @@
       "spreads": {
         "Modest:251/0/0/252/4/0": 0.5367,
         "Jolly:0/252/0/0/4/252": 0.4633
+      },
+      "stats": {
+        "397/284/146/174/147/226": 0.5367,
+        "351/379/146/86/147/317": 0.4633
       },
       "moves": {
         "Fire Blast": 0.5367,
@@ -263,6 +282,10 @@
         "Hasty:0/252/0/4/0/252": 0.5367,
         "Hasty:20/232/0/4/0/252": 0.4633
       },
+      "stats": {
+        "211/298/122/136/176/372": 0.5367,
+        "216/294/122/136/176/372": 0.4633
+      },
       "moves": {
         "Earthquake": 1,
         "Stone Edge": 1,
@@ -292,6 +315,10 @@
       "spreads": {
         "Sassy:252/4/0/0/252/0": 0.5367,
         "Modest:252/0/0/252/4/0": 0.4633
+      },
+      "stats": {
+        "426/203/172/220/289/102": 0.5367,
+        "426/153/172/311/201/114": 0.4633
       },
       "moves": {
         "Ice Beam": 1,
@@ -326,6 +353,7 @@
       "items": {"Life Orb": 0.5367, "Choice Band": 0.4633},
       "happinesses": {"0": 0.4633, "255": 0.5367},
       "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "stats": {"251/279/196/122/247/320": 1},
       "moves": {
         "Play Rough": 1,
         "Destiny Bond": 0.5367,
@@ -363,6 +391,10 @@
         "Timid:0/0/0/252/4/252": 0.5367,
         "Timid:68/0/0/184/4/252": 0.4633
       },
+      "stats": {
+        "341/189/186/339/187/388": 0.5367,
+        "358/189/186/322/187/388": 0.4633
+      },
       "moves": {
         "Air Slash": 1,
         "Dazzling Gleam": 1,
@@ -391,6 +423,10 @@
       "spreads": {
         "Careful:252/4/0/0/252/0": 0.5367,
         "Jolly:0/252/0/0/4/252": 0.4633
+      },
+      "stats": {
+        "420/237/278/178/317/226": 0.5367,
+        "357/299/278/178/227/317": 0.4633
       },
       "moves": {
         "Glare": 1,
@@ -426,6 +462,7 @@
       "items": {"Leftovers": 1},
       "happinesses": {"255": 1},
       "spreads": {"Adamant:252/252/0/0/4/0": 1},
+      "stats": {"324/218/336/122/337/156": 1},
       "moves": {
         "Iron Head": 1,
         "King's Shield": 1,
@@ -450,6 +487,7 @@
       "items": {"Burn Drive": 1},
       "happinesses": {"255": 1},
       "spreads": {"Hasty:0/4/0/252/0/252": 1},
+      "stats": {"283/277/203/339/226/326": 1},
       "moves": {
         "Explosion": 1,
         "Flamethrower": 1,
@@ -474,6 +512,7 @@
       "items": {"Assault Vest": 1},
       "happinesses": {"240": 1},
       "spreads": {"Quiet:248/8/0/252/0/0": 1},
+      "stats": {"343/178/266/394/216/140": 1},
       "moves": {
         "Explosion": 1,
         "Flash Cannon": 1,
@@ -498,6 +537,7 @@
       "items": {"Metagrossite": 1},
       "happinesses": {"255": 1},
       "spreads": {"Hardy:0/250/0/0/0/250": 1},
+      "stats": {"301/388/336/246/256/318": 1},
       "moves": {"Nothing": 2, "Earthquake": 1, "Explosion": 1},
       "teammates": {
         "Aegislash": 0.513,
@@ -517,6 +557,7 @@
       "items": {"Ultranecrozium Z": 1},
       "happinesses": {"255": 1},
       "spreads": {"Brave:252/252/0/4/0/0": 1},
+      "stats": {"398/454/290/263/254/171": 1},
       "moves": {
         "Brick Break": 1,
         "Earthquake": 1,
@@ -547,6 +588,7 @@
       "items": {"Blue Orb": 1},
       "happinesses": {"255": 1},
       "spreads": {"Modest:252/0/0/252/4/0": 1},
+      "stats": {"404/274/216/504/357/216": 1},
       "moves": {"Calm Mind": 1, "Ice Beam": 1, "Origin Pulse": 1, "Thunder": 1},
       "teammates": {
         "Ludicolo": 0.4778,
@@ -573,6 +615,7 @@
       "items": {"Waterium Z": 1},
       "happinesses": {"255": 1},
       "spreads": {"Serious:0/4/0/252/0/252": 1},
+      "stats": {"301/177/176/279/236/239": 1},
       "moves": {"Fake Out": 1, "Grass Knot": 1, "Ice Beam": 1, "Surf": 1},
       "teammates": {
         "Kyogre-Primal": 0.4778,
@@ -592,6 +635,7 @@
       "items": {"Red Card": 1},
       "happinesses": {"255": 1},
       "spreads": {"Bold:248/0/252/0/8/0": 1},
+      "stats": {"323/122/328/226/178/166": 1},
       "moves": {"Roost": 1, "Scald": 1, "Tailwind": 1, "U-turn": 1},
       "teammates": {
         "Kyogre-Primal": 0.4778,
@@ -616,6 +660,7 @@
       "items": {"Swampertite": 1},
       "happinesses": {"255": 1},
       "spreads": {"Adamant:0/252/0/0/4/252": 1},
+      "stats": {"341/438/256/203/257/239": 1},
       "moves": {
         "Earthquake": 1,
         "Stealth Rock": 1,
@@ -647,6 +692,7 @@
       "items": {"Black Sludge": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"301/130/166/259/277/328": 1},
       "moves": {"Hex": 1, "Hydro Pump": 1, "Rapid Spin": 1, "Toxic Spikes": 1},
       "teammates": {
         "Kyogre-Primal": 0.4778,
@@ -669,6 +715,7 @@
       "items": {"Choice Specs": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:40/0/12/212/0/244": 1},
+      "stats": {"295/175/173/295/178/375": 1},
       "moves": {
         "Dark Pulse": 1,
         "Extrasensory": 1,
@@ -700,6 +747,7 @@
       "items": {"Choice Band": 1},
       "happinesses": {"255": 1},
       "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "stats": {"291/333/166/131/167/350": 1},
       "moves": {"Accelerock": 1, "Brick Break": 1, "Crunch": 1, "Drill Run": 1},
       "teammates": {
         "Greninja": 0.8926,
@@ -725,6 +773,7 @@
       "items": {"Eviolite": 1},
       "happinesses": {"255": 1},
       "spreads": {"Adamant:140/252/52/0/64/0": 1},
+      "stats": {"268/234/129/104/132/136": 1},
       "moves": {
         "Head Smash": 1,
         "Sucker Punch": 1,

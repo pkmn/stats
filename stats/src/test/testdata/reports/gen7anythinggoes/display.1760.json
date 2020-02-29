@@ -11,6 +11,7 @@
       "items": {"Nothing": 1},
       "happinesses": {"255": 1},
       "spreads": {"Impish:248/8/252/0/0/0": 1},
+      "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
         "Greninja-Ash": 1,
@@ -31,6 +32,7 @@
       "items": {"Life Orb": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"285/293/159/405/168/399": 1},
       "moves": {
         "Hidden Power Ghost": 1,
         "Spikes": 1,
@@ -56,6 +58,7 @@
       "items": {"Red Card": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"341/143/190/355/293/306": 1},
       "moves": {
         "Focus Blast": 1,
         "Perish Song": 1,
@@ -81,6 +84,7 @@
       "items": {"Eject Button": 1},
       "happinesses": {"255": 1},
       "spreads": {"Adamant:0/252/0/0/4/252": 1},
+      "stats": {"351/504/236/356/237/329": 1},
       "moves": {
         "Dragon Ascent": 1,
         "Dragon Dance": 1,
@@ -106,6 +110,7 @@
       "items": {"Focus Sash": 1},
       "happinesses": {"255": 1},
       "spreads": {"Naive:0/196/0/4/0/232": 1},
+      "stats": {"1/265/126/97/86/191": 1},
       "moves": {
         "Facade": 1,
         "Hidden Power Dark": 1,
@@ -131,6 +136,7 @@
       "items": {"Life Orb": 1},
       "happinesses": {"0": 1},
       "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "stats": {"261/309/156/248/157/339": 1},
       "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
       "teammates": {
         "Ditto": 1,

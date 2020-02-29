@@ -11,6 +11,7 @@
       "items": {"Assault Vest": 1},
       "happinesses": {"255": 1},
       "spreads": {"Modest:251/0/0/252/4/0": 1},
+      "stats": {"397/284/146/174/147/226": 1},
       "moves": {"Fire Blast": 1, "Flamethrower": 1, "Psychic": 1, "U-turn": 1},
       "teammates": {
         "Dugtrio": 0.1374,
@@ -31,6 +32,7 @@
       "items": {"Choice Band": 1},
       "happinesses": {"255": 1},
       "spreads": {"Hasty:0/252/0/4/0/252": 1},
+      "stats": {"211/298/122/136/176/372": 1},
       "moves": {
         "Earthquake": 1,
         "Hidden Power Grass": 1,
@@ -56,6 +58,7 @@
       "items": {"Eject Button": 1},
       "happinesses": {"255": 1},
       "spreads": {"Sassy:252/4/0/0/252/0": 1},
+      "stats": {"426/203/172/220/289/102": 1},
       "moves": {"Earthquake": 1, "Ice Beam": 1, "Recover": 1, "Surf": 1},
       "teammates": {
         "Darmanitan": 0.1374,
@@ -76,6 +79,7 @@
       "items": {"Life Orb": 1},
       "happinesses": {"255": 1},
       "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "stats": {"251/279/196/122/247/320": 1},
       "moves": {
         "Destiny Bond": 1,
         "Play Rough": 1,
@@ -101,6 +105,7 @@
       "items": {"Nothing": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"341/189/186/339/187/388": 1},
       "moves": {
         "Air Slash": 1,
         "Dazzling Gleam": 1,
@@ -126,6 +131,7 @@
       "items": {"Assault Vest": 1},
       "happinesses": {"255": 1},
       "spreads": {"Careful:252/4/0/0/252/0": 1},
+      "stats": {"420/237/278/178/317/226": 1},
       "moves": {
         "Brick Break": 1,
         "Dragon Tail": 1,
@@ -151,6 +157,7 @@
       "items": {"Nothing": 1},
       "happinesses": {"255": 1},
       "spreads": {"Impish:248/8/252/0/0/0": 1},
+      "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
         "Greninja-Ash": 0.8626,
@@ -176,6 +183,7 @@
       "items": {"Life Orb": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"285/293/159/405/168/399": 1},
       "moves": {
         "Hidden Power Ghost": 1,
         "Spikes": 1,
@@ -207,6 +215,7 @@
       "items": {"Red Card": 1},
       "happinesses": {"255": 1},
       "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "stats": {"341/143/190/355/293/306": 1},
       "moves": {
         "Focus Blast": 1,
         "Perish Song": 1,
@@ -232,6 +241,7 @@
       "items": {"Eject Button": 1},
       "happinesses": {"255": 1},
       "spreads": {"Adamant:0/252/0/0/4/252": 1},
+      "stats": {"351/504/236/356/237/329": 1},
       "moves": {
         "Dragon Ascent": 1,
         "Dragon Dance": 1,
@@ -257,6 +267,7 @@
       "items": {"Focus Sash": 1},
       "happinesses": {"255": 1},
       "spreads": {"Naive:0/196/0/4/0/232": 1},
+      "stats": {"1/265/126/97/86/191": 1},
       "moves": {
         "Facade": 1,
         "Hidden Power Dark": 1,
@@ -282,6 +293,7 @@
       "items": {"Life Orb": 1},
       "happinesses": {"0": 1},
       "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "stats": {"261/309/156/248/157/339": 1},
       "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
       "teammates": {
         "Ditto": 0.8626,

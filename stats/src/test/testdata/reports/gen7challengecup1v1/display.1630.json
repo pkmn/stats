@@ -11,6 +11,7 @@
       "items": {"Normalium Z": 1},
       "happinesses": {"25": 1},
       "spreads": {"Naive:0/0/104/46/224/135": 1},
+      "stats": {"238/168/189/176/175/211": 1},
       "moves": {"Flash": 1, "Hyper Voice": 1, "Quash": 1, "Shadow Ball": 1},
       "teammates": {
         "Castform": 0.6524,
@@ -31,6 +32,7 @@
       "items": {"Metal Powder": 1},
       "happinesses": {"201": 1},
       "spreads": {"Bashful:40/0/212/3/0/248": 1},
+      "stats": {"210/140/181/125/138/189": 1},
       "moves": {"Defense Curl": 1, "Psych Up": 1, "Snore": 1, "Thunder": 1},
       "teammates": {
         "Arceus": 0.6524,
@@ -51,6 +53,7 @@
       "items": {"Rocky Helmet": 1},
       "happinesses": {"118": 1},
       "spreads": {"Lonely:56/0/0/249/205/0": 1},
+      "stats": {"183/306/171/154/92/176": 1},
       "moves": {
         "Confide": 1,
         "Sleep Talk": 1,
@@ -76,6 +79,7 @@
       "items": {"Apicot Berry": 1},
       "happinesses": {"131": 1},
       "spreads": {"Naive:64/5/244/172/0/23": 1},
+      "stats": {"214/68/169/126/94/74": 1},
       "moves": {"Growl": 1, "String Shot": 1, "Struggle Bug": 1, "Uproar": 1},
       "teammates": {
         "Arceus": 0.6524,
@@ -96,6 +100,7 @@
       "items": {"Charizardite X": 1},
       "happinesses": {"103": 1},
       "spreads": {"Docile:1/254/108/95/47/3": 1},
+      "stats": {"245/204/137/97/94/80": 1},
       "moves": {"Captivate": 1, "Leer": 1, "Meditate": 1, "Power-Up Punch": 1},
       "teammates": {
         "Arceus": 0.6524,
@@ -116,6 +121,7 @@
       "items": {"Pikanium Z": 1},
       "happinesses": {"135": 1},
       "spreads": {"Relaxed:0/137/172/136/59/5": 1},
+      "stats": {"178/130/289/86/234/20": 1},
       "moves": {"Confide": 1, "Gastro Acid": 1, "Safeguard": 1, "Tickle": 1},
       "teammates": {
         "Arceus": 0.6524,
@@ -136,6 +142,7 @@
       "items": {"Starf Berry": 1},
       "happinesses": {"225": 1},
       "spreads": {"Hasty:34/130/0/0/94/252": 1},
+      "stats": {"223/192/204/134/134/113": 1},
       "moves": {"Aqua Jet": 1, "Bite": 1, "Facade": 1, "Liquidation": 1},
       "teammates": {
         "Deino": 0.6553,
@@ -156,6 +163,7 @@
       "items": {"Blastoisinite": 1},
       "happinesses": {"140": 1},
       "spreads": {"Jolly:0/55/244/0/202/3": 1},
+      "stats": {"197/141/150/90/152/79": 1},
       "moves": {"Hyper Voice": 1, "Substitute": 1, "Superpower": 1, "Toxic": 1},
       "teammates": {
         "Carracosta": 0.6553,
@@ -176,6 +184,7 @@
       "items": {"Yache Berry": 1},
       "happinesses": {"249": 1},
       "spreads": {"Gentle:62/219/112/114/0/0": 1},
+      "stats": {"197/191/107/179/155/162": 1},
       "moves": {
         "Electro Ball": 1,
         "Flash": 1,
@@ -201,6 +210,7 @@
       "items": {"Bottle Cap": 1},
       "happinesses": {"9": 1},
       "spreads": {"Relaxed:101/7/0/116/149/137": 1},
+      "stats": {"192/77/74/209/118/166": 1},
       "moves": {
         "Dazzling Gleam": 1,
         "Dream Eater": 1,
@@ -226,6 +236,7 @@
       "items": {"Absorb Bulb": 1},
       "happinesses": {"233": 1},
       "spreads": {"Calm:189/20/40/127/0/132": 1},
+      "stats": {"231/133/106/185/170/199": 1},
       "moves": {"Grass Knot": 1, "Laser Focus": 1, "Magic Coat": 1, "Thief": 1},
       "teammates": {
         "Carracosta": 0.6553,
@@ -246,6 +257,7 @@
       "items": {"Fire Stone": 1},
       "happinesses": {"240": 1},
       "spreads": {"Lax:251/45/4/64/142/0": 1},
+      "stats": {"260/145/119/169/128/159": 1},
       "moves": {
         "Double Team": 1,
         "Ice Beam": 1,
@@ -271,6 +283,7 @@
       "items": {"Moon Ball": 1},
       "happinesses": {"30": 1},
       "spreads": {"Docile:0/0/236/200/0/72": 1},
+      "stats": {"201/164/124/127/156/145": 1},
       "moves": {"Acrobatics": 1, "Brutal Swing": 1, "Cut": 1, "Throat Chop": 1},
       "teammates": {
         "Eevee": 0.6924,
@@ -291,6 +304,7 @@
       "items": {"Big Root": 1},
       "happinesses": {"108": 1},
       "spreads": {"Quiet:0/0/0/255/14/241": 1},
+      "stats": {"213/124/113/157/129/140": 1},
       "moves": {"Captivate": 1, "Return": 1, "Swift": 1, "Tail Whip": 1},
       "teammates": {
         "Beedrill": 0.6924,
@@ -311,6 +325,7 @@
       "items": {"Mind Plate": 1},
       "happinesses": {"150": 1},
       "spreads": {"Hardy:0/5/176/120/208/0": 1},
+      "stats": {"205/99/161/209/161/155": 1},
       "moves": {"Flash": 1, "Frustration": 1, "Protect": 1, "Teeter Dance": 1},
       "teammates": {
         "Beedrill": 0.6924,
@@ -331,6 +346,7 @@
       "items": {"Mewtwonite Y": 1},
       "happinesses": {"196": 1},
       "spreads": {"Naughty:5/155/60/30/255/2": 1},
+      "stats": {"237/163/136/95/155/168": 1},
       "moves": {"Mud Sport": 1, "Mud-Slap": 1, "Odor Sleuth": 1, "Toxic": 1},
       "teammates": {
         "Beedrill": 0.6924,
@@ -351,6 +367,7 @@
       "items": {"Pikanium Z": 1},
       "happinesses": {"118": 1},
       "spreads": {"Lonely:239/81/92/55/5/35": 1},
+      "stats": {"265/172/140/148/133/134": 1},
       "moves": {
         "Captivate": 1,
         "Focus Punch": 1,
@@ -376,6 +393,7 @@
       "items": {"Fairium Z": 1},
       "happinesses": {"78": 1},
       "spreads": {"Rash:3/133/0/246/122/6": 1},
+      "stats": {"235/224/142/181/136/94": 1},
       "moves": {
         "Hidden Power Bug": 1,
         "Power-Up Punch": 1,
@@ -401,6 +419,7 @@
       "items": {"Coba Berry": 1},
       "happinesses": {"223": 1},
       "spreads": {"Hasty:0/14/88/188/0/220": 1},
+      "stats": {"189/99/95/217/150/244": 1},
       "moves": {"Attract": 1, "Electroweb": 1, "Secret Power": 1, "Surf": 1},
       "teammates": {
         "Honedge": 0.9999,
@@ -421,6 +440,7 @@
       "items": {"Terrain Extender": 1},
       "happinesses": {"176": 1},
       "spreads": {"Jolly:0/167/184/25/127/4": 1},
+      "stats": {"173/186/219/65/109/66": 1},
       "moves": {
         "Destiny Bond": 1,
         "Protect": 1,
@@ -446,6 +466,7 @@
       "items": {"Iron Ball": 1},
       "happinesses": {"141": 1},
       "spreads": {"Jolly:34/16/252/4/1/201": 1},
+      "stats": {"204/131/165/176/172/233": 1},
       "moves": {
         "Dragon Dance": 1,
         "Magic Coat": 1,
@@ -471,6 +492,7 @@
       "items": {"Moon Stone": 1},
       "happinesses": {"14": 1},
       "spreads": {"Modest:0/16/248/2/0/242": 1},
+      "stats": {"216/117/154/127/99/168": 1},
       "moves": {"Rage": 1, "Rain Dance": 1, "Shadow Claw": 1, "Sleep Talk": 1},
       "teammates": {
         "Heliolisk": 0.9999,
@@ -491,6 +513,7 @@
       "items": {"Moon Ball": 1},
       "happinesses": {"171": 1},
       "spreads": {"Calm:53/240/0/98/119/0": 1},
+      "stats": {"226/145/171/154/220/124": 1},
       "moves": {"Brine": 1, "Detect": 1, "Snore": 1, "Toxic": 1},
       "teammates": {
         "Heliolisk": 0.9999,
@@ -511,6 +534,7 @@
       "items": {"Heavy Ball": 1},
       "happinesses": {"40": 1},
       "spreads": {"Quirky:0/239/8/10/248/2": 1},
+      "stats": {"207/163/104/136/160/191": 1},
       "moves": {"Embargo": 1, "Giga Impact": 1, "Shock Wave": 1, "Swagger": 1},
       "teammates": {
         "Heliolisk": 0.9999,
