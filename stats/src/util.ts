@@ -98,7 +98,8 @@ const NON_SINGLES_FORMATS = new Set([
   'gen7pokebankdoublesou', 'gen7pokebankdoublesoubeta', 'gen7randomdoublesbattle',
   'gen7vgc2017', 'gen7vgc2017beta', 'orassmogondoubles', 'randomdoublesbattle', 'smogondoublesuu',
   'randomtriplesbattle', 'smogondoubles', 'smogondoublessuspecttest', 'smogondoublesubers',
-  'smogontriples', 'smogontriples', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
+  'smogontriples', 'smogontriples', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017', 'gen8doublesou',
+  'gen8doublesubers', 'gen8doublesuu',
 ]);
 
 export function isNonSinglesFormat(dex: Dex) {

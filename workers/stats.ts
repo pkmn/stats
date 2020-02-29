@@ -56,7 +56,7 @@ const CUTOFFS = {
 const REPORTS = 5;
 
 // TODO: switch once TLA lands
-const MONOTYPES = new Set<ID>(); 
+const MONOTYPES = new Set<ID>();
 
 export async function init(config: Configuration) {
   if (config.dryRun) return;
@@ -76,8 +76,8 @@ export function accept(config: Configuration) {
       format.includes('metronome' || format.includes('superstaff'))
     ) {
       return 0;
-    } else if (format === 'gen7monotype') {
-      // Given that we compute all the monotype team tags for gen7monotype, we need to
+    } else if (format === 'gen8monotype') {
+      // Given that we compute all the monotype team tags for gen8monotype, we need to
       // weight the format to make sure a batch uses up approximately the same amount
       // of memory during computation compared to the other formats.
       return MONOTYPES.size + 1;
@@ -138,7 +138,7 @@ async function processLog(
   try {
     const raw = JSON.parse(await logStorage.read(log));
     const battle = Parser.parse(raw, dex);
-    const tags = dex.format === 'gen7monotype' ? MONOTYPES : undefined;
+    const tags = dex.format === 'gen8monotype' ? MONOTYPES : undefined;
     Stats.updateTagged(dex, battle, cutoffs, stats, tags);
   } catch (err) {
     console.error(`${log}: ${err.message}`);
@@ -237,7 +237,7 @@ function writeReports(
   const usage = Reports.usageReport(dex, stats);
 
   const reports =
-    format === 'gen7monotype' && tag ? path.join(config.output, 'monotype') : config.output;
+    format === 'gen8monotype' && tag ? path.join(config.output, 'monotype') : config.output;
   const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
@@ -253,7 +253,7 @@ function writeReports(
 
 if (workerData) {
   (async () => {
-    for (const t of Object.keys((await Dex.forFormat('gen7monotype')).Types)) {
+    for (const t of Object.keys((await Dex.forFormat('gen8monotype')).Types)) {
       MONOTYPES.add(`mono${toID(t)}` as ID);
     }
     workerData.type === 'apply'
