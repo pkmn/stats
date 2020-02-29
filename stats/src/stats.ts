@@ -160,7 +160,7 @@ export const Stats = new (class {
             s = this.create();
             stats.total[cutoff] = s;
           }
-          updateStats(dex, player, battle, wsm, gxe, save, short, s);
+          updateStats(dex, player, wsm, gxe, save, short, s);
         }
 
         for (const tag of tags) {
@@ -175,7 +175,7 @@ export const Stats = new (class {
             t[cutoff] = s;
           }
           if (player.team.classification.tags.has(tag)) {
-            updateStats(dex, player, battle, wsm, gxe, save, short, s, tag);
+            updateStats(dex, player, wsm, gxe, save, short, s);
           }
         }
       }
@@ -366,13 +366,11 @@ function getWeights(player: Player, cutoffs: number[]): [Array<{ s: number; m: n
 function updateStats(
   dex: Dex,
   player: Player,
-  battle: Battle,
   weights: { s: number; m: number },
   gxe: number | undefined,
   save: boolean,
   short: boolean,
-  stats: Statistics,
-  tag?: ID
+  stats: Statistics
 ) {
   dex = util.dexForFormat(dex);
   for (const [index, pokemon] of player.team.pokemon.entries()) {
