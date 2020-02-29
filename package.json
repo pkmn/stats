@@ -23,11 +23,11 @@
     "minimist": "^1.2.0"
   },
   "scripts": {
-    "check": "subpkg run check && gts check",
-    "clean": "subpkg run clean && gts clean",
-    "compile": "subpkg run compile && tsc -p .",
-    "fix": "subpkg run fix && gts fix",
-    "test": "subpkg run test && jest",
+    "check": "subpkg run check",
+    "clean": "subpkg run clean",
+    "compile": "subpkg run compile",
+    "fix": "subpkg run fix",
+    "test": "subpkg run test",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run check",
