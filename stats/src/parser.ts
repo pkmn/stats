@@ -269,8 +269,8 @@ export const Parser = new (class {
   }
 
   canonicalizeTeam(team: Array<PokemonSet<string>>, dex: Dex): Array<PokemonSet<ID>> {
-    dex = util.dexForFormat(dex);
     const mray = util.isMegaRayquazaAllowed(dex);
+    dex = util.dexForFormat(dex);
     for (const pokemon of team) {
       const item = pokemon.item && dex.getItem(pokemon.item);
       pokemon.item = item ? item.id : 'nothing';
