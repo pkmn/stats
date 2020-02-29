@@ -395,16 +395,6 @@ function hash(s: string, salt: string) {
     .slice(0, 10);
 }
 
-/**
- * Like string.split(delimiter), but only recognizes the first `limit`
- * delimiters (default 1).
- *
- * `"1 2 3 4".split(" ", 2) => ["1", "2"]`
- *
- * `splitFirst("1 2 3 4", " ", 1) => ["1", "2 3 4"]`
- *
- * Returns an array of length exactly limit + 1.
- */
 function splitFirst(str: string, delimiter: string, limit = 1) {
   const splitStr: string[] = [];
   while (splitStr.length < limit) {

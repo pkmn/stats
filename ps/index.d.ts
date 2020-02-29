@@ -71,7 +71,7 @@ declare module 'ps' {
         Types: DexTable<Type>
         
         format: ID
-        gen: 1|2|3|4|5|6|7
+        gen: 1|2|3|4|5|6|7|8
 
         getAbility(name: string): Ability | undefined
         getItem(name: string): Item | undefined

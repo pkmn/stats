@@ -1,5 +1,5 @@
 {
-  "name": "pokemon-showdown-stats",
+  "name": "smogon-stats",
   "private": true,
   "version": "0.0.1",
   "description": "The stats processing logic for the Pokémon Showdown battle simulator",
@@ -16,7 +16,7 @@
     "stats": "file:stats"
   },
   "devDependencies": {
-    "source-map-support": "^0.5.12",
+    "source-map-support": "^0.5.16",
     "subpkg": "^0.0.1"
   },
   "optionalDependencies": {

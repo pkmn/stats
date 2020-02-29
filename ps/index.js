@@ -106,7 +106,7 @@ const HIDDEN_POWER_TYPES = [
   'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark',
 ];
 
-function hiddenPower(ivs, gen = 7) {
+function hiddenPower(ivs, gen = 8) {
   if (gen < 2) return undefined;
 
   let type;
