@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as stringify from 'json-stringify-pretty-compact';
 
 import { Dex, ID, toID } from 'ps';
 
@@ -140,7 +141,7 @@ function createReports(dex: Dex, s: stats.Statistics, cutoff?: number, tag: ID |
     leads: stats.Reports.leadsReport(dex, s),
     movesets: stats.Reports.movesetReports(dex, s, cutoff, tag, [0, -Infinity]),
     metagame: stats.Reports.metagameReport(s),
-    display: JSON.stringify(stats.Stats.display(dex, s, 0), null, 2),
+    display: stringify(stats.Stats.display(dex, s, 0)),
   };
 }
 

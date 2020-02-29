@@ -2,34 +2,14 @@
   "battles": 6,
   "pokemon": {
     "Meloetta": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.4167,
-        "real": 0.375,
-        "weighted": 0.3787
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.4167, "real": 0.375, "weighted": 0.3787},
       "count": 7,
       "weight": 0.6622,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Serene Grace": 1
-      },
-      "items": {
-        "Red Card": 0.768,
-        "Life Orb": 0.232
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Serene Grace": 1},
+      "items": {"Red Card": 0.768, "Life Orb": 0.232},
+      "happinesses": {"255": 1},
       "spreads": {
         "Timid:0/0/0/252/4/252": 0.768,
         "Timid:0/0/56/196/4/252": 0.232
@@ -52,61 +32,22 @@
         "Nidoran-M": 0.1245
       },
       "counters": {
-        "Darmanitan": [
-          0.9938,
-          1,
-          0
-        ],
-        "Mimikyu": [
-          1,
-          1,
-          0
-        ],
-        "Pelipper": [
-          0.6281,
-          1,
-          0
-        ],
-        "Gastrodon": [
-          0.9938,
-          0,
-          0
-        ],
-        "Zygarde": [
-          1,
-          0,
-          0
-        ]
+        "Darmanitan": [0.9938, 1, 0],
+        "Mimikyu": [1, 1, 0],
+        "Pelipper": [0.6281, 1, 0],
+        "Gastrodon": [0.9938, 0, 0],
+        "Zygarde": [1, 0, 0]
       }
     },
     "Rayquaza": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.1023
-      },
-      "usage": {
-        "raw": 0.4167,
-        "real": 0.5,
-        "weighted": 0.3787
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.1023},
+      "usage": {"raw": 0.4167, "real": 0.5, "weighted": 0.3787},
       "count": 7,
       "weight": 0.6622,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Air Lock": 1
-      },
-      "items": {
-        "Eject Button": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Air Lock": 1},
+      "items": {"Eject Button": 1},
+      "happinesses": {"255": 1},
       "spreads": {
         "Adamant:0/252/0/0/4/252": 0.768,
         "Adamant:0/180/0/0/132/196": 0.232
@@ -130,66 +71,23 @@
         "Nidoran-M": 0.1245
       },
       "counters": {
-        "Kyogre-Primal": [
-          0.6281,
-          1,
-          0
-        ],
-        "Pelipper": [
-          0.6281,
-          1,
-          0
-        ],
-        "Gastrodon": [
-          1.1524,
-          0,
-          0
-        ],
-        "Zygarde": [
-          2.1524,
-          0.5383,
-          0.3398
-        ],
-        "Darmanitan": [
-          1.9938,
-          0.4984,
-          0.3541
-        ],
-        "Swampert-Mega": [
-          1.2562,
-          0.5,
-          0.4461
-        ]
+        "Kyogre-Primal": [0.6281, 1, 0],
+        "Pelipper": [0.6281, 1, 0],
+        "Gastrodon": [1.1524, 0, 0],
+        "Zygarde": [2.1524, 0.5383, 0.3398],
+        "Darmanitan": [1.9938, 0.4984, 0.3541],
+        "Swampert-Mega": [1.2562, 0.5, 0.4461]
       }
     },
     "Zoroark": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.4167,
-        "real": 0.125,
-        "weighted": 0.3787
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.4167, "real": 0.125, "weighted": 0.3787},
       "count": 7,
       "weight": 0.6622,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illusion": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "0": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Illusion": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"0": 1},
       "spreads": {
         "Jolly:0/252/0/0/4/252": 0.768,
         "Timid:96/0/24/152/4/232": 0.232
@@ -215,58 +113,22 @@
         "Nidoran-M": 0.1245
       },
       "counters": {
-        "Swampert-Mega": [
-          0.6281,
-          1,
-          0
-        ],
-        "Darmanitan": [
-          0.9938,
-          0,
-          0
-        ],
-        "Mimikyu": [
-          1.9938,
-          0.5016,
-          0.3541
-        ]
+        "Swampert-Mega": [0.6281, 1, 0],
+        "Darmanitan": [0.9938, 0, 0],
+        "Mimikyu": [1.9938, 0.5016, 0.3541]
       }
     },
     "Ditto": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.2397
-      },
-      "usage": {
-        "raw": 0.3333,
-        "real": 0.375,
-        "weighted": 0.2712
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.2397},
+      "usage": {"raw": 0.3333, "real": 0.375, "weighted": 0.2712},
       "count": 6,
       "weight": 0.5778,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Imposter": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Impish:248/8/252/0/0/0": 1
-      },
-      "moves": {
-        "Nothing": 3,
-        "Transform": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Imposter": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Impish:248/8/252/0/0/0": 1},
+      "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
         "Greninja-Ash": 0.4912,
         "Shedinja": 0.4912,
@@ -275,69 +137,24 @@
         "Zoroark": 0.3837
       },
       "counters": {
-        "Kyogre-Primal": [
-          0.6281,
-          1,
-          0
-        ],
-        "Mimikyu": [
-          0.9938,
-          1,
-          0
-        ],
-        "Darmanitan": [
-          0.9938,
-          0,
-          0
-        ],
-        "Magnezone": [
-          0.3719,
-          0,
-          0
-        ],
-        "Necrozma-Dusk-Mane": [
-          0.3719,
-          0,
-          0
-        ],
-        "Shaymin-Sky": [
-          0.9938,
-          0,
-          0
-        ]
+        "Kyogre-Primal": [0.6281, 1, 0],
+        "Mimikyu": [0.9938, 1, 0],
+        "Darmanitan": [0.9938, 0, 0],
+        "Magnezone": [0.3719, 0, 0],
+        "Necrozma-Dusk-Mane": [0.3719, 0, 0],
+        "Shaymin-Sky": [0.9938, 0, 0]
       }
     },
     "Greninja-Ash": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6407
-      },
-      "usage": {
-        "raw": 0.3333,
-        "real": 0.375,
-        "weighted": 0.2712
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6407},
+      "usage": {"raw": 0.3333, "real": 0.375, "weighted": 0.2712},
       "count": 6,
       "weight": 0.5778,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Battle Bond": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Timid:0/0/0/252/4/252": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Battle Bond": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Timid:0/0/0/252/4/252": 1},
       "moves": {
         "Hidden Power Ghost": 1,
         "Spikes": 1,
@@ -352,69 +169,24 @@
         "Zoroark": 0.3837
       },
       "counters": {
-        "Gastrodon": [
-          0.9938,
-          1,
-          0
-        ],
-        "Zygarde": [
-          0.9938,
-          1,
-          0
-        ],
-        "Dugtrio": [
-          0.9938,
-          0,
-          0
-        ],
-        "Swampert-Mega": [
-          0.6281,
-          0,
-          0
-        ],
-        "Darmanitan": [
-          1.9876,
-          0.5,
-          0.3547
-        ],
-        "Kyogre-Primal": [
-          1.2562,
-          0.5,
-          0.4461
-        ]
+        "Gastrodon": [0.9938, 1, 0],
+        "Zygarde": [0.9938, 1, 0],
+        "Dugtrio": [0.9938, 0, 0],
+        "Swampert-Mega": [0.6281, 0, 0],
+        "Darmanitan": [1.9876, 0.5, 0.3547],
+        "Kyogre-Primal": [1.2562, 0.5, 0.4461]
       }
     },
     "Shedinja": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6447
-      },
-      "usage": {
-        "raw": 0.3333,
-        "real": 0.25,
-        "weighted": 0.2712
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6447},
+      "usage": {"raw": 0.3333, "real": 0.25, "weighted": 0.2712},
       "count": 6,
       "weight": 0.5778,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Wonder Guard": 1
-      },
-      "items": {
-        "Focus Sash": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Naive:0/196/0/4/0/232": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Wonder Guard": 1},
+      "items": {"Focus Sash": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Naive:0/196/0/4/0/232": 1},
       "moves": {
         "Facade": 1,
         "Hidden Power Dark": 1,
@@ -429,62 +201,22 @@
         "Zoroark": 0.3837
       },
       "counters": {
-        "Darmanitan": [
-          0.9938,
-          1,
-          0
-        ],
-        "Swampert-Mega": [
-          0.6281,
-          1,
-          0
-        ],
-        "Pelipper": [
-          1.2562,
-          0,
-          0
-        ],
-        "Tentacruel": [
-          0.6281,
-          0,
-          0
-        ],
-        "Zygarde": [
-          0.9938,
-          0,
-          0
-        ]
+        "Darmanitan": [0.9938, 1, 0],
+        "Swampert-Mega": [0.6281, 1, 0],
+        "Pelipper": [1.2562, 0, 0],
+        "Tentacruel": [0.6281, 0, 0],
+        "Zygarde": [0.9938, 0, 0]
       }
     },
     "Darmanitan": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6447
-      },
-      "usage": {
-        "raw": 0.25,
-        "real": 0.25,
-        "weighted": 0.2319
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6447},
+      "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2319},
       "count": 3,
       "weight": 0.7196,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Zen Mode": 0.5367,
-        "Sheer Force": 0.4633
-      },
-      "items": {
-        "Assault Vest": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Zen Mode": 0.5367, "Sheer Force": 0.4633},
+      "items": {"Assault Vest": 1},
+      "happinesses": {"255": 1},
       "spreads": {
         "Modest:251/0/0/252/4/0": 0.5367,
         "Jolly:0/252/0/0/4/252": 0.4633
@@ -507,82 +239,26 @@
         "Zygarde": 0.7681
       },
       "counters": {
-        "Ditto": [
-          0.9938,
-          1,
-          0
-        ],
-        "Lycanroc-Dusk": [
-          1,
-          1,
-          0
-        ],
-        "Greninja": [
-          1,
-          0,
-          0
-        ],
-        "Meloetta": [
-          0.9938,
-          0,
-          0
-        ],
-        "Nidoran-M": [
-          1,
-          0,
-          0
-        ],
-        "Rayquaza": [
-          1.9938,
-          0,
-          0
-        ],
-        "Shedinja": [
-          0.9938,
-          0,
-          0
-        ],
-        "Zoroark": [
-          0.9938,
-          0,
-          0
-        ],
-        "Greninja-Ash": [
-          1.9876,
-          0.5,
-          0.3547
-        ]
+        "Ditto": [0.9938, 1, 0],
+        "Lycanroc-Dusk": [1, 1, 0],
+        "Greninja": [1, 0, 0],
+        "Meloetta": [0.9938, 0, 0],
+        "Nidoran-M": [1, 0, 0],
+        "Rayquaza": [1.9938, 0, 0],
+        "Shedinja": [0.9938, 0, 0],
+        "Zoroark": [0.9938, 0, 0],
+        "Greninja-Ash": [1.9876, 0.5, 0.3547]
       }
     },
     "Dugtrio": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6447
-      },
-      "usage": {
-        "raw": 0.25,
-        "real": 0.25,
-        "weighted": 0.2319
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6447},
+      "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2319},
       "count": 3,
       "weight": 0.7196,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Arena Trap": 1
-      },
-      "items": {
-        "Choice Band": 0.5367,
-        "Focus Sash": 0.4633
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Arena Trap": 1},
+      "items": {"Choice Band": 0.5367, "Focus Sash": 0.4633},
+      "happinesses": {"255": 1},
       "spreads": {
         "Hasty:0/252/0/4/0/252": 0.5367,
         "Hasty:20/232/0/4/0/252": 0.4633
@@ -602,49 +278,17 @@
         "Shaymin-Sky": 0.7681,
         "Zygarde": 0.7681
       },
-      "counters": {
-        "Greninja": [
-          1,
-          1,
-          0
-        ],
-        "Greninja-Ash": [
-          0.9938,
-          1,
-          0
-        ]
-      }
+      "counters": {"Greninja": [1, 1, 0], "Greninja-Ash": [0.9938, 1, 0]}
     },
     "Gastrodon": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.1023
-      },
-      "usage": {
-        "raw": 0.25,
-        "real": 0.375,
-        "weighted": 0.2319
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.1023},
+      "usage": {"raw": 0.25, "real": 0.375, "weighted": 0.2319},
       "count": 3,
       "weight": 0.7196,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Storm Drain": 0.5367,
-        "Sticky Hold": 0.4633
-      },
-      "items": {
-        "Eject Button": 0.5367,
-        "Rocky Helmet": 0.4633
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Storm Drain": 0.5367, "Sticky Hold": 0.4633},
+      "items": {"Eject Button": 0.5367, "Rocky Helmet": 0.4633},
+      "happinesses": {"255": 1},
       "spreads": {
         "Sassy:252/4/0/0/252/0": 0.5367,
         "Modest:252/0/0/252/4/0": 0.4633
@@ -665,66 +309,23 @@
         "Zygarde": 0.7681
       },
       "counters": {
-        "Greninja": [
-          1,
-          1,
-          0
-        ],
-        "Meloetta": [
-          0.9938,
-          1,
-          0
-        ],
-        "Rayquaza": [
-          1.1524,
-          1,
-          0
-        ],
-        "Greninja-Ash": [
-          0.9938,
-          0,
-          0
-        ],
-        "Lycanroc-Dusk": [
-          1,
-          0,
-          0
-        ]
+        "Greninja": [1, 1, 0],
+        "Meloetta": [0.9938, 1, 0],
+        "Rayquaza": [1.1524, 1, 0],
+        "Greninja-Ash": [0.9938, 0, 0],
+        "Lycanroc-Dusk": [1, 0, 0]
       }
     },
     "Mimikyu": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.25,
-        "real": 0.25,
-        "weighted": 0.2319
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2319},
       "count": 3,
       "weight": 0.7196,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Disguise": 1
-      },
-      "items": {
-        "Life Orb": 0.5367,
-        "Choice Band": 0.4633
-      },
-      "happinesses": {
-        "0": 0.4633,
-        "255": 0.5367
-      },
-      "spreads": {
-        "Jolly:0/252/0/0/4/252": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Disguise": 1},
+      "items": {"Life Orb": 0.5367, "Choice Band": 0.4633},
+      "happinesses": {"0": 0.4633, "255": 0.5367},
+      "spreads": {"Jolly:0/252/0/0/4/252": 1},
       "moves": {
         "Play Rough": 1,
         "Destiny Bond": 0.5367,
@@ -742,62 +343,22 @@
         "Zygarde": 0.7681
       },
       "counters": {
-        "Greninja": [
-          1,
-          1,
-          0
-        ],
-        "Lycanroc-Dusk": [
-          2,
-          1,
-          0
-        ],
-        "Ditto": [
-          0.9938,
-          0,
-          0
-        ],
-        "Meloetta": [
-          1,
-          0,
-          0
-        ],
-        "Zoroark": [
-          1.9938,
-          0.4984,
-          0.3541
-        ]
+        "Greninja": [1, 1, 0],
+        "Lycanroc-Dusk": [2, 1, 0],
+        "Ditto": [0.9938, 0, 0],
+        "Meloetta": [1, 0, 0],
+        "Zoroark": [1.9938, 0.4984, 0.3541]
       }
     },
     "Shaymin-Sky": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.25,
-        "real": 0.25,
-        "weighted": 0.2319
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2319},
       "count": 3,
       "weight": 0.7196,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Serene Grace": 1
-      },
-      "items": {
-        "Nothing": 0.5367,
-        "Life Orb": 0.4633
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Serene Grace": 1},
+      "items": {"Nothing": 0.5367, "Life Orb": 0.4633},
+      "happinesses": {"255": 1},
       "spreads": {
         "Timid:0/0/0/252/4/252": 0.5367,
         "Timid:68/0/0/184/4/252": 0.4633
@@ -816,49 +377,17 @@
         "Mimikyu": 0.7681,
         "Zygarde": 0.7681
       },
-      "counters": {
-        "Ditto": [
-          0.9938,
-          1,
-          0
-        ],
-        "Lycanroc-Dusk": [
-          2,
-          0.5,
-          0.3536
-        ]
-      }
+      "counters": {"Ditto": [0.9938, 1, 0], "Lycanroc-Dusk": [2, 0.5, 0.3536]}
     },
     "Zygarde": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.25,
-        "real": 0.375,
-        "weighted": 0.2319
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.25, "real": 0.375, "weighted": 0.2319},
       "count": 3,
       "weight": 0.7196,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Power Construct": 0.5367,
-        "Aura Break": 0.4633
-      },
-      "items": {
-        "Assault Vest": 0.5367,
-        "Choice Band": 0.4633
-      },
-      "happinesses": {
-        "255": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Power Construct": 0.5367, "Aura Break": 0.4633},
+      "items": {"Assault Vest": 0.5367, "Choice Band": 0.4633},
+      "happinesses": {"255": 1},
       "spreads": {
         "Careful:252/4/0/0/252/0": 0.5367,
         "Jolly:0/252/0/0/4/252": 0.4633
@@ -879,69 +408,24 @@
         "Shaymin-Sky": 0.7681
       },
       "counters": {
-        "Meloetta": [
-          1,
-          1,
-          0
-        ],
-        "Shedinja": [
-          0.9938,
-          1,
-          0
-        ],
-        "Greninja": [
-          1,
-          0,
-          0
-        ],
-        "Greninja-Ash": [
-          0.9938,
-          0,
-          0
-        ],
-        "Nidoran-M": [
-          1,
-          0,
-          0
-        ],
-        "Rayquaza": [
-          2.1524,
-          0.4617,
-          0.3398
-        ]
+        "Meloetta": [1, 1, 0],
+        "Shedinja": [0.9938, 1, 0],
+        "Greninja": [1, 0, 0],
+        "Greninja-Ash": [0.9938, 0, 0],
+        "Nidoran-M": [1, 0, 0],
+        "Rayquaza": [2.1524, 0.4617, 0.3398]
       }
     },
     "Aegislash": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.25,
-        "weighted": 0.2149
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.2149},
       "count": 3,
       "weight": 0.9158,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Stance Change": 1
-      },
-      "items": {
-        "Leftovers": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Adamant:252/252/0/0/4/0": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Stance Change": 1},
+      "items": {"Leftovers": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Adamant:252/252/0/0/4/0": 1},
       "moves": {
         "Iron Head": 1,
         "King's Shield": 1,
@@ -954,45 +438,18 @@
         "Metagross-Mega": 0.513,
         "Necrozma-Dusk-Mane": 0.513
       },
-      "counters": {
-        "Kyogre-Primal": [
-          0.9962,
-          1,
-          0
-        ]
-      }
+      "counters": {"Kyogre-Primal": [0.9962, 1, 0]}
     },
     "Genesect": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.125,
-        "weighted": 0.2149
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1667, "real": 0.125, "weighted": 0.2149},
       "count": 3,
       "weight": 0.9158,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Download": 1
-      },
-      "items": {
-        "Burn Drive": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Hasty:0/4/0/252/0/252": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Download": 1},
+      "items": {"Burn Drive": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Hasty:0/4/0/252/0/252": 1},
       "moves": {
         "Explosion": 1,
         "Flamethrower": 1,
@@ -1005,45 +462,18 @@
         "Metagross-Mega": 0.513,
         "Necrozma-Dusk-Mane": 0.513
       },
-      "counters": {
-        "Kyogre-Primal": [
-          0.9962,
-          0,
-          0
-        ]
-      }
+      "counters": {"Kyogre-Primal": [0.9962, 0, 0]}
     },
     "Magnezone": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6447
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.25,
-        "weighted": 0.2149
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6447},
+      "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.2149},
       "count": 3,
       "weight": 0.9158,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Magnet Pull": 1
-      },
-      "items": {
-        "Assault Vest": 1
-      },
-      "happinesses": {
-        "240": 1
-      },
-      "spreads": {
-        "Quiet:248/8/0/252/0/0": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Magnet Pull": 1},
+      "items": {"Assault Vest": 1},
+      "happinesses": {"240": 1},
+      "spreads": {"Quiet:248/8/0/252/0/0": 1},
       "moves": {
         "Explosion": 1,
         "Flash Cannon": 1,
@@ -1056,100 +486,37 @@
         "Metagross-Mega": 0.513,
         "Necrozma-Dusk-Mane": 0.513
       },
-      "counters": {
-        "Ditto": [
-          0.3719,
-          1,
-          0
-        ],
-        "Kyogre-Primal": [
-          0.9962,
-          1,
-          0
-        ]
-      }
+      "counters": {"Ditto": [0.3719, 1, 0], "Kyogre-Primal": [0.9962, 1, 0]}
     },
     "Metagross-Mega": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.125,
-        "weighted": 0.2149
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1667, "real": 0.125, "weighted": 0.2149},
       "count": 3,
       "weight": 0.9158,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Tough Claws": 1
-      },
-      "items": {
-        "Metagrossite": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Hardy:0/250/0/0/0/250": 1
-      },
-      "moves": {
-        "Nothing": 2,
-        "Earthquake": 1,
-        "Explosion": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Tough Claws": 1},
+      "items": {"Metagrossite": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Hardy:0/250/0/0/0/250": 1},
+      "moves": {"Nothing": 2, "Earthquake": 1, "Explosion": 1},
       "teammates": {
         "Aegislash": 0.513,
         "Genesect": 0.513,
         "Magnezone": 0.513,
         "Necrozma-Dusk-Mane": 0.513
       },
-      "counters": {
-        "Swampert-Mega": [
-          0.9962,
-          1,
-          0
-        ]
-      }
+      "counters": {"Swampert-Mega": [0.9962, 1, 0]}
     },
     "Necrozma-Dusk-Mane": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6447
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.25,
-        "weighted": 0.2149
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6447},
+      "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.2149},
       "count": 3,
       "weight": 0.9158,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Prism Armor": 1
-      },
-      "items": {
-        "Ultranecrozium Z": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Brave:252/252/0/4/0/0": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Prism Armor": 1},
+      "items": {"Ultranecrozium Z": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Brave:252/252/0/4/0/0": 1},
       "moves": {
         "Brick Break": 1,
         "Earthquake": 1,
@@ -1163,70 +530,24 @@
         "Metagross-Mega": 0.513
       },
       "counters": {
-        "Ditto": [
-          0.3719,
-          1,
-          0
-        ],
-        "Ludicolo": [
-          0.9962,
-          0,
-          0
-        ],
-        "Swampert-Mega": [
-          1.9923,
-          0,
-          0
-        ],
-        "Tentacruel": [
-          0.9962,
-          0,
-          0
-        ],
-        "Pelipper": [
-          2.9885,
-          0.3333,
-          0.2727
-        ]
+        "Ditto": [0.3719, 1, 0],
+        "Ludicolo": [0.9962, 0, 0],
+        "Swampert-Mega": [1.9923, 0, 0],
+        "Tentacruel": [0.9962, 0, 0],
+        "Pelipper": [2.9885, 0.3333, 0.2727]
       }
     },
     "Kyogre-Primal": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6422
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.25,
-        "weighted": 0.1745
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6422},
+      "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.1745},
       "count": 3,
       "weight": 0.995,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Primordial Sea": 1
-      },
-      "items": {
-        "Blue Orb": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Modest:252/0/0/252/4/0": 1
-      },
-      "moves": {
-        "Calm Mind": 1,
-        "Ice Beam": 1,
-        "Origin Pulse": 1,
-        "Thunder": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Primordial Sea": 1},
+      "items": {"Blue Orb": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Modest:252/0/0/252/4/0": 1},
+      "moves": {"Calm Mind": 1, "Ice Beam": 1, "Origin Pulse": 1, "Thunder": 1},
       "teammates": {
         "Ludicolo": 0.4778,
         "Pelipper": 0.4778,
@@ -1234,126 +555,44 @@
         "Tentacruel": 0.4778
       },
       "counters": {
-        "Aegislash": [
-          0.9962,
-          0,
-          0
-        ],
-        "Ditto": [
-          0.6281,
-          0,
-          0
-        ],
-        "Genesect": [
-          0.9962,
-          0,
-          0
-        ],
-        "Greninja-Ash": [
-          1.2562,
-          0,
-          0
-        ],
-        "Magnezone": [
-          0.9962,
-          0,
-          0
-        ],
-        "Rayquaza": [
-          0.6281,
-          0,
-          0
-        ]
+        "Aegislash": [0.9962, 0, 0],
+        "Ditto": [0.6281, 0, 0],
+        "Genesect": [0.9962, 0, 0],
+        "Greninja-Ash": [1.2562, 0, 0],
+        "Magnezone": [0.9962, 0, 0],
+        "Rayquaza": [0.6281, 0, 0]
       }
     },
     "Ludicolo": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.125,
-        "weighted": 0.1745
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1667, "real": 0.125, "weighted": 0.1745},
       "count": 3,
       "weight": 0.995,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Swift Swim": 1
-      },
-      "items": {
-        "Waterium Z": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:0/4/0/252/0/252": 1
-      },
-      "moves": {
-        "Fake Out": 1,
-        "Grass Knot": 1,
-        "Ice Beam": 1,
-        "Surf": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Swift Swim": 1},
+      "items": {"Waterium Z": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:0/4/0/252/0/252": 1},
+      "moves": {"Fake Out": 1, "Grass Knot": 1, "Ice Beam": 1, "Surf": 1},
       "teammates": {
         "Kyogre-Primal": 0.4778,
         "Pelipper": 0.4778,
         "Swampert-Mega": 0.4778,
         "Tentacruel": 0.4778
       },
-      "counters": {
-        "Necrozma-Dusk-Mane": [
-          0.9962,
-          1,
-          0
-        ]
-      }
+      "counters": {"Necrozma-Dusk-Mane": [0.9962, 1, 0]}
     },
     "Pelipper": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.4049
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.25,
-        "weighted": 0.1745
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.4049},
+      "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.1745},
       "count": 3,
       "weight": 0.995,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Drizzle": 1
-      },
-      "items": {
-        "Red Card": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Bold:248/0/252/0/8/0": 1
-      },
-      "moves": {
-        "Roost": 1,
-        "Scald": 1,
-        "Tailwind": 1,
-        "U-turn": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Drizzle": 1},
+      "items": {"Red Card": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Bold:248/0/252/0/8/0": 1},
+      "moves": {"Roost": 1, "Scald": 1, "Tailwind": 1, "U-turn": 1},
       "teammates": {
         "Kyogre-Primal": 0.4778,
         "Ludicolo": 0.4778,
@@ -1361,59 +600,22 @@
         "Tentacruel": 0.4778
       },
       "counters": {
-        "Shedinja": [
-          1.2562,
-          1,
-          0
-        ],
-        "Meloetta": [
-          0.6281,
-          0,
-          0
-        ],
-        "Rayquaza": [
-          0.6281,
-          0,
-          0
-        ],
-        "Necrozma-Dusk-Mane": [
-          2.9885,
-          0.6667,
-          0.2727
-        ]
+        "Shedinja": [1.2562, 1, 0],
+        "Meloetta": [0.6281, 0, 0],
+        "Rayquaza": [0.6281, 0, 0],
+        "Necrozma-Dusk-Mane": [2.9885, 0.6667, 0.2727]
       }
     },
     "Swampert-Mega": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0.25,
-        "weighted": 0.1745
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.1745},
       "count": 3,
       "weight": 0.995,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Swift Swim": 1
-      },
-      "items": {
-        "Swampertite": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Adamant:0/252/0/0/4/252": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Swift Swim": 1},
+      "items": {"Swampertite": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Adamant:0/252/0/0/4/252": 1},
       "moves": {
         "Earthquake": 1,
         "Stealth Rock": 1,
@@ -1427,75 +629,25 @@
         "Tentacruel": 0.4778
       },
       "counters": {
-        "Greninja-Ash": [
-          0.6281,
-          1,
-          0
-        ],
-        "Necrozma-Dusk-Mane": [
-          1.9923,
-          1,
-          0
-        ],
-        "Metagross-Mega": [
-          0.9962,
-          0,
-          0
-        ],
-        "Shedinja": [
-          0.6281,
-          0,
-          0
-        ],
-        "Zoroark": [
-          0.6281,
-          0,
-          0
-        ],
-        "Rayquaza": [
-          1.2562,
-          0.5,
-          0.4461
-        ]
+        "Greninja-Ash": [0.6281, 1, 0],
+        "Necrozma-Dusk-Mane": [1.9923, 1, 0],
+        "Metagross-Mega": [0.9962, 0, 0],
+        "Shedinja": [0.6281, 0, 0],
+        "Zoroark": [0.6281, 0, 0],
+        "Rayquaza": [1.2562, 0.5, 0.4461]
       }
     },
     "Tentacruel": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.1667,
-        "real": 0,
-        "weighted": 0.1745
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.1667, "real": 0, "weighted": 0.1745},
       "count": 3,
       "weight": 0.995,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Rain Dish": 1
-      },
-      "items": {
-        "Black Sludge": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Timid:0/0/0/252/4/252": 1
-      },
-      "moves": {
-        "Hex": 1,
-        "Hydro Pump": 1,
-        "Rapid Spin": 1,
-        "Toxic Spikes": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Rain Dish": 1},
+      "items": {"Black Sludge": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "moves": {"Hex": 1, "Hydro Pump": 1, "Rapid Spin": 1, "Toxic Spikes": 1},
       "teammates": {
         "Kyogre-Primal": 0.4778,
         "Ludicolo": 0.4778,
@@ -1503,49 +655,20 @@
         "Swampert-Mega": 0.4778
       },
       "counters": {
-        "Necrozma-Dusk-Mane": [
-          0.9962,
-          1,
-          0
-        ],
-        "Shedinja": [
-          0.6281,
-          1,
-          0
-        ]
+        "Necrozma-Dusk-Mane": [0.9962, 1, 0],
+        "Shedinja": [0.6281, 1, 0]
       }
     },
     "Greninja": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.0833,
-        "real": 0.125,
-        "weighted": 0.1074
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.0833, "real": 0.125, "weighted": 0.1074},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Protean": 1
-      },
-      "items": {
-        "Choice Specs": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Timid:40/0/12/212/0/244": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Protean": 1},
+      "items": {"Choice Specs": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Timid:40/0/12/212/0/244": 1},
       "moves": {
         "Dark Pulse": 1,
         "Extrasensory": 1,
@@ -1560,70 +683,24 @@
         "Zoroark": 0.6213
       },
       "counters": {
-        "Darmanitan": [
-          1,
-          1,
-          0
-        ],
-        "Zygarde": [
-          1,
-          1,
-          0
-        ],
-        "Dugtrio": [
-          1,
-          0,
-          0
-        ],
-        "Gastrodon": [
-          1,
-          0,
-          0
-        ],
-        "Mimikyu": [
-          1,
-          0,
-          0
-        ]
+        "Darmanitan": [1, 1, 0],
+        "Zygarde": [1, 1, 0],
+        "Dugtrio": [1, 0, 0],
+        "Gastrodon": [1, 0, 0],
+        "Mimikyu": [1, 0, 0]
       }
     },
     "Lycanroc-Dusk": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.0833,
-        "real": 0.125,
-        "weighted": 0.1074
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.0833, "real": 0.125, "weighted": 0.1074},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Tough Claws": 1
-      },
-      "items": {
-        "Choice Band": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Jolly:0/252/0/0/4/252": 1
-      },
-      "moves": {
-        "Accelerock": 1,
-        "Brick Break": 1,
-        "Crunch": 1,
-        "Drill Run": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Tough Claws": 1},
+      "items": {"Choice Band": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "moves": {"Accelerock": 1, "Brick Break": 1, "Crunch": 1, "Drill Run": 1},
       "teammates": {
         "Greninja": 0.8926,
         "Nidoran-M": 0.8926,
@@ -1632,59 +709,22 @@
         "Zoroark": 0.6213
       },
       "counters": {
-        "Darmanitan": [
-          1,
-          0,
-          0
-        ],
-        "Gastrodon": [
-          1,
-          0,
-          0
-        ],
-        "Mimikyu": [
-          2,
-          0,
-          0
-        ],
-        "Shaymin-Sky": [
-          2,
-          0,
-          0
-        ]
+        "Darmanitan": [1, 0, 0],
+        "Gastrodon": [1, 0, 0],
+        "Mimikyu": [2, 0, 0],
+        "Shaymin-Sky": [2, 0, 0]
       }
     },
     "Nidoran-M": {
-      "lead": {
-        "raw": 0.5,
-        "real": 0.5,
-        "weighted": 0.6447
-      },
-      "usage": {
-        "raw": 0.0833,
-        "real": 0.125,
-        "weighted": 0.1074
-      },
+      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.6447},
+      "usage": {"raw": 0.0833, "real": 0.125, "weighted": 0.1074},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Poison Point": 1
-      },
-      "items": {
-        "Eviolite": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Adamant:140/252/52/0/64/0": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Poison Point": 1},
+      "items": {"Eviolite": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Adamant:140/252/52/0/64/0": 1},
       "moves": {
         "Head Smash": 1,
         "Sucker Punch": 1,
@@ -1698,18 +738,7 @@
         "Rayquaza": 0.6213,
         "Zoroark": 0.6213
       },
-      "counters": {
-        "Darmanitan": [
-          1,
-          1,
-          0
-        ],
-        "Zygarde": [
-          1,
-          1,
-          0
-        ]
-      }
+      "counters": {"Darmanitan": [1, 1, 0], "Zygarde": [1, 1, 0]}
     }
   },
   "metagame": {
@@ -1726,70 +755,22 @@
     },
     "stalliness": {
       "histogram": [
-        [
-          -1.5,
-          15.145936722379716
-        ],
-        [
-          -1.4,
-          5.999999999999996
-        ],
-        [
-          -1.3,
-          0
-        ],
-        [
-          -1.2,
-          11.999999999999993
-        ],
-        [
-          -1.1,
-          0
-        ],
-        [
-          -1,
-          0
-        ],
-        [
-          -0.9,
-          0
-        ],
-        [
-          -0.8,
-          5.999999999999996
-        ],
-        [
-          -0.7,
-          0
-        ],
-        [
-          -0.6,
-          0
-        ],
-        [
-          -0.5,
-          6.951931523588738
-        ],
-        [
-          -0.4,
-          0
-        ],
-        [
-          -0.3,
-          0
-        ],
-        [
-          -0.2,
-          0
-        ],
-        [
-          -0.1,
-          0
-        ],
-        [
-          0,
-          0
-        ]
+        [-1.5, 15.145936722379716],
+        [-1.4, 5.999999999999996],
+        [-1.3, 0],
+        [-1.2, 11.999999999999993],
+        [-1.1, 0],
+        [-1, 0],
+        [-0.9, 0],
+        [-0.8, 5.999999999999996],
+        [-0.7, 0],
+        [-0.6, 0],
+        [-0.5, 6.951931523588738],
+        [-0.4, 0],
+        [-0.3, 0],
+        [-0.2, 0],
+        [-0.1, 0],
+        [0, 0]
       ],
       "mean": -0.9814,
       "total": 55.84362277181728

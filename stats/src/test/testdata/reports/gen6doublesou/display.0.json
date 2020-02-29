@@ -2,36 +2,15 @@
   "battles": 1,
   "pokemon": {
     "Aegislash": {
-      "lead": {
-        "raw": 3,
-        "real": 3,
-        "weighted": 3
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 3, "real": 3, "weighted": 3},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "abilities": {
-        "Stance Change": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Mild:232/0/0/252/0/24": 1
-      },
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Stance Change": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Mild:232/0/0/252/0/24": 1},
       "moves": {
         "Flash Cannon": 1,
         "King's Shield": 1,
@@ -45,56 +24,19 @@
         "Rhyperior": 0.5,
         "Shaymin": 0.5
       },
-      "counters": {
-        "Amoonguss": [
-          1,
-          0,
-          0
-        ],
-        "Cresselia": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Amoonguss": [1, 0, 0], "Cresselia": [1, 0, 0]}
     },
     "Amoonguss": {
-      "lead": {
-        "raw": 3,
-        "real": 3,
-        "weighted": 3
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 3, "real": 3, "weighted": 3},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        1,
-        63,
-        63,
-        63
-      ],
-      "abilities": {
-        "Regenerator": 1
-      },
-      "items": {
-        "Rocky Helmet": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Sassy:252/0/84/0/172/0": 1
-      },
-      "moves": {
-        "Giga Drain": 1,
-        "Protect": 1,
-        "Rage Powder": 1,
-        "Spore": 1
-      },
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Regenerator": 1},
+      "items": {"Rocky Helmet": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Sassy:252/0/84/0/172/0": 1},
+      "moves": {"Giga Drain": 1, "Protect": 1, "Rage Powder": 1, "Spore": 1},
       "teammates": {
         "Camerupt-Mega": 0.5,
         "Cresselia": 0.5,
@@ -102,45 +44,18 @@
         "Rotom-Wash": 0.5,
         "Scrafty": 0.5
       },
-      "counters": {
-        "Aegislash": [
-          1,
-          1,
-          0
-        ]
-      }
+      "counters": {"Aegislash": [1, 1, 0]}
     },
     "Camerupt-Mega": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        1,
-        63,
-        63,
-        63
-      ],
-      "abilities": {
-        "Sheer Force": 1
-      },
-      "items": {
-        "Cameruptite": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Quiet:252/0/0/252/4/0": 1
-      },
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Sheer Force": 1},
+      "items": {"Cameruptite": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Quiet:252/0/0/252/4/0": 1},
       "moves": {
         "Ancient Power": 1,
         "Earth Power": 1,
@@ -154,51 +69,19 @@
         "Rotom-Wash": 0.5,
         "Scrafty": 0.5
       },
-      "counters": {
-        "Charizard-Mega-Y": [
-          1,
-          1,
-          0
-        ]
-      }
+      "counters": {"Charizard-Mega-Y": [1, 1, 0]}
     },
     "Charizard-Mega-Y": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "abilities": {
-        "Drought": 1
-      },
-      "items": {
-        "Charizardite Y": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Modest:0/0/4/252/0/252": 1
-      },
-      "moves": {
-        "Heat Wave": 1,
-        "Overheat": 1,
-        "Protect": 1,
-        "Solar Beam": 1
-      },
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Drought": 1},
+      "items": {"Charizardite Y": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Modest:0/0/4/252/0/252": 1},
+      "moves": {"Heat Wave": 1, "Overheat": 1, "Protect": 1, "Solar Beam": 1},
       "teammates": {
         "Aegislash": 0.5,
         "Keldeo": 0.5,
@@ -206,56 +89,19 @@
         "Rhyperior": 0.5,
         "Shaymin": 0.5
       },
-      "counters": {
-        "Camerupt-Mega": [
-          1,
-          0,
-          0
-        ],
-        "Rotom-Wash": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Camerupt-Mega": [1, 0, 0], "Rotom-Wash": [1, 0, 0]}
     },
     "Cresselia": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        1,
-        63,
-        63,
-        63
-      ],
-      "abilities": {
-        "Levitate": 1
-      },
-      "items": {
-        "Safety Goggles": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Relaxed:252/0/208/0/48/0": 1
-      },
-      "moves": {
-        "Calm Mind": 1,
-        "Moonlight": 1,
-        "Psychic": 1,
-        "Trick Room": 1
-      },
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Levitate": 1},
+      "items": {"Safety Goggles": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Relaxed:252/0/208/0/48/0": 1},
+      "moves": {"Calm Mind": 1, "Moonlight": 1, "Psychic": 1, "Trick Room": 1},
       "teammates": {
         "Amoonguss": 0.5,
         "Camerupt-Mega": 0.5,
@@ -263,45 +109,18 @@
         "Rotom-Wash": 0.5,
         "Scrafty": 0.5
       },
-      "counters": {
-        "Aegislash": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Aegislash": [1, 0, 0]}
     },
     "Diancie": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        1,
-        63,
-        63,
-        63
-      ],
-      "abilities": {
-        "Clear Body": 1
-      },
-      "items": {
-        "Weakness Policy": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Quiet:192/108/0/208/0/0": 1
-      },
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Clear Body": 1},
+      "items": {"Weakness Policy": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Quiet:192/108/0/208/0/0": 1},
       "moves": {
         "Diamond Storm": 1,
         "Moonblast": 1,
@@ -315,51 +134,19 @@
         "Rotom-Wash": 0.5,
         "Scrafty": 0.5
       },
-      "counters": {
-        "Rhyperior": [
-          1,
-          1,
-          0
-        ]
-      }
+      "counters": {"Rhyperior": [1, 1, 0]}
     },
     "Keldeo": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "abilities": {
-        "Justified": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Timid:0/0/0/252/4/252": 1
-      },
-      "moves": {
-        "Icy Wind": 1,
-        "Protect": 1,
-        "Scald": 1,
-        "Secret Sword": 1
-      },
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Justified": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Timid:0/0/0/252/4/252": 1},
+      "moves": {"Icy Wind": 1, "Protect": 1, "Scald": 1, "Secret Sword": 1},
       "teammates": {
         "Aegislash": 0.5,
         "Charizard-Mega-Y": 0.5,
@@ -370,36 +157,15 @@
       "counters": {}
     },
     "Kyurem-Black": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "abilities": {
-        "Teravolt": 1
-      },
-      "items": {
-        "Choice Scarf": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Lonely:0/208/0/48/0/252": 1
-      },
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Teravolt": 1},
+      "items": {"Choice Scarf": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Lonely:0/208/0/48/0/252": 1},
       "moves": {
         "Dragon Claw": 1,
         "Earth Power": 1,
@@ -413,45 +179,18 @@
         "Rhyperior": 0.5,
         "Shaymin": 0.5
       },
-      "counters": {
-        "Scrafty": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Scrafty": [1, 0, 0]}
     },
     "Rhyperior": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "abilities": {
-        "Lightning Rod": 1
-      },
-      "items": {
-        "Assault Vest": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Adamant:72/184/0/0/252/0": 1
-      },
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Lightning Rod": 1},
+      "items": {"Assault Vest": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Adamant:72/184/0/0/252/0": 1},
       "moves": {
         "Drill Run": 1,
         "Earthquake": 1,
@@ -465,50 +204,18 @@
         "Kyurem-Black": 0.5,
         "Shaymin": 0.5
       },
-      "counters": {
-        "Scrafty": [
-          1,
-          1,
-          0
-        ],
-        "Diancie": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Scrafty": [1, 1, 0], "Diancie": [1, 0, 0]}
     },
     "Rotom-Wash": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        1,
-        63,
-        63,
-        63
-      ],
-      "abilities": {
-        "Levitate": 1
-      },
-      "items": {
-        "Choice Specs": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Quiet:252/0/0/252/4/0": 1
-      },
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Levitate": 1},
+      "items": {"Choice Specs": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Quiet:252/0/0/252/4/0": 1},
       "moves": {
         "Hydro Pump": 1,
         "Thunderbolt": 1,
@@ -522,45 +229,18 @@
         "Diancie": 0.5,
         "Scrafty": 0.5
       },
-      "counters": {
-        "Charizard-Mega-Y": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Charizard-Mega-Y": [1, 0, 0]}
     },
     "Scrafty": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        1,
-        63,
-        63,
-        63
-      ],
-      "abilities": {
-        "Intimidate": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Brave:252/252/0/0/4/0": 1
-      },
+      "viability": [1, 63, 63, 63],
+      "abilities": {"Intimidate": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Brave:252/252/0/0/4/0": 1},
       "moves": {
         "Drain Punch": 1,
         "Fake Out": 1,
@@ -574,50 +254,18 @@
         "Diancie": 0.5,
         "Rotom-Wash": 0.5
       },
-      "counters": {
-        "Kyurem-Black": [
-          1,
-          0,
-          0
-        ],
-        "Rhyperior": [
-          1,
-          0,
-          0
-        ]
-      }
+      "counters": {"Kyurem-Black": [1, 0, 0], "Rhyperior": [1, 0, 0]}
     },
     "Shaymin": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": null,
-      "viability": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "abilities": {
-        "Natural Cure": 1
-      },
-      "items": {
-        "Assault Vest": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Modest:252/0/0/252/4/0": 1
-      },
+      "viability": [0, 0, 0, 0],
+      "abilities": {"Natural Cure": 1},
+      "items": {"Assault Vest": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Modest:252/0/0/252/4/0": 1},
       "moves": {
         "Air Slash": 1,
         "Dazzling Gleam": 1,
@@ -644,58 +292,19 @@
     },
     "stalliness": {
       "histogram": [
-        [
-          -0.05,
-          6
-        ],
-        [
-          0,
-          0
-        ],
-        [
-          0.05,
-          0
-        ],
-        [
-          0.1,
-          0
-        ],
-        [
-          0.15,
-          0
-        ],
-        [
-          0.2,
-          0
-        ],
-        [
-          0.25,
-          0
-        ],
-        [
-          0.3,
-          0
-        ],
-        [
-          0.35,
-          0
-        ],
-        [
-          0.4,
-          0
-        ],
-        [
-          0.45,
-          0
-        ],
-        [
-          0.5,
-          0
-        ],
-        [
-          0.55,
-          0
-        ]
+        [-0.05, 6],
+        [0, 0],
+        [0.05, 0],
+        [0.1, 0],
+        [0.15, 0],
+        [0.2, 0],
+        [0.25, 0],
+        [0.3, 0],
+        [0.35, 0],
+        [0.4, 0],
+        [0.45, 0],
+        [0.5, 0],
+        [0.55, 0]
       ],
       "mean": 0.2681,
       "total": 12

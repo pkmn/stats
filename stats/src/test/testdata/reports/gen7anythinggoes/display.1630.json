@@ -2,40 +2,16 @@
   "battles": 1,
   "pokemon": {
     "Ditto": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 1},
       "count": 1,
       "weight": 0.0002,
-      "viability": [
-        1,
-        43,
-        43,
-        43
-      ],
-      "abilities": {
-        "Imposter": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Impish:248/8/252/0/0/0": 1
-      },
-      "moves": {
-        "Nothing": 3,
-        "Transform": 1
-      },
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Imposter": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Impish:248/8/252/0/0/0": 1},
+      "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
         "Greninja-Ash": 0.999,
         "Meloetta": 0.999,
@@ -46,36 +22,15 @@
       "counters": {}
     },
     "Greninja-Ash": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 1},
       "count": 1,
       "weight": 0.0002,
-      "viability": [
-        1,
-        43,
-        43,
-        43
-      ],
-      "abilities": {
-        "Battle Bond": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Timid:0/0/0/252/4/252": 1
-      },
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Battle Bond": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Timid:0/0/0/252/4/252": 1},
       "moves": {
         "Hidden Power Ghost": 1,
         "Spikes": 1,
@@ -92,36 +47,15 @@
       "counters": {}
     },
     "Meloetta": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 1},
       "count": 1,
       "weight": 0.0002,
-      "viability": [
-        1,
-        43,
-        43,
-        43
-      ],
-      "abilities": {
-        "Serene Grace": 1
-      },
-      "items": {
-        "Red Card": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Timid:0/0/0/252/4/252": 1
-      },
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Serene Grace": 1},
+      "items": {"Red Card": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Timid:0/0/0/252/4/252": 1},
       "moves": {
         "Focus Blast": 1,
         "Perish Song": 1,
@@ -138,36 +72,15 @@
       "counters": {}
     },
     "Rayquaza-Mega": {
-      "lead": {
-        "raw": 3,
-        "real": 3,
-        "weighted": 6
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.6667,
-        "weighted": 1
-      },
+      "lead": {"raw": 3, "real": 3, "weighted": 6},
+      "usage": {"raw": 0.5, "real": 0.6667, "weighted": 1},
       "count": 1,
       "weight": 0.0002,
-      "viability": [
-        1,
-        43,
-        43,
-        43
-      ],
-      "abilities": {
-        "Delta Stream": 1
-      },
-      "items": {
-        "Eject Button": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Adamant:0/252/0/0/4/252": 1
-      },
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Delta Stream": 1},
+      "items": {"Eject Button": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Adamant:0/252/0/0/4/252": 1},
       "moves": {
         "Dragon Ascent": 1,
         "Dragon Dance": 1,
@@ -184,36 +97,15 @@
       "counters": {}
     },
     "Shedinja": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 1},
       "count": 1,
       "weight": 0.0002,
-      "viability": [
-        1,
-        43,
-        43,
-        43
-      ],
-      "abilities": {
-        "Wonder Guard": 1
-      },
-      "items": {
-        "Focus Sash": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Naive:0/196/0/4/0/232": 1
-      },
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Wonder Guard": 1},
+      "items": {"Focus Sash": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Naive:0/196/0/4/0/232": 1},
       "moves": {
         "Facade": 1,
         "Hidden Power Dark": 1,
@@ -230,42 +122,16 @@
       "counters": {}
     },
     "Zoroark": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 1},
       "count": 1,
       "weight": 0.0002,
-      "viability": [
-        1,
-        43,
-        43,
-        43
-      ],
-      "abilities": {
-        "Illusion": 1
-      },
-      "items": {
-        "Life Orb": 1
-      },
-      "happinesses": {
-        "0": 1
-      },
-      "spreads": {
-        "Jolly:0/252/0/0/4/252": 1
-      },
-      "moves": {
-        "Frustration": 1,
-        "Knock Off": 1,
-        "Pursuit": 1,
-        "U-turn": 1
-      },
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Illusion": 1},
+      "items": {"Life Orb": 1},
+      "happinesses": {"0": 1},
+      "spreads": {"Jolly:0/252/0/0/4/252": 1},
+      "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
       "teammates": {
         "Ditto": 0.999,
         "Greninja-Ash": 0.999,
@@ -277,77 +143,25 @@
     }
   },
   "metagame": {
-    "tags": {
-      "hyperoffense": 0.001,
-      "voltturn": 0.001,
-      "weatherless": 0.001
-    },
+    "tags": {"hyperoffense": 0.001, "voltturn": 0.001, "weatherless": 0.001},
     "stalliness": {
       "histogram": [
-        [
-          -1.5,
-          0.0009546515409453171
-        ],
-        [
-          -1.4,
-          0
-        ],
-        [
-          -1.3,
-          0
-        ],
-        [
-          -1.2,
-          0
-        ],
-        [
-          -1.1,
-          0
-        ],
-        [
-          -1,
-          0
-        ],
-        [
-          -0.9,
-          0
-        ],
-        [
-          -0.8,
-          0
-        ],
-        [
-          -0.7,
-          0
-        ],
-        [
-          -0.6,
-          0
-        ],
-        [
-          -0.5,
-          0
-        ],
-        [
-          -0.4,
-          0
-        ],
-        [
-          -0.3,
-          0
-        ],
-        [
-          -0.2,
-          0
-        ],
-        [
-          -0.1,
-          0
-        ],
-        [
-          0,
-          0
-        ]
+        [-1.5, 0.0009546515409453171],
+        [-1.4, 0],
+        [-1.3, 0],
+        [-1.2, 0],
+        [-1.1, 0],
+        [-1, 0],
+        [-0.9, 0],
+        [-0.8, 0],
+        [-0.7, 0],
+        [-0.6, 0],
+        [-0.5, 0],
+        [-0.4, 0],
+        [-0.3, 0],
+        [-0.2, 0],
+        [-0.1, 0],
+        [0, 0]
       ],
       "mean": -1.6075,
       "total": 0.0009546515409453171

@@ -2,36 +2,15 @@
   "battles": 1,
   "pokemon": {
     "Snorlax": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 1,
-        "real": 1.0909,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 1, "real": 1.0909, "weighted": 1},
       "count": 2,
       "weight": 1,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Body Slam": 1,
         "Amnesia": 0.5,
@@ -43,59 +22,22 @@
       },
       "teammates": {},
       "counters": {
-        "Tauros": [
-          1,
-          1,
-          0
-        ],
-        "Clefable": [
-          1,
-          0,
-          0
-        ],
-        "Jolteon": [
-          1,
-          0,
-          0
-        ],
-        "Starmie": [
-          1,
-          0,
-          0
-        ]
+        "Tauros": [1, 1, 0],
+        "Clefable": [1, 0, 0],
+        "Jolteon": [1, 0, 0],
+        "Starmie": [1, 0, 0]
       }
     },
     "Starmie": {
-      "lead": {
-        "raw": 6,
-        "real": 6,
-        "weighted": 6
-      },
-      "usage": {
-        "raw": 1,
-        "real": 1.0909,
-        "weighted": 1
-      },
+      "lead": {"raw": 6, "real": 6, "weighted": 6},
+      "usage": {"raw": 1, "real": 1.0909, "weighted": 1},
       "count": 2,
       "weight": 1,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Psychic": 1,
         "Recover": 1,
@@ -105,64 +47,23 @@
       },
       "teammates": {},
       "counters": {
-        "Alakazam": [
-          2,
-          1,
-          0
-        ],
-        "Snorlax": [
-          1,
-          1,
-          0
-        ],
-        "Tauros": [
-          1,
-          1,
-          0
-        ],
-        "Nidoqueen": [
-          1,
-          0,
-          0
-        ],
-        "Starmie": [
-          4,
-          0.5,
-          0.25
-        ]
+        "Alakazam": [2, 1, 0],
+        "Snorlax": [1, 1, 0],
+        "Tauros": [1, 1, 0],
+        "Nidoqueen": [1, 0, 0],
+        "Starmie": [4, 0.5, 0.25]
       }
     },
     "Tauros": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 1,
-        "real": 1.0909,
-        "weighted": 1
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 1, "real": 1.0909, "weighted": 1},
       "count": 2,
       "weight": 1,
-      "viability": [
-        2,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Blizzard": 1,
         "Body Slam": 1,
@@ -171,427 +72,150 @@
       },
       "teammates": {},
       "counters": {
-        "Alakazam": [
-          1,
-          1,
-          0
-        ],
-        "Dragonite": [
-          1,
-          0,
-          0
-        ],
-        "Exeggutor": [
-          1,
-          0,
-          0
-        ],
-        "Snorlax": [
-          1,
-          0,
-          0
-        ],
-        "Starmie": [
-          1,
-          0,
-          0
-        ],
-        "Tauros": [
-          2,
-          0.5,
-          0.3536
-        ]
+        "Alakazam": [1, 1, 0],
+        "Dragonite": [1, 0, 0],
+        "Exeggutor": [1, 0, 0],
+        "Snorlax": [1, 0, 0],
+        "Starmie": [1, 0, 0],
+        "Tauros": [2, 0.5, 0.3536]
       }
     },
     "Alakazam": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.5455,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.5455, "weighted": 0.5},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        78,
-        78,
-        78
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Psychic": 1,
         "Recover": 1,
         "Seismic Toss": 1,
         "Thunder Wave": 1
       },
-      "teammates": {
-        "Dragonite": 0.5,
-        "Exeggutor": 0.5
-      },
+      "teammates": {"Dragonite": 0.5, "Exeggutor": 0.5},
       "counters": {
-        "Clefable": [
-          1,
-          1,
-          0
-        ],
-        "Starmie": [
-          2,
-          0,
-          0
-        ],
-        "Tauros": [
-          1,
-          0,
-          0
-        ]
+        "Clefable": [1, 1, 0],
+        "Starmie": [2, 0, 0],
+        "Tauros": [1, 0, 0]
       }
     },
     "Clefable": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.5455,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.5455, "weighted": 0.5},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Blizzard": 1,
         "Body Slam": 1,
         "Hyper Beam": 1,
         "Thunder Wave": 1
       },
-      "teammates": {
-        "Jolteon": 0.5,
-        "Nidoqueen": 0.5
-      },
-      "counters": {
-        "Snorlax": [
-          1,
-          1,
-          0
-        ],
-        "Alakazam": [
-          1,
-          0,
-          0
-        ]
-      }
+      "teammates": {"Jolteon": 0.5, "Nidoqueen": 0.5},
+      "counters": {"Snorlax": [1, 1, 0], "Alakazam": [1, 0, 0]}
     },
     "Dragonite": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.5455,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.5455, "weighted": 0.5},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        78,
-        78,
-        78
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
-      "moves": {
-        "Agility": 1,
-        "Hyper Beam": 1,
-        "Surf": 1,
-        "Wrap": 1
-      },
-      "teammates": {
-        "Alakazam": 0.5,
-        "Exeggutor": 0.5
-      },
-      "counters": {
-        "Tauros": [
-          1,
-          1,
-          0
-        ]
-      }
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
+      "moves": {"Agility": 1, "Hyper Beam": 1, "Surf": 1, "Wrap": 1},
+      "teammates": {"Alakazam": 0.5, "Exeggutor": 0.5},
+      "counters": {"Tauros": [1, 1, 0]}
     },
     "Exeggutor": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.5455,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.5455, "weighted": 0.5},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        78,
-        78,
-        78
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Explosion": 1,
         "Psychic": 1,
         "Sleep Powder": 1,
         "Stun Spore": 1
       },
-      "teammates": {
-        "Alakazam": 0.5,
-        "Dragonite": 0.5
-      },
-      "counters": {
-        "Tauros": [
-          1,
-          0,
-          0
-        ]
-      }
+      "teammates": {"Alakazam": 0.5, "Dragonite": 0.5},
+      "counters": {"Tauros": [1, 0, 0]}
     },
     "Jolteon": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Double Kick": 1,
         "Pin Missile": 1,
         "Thunder Wave": 1,
         "Thunderbolt": 1
       },
-      "teammates": {
-        "Clefable": 0.5,
-        "Nidoqueen": 0.5
-      },
-      "counters": {
-        "Snorlax": [
-          1,
-          0,
-          0
-        ]
-      }
+      "teammates": {"Clefable": 0.5, "Nidoqueen": 0.5},
+      "counters": {"Snorlax": [1, 0, 0]}
     },
     "Nidoqueen": {
-      "lead": {
-        "raw": 0,
-        "real": 0,
-        "weighted": 0
-      },
-      "usage": {
-        "raw": 0.5,
-        "real": 0.5455,
-        "weighted": 0.5
-      },
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 0.5, "real": 0.5455, "weighted": 0.5},
       "count": 1,
       "weight": 1,
-      "viability": [
-        1,
-        89,
-        89,
-        89
-      ],
-      "abilities": {
-        "Illuminate": 1
-      },
-      "items": {
-        "Nothing": 1
-      },
-      "happinesses": {
-        "255": 1
-      },
-      "spreads": {
-        "Serious:252/252/252/252/252/252": 1
-      },
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Illuminate": 1},
+      "items": {"Nothing": 1},
+      "happinesses": {"255": 1},
+      "spreads": {"Serious:252/252/252/252/252/252": 1},
       "moves": {
         "Blizzard": 1,
         "Body Slam": 1,
         "Earthquake": 1,
         "Thunderbolt": 1
       },
-      "teammates": {
-        "Clefable": 0.5,
-        "Jolteon": 0.5
-      },
-      "counters": {
-        "Starmie": [
-          1,
-          1,
-          0
-        ]
-      }
+      "teammates": {"Clefable": 0.5, "Jolteon": 0.5},
+      "counters": {"Starmie": [1, 1, 0]}
     }
   },
   "metagame": {
-    "tags": {
-      "balance": 1,
-      "weatherless": 1
-    },
+    "tags": {"balance": 1, "weatherless": 1},
     "stalliness": {
       "histogram": [
-        [
-          0,
-          0
-        ],
-        [
-          0.05,
-          0
-        ],
-        [
-          0.1,
-          0
-        ],
-        [
-          0.15,
-          0
-        ],
-        [
-          0.2,
-          0
-        ],
-        [
-          0.25,
-          0
-        ],
-        [
-          0.3,
-          6
-        ],
-        [
-          0.35,
-          0
-        ],
-        [
-          0.4,
-          0
-        ],
-        [
-          0.45,
-          0
-        ],
-        [
-          0.5,
-          0
-        ],
-        [
-          0.55,
-          0
-        ],
-        [
-          0.6,
-          0
-        ],
-        [
-          0.65,
-          0
-        ],
-        [
-          0.7,
-          0
-        ],
-        [
-          0.75,
-          0
-        ],
-        [
-          0.8,
-          0
-        ],
-        [
-          0.85,
-          0
-        ]
+        [0, 0],
+        [0.05, 0],
+        [0.1, 0],
+        [0.15, 0],
+        [0.2, 0],
+        [0.25, 0],
+        [0.3, 6],
+        [0.35, 0],
+        [0.4, 0],
+        [0.45, 0],
+        [0.5, 0],
+        [0.55, 0],
+        [0.6, 0],
+        [0.65, 0],
+        [0.7, 0],
+        [0.75, 0],
+        [0.8, 0],
+        [0.85, 0]
       ],
       "mean": 0.6011,
       "total": 12
