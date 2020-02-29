@@ -1,6 +1,6 @@
 import { calcStat, Dex, ID, Nature, PokemonSet, Stat, StatsTable, statToEV } from 'ps';
 
-import { Battle, Player, Pokemon, Team } from './parser';
+import { Battle, Player, Pokemon } from './parser';
 import { Outcome } from './util';
 import * as util from './util';
 

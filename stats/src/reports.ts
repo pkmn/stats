@@ -1,6 +1,6 @@
 import { Dex, ID, toID } from 'ps';
 
-import { MetagameStatistics, Statistics, Usage } from './stats';
+import { Statistics } from './stats';
 import * as util from './util';
 
 const round = (v: number, p = util.PRECISION) => util.round(v, p);

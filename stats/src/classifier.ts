@@ -1,4 +1,4 @@
-import { calcStat, Dex, ID, PokemonSet, Species, Stat, toID } from 'ps';
+import { calcStat, Dex, ID, PokemonSet, Stat, toID } from 'ps';
 import * as util from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
