@@ -1,6 +1,24 @@
 import { Dex, ID, PokemonSet, Species, toID } from 'ps';
 import * as aliases from './aliases.json';
 
+export const PRECISION = 1e10;
+
+export const enum Outcome {
+  POKE1_KOED = 0,
+  POKE2_KOED = 1,
+  DOUBLE_DOWN = 2,
+  POKE1_SWITCHED_OUT = 3,
+  POKE2_SWITCHED_OUT = 4,
+  DOUBLE_SWITCH = 5,
+  POKE1_FORCED_OUT = 6,
+  POKE2_FORCED_OUT = 7,
+  POKE1_UTURN_KOED = 8,
+  POKE2_UTURN_KOED = 9,
+  POKE1_FODDERED = 10,
+  POKE2_FODDERED = 11,
+  UNKNOWN = 12,
+}
+
 const ALIASES: Readonly<{ [id: string]: string }> = aliases;
 
 export function fromAlias(name: string) {
@@ -118,6 +136,138 @@ export function canonicalizeFormat(format: ID) {
   if (format === 'smogondoublesubers') return 'doublesubers' as ID;
   if (format === 'smogondoublesuu') return 'doublesuu' as ID;
   return format as ID;
+}
+
+export function round(v: number, p = PRECISION) {
+  return Math.round(v * p) / p;
+}
+
+export function roundStr(v: number, p = PRECISION) {
+  const num = round(v, p);
+  return num === Math.floor(num) ? `${num.toFixed(1)}` : `${num}`;
+}
+
+export function displaySpecies(name: string, dex: Dex) {
+  // FIXME: Seriously, we don't filter 'empty'?
+  if (name === 'empty') return name;
+  const species = getSpecies(name, dex).species;
+  if (name === 'Flabébé') return 'Flabebe';
+  // FIXME: remove bad display of Nidoran-M / Nidoran-F
+  return species.startsWith('Nidoran') ? species.replace('-', '') : species;
+}
+
+export function toDisplayObject(
+  map: { [k: string /* number|ID */]: number },
+  display?: (id: string) => string,
+  p = PRECISION
+) {
+  const obj: { [key: string]: number } = {};
+  const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
+  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
+  for (const [k, v] of sorted) {
+    // FIXME: use display here for `chaos` reports as well
+    obj[k.toString()] = round(v, p);
+  }
+  return obj;
+}
+
+export function computeViability(gxes: number[]): [number, number, number, number] {
+  if (!gxes.length) return [0, 0, 0, 0];
+
+  gxes.sort((a, b) => b - a);
+  return [
+    gxes.length,
+    gxes[0],
+    gxes[Math.ceil(0.01 * gxes.length) - 1],
+    gxes[Math.ceil(0.2 * gxes.length) - 1],
+  ];
+}
+
+export interface EncounterStatistics {
+  koed: number;
+  switched: number;
+  n: number;
+  p: number;
+  d: number;
+  score: number;
+}
+
+export function getChecksAndCounters<T>(
+  encounters: { [id: string /* ID */]: number /* Outcome */[] },
+  display: [(id: string) => string, (es: EncounterStatistics) => T],
+  min = 20
+) {
+  const cc: Array<[string, EncounterStatistics]> = [];
+  for (const [id, outcomes] of Object.entries(encounters)) {
+    // Outcome.POKE1_KOED...Outcome.DOUBLE_SWITCH
+    const n = outcomes.slice(0, 6).reduce((a, b) => a + b);
+    if (n <= min) continue;
+
+    const koed = outcomes[Outcome.POKE1_KOED];
+    const switched = outcomes[Outcome.POKE1_SWITCHED_OUT];
+    const p = round((koed + switched) / n);
+    const d = round(Math.sqrt((p * (1.0 - p)) / n));
+    const score = round(p - 4 * d);
+    cc.push([id, { koed, switched, n, p, d, score }]);
+  }
+
+  const sorted = cc.sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]));
+  const obj: { [key: string]: T } = {};
+  for (const [k, v] of sorted) {
+    obj[display[0](k)] = display[1](v);
+  }
+  return obj;
+}
+
+export function stallinessHistogram(stalliness: Array<[number, number]>) {
+  stalliness.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+  // Figure out a good bin range by looking at .1% and 99.9% points
+  const index = Math.floor(stalliness.length / 1000);
+  let low = stalliness[index][0];
+  let high = stalliness[stalliness.length - index - 1][0];
+  if (low > 0) {
+    low = 0;
+  } else if (high < 0) {
+    high = 0;
+  }
+
+  // Rough guess at number of bins - possible the minimum?
+  let nbins = 13;
+  const size = (high - low) / (nbins - 1);
+  // Try to find a prettier bin size, zooming into 0.05 at most.
+  const binSize = [10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25, 0.2, 0.1, 0.05].find(bs => size > bs) || 0.05;
+  let histogram = [[0, 0]];
+  for (let x = binSize; x + binSize / 2 < high; x += binSize) {
+    histogram.push([x, 0]);
+  }
+  for (let x = -binSize; x - binSize / 2 > low; x -= binSize) {
+    histogram.push([x, 0]);
+  }
+  histogram = histogram.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  nbins = histogram.length;
+
+  const start = 0;
+  // FIXME: Python comparison of an array and a number = break immediately
+  // for (; start < stalliness.length; start++) {
+  //   if (stalliness[start] >= histogram[0][0] - binSize / 2) break;
+  // }
+  let j = 0;
+  for (let i = start; i < stalliness.length; i++) {
+    while (stalliness[i][0] > histogram[0][0] + binSize * (j + 0.5)) j++;
+    if (j >= nbins) break;
+    histogram[j][1] = histogram[j][1] + stalliness[i][1];
+  }
+
+  let x = 0;
+  let total = 0;
+  for (const [val, weight] of stalliness) {
+    x += val * weight;
+    total += weight;
+  }
+  const mean = x / total;
+
+  return { histogram, binSize, mean, total };
 }
 
 export function victoryChance(r1: number, d1: number, r2: number, d2: number) {

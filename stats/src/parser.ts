@@ -1,6 +1,7 @@
 import { Dex, hiddenPower, ID, PokemonSet, Stat, toID } from 'ps';
 
 import { Classifier } from './classifier';
+import { Outcome } from './util';
 import * as util from './util';
 
 export interface Log {
@@ -56,22 +57,6 @@ export interface Pokemon {
 export interface Rating {
   rpr: number;
   rprd: number;
-}
-
-export const enum Outcome {
-  POKE1_KOED = 0,
-  POKE2_KOED = 1,
-  DOUBLE_DOWN = 2,
-  POKE1_SWITCHED_OUT = 3,
-  POKE2_SWITCHED_OUT = 4,
-  DOUBLE_SWITCH = 5,
-  POKE1_FORCED_OUT = 6,
-  POKE2_FORCED_OUT = 7,
-  POKE1_UTURN_KOED = 8,
-  POKE2_UTURN_KOED = 9,
-  POKE1_FODDERED = 10,
-  POKE2_FODDERED = 11,
-  UNKNOWN = 12,
 }
 
 type Slot = 0 | 1 | 2 | 3 | 4 | 5;

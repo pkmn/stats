@@ -1,7 +1,10 @@
 import { calcStat, Dex, ID, Nature, PokemonSet, Stat, StatsTable, statToEV } from 'ps';
 
-import { Battle, Outcome, Player, Pokemon, Team } from './parser';
+import { Battle, Player, Pokemon, Team } from './parser';
+import { Outcome } from './util';
 import * as util from './util';
+
+const PRECISION = 1e4;
 
 export interface TaggedStatistics {
   total: WeightedStatistics;
@@ -51,19 +54,18 @@ export interface MetagameStatistics {
 
 export interface DisplayStatistics {
   battles: number;
-  pokemon: DisplayUsageStatistics; // filtered below 0.01% usage
+  pokemon: { [name: string]: DisplayUsageStatistics };
   metagame: DisplayMetagameStatistics;
 }
 
 export interface DisplayUsageStatistics {
-  lead: Usage; // divided by Statistics.lead
-  usage: Usage; // divided by Statistics.usage
+  lead: Usage;
+  usage: Usage;
 
-  count: number; // UsageStatistics.raw.count;
-  weight: number; // UsageStatitics.saved.weight/saved.count
+  count: number;
+  weight: number;
   viability: [number, number, number, number];
 
-  // filtered by Math.abs, divided by UsageStatistics.raw.weight
   abilities: { [name: string]: number };
   items: { [name: string]: number };
   happinesses: { [num: number]: number };
@@ -74,8 +76,13 @@ export interface DisplayUsageStatistics {
 }
 
 export interface DisplayMetagameStatistics {
-  tags: { [id: string /* ID */]: number };
-  stalliness: Array<[number, number]>; // TODO turn into histogram
+  tags: { [tag: string]: number };
+  stalliness: {
+    histogram: Array<[number, number]>;
+    binSize: number;
+    mean: number;
+    total: number;
+  };
 }
 
 const EMPTY: Set<ID> = new Set();
@@ -244,8 +251,82 @@ export const Stats = new (class {
     return a;
   }
 
-  display(stats: Statistics) {
-    // TODO: -> DisplayStatistics
+  display(dex: Dex, stats: Statistics, min = 20) {
+    const N = (n: string) => dex.getSpecies(n)?.species!;
+    const R = (v: number) => util.round(v, PRECISION);
+
+    const q = Object.entries(stats.pokemon);
+    const real = ['challengecup1v1', '1v1'].includes(dex.format);
+    const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
+    if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(dex.format)) {
+      q.sort((a, b) => N(a[0]).localeCompare(N(b[0])));
+    } else if (real) {
+      q.sort((a, b) => b[1].usage.real - a[1].usage.real || N(a[0]).localeCompare(N(b[0])));
+    } else {
+      q.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || N(a[0]).localeCompare(N(b[0])));
+    }
+
+    const calcUsage = (n: Usage, d: Usage) => ({
+      raw: R((n.raw / d.raw) * 6),
+      real: R((n.real / d.real) * 6),
+      weighted: R((n.weighted / d.weighted) * 6),
+    });
+
+    const formatES = (v: util.EncounterStatistics) =>
+      [R(v.n), R(v.p), R(v.d)] as [number, number, number];
+
+    const pokemon: { [name: string]: DisplayUsageStatistics } = {};
+    for (const [species, p] of q) {
+      if (species === 'empty') continue;
+      const usage = calcUsage(p.usage, stats.usage);
+      if (!usage.weighted) break;
+
+      pokemon[N(species)] = {
+        lead: calcUsage(p.lead, stats.leads),
+        usage,
+
+        count: p.raw.count,
+        weight: R(p.saved.weight / p.saved.count),
+        viability: util.computeViability(Object.values(p.gxes)),
+
+        abilities: toDisplayObject(p.abilities, p.raw.weight, ability => {
+          const o = dex.getAbility(ability);
+          return (o && o.name) || ability;
+        }),
+        items: toDisplayObject(p.items, p.raw.weight, item => {
+          if (item === 'nothing') return 'Nothing';
+          const o = dex.getItem(item);
+          return (o && o.name) || item;
+        }),
+        happinesses: toDisplayObject(p.happinesses, p.raw.weight),
+        spreads: toDisplayObject(p.spreads, p.raw.weight),
+        moves: toDisplayObject(p.moves, p.raw.weight, move => {
+          if (move === '') return 'Nothing';
+          const o = dex.getMove(move);
+          return (o && o.name) || move;
+        }),
+        teammates: getTeammates(dex, p.teammates, p.raw.weight, total, stats),
+        counters: util.getChecksAndCounters(p.encounters, [N, formatES], min),
+      };
+    }
+
+    const ts = Object.entries(stats.metagame.tags).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
+    const W = Math.max(1.0, stats.usage.weighted);
+    const tags: { [id: string]: number } = {};
+    for (const [tag, weight] of ts) {
+      const r = R((100 * weight) / W);
+      if (!r) break;
+      tags[tag] = r;
+    }
+    // TODO: should this be rounded?
+    const stalliness = util.stallinessHistogram(stats.metagame.stalliness);
+    return {
+      battles: stats.battles,
+      pokemon,
+      metagame: { tags, stalliness },
+    };
   }
 })();
 
@@ -578,4 +659,42 @@ function combineCounts(a: Usage, b: Usage | undefined) {
   a.real += b.real;
   a.weighted += b.weighted;
   return a;
+}
+
+function toDisplayObject(
+  map: { [k: string /* number|ID */]: number },
+  weight: number,
+  display?: (id: string) => string
+) {
+  const obj: { [key: string]: number } = {};
+  const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
+  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
+  for (const [k, v] of sorted) {
+    const r = util.round(v / weight, PRECISION);
+    if (!r) break;
+    obj[d(k)] = r;
+  }
+  return obj;
+}
+
+function getTeammates(
+  dex: Dex,
+  teammates: { [id: string /* ID */]: number },
+  weight: number,
+  total: number,
+  stats: Statistics
+): { [key: string]: number } {
+  const real = ['challengecup1v1', '1v1'].includes(dex.format);
+  const m: { [species: string]: number } = {};
+  for (const [id, w] of Object.entries(teammates)) {
+    const species = dex.getSpecies(id)?.species!;
+    const s = stats.pokemon[id];
+    if (!s) {
+      m[species] = 0;
+      continue;
+    }
+    const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
+    m[species] = w - weight * usage;
+  }
+  return toDisplayObject(m, weight);
 }

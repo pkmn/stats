@@ -1,10 +1,9 @@
 import { Dex, ID, toID } from 'ps';
 
-import { Outcome } from './parser';
 import { MetagameStatistics, Statistics, Usage } from './stats';
 import * as util from './util';
 
-const PRECISION = 1e10;
+const round = (v: number, p = util.PRECISION) => util.round(v, p);
 
 interface MovesetStatistics {
   'Raw count': number;
@@ -16,16 +15,7 @@ interface MovesetStatistics {
   Happiness: { [key: string]: number };
   Moves: { [key: string]: number };
   Teammates: { [key: string]: number };
-  'Checks and Counters': { [key: string]: EncounterStatistics };
-}
-
-interface EncounterStatistics {
-  koed: number;
-  switched: number;
-  n: number;
-  p: number;
-  d: number;
-  score: number;
+  'Checks and Counters': { [key: string]: util.EncounterStatistics };
 }
 
 type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
@@ -63,7 +53,9 @@ export const Reports = new (class {
     }
 
     let s = ` Total battles: ${stats.battles}\n`;
-    const avg = stats.battles ? roundStr(stats.usage.weighted / stats.battles / 12, 1e3) : '0.0';
+    const avg = stats.battles
+      ? util.roundStr(stats.usage.weighted / stats.battles / 12, 1e3)
+      : '0.0';
     s += ` Avg. weight/team: ${avg}\n`;
     s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
     s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
@@ -81,7 +73,7 @@ export const Reports = new (class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = displaySpecies(species, dex).padEnd(18);
+      const poke = util.displaySpecies(species, dex).padEnd(18);
       const use = (((100 * usage.weighted) / total.weighted) * 6).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const rawp = (((100 * usage.raw) / total.raw) * 6).toFixed(3).padStart(6);
@@ -117,7 +109,7 @@ export const Reports = new (class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = displaySpecies(species, dex).padEnd(18);
+      const poke = util.displaySpecies(species, dex).padEnd(18);
       const use = ((100 * usage.weighted) / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = ((100 * usage.raw) / total.raw).toFixed(3).padStart(6);
@@ -157,10 +149,10 @@ export const Reports = new (class {
       const p = stats.pokemon[species]!;
 
       s += sep;
-      s += ` | ${displaySpecies(species, dex)}`.padEnd(WIDTH + 2) + '| \n';
+      s += ` | ${util.displaySpecies(species, dex)}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
-      const avg = p.saved.count ? roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
+      const avg = p.saved.count ? util.roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
       s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| \n';
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
       s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| \n';
@@ -282,7 +274,7 @@ export const Reports = new (class {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
       const m: any = Object.assign({}, moveset);
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
-      data[displaySpecies(species, d)] = m;
+      data[util.displaySpecies(species, d)] = m;
     }
 
     return JSON.stringify({ info, data });
@@ -303,47 +295,10 @@ export const Reports = new (class {
     s += '\n';
 
     if (!metagame.stalliness.length) return s;
-    const stalliness = metagame.stalliness.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const { histogram, binSize, mean, total } = util.stallinessHistogram(metagame.stalliness);
 
-    // Figure out a good bin range by looking at .1% and 99.9% points
-    const index = Math.floor(stalliness.length / 1000);
-    let low = stalliness[index][0];
-    let high = stalliness[stalliness.length - index - 1][0];
-    if (low > 0) {
-      low = 0;
-    } else if (high < 0) {
-      high = 0;
-    }
-
-    // Rough guess at number of bins - possible the minimum?
-    let nbins = 13;
-    const size = (high - low) / (nbins - 1);
-    // Try to find a prettier bin size, zooming into 0.05 at most.
-    const binSize =
-      [10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25, 0.2, 0.1, 0.05].find(bs => size > bs) || 0.05;
-    let histogram = [[0, 0]];
-    for (let x = binSize; x + binSize / 2 < high; x += binSize) {
-      histogram.push([x, 0]);
-    }
-    for (let x = -binSize; x - binSize / 2 > low; x -= binSize) {
-      histogram.push([x, 0]);
-    }
-    histogram = histogram.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-    nbins = histogram.length;
-
-    const start = 0;
-    // FIXME: Python comparison of an array and a number = break immediately
-    // for (; start < stalliness.length; start++) {
-    //   if (stalliness[start] >= histogram[0][0] - binSize / 2) break;
-    // }
-    let j = 0;
-    for (let i = start; i < stalliness.length; i++) {
-      while (stalliness[i][0] > histogram[0][0] + binSize * (j + 0.5)) j++;
-      if (j >= nbins) break;
-      histogram[j][1] = histogram[j][1] + stalliness[i][1];
-    }
     let max = 0;
-    for (let i = 0; i < nbins; i++) {
+    for (let i = 0; i < histogram.length; i++) {
       if (histogram[i][1] > max) max = histogram[i][1];
     }
 
@@ -353,14 +308,7 @@ export const Reports = new (class {
 
     if (blockSize <= 0) return s;
 
-    let x = 0;
-    let y = 0;
-    for (const [val, weight] of stalliness) {
-      x += val * weight;
-      y += weight;
-    }
-
-    s += ` Stalliness (mean: ${(x / y).toFixed(3).padStart(6)})\n`;
+    s += ` Stalliness (mean: ${mean.toFixed(3).padStart(6)})\n`;
     for (const h of histogram) {
       let line = '     |';
       if (fmod(h[0], 2 * binSize) < binSize / 2) {
@@ -375,7 +323,7 @@ export const Reports = new (class {
       s += line + '#'.repeat(Math.floor((h[1] + blockSize / 2) / blockSize)) + '\n';
     }
     s += ` more negative = more offensive, more positive = more stall\n`;
-    s += ` one # = ${((100.0 * blockSize) / y).toFixed(2).padStart(5)}%\n`;
+    s += ` one # = ${((100.0 * blockSize) / total).toFixed(2).padStart(5)}%\n`;
     return s;
   }
 
@@ -580,39 +528,31 @@ function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
   for (const entry of sorted) {
     const species = entry[0];
     const pokemon = entry[1];
-    const gxes = Object.values(pokemon.gxes).sort((a, b) => b - a);
-    const viability: [number, number, number, number] = gxes.length
-      ? [
-          gxes.length,
-          gxes[0],
-          gxes[Math.ceil(0.01 * gxes.length) - 1],
-          gxes[Math.ceil(0.2 * gxes.length) - 1],
-        ]
-      : [0, 0, 0, 0];
+    const viability = util.computeViability(Object.values(pokemon.gxes));
     movesets.set(species as ID, {
       'Raw count': pokemon.raw.count,
       usage: usage(real ? pokemon.usage.real : pokemon.usage.weighted),
       'Viability Ceiling': viability,
-      Abilities: toDisplayObject(pokemon.abilities, ability => {
+      Abilities: util.toDisplayObject(pokemon.abilities, ability => {
         const o = dex.getAbility(ability);
         return (o && o.name) || ability;
       }),
-      Items: toDisplayObject(pokemon.items, item => {
+      Items: util.toDisplayObject(pokemon.items, item => {
         if (item === 'nothing') return 'Nothing';
         const o = dex.getItem(item);
         return (o && o.name) || item;
       }),
-      Spreads: toDisplayObject(pokemon.spreads),
-      Happiness: toDisplayObject(pokemon.happinesses),
-      Moves: toDisplayObject(pokemon.moves, move => {
+      Spreads: util.toDisplayObject(pokemon.spreads),
+      Happiness: util.toDisplayObject(pokemon.happinesses),
+      Moves: util.toDisplayObject(pokemon.moves, move => {
         if (move === '') return 'Nothing';
         const o = dex.getMove(move);
         return (o && o.name) || move;
       }),
       Teammates: getTeammates(dex, pokemon.teammates, pokemon.raw.weight, total, stats),
-      'Checks and Counters': getChecksAndCounters(
+      'Checks and Counters': util.getChecksAndCounters(
         pokemon.encounters,
-        s => displaySpecies(s, dex),
+        [s => util.displaySpecies(s, dex), es => es],
         min
       ),
     });
@@ -624,82 +564,31 @@ function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
 function getTeammates(
   dex: Dex,
   teammates: { [id: string /* ID */]: number },
-  count: number,
+  weight: number,
   total: number,
   stats: Statistics
 ): { [key: string]: number } {
   const real = ['challengecup1v1', '1v1'].includes(dex.format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
-    const species = displaySpecies(id, dex);
+    const species = util.displaySpecies(id, dex);
     const s = stats.pokemon[id];
     if (!s) {
       m[species] = 0;
       continue;
     }
     const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
-    m[species] = w - round(count) * round(usage, 1e7);
+    m[species] = w - round(weight) * round(usage, 1e7);
   }
-  return toDisplayObject(m);
+  return util.toDisplayObject(m);
 }
 
-function getChecksAndCounters(
-  encounters: { [id: string /* ID */]: number /* Outcome */[] },
-  display: (id: string) => string,
-  min = 20
-) {
-  const cc: Array<[string, EncounterStatistics]> = [];
-  for (const [id, outcomes] of Object.entries(encounters)) {
-    // Outcome.POKE1_KOED...Outcome.DOUBLE_SWITCH
-    const n = outcomes.slice(0, 6).reduce((a, b) => a + b);
-    if (n <= min) continue;
-
-    const koed = outcomes[Outcome.POKE1_KOED];
-    const switched = outcomes[Outcome.POKE1_SWITCHED_OUT];
-    const p = round((koed + switched) / n);
-    const d = round(Math.sqrt((p * (1.0 - p)) / n));
-    const score = round(p - 4 * d);
-    cc.push([id, { koed, switched, n, p, d, score }]);
-  }
-
-  const sorted = cc.sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]));
-  const obj: { [key: string]: EncounterStatistics } = {};
-  for (const [k, v] of sorted) {
-    obj[display(k)] = v;
-  }
-  return obj;
-}
-
-function forDetailed(cc: { [key: string]: EncounterStatistics }) {
+function forDetailed(cc: { [key: string]: util.EncounterStatistics }) {
   const obj: { [key: string]: [number, number, number] } = {};
   for (const [k, v] of Object.entries(cc)) {
     obj[k] = [round(v.n), round(v.p), round(v.d)];
   }
   return obj;
-}
-
-function toDisplayObject(
-  map: { [k: string /* number|ID */]: number },
-  display?: (id: string) => string,
-  p = PRECISION
-) {
-  const obj: { [key: string]: number } = {};
-  const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
-  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
-  for (const [k, v] of sorted) {
-    // FIXME: use display here for `chaos` reports as well
-    obj[k.toString()] = round(v, p);
-  }
-  return obj;
-}
-
-function round(v: number, p = PRECISION) {
-  return Math.round(v * p) / p;
-}
-
-function roundStr(v: number, p = PRECISION) {
-  const num = round(v, p);
-  return num === Math.floor(num) ? `${num.toFixed(1)}` : `${num}`;
 }
 
 function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, dex: Dex) {
@@ -712,7 +601,7 @@ function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, dex: Dex) {
     const [id, usage] = pair;
     if (usage < 0.001) break;
     const rank = (i + 1).toFixed().padEnd(4);
-    const poke = displaySpecies(id, dex).padEnd(18);
+    const poke = util.displaySpecies(id, dex).padEnd(18);
     const percent = (100 * usage).toFixed(3).padStart(6);
     s += ` | ${rank} | ${poke} | ${percent}% |\n`;
   }
@@ -740,13 +629,4 @@ function parseUsageReport(report: string): [Map<ID, number>, number] {
   }
 
   return [usage, battles];
-}
-
-function displaySpecies(name: string, dex: Dex) {
-  // FIXME: Seriously, we don't filter 'empty'?
-  if (name === 'empty') return name;
-  const species = util.getSpecies(name, dex).species;
-  if (name === 'Flabébé') return 'Flabebe';
-  // FIXME: remove bad display of Nidoran-M / Nidoran-F
-  return species.startsWith('Nidoran') ? species.replace('-', '') : species;
 }
