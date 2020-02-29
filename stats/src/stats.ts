@@ -18,7 +18,7 @@ export interface WeightedStatistics {
 export interface Statistics {
   battles: number;
   pokemon: { [id: string /* ID */]: UsageStatistics };
-  leads: Usage;
+  lead: Usage;
   usage: Usage;
   metagame: MetagameStatistics;
 }
@@ -91,7 +91,7 @@ export const Stats = new (class {
     return {
       battles: 0,
       pokemon: {},
-      leads: newUsage(),
+      lead: newUsage(),
       usage: newUsage(),
       metagame: { tags: {}, stalliness: [] },
     };
@@ -244,7 +244,7 @@ export const Stats = new (class {
     for (const pokemon in b.pokemon) {
       a.pokemon[pokemon] = combineUsage(b.pokemon[pokemon], a.pokemon[pokemon]);
     }
-    a.leads = combineCounts(a.leads, b.leads);
+    a.lead = combineCounts(a.lead, b.lead);
     a.usage = combineCounts(a.usage, b.usage);
     a.metagame = combineMetagame(a.metagame, b.metagame);
     return a;
@@ -281,7 +281,7 @@ export const Stats = new (class {
       if (!usage.weighted) break;
 
       pokemon[N(species)] = {
-        lead: calcUsage(p.lead, stats.leads),
+        lead: calcUsage(p.lead, stats.lead),
         usage,
 
         count: p.raw.count,
@@ -570,13 +570,13 @@ function updateLeads(
     if (tag && !tags[side].has(tag)) continue;
     const usage = stats.pokemon[leads[side]]!.lead;
     usage.raw++;
-    stats.leads.raw++;
+    stats.lead.raw++;
 
     usage.real++;
-    stats.leads.real++;
+    stats.lead.real++;
 
     usage.weighted += weights[side];
-    stats.leads.weighted += weights[side];
+    stats.lead.weighted += weights[side];
   }
 
   return true;

@@ -92,8 +92,8 @@ export const Reports = new (class {
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
 
     const total = { raw: 0, weighted: 0 };
-    total.raw = Math.max(1.0, stats.leads.raw);
-    total.weighted = Math.max(1.0, stats.leads.weighted);
+    total.raw = Math.max(1.0, stats.lead.raw);
+    total.weighted = Math.max(1.0, stats.lead.weighted);
 
     const sorted = Object.entries(stats.pokemon)
       .filter(p => p[0] !== 'empty')
@@ -370,7 +370,7 @@ export const Reports = new (class {
     }
 
     // prettier-ignore
-    const tiers: UsageTiers<Array<[ID, number]>> = 
+    const tiers: UsageTiers<Array<[ID, number]>> =
       { OU: [], UU: [], RU: [], NU: [], PU: [] };
 
     for (const [species, usage] of pokemon.entries()) {
