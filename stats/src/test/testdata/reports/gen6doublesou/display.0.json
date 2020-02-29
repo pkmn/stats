@@ -4,6 +4,7 @@
     "Aegislash": {
       "lead": {"raw": 3, "real": 3, "weighted": 3},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [0, 0, 0, 0],
@@ -30,6 +31,7 @@
     "Amoonguss": {
       "lead": {"raw": 3, "real": 3, "weighted": 3},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [1, 63, 63, 63],
@@ -51,6 +53,7 @@
     "Camerupt-Mega": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [1, 63, 63, 63],
@@ -77,6 +80,7 @@
     "Charizard-Mega-Y": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [0, 0, 0, 0],
@@ -98,6 +102,7 @@
     "Cresselia": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [1, 63, 63, 63],
@@ -119,6 +124,7 @@
     "Diancie": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [1, 63, 63, 63],
@@ -145,6 +151,7 @@
     "Keldeo": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [0, 0, 0, 0],
@@ -166,6 +173,7 @@
     "Kyurem-Black": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [0, 0, 0, 0],
@@ -192,6 +200,7 @@
     "Rhyperior": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [0, 0, 0, 0],
@@ -218,6 +227,7 @@
     "Rotom-Wash": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [1, 63, 63, 63],
@@ -244,6 +254,7 @@
     "Scrafty": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [1, 63, 63, 63],
@@ -270,6 +281,7 @@
     "Shaymin": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": null,
       "viability": [0, 0, 0, 0],
