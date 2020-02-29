@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+require('source-map-support').install();
+const fs = require('fs');
+
+const stringify = require('json-stringify-pretty-compact');
+const stats = require('./build/index');
+
+const r = f => fs.readFileSync(`/Users/kjs/Downloads/gen7ou-1825.${f}`, 'utf8');
+stringify(stats.Display.fromReports(
+  r('usage.txt'),
+  r('leads.txt'),
+  r('moveset.txt'),
+  JSON.parse(r('detailed.json')),
+  r('metagame.txt')));

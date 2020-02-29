@@ -1,5 +1,5 @@
-import { Dex } from 'ps';
-import { Usage, Statistics } from './stats';
+import { Dex, ID, toID } from 'ps';
+import { Usage, Statistics} from './stats';
 
 import * as util from './util';
 
@@ -124,6 +124,8 @@ export const Display = new (class {
   }
 
   fromReports(usage: string, leads: string, movesets: string, detailed: any, metagame: string) {
+    console.log(usage.length, leads.length, movesets.length, metagame.length);
+    console.log(parseUsageReport(usage));
     return null! as DisplayUsageStatistics; // TODO
   }
 })();
@@ -164,4 +166,34 @@ function getTeammates(
     m[species] = w - weight * usage;
   }
   return toDisplayObject(m, weight);
+}
+
+
+interface UsageReportRowData {
+  weightedp: number;
+  raw: number;
+  rawp: number;
+  real: number;
+  realp: number;
+}
+
+function parseUsageReport(report: string) {
+  const usage: {[id: string]: UsageReportRowData} = {};
+  const lines = report.split('\n');
+  const battles = Number(lines[0].slice(16));
+  const avg = Number(lines[1].slice(19));
+
+  for (let i = 5; i < lines.length; i++) {
+    const line = lines[i].split('|');
+    if (line.length < 3) break;
+    const name = line[2].slice(1).trim();
+    const weightedp = Number(line[3].slice(1, line[3].indexOf('%'))) / 100;
+    const raw = Number(line[4].slice(1, -1));
+    const rawp = Number(line[5].slice(1, line[5].indexOf('%'))) / 100;
+    const real = Number(line[6].slice(1, -1));
+    const realp = Number(line[7].slice(1, line[7].indexOf('%'))) / 100;
+    usage[toID(name)] = {weightedp, raw, rawp, real, realp};
+  }
+
+  return {battles, avg, usage};
 }
