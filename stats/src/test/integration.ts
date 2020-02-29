@@ -25,6 +25,7 @@ interface Reports {
   leads: string;
   movesets: { basic: string; detailed: string };
   metagame: string;
+  display: string;
 }
 type CompareFn = (file: string, actual: string, expected: string) => void;
 
@@ -139,11 +140,14 @@ function createReports(dex: Dex, s: stats.Statistics, cutoff?: number, tag: ID |
     leads: stats.Reports.leadsReport(dex, s),
     movesets: stats.Reports.movesetReports(dex, s, cutoff, tag, [0, -Infinity]),
     metagame: stats.Reports.metagameReport(s),
+    display: JSON.stringify(stats.Stats.display(dex, s, 0), null, 2),
   };
 }
 
 function writeReports(dir: string, reports: Reports, cutoff: number) {
-  eachReport(reports, cutoff, (name, data) => fs.writeFileSync(path.resolve(dir, name), data));
+  eachReport(reports, cutoff, (name, data) => {
+    fs.writeFileSync(path.resolve(dir, name), data);
+  });
 }
 
 function compareReports(dir: string, reports: Reports, cutoff: number, cmp: CompareFn) {
@@ -159,6 +163,7 @@ function eachReport(reports: Reports, cutoff: number, fn: (name: string, data: s
   fn(`movesets.${cutoff}.txt`, reports.movesets.basic);
   fn(`detailed.${cutoff}.json`, reports.movesets.detailed);
   fn(`metagame.${cutoff}.txt`, reports.metagame);
+  fn(`display.${cutoff}.json`, reports.display);
 }
 
 function rmrf(dir: string) {

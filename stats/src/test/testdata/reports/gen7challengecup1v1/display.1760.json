@@ -1,0 +1,914 @@
+{
+  "battles": 4,
+  "pokemon": {
+    "Arceus": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.531
+      },
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [
+        1,
+        89,
+        89,
+        89
+      ],
+      "abilities": {
+        "Multitype": 1
+      },
+      "items": {
+        "Normalium Z": 1
+      },
+      "happinesses": {
+        "25": 1
+      },
+      "spreads": {
+        "Naive:0/0/104/46/224/135": 1
+      },
+      "moves": {
+        "Flash": 1,
+        "Hyper Voice": 1,
+        "Quash": 1,
+        "Shadow Ball": 1
+      },
+      "teammates": {
+        "Castform": 0.469,
+        "Kartana": 0.469,
+        "Kricketot": 0.469,
+        "Machop": 0.469,
+        "Pyukumuku": 0.469
+      },
+      "counters": {}
+    },
+    "Castform": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.531
+      },
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [
+        1,
+        89,
+        89,
+        89
+      ],
+      "abilities": {
+        "Forecast": 1
+      },
+      "items": {
+        "Metal Powder": 1
+      },
+      "happinesses": {
+        "201": 1
+      },
+      "spreads": {
+        "Bashful:40/0/212/3/0/248": 1
+      },
+      "moves": {
+        "Defense Curl": 1,
+        "Psych Up": 1,
+        "Snore": 1,
+        "Thunder": 1
+      },
+      "teammates": {
+        "Arceus": 0.469,
+        "Kartana": 0.469,
+        "Kricketot": 0.469,
+        "Machop": 0.469,
+        "Pyukumuku": 0.469
+      },
+      "counters": {}
+    },
+    "Kartana": {
+      "lead": {
+        "raw": 0.75,
+        "real": 0.75,
+        "weighted": 4.2199
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0.75,
+        "weighted": 0.531
+      },
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [
+        1,
+        89,
+        89,
+        89
+      ],
+      "abilities": {
+        "Beast Boost": 1
+      },
+      "items": {
+        "Rocky Helmet": 1
+      },
+      "happinesses": {
+        "118": 1
+      },
+      "spreads": {
+        "Lonely:56/0/0/249/205/0": 1
+      },
+      "moves": {
+        "Confide": 1,
+        "Sleep Talk": 1,
+        "Smart Strike": 1,
+        "Synthesis": 1
+      },
+      "teammates": {
+        "Arceus": 0.469,
+        "Castform": 0.469,
+        "Kricketot": 0.469,
+        "Machop": 0.469,
+        "Pyukumuku": 0.469
+      },
+      "counters": {}
+    },
+    "Kricketot": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.531
+      },
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [
+        1,
+        89,
+        89,
+        89
+      ],
+      "abilities": {
+        "Run Away": 1
+      },
+      "items": {
+        "Apicot Berry": 1
+      },
+      "happinesses": {
+        "131": 1
+      },
+      "spreads": {
+        "Naive:64/5/244/172/0/23": 1
+      },
+      "moves": {
+        "Growl": 1,
+        "String Shot": 1,
+        "Struggle Bug": 1,
+        "Uproar": 1
+      },
+      "teammates": {
+        "Arceus": 0.469,
+        "Castform": 0.469,
+        "Kartana": 0.469,
+        "Machop": 0.469,
+        "Pyukumuku": 0.469
+      },
+      "counters": {}
+    },
+    "Machop": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.531
+      },
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [
+        1,
+        89,
+        89,
+        89
+      ],
+      "abilities": {
+        "No Guard": 1
+      },
+      "items": {
+        "Charizardite X": 1
+      },
+      "happinesses": {
+        "103": 1
+      },
+      "spreads": {
+        "Docile:1/254/108/95/47/3": 1
+      },
+      "moves": {
+        "Captivate": 1,
+        "Leer": 1,
+        "Meditate": 1,
+        "Power-Up Punch": 1
+      },
+      "teammates": {
+        "Arceus": 0.469,
+        "Castform": 0.469,
+        "Kartana": 0.469,
+        "Kricketot": 0.469,
+        "Pyukumuku": 0.469
+      },
+      "counters": {}
+    },
+    "Pyukumuku": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.531
+      },
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [
+        1,
+        89,
+        89,
+        89
+      ],
+      "abilities": {
+        "Unaware": 1
+      },
+      "items": {
+        "Pikanium Z": 1
+      },
+      "happinesses": {
+        "135": 1
+      },
+      "spreads": {
+        "Relaxed:0/137/172/136/59/5": 1
+      },
+      "moves": {
+        "Confide": 1,
+        "Gastro Acid": 1,
+        "Safeguard": 1,
+        "Tickle": 1
+      },
+      "teammates": {
+        "Arceus": 0.469,
+        "Castform": 0.469,
+        "Kartana": 0.469,
+        "Kricketot": 0.469,
+        "Machop": 0.469
+      },
+      "counters": {}
+    },
+    "Beedrill": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.245
+      },
+      "count": 1,
+      "weight": 0.4602,
+      "viability": [
+        1,
+        78,
+        78,
+        78
+      ],
+      "abilities": {
+        "Swarm": 1
+      },
+      "items": {
+        "Moon Ball": 1
+      },
+      "happinesses": {
+        "30": 1
+      },
+      "spreads": {
+        "Docile:0/0/236/200/0/72": 1
+      },
+      "moves": {
+        "Acrobatics": 1,
+        "Brutal Swing": 1,
+        "Cut": 1,
+        "Throat Chop": 1
+      },
+      "teammates": {
+        "Eevee": 0.755,
+        "Lilligant": 0.755,
+        "Linoone": 0.755,
+        "Nidoqueen": 0.755,
+        "Pangoro": 0.755
+      },
+      "counters": {}
+    },
+    "Eevee": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.245
+      },
+      "count": 1,
+      "weight": 0.4602,
+      "viability": [
+        1,
+        78,
+        78,
+        78
+      ],
+      "abilities": {
+        "Run Away": 1
+      },
+      "items": {
+        "Big Root": 1
+      },
+      "happinesses": {
+        "108": 1
+      },
+      "spreads": {
+        "Quiet:0/0/0/255/14/241": 1
+      },
+      "moves": {
+        "Captivate": 1,
+        "Return": 1,
+        "Swift": 1,
+        "Tail Whip": 1
+      },
+      "teammates": {
+        "Beedrill": 0.755,
+        "Lilligant": 0.755,
+        "Linoone": 0.755,
+        "Nidoqueen": 0.755,
+        "Pangoro": 0.755
+      },
+      "counters": {}
+    },
+    "Lilligant": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.245
+      },
+      "count": 1,
+      "weight": 0.4602,
+      "viability": [
+        1,
+        78,
+        78,
+        78
+      ],
+      "abilities": {
+        "Own Tempo": 1
+      },
+      "items": {
+        "Mind Plate": 1
+      },
+      "happinesses": {
+        "150": 1
+      },
+      "spreads": {
+        "Hardy:0/5/176/120/208/0": 1
+      },
+      "moves": {
+        "Flash": 1,
+        "Frustration": 1,
+        "Protect": 1,
+        "Teeter Dance": 1
+      },
+      "teammates": {
+        "Beedrill": 0.755,
+        "Eevee": 0.755,
+        "Linoone": 0.755,
+        "Nidoqueen": 0.755,
+        "Pangoro": 0.755
+      },
+      "counters": {}
+    },
+    "Linoone": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.245
+      },
+      "count": 1,
+      "weight": 0.4602,
+      "viability": [
+        1,
+        78,
+        78,
+        78
+      ],
+      "abilities": {
+        "Gluttony": 1
+      },
+      "items": {
+        "Mewtwonite Y": 1
+      },
+      "happinesses": {
+        "196": 1
+      },
+      "spreads": {
+        "Naughty:5/155/60/30/255/2": 1
+      },
+      "moves": {
+        "Mud Sport": 1,
+        "Mud-Slap": 1,
+        "Odor Sleuth": 1,
+        "Toxic": 1
+      },
+      "teammates": {
+        "Beedrill": 0.755,
+        "Eevee": 0.755,
+        "Lilligant": 0.755,
+        "Nidoqueen": 0.755,
+        "Pangoro": 0.755
+      },
+      "counters": {}
+    },
+    "Nidoqueen": {
+      "lead": {
+        "raw": 0.75,
+        "real": 0.75,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.2,
+        "real": 0.75,
+        "weighted": 0.245
+      },
+      "count": 2,
+      "weight": 0.4602,
+      "viability": [
+        1,
+        78,
+        78,
+        78
+      ],
+      "abilities": {
+        "Rivalry": 1
+      },
+      "items": {
+        "Pikanium Z": 1
+      },
+      "happinesses": {
+        "118": 1
+      },
+      "spreads": {
+        "Lonely:239/81/92/55/5/35": 1
+      },
+      "moves": {
+        "Captivate": 1,
+        "Focus Punch": 1,
+        "Giga Impact": 1,
+        "Submission": 1
+      },
+      "teammates": {
+        "Beedrill": 0.755,
+        "Eevee": 0.755,
+        "Lilligant": 0.755,
+        "Linoone": 0.755,
+        "Pangoro": 0.755
+      },
+      "counters": {}
+    },
+    "Pangoro": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.245
+      },
+      "count": 1,
+      "weight": 0.4602,
+      "viability": [
+        1,
+        78,
+        78,
+        78
+      ],
+      "abilities": {
+        "Iron Fist": 1
+      },
+      "items": {
+        "Fairium Z": 1
+      },
+      "happinesses": {
+        "78": 1
+      },
+      "spreads": {
+        "Rash:3/133/0/246/122/6": 1
+      },
+      "moves": {
+        "Hidden Power Bug": 1,
+        "Power-Up Punch": 1,
+        "Round": 1,
+        "Swagger": 1
+      },
+      "teammates": {
+        "Beedrill": 0.755,
+        "Eevee": 0.755,
+        "Lilligant": 0.755,
+        "Linoone": 0.755,
+        "Nidoqueen": 0.755
+      },
+      "counters": {}
+    },
+    "Carracosta": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.224
+      },
+      "count": 1,
+      "weight": 0.4207,
+      "viability": [
+        1,
+        79,
+        79,
+        79
+      ],
+      "abilities": {
+        "Sturdy": 1
+      },
+      "items": {
+        "Starf Berry": 1
+      },
+      "happinesses": {
+        "225": 1
+      },
+      "spreads": {
+        "Hasty:34/130/0/0/94/252": 1
+      },
+      "moves": {
+        "Aqua Jet": 1,
+        "Bite": 1,
+        "Facade": 1,
+        "Liquidation": 1
+      },
+      "teammates": {
+        "Deino": 0.776,
+        "Electabuzz": 0.776,
+        "Gastly": 0.776,
+        "Raichu-Alola": 0.776,
+        "Swanna": 0.776
+      },
+      "counters": {}
+    },
+    "Deino": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.224
+      },
+      "count": 1,
+      "weight": 0.4207,
+      "viability": [
+        1,
+        79,
+        79,
+        79
+      ],
+      "abilities": {
+        "Hustle": 1
+      },
+      "items": {
+        "Blastoisinite": 1
+      },
+      "happinesses": {
+        "140": 1
+      },
+      "spreads": {
+        "Jolly:0/55/244/0/202/3": 1
+      },
+      "moves": {
+        "Hyper Voice": 1,
+        "Substitute": 1,
+        "Superpower": 1,
+        "Toxic": 1
+      },
+      "teammates": {
+        "Carracosta": 0.776,
+        "Electabuzz": 0.776,
+        "Gastly": 0.776,
+        "Raichu-Alola": 0.776,
+        "Swanna": 0.776
+      },
+      "counters": {}
+    },
+    "Electabuzz": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.224
+      },
+      "count": 1,
+      "weight": 0.4207,
+      "viability": [
+        1,
+        79,
+        79,
+        79
+      ],
+      "abilities": {
+        "Vital Spirit": 1
+      },
+      "items": {
+        "Yache Berry": 1
+      },
+      "happinesses": {
+        "249": 1
+      },
+      "spreads": {
+        "Gentle:62/219/112/114/0/0": 1
+      },
+      "moves": {
+        "Electro Ball": 1,
+        "Flash": 1,
+        "Natural Gift": 1,
+        "Quick Attack": 1
+      },
+      "teammates": {
+        "Carracosta": 0.776,
+        "Deino": 0.776,
+        "Gastly": 0.776,
+        "Raichu-Alola": 0.776,
+        "Swanna": 0.776
+      },
+      "counters": {}
+    },
+    "Gastly": {
+      "lead": {
+        "raw": 0.75,
+        "real": 0.75,
+        "weighted": 1.7801
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0.75,
+        "weighted": 0.224
+      },
+      "count": 1,
+      "weight": 0.4207,
+      "viability": [
+        1,
+        79,
+        79,
+        79
+      ],
+      "abilities": {
+        "Levitate": 1
+      },
+      "items": {
+        "Bottle Cap": 1
+      },
+      "happinesses": {
+        "9": 1
+      },
+      "spreads": {
+        "Relaxed:101/7/0/116/149/137": 1
+      },
+      "moves": {
+        "Dazzling Gleam": 1,
+        "Dream Eater": 1,
+        "Thunder Punch": 1,
+        "Zap Cannon": 1
+      },
+      "teammates": {
+        "Carracosta": 0.776,
+        "Deino": 0.776,
+        "Electabuzz": 0.776,
+        "Raichu-Alola": 0.776,
+        "Swanna": 0.776
+      },
+      "counters": {}
+    },
+    "Raichu-Alola": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.224
+      },
+      "count": 1,
+      "weight": 0.4207,
+      "viability": [
+        1,
+        79,
+        79,
+        79
+      ],
+      "abilities": {
+        "Surge Surfer": 1
+      },
+      "items": {
+        "Absorb Bulb": 1
+      },
+      "happinesses": {
+        "233": 1
+      },
+      "spreads": {
+        "Calm:189/20/40/127/0/132": 1
+      },
+      "moves": {
+        "Grass Knot": 1,
+        "Laser Focus": 1,
+        "Magic Coat": 1,
+        "Thief": 1
+      },
+      "teammates": {
+        "Carracosta": 0.776,
+        "Deino": 0.776,
+        "Electabuzz": 0.776,
+        "Gastly": 0.776,
+        "Swanna": 0.776
+      },
+      "counters": {}
+    },
+    "Swanna": {
+      "lead": {
+        "raw": 0,
+        "real": 0,
+        "weighted": 0
+      },
+      "usage": {
+        "raw": 0.1,
+        "real": 0,
+        "weighted": 0.224
+      },
+      "count": 1,
+      "weight": 0.4207,
+      "viability": [
+        1,
+        79,
+        79,
+        79
+      ],
+      "abilities": {
+        "Big Pecks": 1
+      },
+      "items": {
+        "Fire Stone": 1
+      },
+      "happinesses": {
+        "240": 1
+      },
+      "spreads": {
+        "Lax:251/45/4/64/142/0": 1
+      },
+      "moves": {
+        "Double Team": 1,
+        "Ice Beam": 1,
+        "Sky Attack": 1,
+        "Water Pulse": 1
+      },
+      "teammates": {
+        "Carracosta": 0.776,
+        "Deino": 0.776,
+        "Electabuzz": 0.776,
+        "Gastly": 0.776,
+        "Raichu-Alola": 0.776
+      },
+      "counters": {}
+    }
+  },
+  "metagame": {
+    "tags": {
+      "weatherless": 1,
+      "balance": 0.531,
+      "offense": 0.469
+    },
+    "stalliness": {
+      "histogram": [
+        [
+          -0.6,
+          2.5244417433653816
+        ],
+        [
+          -0.55,
+          0
+        ],
+        [
+          -0.5,
+          0
+        ],
+        [
+          -0.45,
+          0
+        ],
+        [
+          -0.4,
+          0
+        ],
+        [
+          -0.35,
+          0
+        ],
+        [
+          -0.3,
+          0
+        ],
+        [
+          -0.25,
+          0
+        ],
+        [
+          -0.2,
+          0
+        ],
+        [
+          -0.15,
+          0
+        ],
+        [
+          -0.1,
+          0
+        ],
+        [
+          -0.05,
+          0
+        ],
+        [
+          0,
+          2.7610329763378263
+        ],
+        [
+          0.05,
+          0
+        ],
+        [
+          0.1,
+          0
+        ],
+        [
+          0.15,
+          5.984669218017432
+        ],
+        [
+          0.2,
+          0
+        ]
+      ],
+      "mean": -0.0796,
+      "total": 11.270143939414536
+    }
+  }
+}

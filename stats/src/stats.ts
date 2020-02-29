@@ -79,7 +79,6 @@ export interface DisplayMetagameStatistics {
   tags: { [tag: string]: number };
   stalliness: {
     histogram: Array<[number, number]>;
-    binSize: number;
     mean: number;
     total: number;
   };
@@ -316,12 +315,18 @@ export const Stats = new (class {
     const W = Math.max(1.0, stats.usage.weighted);
     const tags: { [id: string]: number } = {};
     for (const [tag, weight] of ts) {
-      const r = R((100 * weight) / W);
+      const r = R(weight / W);
       if (!r) break;
       tags[tag] = r;
     }
     // TODO: should this be rounded?
-    const stalliness = util.stallinessHistogram(stats.metagame.stalliness);
+    const { histogram, mean, total: tot } = util.stallinessHistogram(stats.metagame.stalliness);
+
+    const stalliness = {
+      histogram: histogram.map(([bin, num]) => [R(bin), num]),
+      mean: R(mean),
+      total: tot,
+    };
     return {
       battles: stats.battles,
       pokemon,
