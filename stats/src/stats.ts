@@ -319,13 +319,12 @@ export const Stats = new (class {
       if (!r) break;
       tags[tag] = r;
     }
-    // TODO: should this be rounded?
     const { histogram, mean, total: tot } = util.stallinessHistogram(stats.metagame.stalliness);
 
     const stalliness = {
-      histogram: histogram.map(([bin, num]) => [R(bin), num]),
+      histogram: histogram.map(([bin, num]) => [R(bin), R(num)]),
       mean: R(mean),
-      total: tot,
+      total: R(tot),
     };
     return {
       battles: stats.battles,
