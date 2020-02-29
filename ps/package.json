@@ -11,7 +11,7 @@
   "scripts": {
     "check": "true",
     "clean": "true",
-    "compile": "true",
+    "compile": "node Pokemon-Showdown/build",
     "fix": "true",
     "test": "true"
   }
