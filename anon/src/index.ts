@@ -422,7 +422,7 @@ function copyPokemonSet(pokemon: PokemonSet) {
     gender: pokemon.gender,
     evs: Object.assign({}, pokemon.evs),
     ivs: Object.assign({}, pokemon.ivs),
-    level: pokemon.level
+    level: pokemon.level,
   };
   if (pokemon.forcedLevel !== undefined) copy.forcedLevel = pokemon.forcedLevel;
   if (pokemon.shiny !== undefined) copy.shiny = pokemon.shiny;

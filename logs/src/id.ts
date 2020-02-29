@@ -1,1 +1,1 @@
-export type ID = '' | string & {__isID: true};
+export type ID = '' | string & { __isID: true };

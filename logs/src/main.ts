@@ -6,7 +6,7 @@ import { Worker } from 'worker_threads';
 
 import { Batch, Checkpoints } from './checkpoint';
 import { Configuration, Options } from './config';
-import { ID } from './id'
+import { ID } from './id';
 import { Random } from './random';
 import { CheckpointStorage } from './storage';
 
