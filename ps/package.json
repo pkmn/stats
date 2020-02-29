@@ -6,7 +6,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "pokemon-showdown": "file:../../Pokemon-Showdown"
+    "pokemon-showdown": "file:Pokemon-Showdown"
   },
   "scripts": {
     "check": "true",
