@@ -8,8 +8,7 @@ import { Log, Parser } from '../parser';
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 
 describe('Parser', async () => {
-
-  const DEX = await Dex.forFormat('gen7anythinggoes');;
+  const DEX = await Dex.forFormat('gen7anythinggoes');
   const LOG = path.resolve(TESTDATA, 'logs', DEX.format, 'log.1.json');
 
   const read = () => JSON.parse(fs.readFileSync(LOG, 'utf8'));

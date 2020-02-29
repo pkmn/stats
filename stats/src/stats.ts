@@ -136,8 +136,7 @@ export const Stats = new (class {
     stats = stats || { total: {}, tags: {} };
 
     const singles = !util.isNonSinglesFormat(dex);
-    const short =
-      !util.isNon6v6Format(dex) && (battle.turns < 2 || (battle.turns < 3 && singles));
+    const short = !util.isNon6v6Format(dex) && (battle.turns < 2 || (battle.turns < 3 && singles));
 
     const playerWeights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {

@@ -22,16 +22,12 @@ export function getBaseSpecies(name: string, dex: Dex): Species {
 
 // TODO: Remove this function in favor of using the actual dex calls once format is fixed.
 export function dexForFormat(dex?: Dex) {
-  return (/* dex || FIXME */ Dex.get());
+  return /* dex || FIXME */ Dex.get();
 }
 
+// prettier-ignore
 const MEGA_RAYQUAZA_BANNED = new Set([
-  'ubers',
-  'battlefactory',
-  'megamons',
-  'gen6ubers',
-  'gen7ubers',
-  'gen7pokebankubers',
+  'ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers',
 ]);
 
 export function isMegaRayquazaAllowed(dex?: Dex) {
@@ -75,41 +71,16 @@ export function revertFormes(id: ID, dex: Dex) {
 }
 
 // FIXME: Generate this based on gameType from config/formats.js
+// prettier-ignore
 const NON_SINGLES_FORMATS = new Set([
-  'battlespotdoubles',
-  'battlespotspecial7',
-  'battlespottriples',
-  'doublesou',
-  'doublesubers',
-  'doublesuu',
-  'gen5doublesou',
-  'gen5smogondoubles',
-  'gen7battlespotdoubles',
-  'gen7doublesanythinggoes',
-  'gen7doublesanythinggoesbeta',
-  'gen7doublesou',
-  'gen7doublesoubeta',
-  'gen7pokebankdoubleaanythinggoes',
-  'gen7pokebankdoublesag',
-  'gen7pokebankdoublesanythinggoes',
-  'gen7pokebankdoublesou',
-  'gen7pokebankdoublesoubeta',
-  'gen7randomdoublesbattle',
-  'gen7vgc2017',
-  'gen7vgc2017beta',
-  'orassmogondoubles',
-  'randomdoublesbattle',
-  'randomtriplesbattle',
-  'smogondoubles',
-  'smogondoublessuspecttest',
-  'smogondoublesubers',
-  'smogondoublesuu',
-  'smogontriples',
-  'smogontriples',
-  'vgc2014',
-  'vgc2015',
-  'vgc2016',
-  'vgc2017',
+  'battlespotdoubles', 'battlespotspecial7', 'battlespottriples', 'doublesou', 'doublesubers',
+  'doublesuu', 'gen5doublesou', 'gen5smogondoubles', 'gen7battlespotdoubles',
+  'gen7doublesanythinggoes', 'gen7doublesanythinggoesbeta', 'gen7doublesou', 'gen7doublesoubeta',
+  'gen7pokebankdoubleaanythinggoes', 'gen7pokebankdoublesag', 'gen7pokebankdoublesanythinggoes',
+  'gen7pokebankdoublesou', 'gen7pokebankdoublesoubeta', 'gen7randomdoublesbattle',
+  'gen7vgc2017', 'gen7vgc2017beta', 'orassmogondoubles', 'randomdoublesbattle', 'smogondoublesuu',
+  'randomtriplesbattle', 'smogondoubles', 'smogondoublessuspecttest', 'smogondoublesubers',
+  'smogontriples', 'smogontriples', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
 ]);
 
 export function isNonSinglesFormat(dex: Dex) {
@@ -118,25 +89,12 @@ export function isNonSinglesFormat(dex: Dex) {
 }
 
 // FIXME: Generate this based on teamLength from config/formats.js
+// prettier-ignore
 const NON_6V6_FORMATS = new Set([
-  '1v1',
-  'battlespotdoubles',
-  'battlespotsingles',
-  'battlespotspecial7',
-  'challengecup1v1',
-  'gen5gbusingles',
-  'gen71v1',
-  'gen7alolafriendly',
-  'gen7battlespotdoubles',
-  'gen7battlespotsingles',
-  'gen7challengecup1v1',
-  'gen7vgc2017',
-  'gen7vgc2017beta',
-  'pgllittlecup',
-  'vgc2014',
-  'vgc2015',
-  'vgc2016',
-  'vgc2017',
+  '1v1', 'battlespotdoubles', 'battlespotsingles', 'battlespotspecial7', 'challengecup1v1',
+  'gen5gbusingles', 'gen71v1', 'gen7alolafriendly', 'gen7battlespotdoubles',
+  'gen7battlespotsingles', 'gen7challengecup1v1', 'gen7vgc2017', 'gen7vgc2017beta', 'pgllittlecup',
+  'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
 ]);
 
 export function isNon6v6Format(dex: Dex) {
@@ -176,52 +134,36 @@ export function weighting(rating: number, deviation: number, cutoff: number) {
 const MAX_NUM = Math.pow(2, 53);
 const THRESH = 0.46875;
 const SQRPI = 5.6418958354775628695e-1;
+// prettier-ignore
 const P = [
   [
-    3.1611237438705656,
-    1.13864154151050156e2,
-    3.77485237685302021e2,
-    3.20937758913846947e3,
-    1.85777706184603153e-1,
+    3.1611237438705656, 1.13864154151050156e2, 3.77485237685302021e2,
+    3.20937758913846947e3, 1.85777706184603153e-1,
   ],
   [
-    5.64188496988670089e-1,
-    8.88314979438837594,
-    6.61191906371416295e1,
-    2.98635138197400131e2,
-    8.8195222124176909e2,
-    1.71204761263407058e3,
-    2.05107837782607147e3,
-    1.23033935479799725e3,
-    2.15311535474403846e-8,
+    5.64188496988670089e-1, 8.88314979438837594, 6.61191906371416295e1,
+    2.98635138197400131e2, 8.8195222124176909e2, 1.71204761263407058e3,
+    2.05107837782607147e3, 1.23033935479799725e3, 2.15311535474403846e-8,
   ],
   [
-    3.05326634961232344e-1,
-    3.60344899949804439e-1,
-    1.25781726111229246e-1,
-    1.60837851487422766e-2,
-    6.58749161529837803e-4,
-    1.63153871373020978e-2,
+    3.05326634961232344e-1, 3.60344899949804439e-1, 1.25781726111229246e-1,
+    1.60837851487422766e-2, 6.58749161529837803e-4, 1.63153871373020978e-2,
   ],
 ];
+// prettier-ignore
 const Q = [
-  [2.36012909523441209e1, 2.44024637934444173e2, 1.28261652607737228e3, 2.84423683343917062e3],
   [
-    1.57449261107098347e1,
-    1.17693950891312499e2,
-    5.37181101862009858e2,
-    1.62138957456669019e3,
-    3.29079923573345963e3,
-    4.36261909014324716e3,
-    3.43936767414372164e3,
-    1.23033935480374942e3,
+    2.36012909523441209e1, 2.44024637934444173e2, 1.28261652607737228e3,
+    2.84423683343917062e3
   ],
   [
-    2.56852019228982242,
-    1.87295284992346047,
-    5.27905102951428412e-1,
-    6.05183413124413191e-2,
-    2.33520497626869185e-3,
+    1.57449261107098347e1, 1.17693950891312499e2, 5.37181101862009858e2,
+    1.62138957456669019e3, 3.29079923573345963e3, 4.36261909014324716e3,
+    3.43936767414372164e3, 1.23033935480374942e3,
+  ],
+  [
+    2.56852019228982242, 1.87295284992346047, 5.27905102951428412e-1,
+    6.05183413124413191e-2, 2.33520497626869185e-3,
   ],
 ];
 

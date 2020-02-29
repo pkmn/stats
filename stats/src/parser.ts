@@ -132,8 +132,7 @@ export const Parser = new (class {
     }
     if (!raw.log || util.isNonSinglesFormat(dex)) return battle;
 
-    const active: { p1?: Slot; p2?: Slot } = {};
-    let flags = {
+    const initialFlags = {
       roar: false,
       uturn: false,
       fodder: false,
@@ -142,6 +141,9 @@ export const Parser = new (class {
       ko: { p1: false, p2: false },
       switch: { p1: false, p2: false },
     };
+
+    const active: { p1?: Slot; p2?: Slot } = {};
+    let flags = Object.assign({}, initialFlags);
     let turnMatchups: Array<[ID, ID, Outcome]> = [];
 
     for (const rawLine of raw.log) {
@@ -151,15 +153,7 @@ export const Parser = new (class {
       switch (line[1]) {
         case 'turn':
           battle.matchups.push(...turnMatchups);
-          flags = {
-            roar: false,
-            uturn: false,
-            fodder: false,
-            hazard: false,
-            uturnko: false,
-            ko: { p1: false, p2: false },
-            switch: { p1: false, p2: false },
-          };
+          flags = Object.assign({}, initialFlags);
           turnMatchups = [];
           battle.p1.team.pokemon[active.p1!].turnsOut++;
           battle.p2.team.pokemon[active.p2!].turnsOut++;
@@ -342,13 +336,10 @@ export const Parser = new (class {
 })();
 
 // FIXME: meloettapiroutte? darmanitanzen?
+// prettier-ignore
 const FORMES = new Set([
-  'greninjaash',
-  'zygardecomplete',
-  'mimikyubusted',
-  'mimikyubustedtotem',
-  'shayminsky',
-  'necrozmaultra',
+  'greninjaash', 'zygardecomplete', 'mimikyubusted',
+  'mimikyubustedtotem', 'shayminsky', 'necrozmaultra',
 ]);
 
 function identify(

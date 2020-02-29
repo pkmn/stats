@@ -31,13 +31,8 @@ interface EncounterStatistics {
 type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
 // FIXME: Should BL{1,2,3,4} not be {UU,RU,NU,PU}BL instead?
 type Tier = UsageTier | 'Uber' | 'BL' | 'BL2' | 'BL3' | 'BL4';
-interface UsageTiers<T> {
-  OU: T;
-  UU: T;
-  RU: T;
-  NU: T;
-  PU: T;
-}
+// prettier-ignore
+interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T; }
 
 type DoublesUsageTier = 'DOU' | 'DUU';
 type DoublesTier = DoublesUsageTier | 'DUber';
@@ -140,12 +135,7 @@ export const Reports = new (class {
     return { basic, detailed };
   }
 
-  movesetReport(
-    dex: Dex,
-    stats: Statistics,
-    movesetStats?: Map<ID, MovesetStatistics>,
-    min = MIN
-  ) {
+  movesetReport(dex: Dex, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>, min = MIN) {
     movesetStats = movesetStats || toMovesetStatistics(dex, stats, min[0]);
 
     dex = util.dexForFormat(dex);
@@ -431,13 +421,9 @@ export const Reports = new (class {
       }
     }
 
-    const tiers: UsageTiers<Array<[ID, number]>> = {
-      OU: [],
-      UU: [],
-      RU: [],
-      NU: [],
-      PU: [],
-    };
+    // prettier-ignore
+    const tiers: UsageTiers<Array<[ID, number]>> = 
+      { OU: [], UU: [], RU: [], NU: [], PU: [] };
 
     for (const [species, usage] of pokemon.entries()) {
       for (const tier of USAGE_TIERS) {
@@ -477,54 +463,15 @@ export const Reports = new (class {
   }
 })();
 
+// prettier-ignore
 const SKIP = new Set([
-  'pichuspikyeared',
-  'unownb',
-  'unownc',
-  'unownd',
-  'unowne',
-  'unownf',
-  'unowng',
-  'unownh',
-  'unowni',
-  'unownj',
-  'unownk',
-  'unownl',
-  'unownm',
-  'unownn',
-  'unowno',
-  'unownp',
-  'unownq',
-  'unownr',
-  'unowns',
-  'unownt',
-  'unownu',
-  'unownv',
-  'unownw',
-  'unownx',
-  'unowny',
-  'unownz',
-  'unownem',
-  'unownqm',
-  'burmysandy',
-  'burmytrash',
-  'cherrimsunshine',
-  'shelloseast',
-  'gastrodoneast',
-  'deerlingsummer',
-  'deerlingautumn',
-  'deerlingwinter',
-  'sawsbucksummer',
-  'sawsbuckautumn',
-  'sawsbuckwinter',
-  'keldeoresolution',
-  'genesectdouse',
-  'genesectburn',
-  'genesectshock',
-  'genesectchill',
-  'basculinbluestriped',
-  'darmanitanzen',
-  'keldeoresolute',
+  'pichuspikyeared', 'unownb', 'unownc', 'unownd', 'unowne', 'unownf', 'unowng', 'unownh',
+  'unowni', 'unownj', 'unownk', 'unownl', 'unownm', 'unownn', 'unowno', 'unownp', 'unownq',
+  'unownr', 'unowns', 'unownt', 'unownu', 'unownv', 'unownw', 'unownx', 'unowny', 'unownz',
+  'unownem', 'unownqm', 'burmysandy', 'burmytrash', 'cherrimsunshine', 'shelloseast',
+  'gastrodoneast', 'deerlingsummer', 'deerlingautumn', 'deerlingwinter', 'sawsbucksummer',
+  'sawsbuckautumn', 'sawsbuckwinter', 'keldeoresolution', 'genesectdouse', 'genesectburn',
+  'genesectshock', 'genesectchill', 'basculinbluestriped', 'darmanitanzen', 'keldeoresolute',
   'pikachucosplay',
 ]);
 
