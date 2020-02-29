@@ -4,8 +4,6 @@ import { Battle, Player, Pokemon } from './parser';
 import { Outcome } from './util';
 import * as util from './util';
 
-const PRECISION = 1e4;
-
 export interface TaggedStatistics {
   total: WeightedStatistics;
   tags: { [id: string /* ID */]: WeightedStatistics };
@@ -51,39 +49,6 @@ export interface Usage {
 export interface MetagameStatistics {
   tags: { [id: string /* ID */]: number };
   stalliness: Array<[number, number]>;
-}
-
-export interface DisplayStatistics {
-  battles: number;
-  pokemon: { [name: string]: DisplayUsageStatistics };
-  metagame: DisplayMetagameStatistics;
-}
-
-export interface DisplayUsageStatistics {
-  lead: Usage;
-  usage: Usage;
-
-  count: number;
-  weight: number;
-  viability: [number, number, number, number];
-
-  abilities: { [name: string]: number };
-  items: { [name: string]: number };
-  happinesses: { [num: number]: number };
-  spreads: { [spread: string]: number };
-  stats: { [spread: string]: number };
-  moves: { [name: string]: number };
-  teammates: { [name: string]: number };
-  counters: { [name: string]: [number, number, number] };
-}
-
-export interface DisplayMetagameStatistics {
-  tags: { [tag: string]: number };
-  stalliness: {
-    histogram: Array<[number, number]>;
-    mean: number;
-    total: number;
-  };
 }
 
 const EMPTY: Set<ID> = new Set();
@@ -251,90 +216,6 @@ export const Stats = new (class {
     a.metagame = combineMetagame(a.metagame, b.metagame);
     return a;
   }
-
-  display(dex: Dex, stats: Statistics, min = 20) {
-    const N = (n: string) => dex.getSpecies(n)?.species!;
-    const R = (v: number) => util.round(v, PRECISION);
-
-    const q = Object.entries(stats.pokemon);
-    const real = ['challengecup1v1', '1v1'].includes(dex.format);
-    const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
-    if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(dex.format)) {
-      q.sort((a, b) => N(a[0]).localeCompare(N(b[0])));
-    } else if (real) {
-      q.sort((a, b) => b[1].usage.real - a[1].usage.real || N(a[0]).localeCompare(N(b[0])));
-    } else {
-      q.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || N(a[0]).localeCompare(N(b[0])));
-    }
-
-    const calcUsage = (n: Usage, d: Usage) => ({
-      raw: R((n.raw / d.raw) * 6),
-      real: R((n.real / d.real) * 6),
-      weighted: R((n.weighted / d.weighted) * 6),
-    });
-
-    const formatES = (v: util.EncounterStatistics) =>
-      [R(v.n), R(v.p), R(v.d)] as [number, number, number];
-
-    const pokemon: { [name: string]: DisplayUsageStatistics } = {};
-    for (const [species, p] of q) {
-      if (species === 'empty') continue;
-      const usage = calcUsage(p.usage, stats.usage);
-      if (!usage.weighted) break;
-
-      pokemon[N(species)] = {
-        lead: calcUsage(p.lead, stats.lead),
-        usage,
-
-        count: p.raw.count,
-        weight: p.saved.count ? R(p.saved.weight / p.saved.count) : -1,
-        viability: util.computeViability(Object.values(p.gxes)),
-
-        abilities: toDisplayObject(p.abilities, p.raw.weight, ability => {
-          const o = dex.getAbility(ability);
-          return (o && o.name) || ability;
-        }),
-        items: toDisplayObject(p.items, p.raw.weight, item => {
-          if (item === 'nothing') return 'Nothing';
-          const o = dex.getItem(item);
-          return (o && o.name) || item;
-        }),
-        happinesses: toDisplayObject(p.happinesses, p.raw.weight),
-        spreads: toDisplayObject(p.spreads, p.raw.weight),
-        stats: toDisplayObject(p.stats, p.raw.weight),
-        moves: toDisplayObject(p.moves, p.raw.weight, move => {
-          if (move === '') return 'Nothing';
-          const o = dex.getMove(move);
-          return (o && o.name) || move;
-        }),
-        teammates: getTeammates(dex, p.teammates, p.raw.weight, total, stats),
-        counters: util.getChecksAndCounters(p.encounters, [N, formatES], min),
-      };
-    }
-
-    const ts = Object.entries(stats.metagame.tags).sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
-    );
-    const W = Math.max(1.0, stats.usage.weighted);
-    const tags: { [id: string]: number } = {};
-    for (const [tag, weight] of ts) {
-      const r = R(weight / W);
-      if (!r) break;
-      tags[tag] = r;
-    }
-    const { histogram, mean, total: tot } = util.stallinessHistogram(stats.metagame.stalliness);
-
-    const stalliness = {
-      histogram: histogram.map(([bin, num]) => [R(bin), R(num)]),
-      mean: R(mean),
-      total: R(tot),
-    };
-    return {
-      battles: stats.battles,
-      pokemon,
-      metagame: { tags, stalliness },
-    };
-  }
 })();
 
 function getWeights(player: Player, cutoffs: number[]): [Array<{ s: number; m: number }>, boolean] {
@@ -478,14 +359,9 @@ function computeStats<T>(nature: Nature, base: StatsTable<number>, pokemon: Poke
   const stats: number[] = [];
   let stat: Stat;
   for (stat in pokemon.evs) {
-    stats.push(calcStat(
-        stat,
-        base[stat],
-        pokemon.ivs[stat],
-        pokemon.evs[stat],
-        pokemon.level,
-        nature
-      ));
+    stats.push(
+      calcStat(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature)
+    );
   }
   return stats.join('/');
 }
@@ -685,42 +561,4 @@ function combineCounts(a: Usage, b: Usage | undefined) {
   a.real += b.real;
   a.weighted += b.weighted;
   return a;
-}
-
-function toDisplayObject(
-  map: { [k: string /* number|ID */]: number },
-  weight: number,
-  display?: (id: string) => string
-) {
-  const obj: { [key: string]: number } = {};
-  const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
-  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
-  for (const [k, v] of sorted) {
-    const r = util.round(v / weight, PRECISION);
-    if (!r) break;
-    obj[d(k)] = r;
-  }
-  return obj;
-}
-
-function getTeammates(
-  dex: Dex,
-  teammates: { [id: string /* ID */]: number },
-  weight: number,
-  total: number,
-  stats: Statistics
-): { [key: string]: number } {
-  const real = ['challengecup1v1', '1v1'].includes(dex.format);
-  const m: { [species: string]: number } = {};
-  for (const [id, w] of Object.entries(teammates)) {
-    const species = dex.getSpecies(id)?.species!;
-    const s = stats.pokemon[id];
-    if (!s) {
-      m[species] = 0;
-      continue;
-    }
-    const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
-    m[species] = w - weight * usage;
-  }
-  return toDisplayObject(m, weight);
 }

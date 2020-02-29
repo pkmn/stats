@@ -141,7 +141,7 @@ function createReports(dex: Dex, s: stats.Statistics, cutoff?: number, tag: ID |
     leads: stats.Reports.leadsReport(dex, s),
     movesets: stats.Reports.movesetReports(dex, s, cutoff, tag, [0, -Infinity]),
     metagame: stats.Reports.metagameReport(s),
-    display: stringify(stats.Stats.display(dex, s, 0)),
+    display: stringify(stats.Display.fromStatistics(dex, s, 0)),
   };
 }
 
