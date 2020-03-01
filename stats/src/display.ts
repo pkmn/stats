@@ -217,10 +217,19 @@ export const Display = new (class {
       if (!r) break;
       tags[tag] = r;
     }
+
+    // BUG: this probably wrong
+    const total = mr.histogram.reduce((acc, [, num]) => acc + num, 0);
+    const stalliness = {
+      histogram: mr.histogram.map(([bin, num]) => [R(bin), R(num * mr.legend * total)]),
+      mean: R(mr.mean),
+      total: R(total),
+    };
+
     return {
       battles: dr.info['number of battles'],
       pokemon,
-      metagame: { tags } as DisplayMetagameStatistics, // TODO
+      metagame: { tags, stalliness },
     };
   }
 })();
@@ -349,6 +358,7 @@ function parseMetagameReport(report: string) {
     tags[tag] = weight;
   }
   i++;
+  if (i >= lines.length) return { tags, mean: 0, histogram: [], legend: 0 };
   const mean = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf(')')));
 
   let j = 0;
