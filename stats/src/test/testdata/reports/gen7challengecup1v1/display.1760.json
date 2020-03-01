@@ -4,6 +4,7 @@
     "Arceus": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.531},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.7033},
       "count": 1,
       "weight": 0.9974,
       "viability": [1, 89, 89, 89],
@@ -25,6 +26,7 @@
     "Castform": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.531},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.7033},
       "count": 1,
       "weight": 0.9974,
       "viability": [1, 89, 89, 89],
@@ -46,6 +48,7 @@
     "Kartana": {
       "lead": {"raw": 0.75, "real": 0.75, "weighted": 4.2199},
       "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.531},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.7033},
       "count": 1,
       "weight": 0.9974,
       "viability": [1, 89, 89, 89],
@@ -72,6 +75,7 @@
     "Kricketot": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.531},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.7033},
       "count": 1,
       "weight": 0.9974,
       "viability": [1, 89, 89, 89],
@@ -93,6 +97,7 @@
     "Machop": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.531},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.7033},
       "count": 1,
       "weight": 0.9974,
       "viability": [1, 89, 89, 89],
@@ -114,6 +119,7 @@
     "Pyukumuku": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.531},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.7033},
       "count": 1,
       "weight": 0.9974,
       "viability": [1, 89, 89, 89],
@@ -135,6 +141,7 @@
     "Beedrill": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.245},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3245},
       "count": 1,
       "weight": 0.4602,
       "viability": [1, 78, 78, 78],
@@ -156,6 +163,7 @@
     "Eevee": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.245},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3245},
       "count": 1,
       "weight": 0.4602,
       "viability": [1, 78, 78, 78],
@@ -177,6 +185,7 @@
     "Lilligant": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.245},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3245},
       "count": 1,
       "weight": 0.4602,
       "viability": [1, 78, 78, 78],
@@ -198,6 +207,7 @@
     "Linoone": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.245},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3245},
       "count": 1,
       "weight": 0.4602,
       "viability": [1, 78, 78, 78],
@@ -219,6 +229,7 @@
     "Nidoqueen": {
       "lead": {"raw": 0.75, "real": 0.75, "weighted": 0},
       "usage": {"raw": 0.2, "real": 0.75, "weighted": 0.245},
+      "unique": {"raw": 1, "real": 0.5, "weighted": 0.3245},
       "count": 2,
       "weight": 0.4602,
       "viability": [1, 78, 78, 78],
@@ -245,6 +256,7 @@
     "Pangoro": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.245},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.3245},
       "count": 1,
       "weight": 0.4602,
       "viability": [1, 78, 78, 78],
@@ -271,6 +283,7 @@
     "Carracosta": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.224},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.2967},
       "count": 1,
       "weight": 0.4207,
       "viability": [1, 79, 79, 79],
@@ -292,6 +305,7 @@
     "Deino": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.224},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.2967},
       "count": 1,
       "weight": 0.4207,
       "viability": [1, 79, 79, 79],
@@ -313,6 +327,7 @@
     "Electabuzz": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.224},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.2967},
       "count": 1,
       "weight": 0.4207,
       "viability": [1, 79, 79, 79],
@@ -339,6 +354,7 @@
     "Gastly": {
       "lead": {"raw": 0.75, "real": 0.75, "weighted": 1.7801},
       "usage": {"raw": 0.1, "real": 0.75, "weighted": 0.224},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.2967},
       "count": 1,
       "weight": 0.4207,
       "viability": [1, 79, 79, 79],
@@ -365,6 +381,7 @@
     "Raichu-Alola": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.224},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.2967},
       "count": 1,
       "weight": 0.4207,
       "viability": [1, 79, 79, 79],
@@ -386,6 +403,7 @@
     "Swanna": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1, "real": 0, "weighted": 0.224},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.2967},
       "count": 1,
       "weight": 0.4207,
       "viability": [1, 79, 79, 79],

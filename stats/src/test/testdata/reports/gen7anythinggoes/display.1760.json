@@ -4,6 +4,7 @@
     "Ditto": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 1},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 1},
       "count": 1,
       "weight": 0,
       "viability": [1, 43, 43, 43],
@@ -25,6 +26,7 @@
     "Greninja-Ash": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 1},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 1},
       "count": 1,
       "weight": 0,
       "viability": [1, 43, 43, 43],
@@ -51,6 +53,7 @@
     "Meloetta": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 1},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 1},
       "count": 1,
       "weight": 0,
       "viability": [1, 43, 43, 43],
@@ -77,6 +80,7 @@
     "Rayquaza-Mega": {
       "lead": {"raw": 3, "real": 3, "weighted": 6},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 1},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 1},
       "count": 1,
       "weight": 0,
       "viability": [1, 43, 43, 43],
@@ -103,6 +107,7 @@
     "Shedinja": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 1},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 1},
       "count": 1,
       "weight": 0,
       "viability": [1, 43, 43, 43],
@@ -129,6 +134,7 @@
     "Zoroark": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 1},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 1},
       "count": 1,
       "weight": 0,
       "viability": [1, 43, 43, 43],

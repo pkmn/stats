@@ -1,10 +1,16 @@
-import { Dex, ID, toID, calcStat, Stat } from 'ps';
-import { Usage, Statistics } from './stats';
+import { Dex, ID, toID } from 'ps';
+import {
+  Usage,
+  Statistics,
+  UsageStatistics,
+  UniqueStatistics,
+  newUsage,
+  combineUnique,
+} from './stats';
 
 import * as util from './util';
 
 const R = (v: number) => util.round(v, 1e4);
-const STATS = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as Stat[];
 
 export interface DisplayStatistics {
   battles: number;
@@ -15,6 +21,7 @@ export interface DisplayStatistics {
 export interface DisplayUsageStatistics {
   lead: Usage;
   usage: Usage;
+  unique: Usage;
 
   count: number;
   weight: number | null;
@@ -82,19 +89,23 @@ export const Display = new (class {
       q.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || N(a[0]).localeCompare(N(b[0])));
     }
 
+    const unique = computeUnique(stats.pokemon);
+
     const pokemon: { [name: string]: DisplayUsageStatistics } = {};
     for (const [species, p] of q) {
       if (species === 'empty') continue;
       const usage = calcUsage(p.usage, stats.usage);
       if (!usage.weighted) break;
 
+      const u = unique.pokemon[species];
       pokemon[N(species)] = {
         lead: calcUsage(p.lead, stats.lead),
         usage,
+        unique: calcUsage(u.usage, unique.total, 1),
 
         count: p.raw.count,
         weight: p.saved.count ? R(p.saved.weight / p.saved.count) : null,
-        viability: util.computeViability(Object.values(p.gxes)),
+        viability: util.computeViability(u.gxes),
 
         abilities: toDisplayObject(p.abilities, p.raw.weight, ability => {
           const o = dex.getAbility(ability);
@@ -158,7 +169,7 @@ export const Display = new (class {
     const pmr = partialParseMovesetReport(movesetReport);
     const mr = parseMetagameReport(metagameReport);
 
-    const pokemon: { [name: string]: Omit<DisplayUsageStatistics, 'stats'> } = {};
+    const pokemon: { [name: string]: Omit<DisplayUsageStatistics, 'stats' | 'unique'> } = {};
     for (const [species, pmrw] of Object.entries(pmr)) {
       if (species === 'empty') continue;
       const p = dr.data[species];
@@ -240,11 +251,11 @@ export const Display = new (class {
   }
 })();
 
-function calcUsage(n: Usage, d: Usage) {
+function calcUsage(n: Usage, d: Usage, f = 6) {
   return {
-    raw: R((n.raw / d.raw) * 6),
-    real: R((n.real / d.real) * 6),
-    weighted: R((n.weighted / d.weighted) * 6),
+    raw: R((n.raw / d.raw) * f),
+    real: R((n.real / d.real) * f),
+    weighted: R((n.weighted / d.weighted) * f),
   };
 }
 
@@ -296,6 +307,39 @@ function getTeammates(
     m[species] = w - weight * usage;
   }
   return toDisplayObject(m, weight);
+}
+
+function computeUnique(stats: { [id: string /* ID */]: UsageStatistics }) {
+  const pokemon: { [id: string /* ID */]: { usage: Usage; gxes: number[] } } = {};
+  const all: { [id: string /* ID */]: UniqueStatistics } = {};
+
+  for (const p in stats) {
+    const usage = newUsage();
+    const gxes = [];
+    const unique = stats[p].unique;
+    for (const player in unique) {
+      const u = unique[player];
+
+      usage.raw++;
+      if ('r' in u) usage.real += u.r;
+      if ('w' in u) usage.weighted += u.w;
+      if ('g' in u) gxes.push(u.g);
+
+      all[player] = combineUnique(u, all[player]);
+    }
+    pokemon[p] = { usage, gxes };
+  }
+
+  const total = newUsage();
+  for (const player in all) {
+    const u = all[player];
+
+    total.raw++;
+    if ('r' in u) total.real += u.r;
+    if ('w' in u) total.weighted += u.w;
+  }
+
+  return { pokemon, total };
 }
 
 interface UsageReportRowData {

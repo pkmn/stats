@@ -37,8 +37,13 @@ export interface UsageStatistics {
 
   encounters: { [id: string /* ID */]: number /* Outcome */[] };
   teammates: { [id: string /* ID */]: number };
-  gxes: { [id: string /* ID */]: number };
+  unique: { [id: string /* ID */]: UniqueStatistics };
 }
+
+export type UniqueStatistics =
+  | { r: 0 | 1; w: number; g: number }
+  | { r: 0 | 1; w: number }
+  | { g: number };
 
 export interface Usage {
   raw: number;
@@ -288,8 +293,14 @@ function updateStats(
     }
 
     if (gxe !== undefined) {
-      const g = p.gxes[player.name];
-      if (!g || g < gxe) p.gxes[player.name] = gxe;
+      const u = p.unique[player.name];
+      if (!u) {
+        p.unique[player.name] = { g: gxe };
+      } else if (!('g' in u)) {
+        (u as { r: 0 | 1; w: number; g: number }).g = gxe;
+      } else if (u.g < gxe) {
+        u.g = gxe;
+      }
     }
 
     const set = pokemon.set;
@@ -321,11 +332,24 @@ function updateStats(
 
     if (!short) {
       p.usage.raw++;
-      if (pokemon.turnsOut > 0) {
+      const real = pokemon.turnsOut > 0 ? 1 : 0;
+      if (real) {
         p.usage.real++;
         stats.usage.real++;
       }
       p.usage.weighted += weights.s;
+
+      const u = p.unique[player.name];
+      const c = u as { r: 0 | 1; w: number; g: number };
+      if (!u) {
+        p.unique[player.name] = { r: real, w: weights.s };
+      } else if (!('r' in u)) {
+        c.r = real;
+        c.w = weights.s;
+      } else {
+        c.r = (u.r | real) as 0 | 1;
+        c.w = Math.max(u.w, weights.s);
+      }
 
       updateTeammates(player.team.pokemon, index, pokemon.species, p.teammates, stats, weights.s);
     }
@@ -493,10 +517,11 @@ function newUsageStatistics() {
     encounters: {},
     teammates: {},
     gxes: {},
+    unique: {},
   };
 }
 
-function newUsage() {
+export function newUsage() {
   return { raw: 0, real: 0, weighted: 0 };
 }
 
@@ -529,12 +554,19 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {
     }
   }
   a.teammates = combineMap(a.teammates, b.teammates);
-  for (const player in b.gxes) {
-    const gxe = b.gxes[player];
-    const g = a.gxes[player];
-    if (!g || g < gxe) a.gxes[player] = gxe;
+  for (const player in b.unique) {
+    a.unique[player] = combineUnique(b.unique[player], a.unique[player]);
   }
   return a;
+}
+
+export function combineUnique(a: UniqueStatistics, b: UniqueStatistics) {
+  if (!b) return a;
+  const c = a as { r?: 0 | 1; w?: number; g?: number };
+  if ('r' in b) c.r = ((c.r ?? 0) | b.r) as 0 | 1;
+  if ('w' in b) c.w = 'w' in c ? Math.max(c.w!, b.w) : b.w;
+  if ('g' in b) c.g = 'g' in c ? Math.max(c.g!, b.g) : b.g;
+  return c as UniqueStatistics;
 }
 
 function combineMetagame(a: MetagameStatistics, b: MetagameStatistics | undefined) {

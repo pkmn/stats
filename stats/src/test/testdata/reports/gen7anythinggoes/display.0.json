@@ -4,6 +4,7 @@
     "Darmanitan": {
       "lead": {"raw": 3, "real": 3, "weighted": 3},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 88, 88, 88],
@@ -25,6 +26,7 @@
     "Ditto": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 43, 43, 43],
@@ -51,6 +53,7 @@
     "Dugtrio": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 88, 88, 88],
@@ -77,6 +80,7 @@
     "Gastrodon": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 88, 88, 88],
@@ -98,6 +102,7 @@
     "Greninja-Ash": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 43, 43, 43],
@@ -130,6 +135,7 @@
     "Meloetta": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 43, 43, 43],
@@ -156,6 +162,7 @@
     "Mimikyu": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 88, 88, 88],
@@ -182,6 +189,7 @@
     "Rayquaza-Mega": {
       "lead": {"raw": 3, "real": 3, "weighted": 3},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 43, 43, 43],
@@ -208,6 +216,7 @@
     "Shaymin-Sky": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 88, 88, 88],
@@ -234,6 +243,7 @@
     "Shedinja": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 43, 43, 43],
@@ -260,6 +270,7 @@
     "Zoroark": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 43, 43, 43],
@@ -281,6 +292,7 @@
     "Zygarde": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.5},
+      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
       "count": 1,
       "weight": 1,
       "viability": [1, 88, 88, 88],
