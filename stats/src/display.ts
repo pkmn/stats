@@ -156,7 +156,7 @@ export const Display = new (class {
     const lr = parseLeadsReport(leadsReport);
     const mr = parseMetagameReport(metagameReport);
 
-    const pokemon: { [name: string]: DisplayUsageStatistics } = {};
+    const pokemon: { [name: string]: Omit<DisplayUsageStatistics, 'stats'> } = {};
     for (const [species, p] of Object.entries(dr.data)) {
       if (species === 'empty') continue;
 
@@ -198,7 +198,6 @@ export const Display = new (class {
         }),
         happinesses: toDisplayObject(p.Happiness, rawWeight),
         spreads: toDisplayObject(p.Spreads, rawWeight),
-        stats: toDisplayObject(computeStats(dex, toID(species), p.Spreads), rawWeight),
         moves: toDisplayObject(p.Moves, rawWeight, move => {
           if (move === '') return 'Nothing';
           const o = dex.getMove(move);
@@ -384,39 +383,4 @@ function parseMetagameReport(report: string) {
   i++;
   const legend = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100;
   return { tags, mean, histogram, legend };
-}
-
-const LVL5 = new Set(['gen8lc', 'gen7lc', 'gen6lc', 'gen5lc', 'gen4lc', 'littlecup', 'lc']);
-// prettier-ignore
-const LVL50 = new Set([
-  'gen8battlestadiumsingles', 'gen8vgc2020', 'gen8battlestadiumdoubles', 'gen8galarnewcomers',
-  'gen7letsgoou', 'gen7vgc2019', 'gen7vgc2018', 'gen7vgc2017', 'battlespotdoubles',
-  'batctlespotspecial7', 'battlespottriples', 'gen7battlespotdoubles', 'gen7vgc2017',
-  'gen7vgc2017beta', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
-]);
-
-// BUG: the original spreads are lossy and we have no information about level or
-// IVs, but its fairly safe to assume the max for both of these.
-// TODO: return empty resu;ts if format invalidates this assumptions.
-function computeStats(dex: Dex, species: ID, spreads: { [spread: string]: number }) {
-  const base = util.getSpecies(species, dex).baseStats;
-  const level = LVL5.has(dex.format) ? 5 : LVL50.has(dex.format) ? 50 : 100;
-  const s: { [stats: string]: number } = {};
-
-  for (const spread in spreads) {
-    const r = R(spreads[spread]);
-    if (!r) break;
-
-    const split = spread.split(':');
-    const nature = dex.getNature(split[0]);
-    const revs = split[1].split('/');
-
-    const stats: number[] = [];
-    for (const [i, stat] of STATS.entries()) {
-      stats.push(calcStat(stat, base[stat], 31, Number(revs[i]), level, nature));
-    }
-    s[stats.join('/')] = r;
-  }
-
-  return s;
 }
