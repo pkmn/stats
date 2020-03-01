@@ -15,6 +15,7 @@ const Dex = require('ps').Dex;
     dex,
     r('usage.txt'),
     r('leads.txt'),
+    r('moveset.txt'),
     r('detailed.json'),
     r('metagame.txt'))));
 })();

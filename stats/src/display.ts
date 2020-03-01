@@ -146,6 +146,7 @@ export const Display = new (class {
     dex: Dex,
     usageReport: string,
     leadsReport: string,
+    movesetReport: string,
     detailedReport: string,
     metagameReport: string
   ) {
@@ -154,15 +155,20 @@ export const Display = new (class {
     const dr = JSON.parse(detailedReport) as DetailedUsageStatistics;
     const ur = parseUsageReport(usageReport);
     const lr = parseLeadsReport(leadsReport);
+    const pmr = partialParseMovesetReport(movesetReport);
     const mr = parseMetagameReport(metagameReport);
 
     const pokemon: { [name: string]: Omit<DisplayUsageStatistics, 'stats'> } = {};
-    for (const [species, p] of Object.entries(dr.data)) {
+    for (const [species, pmrw] of Object.entries(pmr)) {
       if (species === 'empty') continue;
+      const p = dr.data[species];
+      if (!p) continue;
 
+      const id = toID(species);
       const rawWeight = Object.values(p.Abilities).reduce((acc, v) => acc + v, 0);
+      const weight = pmrw ? R(pmrw) : null;
 
-      const urp = ur.usage[toID(species)];
+      const urp = ur.usage[id];
       if (!urp) break;
       const usage = {
         raw: R(urp.rawp),
@@ -172,7 +178,7 @@ export const Display = new (class {
       if (!usage.weighted) break;
 
       const lead = { raw: 0, real: 0, weighted: 0 };
-      const lrp = lr.usage[toID(species)];
+      const lrp = lr.usage[id];
       if (lrp) {
         lead.raw = R(lrp.rawp);
         lead.real = lead.raw;
@@ -184,7 +190,7 @@ export const Display = new (class {
         usage,
 
         count: p['Raw count'],
-        weight: null, // TODO can parse from moveset report
+        weight,
         viability: p['Viability Ceiling'],
 
         abilities: toDisplayObject(p.Abilities, rawWeight, ability => {
@@ -343,6 +349,30 @@ function parseLeadsReport(report: string) {
   }
 
   return { total, usage };
+}
+
+function partialParseMovesetReport(report: string) {
+  const weights: { [name: string]: number } = {};
+
+  let section = 0;
+  let i = 0;
+  let species = '';
+  for (const line of report.split('\n')) {
+    i++;
+    if (line.startsWith(' +')) {
+      section++;
+      i = 0;
+      continue;
+    }
+    if (section % 9 === 1) {
+      species = line.slice(3, line.indexOf('  '));
+    }
+    if (section % 9 === 2 && i === 2) {
+      weights[species] = Number(line.slice(17, line.indexOf(' ', 17)));
+    }
+  }
+
+  return weights;
 }
 
 function parseMetagameReport(report: string) {
