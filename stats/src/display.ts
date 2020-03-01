@@ -1,9 +1,10 @@
-import { Dex, ID, toID } from 'ps';
+import { Dex, ID, toID, calcStat, Stat } from 'ps';
 import { Usage, Statistics } from './stats';
 
 import * as util from './util';
 
-const PRECISION = 1e4;
+const R = (v: number) => util.round(v, 1e4);
+const STATS = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as Stat[];
 
 export interface DisplayStatistics {
   battles: number;
@@ -38,10 +39,37 @@ export interface DisplayMetagameStatistics {
   };
 }
 
+export interface DetailedUsageStatistics {
+  info: {
+    metagame: string;
+    cutoff: number;
+    'cutoff deviation': 0;
+    'team type': ID | null;
+    'number of battles': number;
+  };
+  data: { [name: string]: DetailedMovesetStatistics };
+}
+
+export interface DetailedMovesetStatistics {
+  'Raw count': number;
+  usage: number;
+  // num GXE, max GXE, 1% GXE, 20% GXE
+  'Viability Ceiling': [number, number, number, number];
+  Abilities: { [ability: string]: number };
+  Items: { [item: string]: number };
+  Spreads: { [spread: string]: number };
+  Happiness: { [happiness: string]: number };
+  Moves: { [move: string]: number };
+  Teammates: { [pokemon: string]: number };
+  // n = sum(POKE1_KOED...DOUBLE_SWITCH)
+  // p = POKE1_KOED + POKE1_SWITCHED_OUT / n
+  // d = sqrt((p * (1 - p)) / n)
+  'Checks and Counters': { [pokemon: string]: [number, number, number] };
+}
+
 export const Display = new (class {
   fromStatistics(dex: Dex, stats: Statistics, min = 20) {
     const N = (n: string) => dex.getSpecies(n)?.species!;
-    const R = (v: number) => util.round(v, PRECISION);
 
     const q = Object.entries(stats.pokemon);
     const real = ['challengecup1v1', '1v1'].includes(dex.format);
@@ -53,15 +81,6 @@ export const Display = new (class {
     } else {
       q.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || N(a[0]).localeCompare(N(b[0])));
     }
-
-    const calcUsage = (n: Usage, d: Usage) => ({
-      raw: R((n.raw / d.raw) * 6),
-      real: R((n.real / d.real) * 6),
-      weighted: R((n.weighted / d.weighted) * 6),
-    });
-
-    const formatES = (v: util.EncounterStatistics) =>
-      [R(v.n), R(v.p), R(v.d)] as [number, number, number];
 
     const pokemon: { [name: string]: DisplayUsageStatistics } = {};
     for (const [species, p] of q) {
@@ -95,7 +114,7 @@ export const Display = new (class {
           return (o && o.name) || move;
         }),
         teammates: getTeammates(dex, p.teammates, p.raw.weight, total, stats),
-        counters: util.getChecksAndCounters(p.encounters, [N, formatES], min),
+        counters: util.getChecksAndCounters(p.encounters, [N, formatEncounterStatistics], min),
       };
     }
 
@@ -123,13 +142,101 @@ export const Display = new (class {
     };
   }
 
-  fromReports(usage: string, leads: string, movesets: string, detailed: any, metagame: string) {
-    const u = parseUsageReport(usage);
-    const l = parseLeadsReport(leads);
-    console.log(l);
-    return null! as DisplayUsageStatistics; // TODO
+  fromReports(
+    dex: Dex,
+    usageReport: string,
+    leadsReport: string,
+    detailedReport: string,
+    metagameReport: string
+  ) {
+    const N = (n: string) => dex.getSpecies(n)?.species!;
+
+    const dr = JSON.parse(detailedReport) as DetailedUsageStatistics;
+    const ur = parseUsageReport(usageReport);
+    const lr = parseLeadsReport(leadsReport);
+    const mr = parseMetagameReport(metagameReport);
+
+    const pokemon: { [name: string]: DisplayUsageStatistics } = {};
+    for (const [species, p] of Object.entries(dr.data)) {
+      if (species === 'empty') continue;
+
+      const rawWeight = Object.values(p.Abilities).reduce((acc, v) => acc + v, 0);
+
+      const urp = ur.usage[toID(species)];
+      if (!urp) break;
+      const usage = {
+        raw: R(urp.rawp),
+        real: R(urp.realp),
+        weighted: R(urp.weightedp),
+      };
+      if (!usage.weighted) break;
+
+      const lead = { raw: 0, real: 0, weighted: 0 };
+      const lrp = lr.usage[toID(species)];
+      if (lrp) {
+        lead.raw = R(lrp.rawp);
+        lead.real = lead.raw;
+        lead.weighted = R(lrp.weightedp);
+      }
+
+      pokemon[N(species)] = {
+        lead,
+        usage,
+
+        count: p['Raw count'],
+        weight: null, // TODO can parse from moveset report
+        viability: p['Viability Ceiling'],
+
+        abilities: toDisplayObject(p.Abilities, rawWeight, ability => {
+          const o = dex.getAbility(ability);
+          return (o && o.name) || ability;
+        }),
+        items: toDisplayObject(p.Items, rawWeight, item => {
+          if (item === 'nothing') return 'Nothing';
+          const o = dex.getItem(item);
+          return (o && o.name) || item;
+        }),
+        happinesses: toDisplayObject(p.Happiness, rawWeight),
+        spreads: toDisplayObject(p.Spreads, rawWeight),
+        stats: toDisplayObject(computeStats(dex, toID(species), p.Spreads), rawWeight),
+        moves: toDisplayObject(p.Moves, rawWeight, move => {
+          if (move === '') return 'Nothing';
+          const o = dex.getMove(move);
+          return (o && o.name) || move;
+        }),
+        teammates: cleanDisplayObject(dex, p.Teammates) as DisplayUsageStatistics['teammates'],
+        counters: cleanDisplayObject(
+          dex,
+          p['Checks and Counters']
+        ) as DisplayUsageStatistics['counters'],
+      };
+    }
+
+    const tags: { [tag: string]: number } = {};
+    for (const tag in mr.tags) {
+      const r = R(mr.tags[tag]);
+      if (!r) break;
+      tags[tag] = r;
+    }
+    return {
+      battles: dr.info['number of battles'],
+      pokemon,
+      metagame: { tags } as DisplayMetagameStatistics, // TODO
+    };
   }
 })();
+
+function calcUsage(n: Usage, d: Usage) {
+  return {
+    raw: R((n.raw / d.raw) * 6),
+    real: R((n.real / d.real) * 6),
+    weighted: R((n.weighted / d.weighted) * 6),
+  };
+}
+
+function formatEncounterStatistics(v: util.EncounterStatistics) {
+  return [R(v.n), R(v.p), R(v.d)] as [number, number, number];
+}
 
 function toDisplayObject(
   map: { [k: string /* number|ID */]: number },
@@ -140,9 +247,17 @@ function toDisplayObject(
   const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
   const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
-    const r = util.round(v / weight, PRECISION);
+    const r = R(v / weight);
     if (!r) break;
     obj[d(k)] = r;
+  }
+  return obj;
+}
+
+function cleanDisplayObject(dex: Dex, map: { [k: string]: number | number[] }) {
+  const obj: { [k: string]: number | number[] } = {};
+  for (const [k, v] of Object.entries(map)) {
+    obj[dex.getSpecies(k)?.species!] = Array.isArray(v) ? v.map(e => R(e)) : R(v as number);
   }
   return obj;
 }
@@ -220,4 +335,88 @@ function parseLeadsReport(report: string) {
   }
 
   return { total, usage };
+}
+
+function parseMetagameReport(report: string) {
+  const tags: { [tag: string]: number } = {};
+  const lines = report.split('\n');
+
+  let i = 0;
+  for (; i < lines.length; i++) {
+    const d = lines[i].indexOf('.');
+    if (d < 0) break;
+    const tag = lines[i].slice(1, d);
+    const weight = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100;
+    tags[tag] = weight;
+  }
+  i++;
+  const mean = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf(')')));
+
+  let j = 0;
+  let start: number | null = null;
+  let step: number | null = null;
+  const values = [];
+  const begin = ++i;
+  for (; i < lines.length; i++) {
+    const line = lines[i].split('|');
+    if (line.length < 2) break;
+    if (start === null || !step) {
+      if (line[0].search(/\d/) >= 0) {
+        const n = Number(line[0]);
+        if (start === null) {
+          start = n;
+          j = i;
+          if (i !== begin) step = 0;
+        } else {
+          const s: number = (n - start) / (i - j);
+          if (step === 0) start -= (j - begin) * s;
+          step = s;
+        }
+      }
+    }
+    values.push(line[1].length);
+  }
+  const histogram: Array<[number, number]> = [];
+  for (const value of values) {
+    histogram.push([start as number, value]);
+    (start as number) += step!;
+  }
+  i++;
+  const legend = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100;
+  return { tags, mean, histogram, legend };
+}
+
+const LVL5 = new Set(['gen8lc', 'gen7lc', 'gen6lc', 'gen5lc', 'gen4lc', 'littlecup', 'lc']);
+// prettier-ignore
+const LVL50 = new Set([
+  'gen8battlestadiumsingles', 'gen8vgc2020', 'gen8battlestadiumdoubles', 'gen8galarnewcomers',
+  'gen7letsgoou', 'gen7vgc2019', 'gen7vgc2018', 'gen7vgc2017', 'battlespotdoubles',
+  'batctlespotspecial7', 'battlespottriples', 'gen7battlespotdoubles', 'gen7vgc2017',
+  'gen7vgc2017beta', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
+]);
+
+// BUG: the original spreads are lossy and we have no information about level or
+// IVs, but its fairly safe to assume the max for both of these.
+// TODO: return empty resu;ts if format invalidates this assumptions.
+function computeStats(dex: Dex, species: ID, spreads: { [spread: string]: number }) {
+  const base = util.getSpecies(species, dex).baseStats;
+  const level = LVL5.has(dex.format) ? 5 : LVL50.has(dex.format) ? 50 : 100;
+  const s: { [stats: string]: number } = {};
+
+  for (const spread in spreads) {
+    const r = R(spreads[spread]);
+    if (!r) break;
+
+    const split = spread.split(':');
+    const nature = dex.getNature(split[0]);
+    const revs = split[1].split('/');
+
+    const stats: number[] = [];
+    for (const [i, stat] of STATS.entries()) {
+      stats.push(calcStat(stat, base[stat], 31, Number(revs[i]), level, nature));
+    }
+    s[stats.join('/')] = r;
+  }
+
+  return s;
 }

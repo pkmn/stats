@@ -5,11 +5,16 @@ const fs = require('fs');
 
 const stringify = require('json-stringify-pretty-compact');
 const stats = require('./build/index');
+const Dex = require('ps').Dex;
 
-const r = f => fs.readFileSync(`/Users/kjs/Downloads/gen7ou-1825.${f}`, 'utf8');
-stringify(stats.Display.fromReports(
-  r('usage.txt'),
-  r('leads.txt'),
-  r('moveset.txt'),
-  JSON.parse(r('detailed.json')),
-  r('metagame.txt')));
+// tslint:disable-next-line: no-floating-promises
+(async () => {
+  const dex = await Dex.forFormat('gen7ou');
+  const r = f => fs.readFileSync(`/Users/kjs/Downloads/gen7ou-1825.${f}`, 'utf8');
+  console.log(stringify(stats.Display.fromReports(
+    dex,
+    r('usage.txt'),
+    r('leads.txt'),
+    r('detailed.json'),
+    r('metagame.txt'))));
+})();
