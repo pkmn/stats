@@ -46,6 +46,7 @@ export interface DisplayMetagameStatistics {
   };
 }
 
+// TODO: this doesnt really belong here
 export interface DetailedUsageStatistics {
   info: {
     metagame: string;
