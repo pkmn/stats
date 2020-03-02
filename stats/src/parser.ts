@@ -311,6 +311,7 @@ export const Parser = new (class {
         const mega = util.getMegaEvolution(pokemon, dex);
         if (mega) {
           pokemon.species = mega.species;
+          // FIXME: don't override mega's ability (and default to species.abilities['0'] if absent)
           pokemon.ability = mega.ability;
         }
       }
