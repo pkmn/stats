@@ -151,7 +151,7 @@ export function roundStr(v: number, p = PRECISION) {
 export function displaySpecies(name: string, dex: Dex) {
   // FIXME: Seriously, we don't filter 'empty'?
   if (name === 'empty') return name;
-  const species = getSpecies(name, dex).species;
+  const species = getSpecies(name, dex).name;
   if (name === 'Flabébé') return 'Flabebe';
   // FIXME: remove bad display of Nidoran-M / Nidoran-F
   return species.startsWith('Nidoran') ? species.replace('-', '') : species;

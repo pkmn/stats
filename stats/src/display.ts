@@ -77,7 +77,7 @@ export interface DetailedMovesetStatistics {
 
 export const Display = new (class {
   fromStatistics(dex: Dex, stats: Statistics, min = 20) {
-    const N = (n: string) => dex.getSpecies(n)?.species!;
+    const N = (n: string) => dex.getSpecies(n)?.name!;
 
     const q = Object.entries(stats.pokemon);
     const real = ['challengecup1v1', '1v1'].includes(dex.format);
@@ -162,7 +162,7 @@ export const Display = new (class {
     detailedReport: string,
     metagameReport: string
   ) {
-    const N = (n: string) => dex.getSpecies(n)?.species!;
+    const N = (n: string) => dex.getSpecies(n)?.name!;
 
     const dr = JSON.parse(detailedReport) as DetailedUsageStatistics;
     const ur = parseUsageReport(usageReport);
@@ -283,7 +283,7 @@ function toDisplayObject(
 function cleanDisplayObject(dex: Dex, map: { [k: string]: number | number[] }) {
   const obj: { [k: string]: number | number[] } = {};
   for (const [k, v] of Object.entries(map)) {
-    obj[dex.getSpecies(k)?.species!] = Array.isArray(v) ? v.map(e => R(e)) : R(v as number);
+    obj[dex.getSpecies(k)?.name!] = Array.isArray(v) ? v.map(e => R(e)) : R(v as number);
   }
   return obj;
 }
@@ -298,7 +298,7 @@ function getTeammates(
   const real = ['challengecup1v1', '1v1'].includes(dex.format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
-    const species = dex.getSpecies(id)?.species!;
+    const species = dex.getSpecies(id)?.name!;
     const s = stats.pokemon[id];
     if (!s) {
       m[species] = 0;

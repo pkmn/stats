@@ -55,7 +55,7 @@ class Dex {
   }
 
   getSpecies(name) {
-    const s = this.dex.getTemplate(name);
+    const s = this.dex.getSpecies(name);
     return s.exists ? s : undefined;
   }
 
