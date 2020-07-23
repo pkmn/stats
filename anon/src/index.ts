@@ -109,7 +109,7 @@ export const Anonymizer = new (class {
         pokemon.name = hash(pokemon.name, salt);
       } else {
         const species = dex.getSpecies(pokemon.species)!;
-        pokemon.name = species.baseSpecies || species.species;
+        pokemon.name = species.baseSpecies || species.name;
       }
       nameMap.set(`${prefix}${name}`, pokemon.name);
       if (verifier && pokemon.name !== name) verifier.names.add(name);
@@ -164,6 +164,7 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
       return undefined;
     }
 
+    case 't:': // |t:|TIMESTAMP
     case ':': // |:|TIMESTAMP
     case 'c:': // |c:|TIMESTAMP|USER|MESSAGE
     case 'chat': // |chat|USER|MESSAGE

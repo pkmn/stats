@@ -41,7 +41,7 @@ declare module 'ps' {
     interface Species extends Effect {
         abilities: {0: string, 1?: string, H?: string, S?: string}
         baseStats: StatsTable<number>
-        species: string
+        name: string
         types: string[]
         baseSpecies?: string
         forme?: string
@@ -69,7 +69,7 @@ declare module 'ps' {
         Aliases: {[id: string]: string}
         Natures: DexTable<Nature>
         Types: DexTable<Type>
-        
+
         format: ID
         gen: 1|2|3|4|5|6|7|8
 
@@ -77,7 +77,7 @@ declare module 'ps' {
         getItem(name: string): Item | undefined
         getMove(name: string): Move | undefined
         getSpecies(name: string): Species | undefined
-        
+
         getNature(name: string): Nature | undefined
         getType(name: string): Type | undefined
 

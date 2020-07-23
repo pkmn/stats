@@ -2,7 +2,7 @@ import { ID } from 'ps';
 
 import { Batch, Checkpoint, Checkpoints, Offset } from '../checkpoint';
 import { Configuration } from '../config';
-import { CheckpointMemoryStorage, CheckpointStorage, LogStorage } from '../storage';
+import { CheckpointMemoryStorage, LogStorage } from '../storage';
 
 const CMP = Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
 
@@ -91,7 +91,7 @@ describe('Checkpoints', () => {
       });
 
       const config = ({
-        logs: logStorage,
+        input: logStorage,
         checkpoints: checkpointStorage,
       } as unknown) as Configuration;
       const accept = (format: ID) => +(format !== 'gen5ou');
@@ -100,10 +100,10 @@ describe('Checkpoints', () => {
         config.batchSize = { apply: batchSize, combine: batchSize };
         const formatBatches = await Checkpoints.restore(config, accept);
         expect(formatBatches.size).toBe(4);
-        expect(formatBatches.get('gen7ou' as ID)!).toHaveLength(Math.ceil(300 / batchSize));
-        expect(formatBatches.get('gen6ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
-        expect(formatBatches.get('gen4ou' as ID)!).toHaveLength(Math.ceil(100 / batchSize));
-        expect(formatBatches.get('gen3ou' as ID)!).toHaveLength(Math.ceil(6 / batchSize));
+        expect(formatBatches.get('gen7ou' as ID)!.batches).toHaveLength(Math.ceil(300 / batchSize));
+        expect(formatBatches.get('gen6ou' as ID)!.batches).toHaveLength(Math.ceil(100 / batchSize));
+        expect(formatBatches.get('gen4ou' as ID)!.batches).toHaveLength(Math.ceil(100 / batchSize));
+        expect(formatBatches.get('gen3ou' as ID)!.batches).toHaveLength(Math.ceil(6 / batchSize));
       }
     });
 
@@ -137,7 +137,7 @@ describe('Checkpoints', () => {
       mockCheckpoint(checkpointStorage, 'gen3ou', '20180202_2_1_2-20180202_2_1_2');
 
       const config = ({
-        logs: logStorage,
+        input: logStorage,
         checkpoints: checkpointStorage,
         batchSize: { apply: 10, combine: 10 },
       } as unknown) as Configuration;
@@ -188,7 +188,10 @@ describe('Checkpoints', () => {
         [80, 89],
         [90, 99],
       ]);
-      expect(indices(formatBatches.get('gen3ou' as ID)!.batches)).toEqual([[0, 1], [3, 5]]);
+      expect(indices(formatBatches.get('gen3ou' as ID)!.batches)).toEqual([
+        [0, 1],
+        [3, 5],
+      ]);
     });
   });
 

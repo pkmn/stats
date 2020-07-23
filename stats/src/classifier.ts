@@ -31,7 +31,7 @@ export const Classifier = new (class {
     let mega: { species: ID; ability: ID } | undefined;
     if (util.isMega(species)) {
       mega = {
-        species: toID(species.species),
+        species: toID(species.name),
         ability: toID(species.abilities['0']),
       };
       pokemon.species = toID(species.baseSpecies);

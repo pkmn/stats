@@ -89,7 +89,7 @@
       "items": {"Berry Juice": 1},
       "happinesses": {"76": 1},
       "spreads": {"Sassy:141/0/8/73/246/42": 1},
-      "stats": {"193/76/233/108/288/92": 1},
+      "stats": {"193/76/219/108/271/92": 1},
       "moves": {"False Swipe": 1, "Iron Defense": 1, "Rest": 1, "Sunny Day": 1},
       "teammates": {
         "Bayleef": 0.9,
@@ -1433,7 +1433,7 @@
         [0.15, 12],
         [0.2, 0]
       ],
-      "mean": -0.1292,
+      "mean": -0.1289,
       "total": 60
     }
   }

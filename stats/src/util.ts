@@ -61,25 +61,22 @@ export function getMegaEvolution(pokemon: PokemonSet<string | ID>, dex: Dex) {
   const item = dexForFormat(dex).getItem(pokemon.item);
   if (!item) return undefined;
   const species = getSpecies(pokemon.species, dex);
-  if (
-    item.name === 'Blue Orb' &&
-    (species.species === 'Kyogre' || species.baseSpecies === 'Kyogre')
-  ) {
+  if (item.name === 'Blue Orb' && (species.name === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
     return { species: 'kyogreprimal' as ID, ability: 'primordialsea' as ID };
   }
   if (
     item.name === 'Red Orb' &&
-    (species.species === 'Groudon' || species.baseSpecies === 'Groudon')
+    (species.name === 'Groudon' || species.baseSpecies === 'Groudon')
   ) {
     return { species: 'groudonprimal' as ID, ability: 'desolateland' as ID };
   }
   // FIXME: Ultra Burst?
-  if (!item.megaEvolves || item.megaEvolves !== species.species || !item.megaStone) {
+  if (!item.megaEvolves || item.megaEvolves !== species.name || !item.megaStone) {
     return undefined;
   }
   const mega = getSpecies(item.megaStone, dex);
   if (!mega) return undefined;
-  return { species: toID(mega.species), ability: toID(mega.abilities['0']) };
+  return { species: toID(mega.name), ability: toID(mega.abilities['0']) };
 }
 
 export function revertFormes(id: ID, dex: Dex) {
