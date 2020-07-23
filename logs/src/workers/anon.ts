@@ -70,7 +70,7 @@ async function apply(batches: Batch[], config: AnonConfiguration) {
   const random = new Random(workerData.num);
   for (const [i, { format, begin, end }] of batches.entries()) {
     const options = formats.get(format)!;
-    const dex= await Dex.forFormat(format);
+    const dex = await Dex.forFormat(format);
 
     const size = end.index.global - begin.index.global + 1;
     const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;

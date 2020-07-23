@@ -241,7 +241,7 @@ function writeReports(
   const min = config.all ? [0, -Infinity] : [20, 0.5];
   const writes = [];
   writes.push(fs.writeFile(path.resolve(reports, `${file}.txt`), usage));
-  const leads = Reports.leadsReport(dex stats);
+  const leads = Reports.leadsReport(dex, stats);
   writes.push(fs.writeFile(path.resolve(reports, 'leads', `${file}.txt`), leads));
   const movesets = Reports.movesetReports(dex, stats, cutoff, tag, min);
   writes.push(fs.writeFile(path.resolve(reports, 'moveset', `${file}.txt`), movesets.basic));
@@ -258,6 +258,6 @@ if (workerData) {
     }
     workerData.type === 'apply'
       ? apply(workerData.formats, workerData.config)
-      : combine(workerData.formats, workerData.config)
+      : combine(workerData.formats, workerData.config);
   })().catch(err => console.error(err));
 }
