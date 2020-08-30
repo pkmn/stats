@@ -1,7 +1,7 @@
 'use strict';
 const ps = require('pokemon-showdown/.sim-dist');
 
-const toID = ps.Dex.Data.Tools.getId;
+const toID = ps.Dex.toID;
 
 class Dex {
   static get() {
