@@ -103,7 +103,7 @@ export const Anonymizer = new (class {
     dex = dex || Dex.get();
     const anonymized = [];
     for (let pokemon of team) {
-      pokemon = COPY ? copyPokemonSet(pokemon) : pokemon;
+      pokemon = copy ? copyPokemonSet(pokemon) : pokemon;
       const name = pokemon.name;
       if (salt) {
         pokemon.name = hash(pokemon.name, salt);
@@ -204,7 +204,6 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'rule': // |rule|RULE: DESCRIPTION
     case 'teamsize': // |teamsize|PLAYER|NUMBER
     case 'clearpoke': // |clearpoke
-    case 'poke': // |poke|PLAYER|DETAILS|ITEM
     case 'teampreview': // |teampreview
     case 'start': // |start
     case 'rated': // |rated, |rated|MESSAGE
@@ -212,6 +211,11 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case 'upkeep': // |upkeep
     case 'tie': /* |tie */ {
       return line;
+    }
+
+    case 'poke': /* |poke|PLAYER|DETAILS|ITEM */ {
+      split[3] = anonymizePokemonDetails(split[3]);
+      return split.join('|');
     }
 
     case '-clearallboost': // |-clearallboost
@@ -308,20 +312,31 @@ function anonymize(line: string, playerMap: Map<ID, string>, pokemonMap: Map<str
     case '-boost': // |-boost|POKEMON|STAT|AMOUNT ([from] EFFECT, [silent], [zeffect])
     case '-unboost': // |-unboost|POKEMON|STAT|AMOUNT ([from] EFFECT, [silent], [zeffect])
     case '-setboost': // |-setboost|POKEMON|STAT|AMOUNT ([from] EFFECT)
+    case '-burst': /* |-burst|POKEMON|SPECIES|ITEM */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      return anonymizeOf(split, pokemonMap).join('|');
+    }
+
     case 'detailschange': // |detailschange|POKEMON|DETAILS|HP STATUS
     case '-formechange': // |-formechange|POKEMON|DETAILS|HP STATUS ([from] EFFECT)
-    case '-burst': // |-burst|POKEMON|SPECIES|ITEM
     case 'switch': // |switch|POKEMON|DETAILS|HP STATUS
     case 'drag': // |drag|POKEMON|DETAILS|HP STATUS
     case 'replace': /* |replace|POKEMON|DETAILS|HP STATUS */ {
       split[2] = anonymizePokemon(split[2], pokemonMap);
+      split[3] = anonymizePokemonDetails(split[3]);
+      return anonymizeOf(split, pokemonMap).join('|');
+    }
+
+    case '-block': /* |-block|POKEMON|EFFECT|MOVE|ATTACKER */ {
+      split[2] = anonymizePokemon(split[2], pokemonMap);
+      if (split[4] && !split[4].startsWith('[')) anonymizePokemon(split[4], pokemonMap);
       return anonymizeOf(split, pokemonMap).join('|');
     }
 
     case '-sethp': /* |-sethp|POKEMON|HP ([from] EFFECT, [silent]) */ {
       // '|-sethp|TARGET|TARGET HP|SOURCE|SOURCE HP' before 7e4929a39f
       split[2] = anonymizePokemon(split[2], pokemonMap);
-      if (split[4]) split[4] = anonymizePokemon(split[4], pokemonMap);
+      if (split[4] && !split[4].startsWith('[')) split[4] = anonymizePokemon(split[4], pokemonMap);
       return split.join('|');
     }
 
@@ -372,6 +387,19 @@ function anonymizePlayer(name: string, playerMap: Map<ID, string>) {
   const anon = playerMap.get(toID(name));
   if (anon) return anon;
   throw new Error(`Unknown player: ${name}`);
+}
+
+const EXCEPTIONS: {[species: string]: string} = {
+  'Farfetch\'d': 'Farfetch’d',
+  'Farfetch\'d-Galar': 'Farfetch’d-Galar',
+  'Sirfetch\'d': 'Sirfetch’d',
+};
+
+// NOTE: details should not require anonymization but PS mishandles certain names
+function anonymizePokemonDetails(details: string) {
+  const split = details.split(',');
+  split[0] = EXCEPTIONS[split[0]] || split[0];
+  return split.join(',');
 }
 
 function anonymizePokemon(pokemon: string, pokemonMap: Map<string, string>) {
