@@ -25,12 +25,7 @@
     "ts-jest": "^26.4.0",
     "typescript": "^4.0.3"
   },
-  "subPackages": [
-    "anon",
-    "stats",
-    "logs",
-    "ui"
-  ],
+  "subPackages": ["anon", "stats", "logs"],
   "scripts": {
     "lint": "eslint --cache workflows --ext ts && subpkg run lint",
     "fix": "eslint --fix workflows --ext ts && subpkg run fix",

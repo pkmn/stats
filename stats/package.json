@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "description": "Logic for processing stats from Pokémon Showdown battle simulator logs",
+  "description": "Logic for processing usage stats from Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",
   "publishConfig": {
@@ -17,8 +17,8 @@
     "json-stringify-pretty-compact": "^2.0.0"
   },
   "scripts": {
-    "lint": "eslint --cache --ext ts src/",
-    "fix": "eslint --fix --ext ts src/",
+    "lint": "eslint --cache src --ext ts",
+    "fix": "eslint --fix src --ext ts",
     "compile": "tsc -p .",
     "test": "jest",
     "pretest": "npm run compile",

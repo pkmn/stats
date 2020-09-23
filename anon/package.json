@@ -11,14 +11,14 @@
   },
   "dependencies": {
     "@pkmn/data": "^0.2.2",
-    "@pkmn/protocol": "^0.0.1"
+    "@pkmn/protocol": "^0.1.0"
   },
   "devDependencies": {
     "@pkmn/dex": "^0.2.2"
   },
   "scripts": {
-    "lint": "eslint --cache --ext ts src/",
-    "fix": "eslint --fix --ext ts src/",
+    "lint": "eslint --cache src --ext ts",
+    "fix": "eslint --fix src --ext ts",
     "compile": "tsc -p .",
     "test": "jest",
     "pretest": "npm run compile",

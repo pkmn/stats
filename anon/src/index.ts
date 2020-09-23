@@ -153,7 +153,9 @@ function anonymizeLog(
 
 const IDENT = /^p\d[a-d]: .*$/;
 
-function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonMap: Map<string, string>) {
+function anonymize(
+  line: string, playerMap: Map<ID, Protocol.Username>, pokemonMap: Map<string, string>
+) {
   if (line === '') return line;
   if (!line.startsWith('|')) return undefined;
   const {args: roArgs, kwArgs: roKWArgs} = Protocol.parseBattleLine(line);
@@ -164,9 +166,9 @@ function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonM
     const buf = `|${a.join('|')}`;
     const kws: string[] = [];
     for (const k in kwArgs) {
-      let v = kwArgs[k];
+      let v = kwArgs[k as keyof typeof kwArgs] as string;
       if (k === 'of') {
-        v = anonymizePokemon(kwArgs[k], pokemonMap);
+        v = anonymizePokemon(v as Protocol.PokemonIdent, pokemonMap);
       } else if (k === 'spread') {
         // TODO: why do we anonymize this - [spread] is currently just hit slots, not idents?
         v = v.split(',').map((s: string | Protocol.PokemonIdent) =>
@@ -248,7 +250,7 @@ function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonM
   }
 
   case '-activate': {
-    if (IDENT.test(args[1])) args[1] = anonymizePokemon(args[1], pokemonMap);
+    if (args[1] && IDENT.test(args[1])) args[1] = anonymizePokemon(args[1], pokemonMap);
     return combine(args);
   }
 
@@ -273,13 +275,15 @@ function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonM
 
   case '-prepare': {
     args[1] = anonymizePokemon(args[1], pokemonMap);
-    args[3] = anonymizePokemon(args[3], pokemonMap);
+    if (args[3]) args[3] = anonymizePokemon(args[3], pokemonMap);
     return combine(args);
   }
 
   case 'move': {
     args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (IDENT.test(args[3])) args[3] = anonymizePokemon(args[3], pokemonMap);
+    if (args[3] && args[3] !== 'null' && IDENT.test(args[3])) {
+      args[3] = anonymizePokemon(args[3], pokemonMap);
+    }
     return combine(args);
   }
 
@@ -337,6 +341,7 @@ function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonM
   case '-block': {
     args[1] = anonymizePokemon(args[1], pokemonMap);
     if (args[4]) anonymizePokemon(args[4], pokemonMap);
+    args[4] = args[4] || '';
     return combine(args);
   }
 
@@ -351,8 +356,8 @@ function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonM
     args[1] = anonymizePokemon(args[1], pokemonMap);
     if (args[3] && IDENT.test(args[3])) {
       args[3] = anonymizePokemon(args[3] as Protocol.PokemonIdent, pokemonMap);
-    } else if (args[3] && args[3].includes(':')) {
-      args[3] = anonymizeSide(args[3], playerMap);
+    } else if (args[3]?.includes(':')) {
+      args[3] = anonymizeSide(args[3] as Protocol.Side, playerMap);
     } else if (args[4]) {
       args[4] = anonymizePokemon(args[4], pokemonMap);
     }
@@ -364,8 +369,9 @@ function anonymize(line: string, playerMap: Map<ID, Protocol.Username>, pokemonM
     if ('wisher' in kwArgs) {
       // Not the actual position, but we don't really care, we just need the side
       const position = args[1].split(': ')[0];
-      const full =
-        anonymizePokemon(`${position}: ${kwArgs.wisher}` as Protocol.PokemonIdent, pokemonMap);
+      const full = anonymizePokemon(
+        `${position}: ${kwArgs.wisher as string}` as Protocol.PokemonIdent, pokemonMap
+      );
       kwArgs.wisher = full.split(': ')[1] as Protocol.Nickname;
     }
     return combine(args);
@@ -411,7 +417,7 @@ function anonymizePokemonDetails<D extends Protocol.PokemonDetails | Protocol.Sp
 function anonymizePokemon(pokemon: Protocol.PokemonIdent, pokemonMap: Map<string, string>) {
   const {player, position, name} = Protocol.parsePokemonIdent(pokemon);
   const anon = pokemonMap.get(`${player}: ${name}`);
-  if (anon) return `${player}${position}: ${anon}` as Protocol.PokemonIdent;
+  if (anon) return `${player}${position || ''}: ${anon}` as Protocol.PokemonIdent;
   throw new Error(`Unknown Pokemon: ${pokemon}`);
 }
 

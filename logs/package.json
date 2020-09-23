@@ -1,23 +1,17 @@
 {
-  "name": "@pkmn/anon",
+  "name": "@pkmn/logs",
   "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "description": "Logic for anonymizing Pokémon Showdown battle simulator logs",
+  "description": "Logic for processing Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@pkmn/data": "^0.2.2"
-  },
-  "devDependencies": {
-    "@pkmn/dex": "^0.2.2"
-  },
   "scripts": {
-    "lint": "eslint --cache --ext ts src/",
-    "fix": "eslint --fix --ext ts src/",
+    "lint": "eslint --cache src --ext ts",
+    "fix": "eslint --fix src --ext ts",
     "compile": "tsc -p .",
     "test": "jest",
     "pretest": "npm run compile",
