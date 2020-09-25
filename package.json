@@ -6,7 +6,7 @@
     "logs": "file:logs",
     "minimist": "^1.2.5",
     "source-map-support": "^0.5.19",
-    "subpkg": "^3.0.3"
+    "subpkg": "^4.0.1"
   },
   "optionalDependencies": {
     "anon": "file:anon",
@@ -15,9 +15,9 @@
    "devDependencies": {
     "@pkmn/eslint-config": "^0.6.1",
     "@types/jest": "^26.0.14",
-    "@types/node": "^14.11.1",
-    "@typescript-eslint/eslint-plugin": "^4.1.1",
-    "@typescript-eslint/parser": "^4.1.1",
+    "@types/node": "^14.11.2",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^24.0.2",
     "eslint": "^7.9.0",

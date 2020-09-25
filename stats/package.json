@@ -10,10 +10,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.2.2"
+    "@pkmn/data": "^0.2.3"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.2.2",
+    "@pkmn/dex": "^0.2.3",
     "json-stringify-pretty-compact": "^2.0.0"
   },
   "scripts": {

@@ -1120,7 +1120,6 @@ Basculin moved from NU to PU
 Bisharp moved from UU to OU
 Blastoise moved from RU to NU
 Blissey moved from OU to UU
-Bouffalant moved from PU to ZU
 Braviary moved from RU to NU
 Chansey moved from UU to OU
 Charizard moved from RU to NU
@@ -1169,7 +1168,7 @@ Keldeo moved from UU to OU
 Kingdra moved from UU to RU
 Kingler moved from NU to PU
 Klefki moved from RU to UU
-Klinklang moved from PU to NU
+Klinklang moved from PUBL to NU
 Kommo-o moved from OU to UU
 Kyurem moved from OU to UU
 Lanturn moved from NU to PU
