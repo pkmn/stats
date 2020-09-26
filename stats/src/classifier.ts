@@ -4,7 +4,7 @@ import * as util from './util';
 // TODO: Where does this constant come from? (ie. rename!)
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
-export const Classifier = new (class {
+export const Classifier = new class {
   classifyTeam(gen: Generation, team: Array<PokemonSet<ID>>) {
     let teamBias = 0;
     const teamStalliness = [];
@@ -65,7 +65,7 @@ export const Classifier = new (class {
 
     return {bias, stalliness};
   }
-})();
+};
 
 const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 

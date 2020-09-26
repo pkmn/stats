@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 
-import {Generation, ID, toID, PokemonSet} from '@pkmn/data';
-import {Protocol} from '@pkmn/protocol';
+import {Generation, ID, toID, PokemonSet, SpeciesName} from '@pkmn/data';
+import {Protocol, Username, Nickname, PokemonIdent, PokemonDetails} from '@pkmn/protocol';
 
 export interface Log {
   id: string;
@@ -56,28 +56,34 @@ export interface Rating {
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
-const COPY = true;
-
-export const Anonymizer = new (class {
-  anonymize(gen: Generation, raw: Log, salt?: string, verifier?: Verifier): AnonymizedLog {
-    const p1 = (salt ? hash(raw.p1, salt) : 'Player 1') as Protocol.Username;
-    const p2 = (salt ? hash(raw.p2, salt) : 'Player 2') as Protocol.Username;
+export const Anonymizer = new class {
+  anonymize(
+    gen: Generation,
+    raw: Log,
+    options?: {
+      salt?: string;
+      verifier?: Verifier;
+      copy?: boolean;
+    }
+  ): AnonymizedLog {
+    const p1 = (options?.salt ? hash(raw.p1, options.salt) : 'Player 1') as Username;
+    const p2 = (options?.salt ? hash(raw.p2, options.salt) : 'Player 2') as Username;
     const winner = raw.winner === raw.p1 ? p1 : raw.winner === raw.p2 ? p2 : '';
 
-    const playerMap = new Map<ID, Protocol.Username>();
+    const playerMap = new Map<ID, Username>();
     playerMap.set(toID(raw.p1), p1);
     playerMap.set(toID(raw.p2), p2);
 
-    if (verifier) {
-      verifier.names.add(raw.p1);
-      verifier.names.add(raw.p2);
-    }
+    options?.verifier?.names.add(raw.p1);
+    options?.verifier?.names.add(raw.p2);
 
     // Rating may actually contain more fields, we make sure to only copy over the ones we expose
     const p1rating = raw.p1rating ? {rpr: raw.p1rating.rpr, rprd: raw.p1rating.rprd} : null;
     const p2rating = raw.p2rating ? {rpr: raw.p2rating.rpr, rprd: raw.p2rating.rprd} : null;
 
-    const pokemonMap = new Map<string, string>();
+    const pokemonMap = new Map<PokemonIdent | Nickname, SpeciesName | string>();
+    options = options || {};
+    options.copy = options.copy ?? false;
     return {
       format: raw.format,
       endType: raw.endType,
@@ -85,42 +91,44 @@ export const Anonymizer = new (class {
       score: raw.score,
       p1rating,
       p2rating,
-      p1team: this.anonymizeTeam(gen, raw.p1team, salt, pokemonMap, 'p1: ', verifier, !COPY),
-      p2team: this.anonymizeTeam(gen, raw.p2team, salt, pokemonMap, 'p2: ', verifier, !COPY),
+      p1team: this.anonymizeTeam(gen, raw.p1team, {...options, prefix: 'p1: ', pokemonMap}),
+      p2team: this.anonymizeTeam(gen, raw.p2team, {...options, prefix: 'p2: ', pokemonMap}),
       p1,
       p2,
       winner,
-      log: anonymizeLog(raw.log, playerMap, pokemonMap, verifier),
-      inputLog: anonymizeInputLog(raw.inputLog, verifier),
+      log: anonymizeLog(raw.log, playerMap, pokemonMap, options?.verifier),
+      inputLog: anonymizeInputLog(raw.inputLog, options?.verifier),
     };
   }
 
   anonymizeTeam(
     gen: Generation,
     team: PokemonSet[],
-    salt?: string,
-    nameMap = new Map<string, string>(),
-    prefix = '',
-    verifier?: Verifier,
-    copy = true
+    options?: {
+      pokemonMap?: Map<PokemonIdent | Nickname, SpeciesName | string>;
+      salt?: string;
+      prefix?: string;
+      verifier?: Verifier;
+      copy?: boolean;
+    }
   ) {
     const anonymized = [];
     for (let pokemon of team) {
-      pokemon = copy ? copyPokemonSet(pokemon) : pokemon;
+      pokemon = (options?.copy ?? true) ? copyPokemonSet(pokemon) : pokemon;
       const name = pokemon.name;
-      if (salt) {
-        pokemon.name = hash(pokemon.name, salt);
+      if (options?.salt) {
+        pokemon.name = hash(pokemon.name, options.salt);
       } else {
         const species = gen.species.get(pokemon.species)!;
         pokemon.name = species.baseSpecies || species.name;
       }
-      nameMap.set(`${prefix}${name}`, pokemon.name);
-      if (verifier && pokemon.name !== name) verifier.names.add(name);
+      options?.pokemonMap?.set(`${options?.prefix || ''}${name}` as PokemonIdent, pokemon.name);
+      if (pokemon.name !== name) options?.verifier?.names.add(name);
       anonymized.push(pokemon);
     }
     return anonymized;
   }
-})();
+};
 
 function anonymizeInputLog(raw: string[], verifier?: Verifier) {
   const log: string[] = [];
@@ -136,8 +144,8 @@ function anonymizeInputLog(raw: string[], verifier?: Verifier) {
 
 function anonymizeLog(
   raw: string[],
-  playerMap: Map<ID, Protocol.Username>,
-  pokemonMap: Map<string, string>,
+  playerMap: Map<ID, Username>,
+  pokemonMap: Map<PokemonIdent | Nickname, SpeciesName | string>,
   verifier?: Verifier
 ) {
   const log: string[] = [];
@@ -154,7 +162,9 @@ function anonymizeLog(
 const IDENT = /^p\d[a-d]: .*$/;
 
 function anonymize(
-  line: string, playerMap: Map<ID, Protocol.Username>, pokemonMap: Map<string, string>
+  line: string,
+  playerMap: Map<ID, Username>,
+  pokemonMap: Map<PokemonIdent | Nickname, SpeciesName | string>
 ) {
   if (line === '') return line;
   if (!line.startsWith('|')) return undefined;
@@ -168,11 +178,11 @@ function anonymize(
     for (const k in kwArgs) {
       let v = kwArgs[k as keyof typeof kwArgs] as string;
       if (k === 'of') {
-        v = anonymizePokemon(v as Protocol.PokemonIdent, pokemonMap);
+        v = anonymizePokemon(v as PokemonIdent, pokemonMap);
       } else if (k === 'spread') {
         // TODO: why do we anonymize this - [spread] is currently just hit slots, not idents?
-        v = v.split(',').map((s: string | Protocol.PokemonIdent) =>
-          IDENT.test(s) ? anonymizePokemon(s as Protocol.PokemonIdent, pokemonMap) : s).join(',');
+        v = v.split(',').map((s: string | PokemonIdent) =>
+          IDENT.test(s) ? anonymizePokemon(s as PokemonIdent, pokemonMap) : s).join(',');
       }
       kws.push(`[${k}] ${v}`);
     }
@@ -213,11 +223,11 @@ function anonymize(
   case 'seed':
   case 'message':
   case '-message':
-  case '-hint':
-  case '-anim': {
+  case '-hint': {
     return undefined;
   }
 
+  case 'done':
   case 'gametype':
   case 'gen':
   case 'tier':
@@ -273,6 +283,7 @@ function anonymize(
     return combine(args);
   }
 
+  case '-anim':
   case '-prepare': {
     args[1] = anonymizePokemon(args[1], pokemonMap);
     if (args[3]) args[3] = anonymizePokemon(args[3], pokemonMap);
@@ -355,7 +366,7 @@ function anonymize(
   case '-ability': {
     args[1] = anonymizePokemon(args[1], pokemonMap);
     if (args[3] && IDENT.test(args[3])) {
-      args[3] = anonymizePokemon(args[3] as Protocol.PokemonIdent, pokemonMap);
+      args[3] = anonymizePokemon(args[3] as PokemonIdent, pokemonMap);
     } else if (args[3]?.includes(':')) {
       args[3] = anonymizeSide(args[3] as Protocol.Side, playerMap);
     } else if (args[4]) {
@@ -370,9 +381,9 @@ function anonymize(
       // Not the actual position, but we don't really care, we just need the side
       const position = args[1].split(': ')[0];
       const full = anonymizePokemon(
-        `${position}: ${kwArgs.wisher as string}` as Protocol.PokemonIdent, pokemonMap
+        `${position}: ${kwArgs.wisher as string}` as PokemonIdent, pokemonMap
       );
-      kwArgs.wisher = full.split(': ')[1] as Protocol.Nickname;
+      kwArgs.wisher = full.split(': ')[1] as Nickname;
     }
     return combine(args);
   }
@@ -393,7 +404,7 @@ function anonymize(
   }
 }
 
-function anonymizePlayer(name: string, playerMap: Map<ID, Protocol.Username>) {
+function anonymizePlayer(name: string, playerMap: Map<ID, Username>) {
   const anon = playerMap.get(toID(name));
   if (anon) return anon;
   throw new Error(`Unknown player: ${name}`);
@@ -406,22 +417,22 @@ const EXCEPTIONS: {[species: string]: string} = {
 };
 
 // NOTE: details/species should not require anonymization but PS mishandles certain names
-function anonymizePokemonDetails<D extends Protocol.PokemonDetails | Protocol.SpeciesName>(
-  details: D
-) {
+function anonymizePokemonDetails<D extends PokemonDetails | SpeciesName>(details: D) {
   const split = details.split(',');
   split[0] = EXCEPTIONS[split[0]] || split[0];
   return split.join(',') as D;
 }
 
-function anonymizePokemon(pokemon: Protocol.PokemonIdent, pokemonMap: Map<string, string>) {
+function anonymizePokemon(
+  pokemon: PokemonIdent, pokemonMap: Map<PokemonIdent | Nickname, SpeciesName | string>
+) {
   const {player, position, name} = Protocol.parsePokemonIdent(pokemon);
-  const anon = pokemonMap.get(`${player}: ${name}`);
-  if (anon) return `${player}${position || ''}: ${anon}` as Protocol.PokemonIdent;
+  const anon = pokemonMap.get(`${player}: ${name}` as PokemonIdent);
+  if (anon) return `${player}${position || ''}: ${anon}` as PokemonIdent;
   throw new Error(`Unknown Pokemon: ${pokemon}`);
 }
 
-function anonymizeSide(side: Protocol.Side, playerMap: Map<ID, Protocol.Username>) {
+function anonymizeSide(side: Protocol.Side, playerMap: Map<ID, Username>) {
   return `${side.slice(0, 4)}${anonymizePlayer(side.slice(4), playerMap)}` as Protocol.Side;
 }
 

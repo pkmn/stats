@@ -61,7 +61,7 @@ export interface MetagameStatistics {
 
 const EMPTY: Set<ID> = new Set();
 
-export const Stats = new (class {
+export const Stats = new class {
   create() {
     return {
       battles: 0,
@@ -235,7 +235,7 @@ export const Stats = new (class {
     a.metagame = combineMetagame(a.metagame, b.metagame);
     return a;
   }
-})();
+};
 
 function getWeights(player: Player, cutoffs: number[]): [Array<{ s: number; m: number }>, boolean] {
   let save = false;

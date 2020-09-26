@@ -83,7 +83,7 @@ export interface DetailedMovesetStatistics {
 const SPECIES = /\| (.*) [-+.0-9]+ \([-+.0-9]+±[-+.0-9]+\)/;
 const OUTCOME = /\|\W+\(([-+.0-9]+)% KOed \/ ([-+.0-9]+)% switched out\)/;
 
-export const Display = new (class {
+export const Display = new class {
   fromStatistics(gen: Generation, format: ID, stats: Statistics, min = 20): DisplayStatistics {
     const N = (n: string) => gen.species.get(n)?.name as string;
 
@@ -267,7 +267,7 @@ export const Display = new (class {
       metagame: {tags, stalliness},
     };
   }
-})();
+};
 
 function calcUsage(n: Usage, d: Usage, f = 1) {
   return {

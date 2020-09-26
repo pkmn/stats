@@ -45,7 +45,7 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 
 const MIN = [20, 0.5];
 
-export const Reports = new (class {
+export const Reports = new class {
   usageReport(gen: Generation, format: ID, stats: Statistics) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
     if (['challengecup1v1', '1v1'].includes(format)) {
@@ -424,7 +424,7 @@ export const Reports = new (class {
     }
     return s;
   }
-})();
+};
 
 const SKIP = new Set([
   'pichuspikyeared', 'unownb', 'unownc', 'unownd', 'unowne', 'unownf', 'unowng', 'unownh',

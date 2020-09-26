@@ -65,7 +65,7 @@ type Slot = 0 | 1 | 2 | 3 | 4 | 5;
 const ROAR = new Set(['Roar', 'Whirlwind', 'Circle Throw', 'Dragon Tail']);
 const UTURN = new Set(['U-Turn', 'U-turn', 'Volt Switch', 'Baton Pass']);
 
-export const Parser = new (class {
+export const Parser = new class {
   parse(gen: Generation, format: ID, raw: Log) {
     // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
     if ((raw as unknown) === '"log"') throw new Error('Log = "log"');
@@ -319,7 +319,7 @@ export const Parser = new (class {
     }
     return team as Array<PokemonSet<ID>>;
   }
-})();
+};
 
 // FIXME: meloettapiroutte? darmanitanzen?
 // prettier-ignore

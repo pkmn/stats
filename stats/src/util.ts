@@ -30,7 +30,7 @@ export const enum Outcome {
 
 const ALIASES: Readonly<{ [id: string]: string }> = aliases;
 
-// FIXME: Remove newGenerations and ignoreGeneration in favor of using the normal APIs!
+// FIXME: Remove newGenerations and ignoreGen in favor of using the normal APIs!
 let DEFAULT!: Generation;
 export function newGenerations(dex: Dex) {
   const gens = new Generations(dex, e => !!e.exists);
