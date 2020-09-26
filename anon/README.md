@@ -48,7 +48,8 @@ The [`anonymize`](anonymize) tool takes in a log as input and anonymizes it:
 $ anonymize 2020-09/gen8ou/2020-09-25/gen8ou-2875469343.log
 ```
 
-If there are potential leaks the warnings from the `Verifier` will be output instead.
+If there are potential leaks the warnings from the `Verifier` will be output instead. For
+anonymizing logs efficiently *en masse*, see [`@pkmn/logs`](../logs).
 
 ### Browser
 

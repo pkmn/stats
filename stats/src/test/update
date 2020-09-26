@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
-require('source-map-support').install();
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
+
 const integration = require('../../build/test/integration');
-// tslint:disable-next-line: no-floating-promises
 (async () => integration.update(await integration.process()))(); // Update golden files
