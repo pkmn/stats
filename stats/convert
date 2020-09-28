@@ -1,18 +1,25 @@
 #!/usr/bin/env node
+'use strict';
 
-require('source-map-support').install();
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
 
 const fs = require('fs');
 const path = require('path');
+
 const stats = require('./build');
 const gens = stats.newGenerations(require('@pkmn/dex').Dex);
 const stringify = require('json-stringify-pretty-compact');
 
-const dir = path.join(__dirname, 'src/test/testdata/reports');
-const format = process.argv[2] || 'gen7ubers';
+const dir = process.argv[2] || path.join(__dirname, 'src/test/testdata/reports/gen7ubers');
+const format = path.basename(dir);
 const cutoff = process.argv[3] || 1630;
+const gen = gens.get(format.startsWith('gen') ? +format.charAt(3) : 6);
 
 const r = f =>
   fs.readFileSync(`${dir}/${format}/${f}.${cutoff}.${f === 'detailed' ? 'json' : 'txt'}`, 'utf8');
 console.log(stringify(stats.Display.fromReports(
-  gens.get(7), r('usage'), r('leads'), r('movesets'), r('detailed'), r('metagame'))));
+  gen, r('usage'), r('leads'), r('movesets'), r('detailed'), r('metagame'))));

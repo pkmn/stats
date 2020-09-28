@@ -155,3 +155,11 @@ that are relevant:
   particularly interesting for balancing Random Battles, though for non-random formats weighted
   statistics are more important.
 - Information about the **exact `stats`** that were used (this includes contributions from IVs, and importantly, level) have been included and information about **`spreads` has been dropped**.
+
+#### Legacy
+
+A [conversion tool](convert) exists for transforming the old reports into the new output format,
+however, the old reports do not contain all of the data required to populate the new `Statistics`
+object. Instead, a legacy version of `Statistics` is produced which does not have `unique`, `wins`
+or `stats` fields but retains the `happinesses` and `spreads` fields (rounded and respecting
+cutoffs approrpriately) instead.

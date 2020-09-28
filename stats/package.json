@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "bin": {
+    "convert": "./convert"
+  },
   "description": "Logic for processing usage stats from Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",

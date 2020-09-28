@@ -377,7 +377,7 @@ function identify(
     p1: {team: battle.p1.team.pokemon.map(p => p.species), idents: idents.p1},
     p2: {team: battle.p2.team.pokemon.map(p => p.species), idents: idents.p2},
   };
-  // FIXME: This occurs due to interactons between Illusion and Transform/Illusion (which is
+  // BUG: This occurs due to interactons between Illusion and Transform/Imposter (which is
   // exclusively an issue in Hackmons formats). We don't have enough information in a single
   // log line to be able to disambiguate this :(.
   throw new Error(`Unable to locate ${side}'s '${name}' in ${JSON.stringify(state)}`);
