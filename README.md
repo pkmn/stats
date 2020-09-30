@@ -13,4 +13,32 @@ FIXME
 
 FIXME workflows, `process`
 
+    YYYY-MM
+    └── format
+        └── YYYY-MM-DD
+            └── battle-format-N.log.json
+
+FIXME
+
+    YYYY-MM
+    ├── chaos
+    │   └── format-N.json
+    ├── format-N.txt
+    ├── leads
+    │   └── format-N.txt
+    ├── metagame
+    │   └── format-N.txt
+    ├── monotype
+    │   ├── chaos
+    │   │   └── format-monoT-N.json
+    │   ├── format-monoT-N.txt
+    │   ├── leads
+    │   │   └── format-monoT-N.txt
+    │   ├── metagame
+    │   │   └── format-monoT-N.txt
+    │   └── moveset
+    │       └── format-monoT-N.txt
+    └── moveset
+        └── format-N.txt
+
 Everything in this repository is distributed under the terms of the [MIT License](LICENSE).
