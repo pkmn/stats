@@ -430,19 +430,14 @@ function statToEV(
   level: number,
   nature: Nature
 ) {
-  const rud = (a: number, b: number) => Math.trunc(a / b) + (a % b === 0 ? 0 : 1);
-  let ev;
+  if (gen.num < 3) iv = gen.stats.toDV(iv) * 2;
   if (stat === 'hp') {
-    ev = base === 1 ? 0 : Math.max(0, (rud((val - level - 10) * 100, level) - 2 * base - iv) * 4);
+    if (base === 1) return 0;
+    return Math.max(0, (Math.ceil(((val - level - 10) * 100) / level) - 2 * base - iv) * 4);
   } else {
     const n = !nature ? 1 : nature.plus === stat ? 1.1 : nature.minus === stat ? 0.9 : 1;
-    ev = Math.max(0, (rud((rud(val, n) - 5) * 100, level) - 2 * base - iv) * 4);
+    return Math.max(0, (Math.ceil(((Math.ceil(val / n) - 5) * 100) / level) - 2 * base - iv) * 4);
   }
-  // TODO: can we actually compute the EV without needing to search?
-  for (; ev > 0; ev -= 4) {
-    if (gen.stats.calc(stat, base, iv, ev - 4, level, nature) !== val) break;
-  }
-  return ev;
 }
 
 function updateTeammates(
