@@ -1,6 +1,7 @@
 # `@pkmn/anon`
 
 ![Test Status](https://github.com/pkmn/stats/workflows/Tests/badge.svg)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 [![npm version](https://img.shields.io/npm/v/@pkmn/anon.svg)](https://www.npmjs.com/package/@pkmn/anon)
 
 Logic for anonymizing Pokémon Showdown teams and battle logs.

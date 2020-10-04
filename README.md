@@ -1,6 +1,7 @@
 # `@pkmn/stats`
 
 ![Test Status](https://github.com/pkmn/stats/workflows/Tests/badge.svg)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 This is the top level of [`@pkmn`](https://pkmn.cc/@pkmn/)'s Pokémon Showdown battle logs
 processing and analysis components.

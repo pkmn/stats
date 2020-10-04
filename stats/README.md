@@ -1,6 +1,7 @@
 # `@pkmn/stats`
 
 ![Test Status](https://github.com/pkmn/stats/workflows/Tests/badge.svg)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 [![npm version](https://img.shields.io/npm/v/@pkmn/stats.svg)](https://www.npmjs.com/package/@pkmn/stats)
 
 This package provides the core logic required for parsing and analyzing Pokémon Showdown battle
