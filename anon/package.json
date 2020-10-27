@@ -30,5 +30,10 @@
     "test": "jest",
     "pretest": "npm run compile",
     "posttest": "npm run lint"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": ["node_modules/", "build/"]
   }
 }
