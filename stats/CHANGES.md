@@ -29,8 +29,8 @@ In addition to the high-level architectural changes, Smogon-Usage-Stats has a nu
 quirks that have been corrected by `@pkmn/stats`:
 
 - The ordering of output from Smogon-Usage-Stats often depends on Python 2's internal **sort
-  ordering** for dictionaries, `@pkmn/stats` does not base its sort orders on a particular programming
-  language's implementation details.
+  ordering** for dictionaries, `@pkmn/stats` does not base its sort orders on a particular
+  programming language's implementation details.
 - `@pkmn/stats` offers a [**unified display option**](OUTPUT.md) that consolidates and extends the
   information from all of Smogon-Usage-Stats reports.
 - The reports from processing logs with `@pkmn/stats` via `@pkmn/logs` are going to be subtly
@@ -41,10 +41,12 @@ quirks that have been corrected by `@pkmn/stats`:
   reports match), but is a difference that results in practice given that `@pkmn/logs` is the
   replacement for Smogon-Usage-Stats' processing infrastructure.
 - Smogon-Usage-Stats 'extracts' type and base stat data from Pokémon Showdown's data files but
-  **only handles the most recent generation**, meaning when it processes logs from older generations.
-  the modern data is erroneously used. `@pkmn/stats` uses the accurate data for the generation being processed.
+  **only handles the most recent generation**, meaning when it processes logs from older
+  generations. the modern data is erroneously used. `@pkmn/stats` uses the accurate data for the
+  generation being processed.
 - Smogon-Usage-Stats considers 'Primal' Pokémon as mega-evolutions along with 'Mega' Pokémon but
-  forgets about **'Ultra Burst'**. `@pkmn/stats` handles 'Ultra Burst' Pokémon the same as the other mega-evolution types.
+  forgets about **'Ultra Burst'**. `@pkmn/stats` handles 'Ultra Burst' Pokémon the same as the other
+  mega-evolution types.
 - Smogon-Usage-Stats depends on numerous **hardcoded lists** - of non-singles or non-6v6 formats,
   'setup' moves, 'dragon' Pokémon, battle formes etc which include several notable absences
   (Darmanitan-Zen and Meloetta-Piroutte are not considered formes, Kommo-o is not considered a
@@ -56,8 +58,8 @@ quirks that have been corrected by `@pkmn/stats`:
   `@pkmn/stats` but influences results and is displayed by Smogon-Usage-Stats.
 - The code used by Smogon-Usage-Stats to display the **'stalliness' histogram** report contains a
   bug in the [logic used to determine the start as it attempts to compare an array and a
-  number](https://github.com/Antar1011/Smogon-Usage-Stats/blob/59a9c1cf3570a9d68d89e073699cce17b1d999c7/StatCounter.py#L354-L356)
-  \- this no-op is simply removed in `@pkmn/stats`.
+  number](https://github.com/Antar1011/Smogon-Usage-Stats/blob/59a9c1cf/StatCounter.py#L354-L356) -
+  this no-op is simply removed in `@pkmn/stats`.
 - In the case of a **'double down'** where both sides' Pokémon faint, Smogon-Usage-Stats only
   increments the KO count for a single side in the case of `|switch|` or `|drag|` protocol messages
   (it handles double downs properly in the case of `|win|` or `|tie|`). `@pkmn/stats` treats all

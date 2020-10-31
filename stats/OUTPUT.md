@@ -150,11 +150,13 @@ that are relevant:
   usage for the Pokemon in question.
 - **`counters` has changed from `[n, p, d]` to `[n, koed/n, switched/n]`**. `p` and `d` are
   derivable from `koed` and `switched` but not the other way around.
-- Usage statistics tracking the amount of **`unique `users** that used a specific Pokemon for use in tiering calculations has been added. This has been requested by Smogon's tiering admins.
+- Usage statistics tracking the amount of **`unique` users** that used a specific Pokemon for use in
+  tiering calculations has been added. This has been requested by Smogon's tiering admins.
 - Usage statistics tracking the amount of **`wins`** a specific Pokemon was involved in. This is
   particularly interesting for balancing Random Battles, though for non-random formats weighted
   statistics are more important.
-- Information about the **exact `stats`** that were used (this includes contributions from IVs, and importantly, level) have been included and information about **`spreads` has been dropped**.
+- Information about the **exact `stats`** that were used (this includes contributions from IVs, and
+  importantly, level) have been included and information about **`spreads` has been dropped**.
 
 #### Legacy
 

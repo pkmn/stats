@@ -96,7 +96,8 @@ Bias is a metric computed from a Pokémon's base stats which compares offensive 
 prowess whereas stalliness is meant to measure how much a Pokémon contributes to a 'stalling'
 playstyle.
 
-The `classifyTeam` method also returns *tags* - various labels for the particular categories the team falls into based on attributes of its members.
+The `classifyTeam` method also returns *tags* - various labels for the particular categories the
+team falls into based on attributes of its members.
 
 **NOTE:** The `Classifier` expects `PokemonSet<ID>` arguments, not `PokemonSet` -
 `Parser#canonicalizeTeam` can be used to convert a `PokemonSet` into a `PokemonSet<ID>` if
