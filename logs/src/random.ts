@@ -1,14 +1,18 @@
 export class Random {
-  private seed: number;
+  seed: number;
 
-  constructor(n = 4 /* https://xkcd.com/221/ */) {
+  static seed(n = 4 /* https://xkcd.com/221/ */) {
     // Hash: https://burtleburtle.net/bob/hash/integer.html
     n = n ^ 61 ^ (n >>> 16);
     n = n + (n << 3);
     n = n ^ (n >>> 4);
     n = Math.imul(n, 0x27d4eb2d);
     n = n ^ (n >>> 15);
-    this.seed = n >>> 0;
+    return n >>> 0;
+  }
+
+  constructor(seed = Random.seed()) {
+    this.seed = seed;
   }
 
   // Mulberry32: https://gist.github.com/tommyettinger/46a874533244883189143505d203312c
@@ -44,7 +48,7 @@ export class Random {
       arr.pop();
     }
     if (val === undefined && !Object.prototype.hasOwnProperty.call(arr, index)) {
-      throw new RangeError(`Cannot sample a sparse array`);
+      throw new RangeError('Cannot sample a sparse array');
     }
     return val;
   }

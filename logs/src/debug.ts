@@ -3,15 +3,16 @@ import {format} from 'util';
 import {workerData} from 'bthreads';
 import * as tty from 'tty';
 
-const TTY = tty.isatty(process.stdout.fd)
+const TTY = tty.isatty(process.stdout.fd);
 const DEBUG = process.env.DEBUG;
 
 export function LOG(...args: any[]) {
   if (!args.length || !DEBUG) return DEBUG;
   if (workerData) {
-    log(`worker:${workerData.num}`, workerData.num, ...args);
+    const num = workerData.num as number;
+    log(`worker:${num}`, num, ...args);
   } else {
-    log(`main`, 0, ...args);
+    log('main', 0, ...args);
   }
   return true;
 }

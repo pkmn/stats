@@ -68,7 +68,7 @@ export async function unlink(path: string) {
 }
 
 export function rmdir(path: string, options?: {recursive?: boolean}) {
-  return fs.rmdir(path, {maxRetries: 5, ...options}) as Promise<void>;
+  return fs.rmdir(path, {maxRetries: 5, ...options});
 }
 
 function isGzipped(buf: Buffer) {
