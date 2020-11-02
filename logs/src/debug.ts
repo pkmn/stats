@@ -1,6 +1,6 @@
 import {performance} from 'perf_hooks';
 import {format} from 'util';
-import {workerData} from 'worker_threads'; // FIXME: bthreads
+import {workerData} from 'bthreads';
 import * as tty from 'tty';
 
 const TTY = tty.isatty(process.stdout.fd)
