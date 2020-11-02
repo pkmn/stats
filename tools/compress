@@ -17,7 +17,7 @@ fi
 #         └── battle-format-N.log.json
 OUTPUT=${2:-$INPUT}
 if [[ $OUTPUT != *.tar ]]; then
-  OUTPUT="${OUTPUT}.tar"
+    OUTPUT="${OUTPUT}.tar"
 fi
 
 TMP=$(mktemp -d)
@@ -27,17 +27,17 @@ compress() {
     TMP=$1
     INPUT=$2
     format=$3
-    cd "${INPUT}/${format}"
-    mkdir "${TMP}/${format}"
-    for day in `ls`; do
-        pushd $day
-        7z a "${TMP}/${format}/${day}.7z" *
-        popd
-    done
+    day=$4
+
+    cd "${INPUT}/${format}/${day}"
+    7z a "${TMP}/${format}/${day}.7z" *
 }
 export -f compress
 
-parallel compress $TMP $INPUT ::: `ls $INPUT`
+for format in `ls $INPUT`; do
+    mkdir "${TMP}/${format}"
+    parallel compress $TMP $INPUT $format ::: `ls ${INPUT}/${format}`
+done
 
 cd $TMP
 tar cvf $OUTPUT *
