@@ -31,6 +31,9 @@ export interface Configuration {
   output: string;
   checkpoints?: string;
 
+  begin?: Date;
+  end?: Date;
+
   worker: string;
   workerType: 'threads' | 'processes';
   numWorkers: {apply: number; combine: number};
@@ -39,7 +42,6 @@ export interface Configuration {
   batchSize: {apply: number; combine: number};
   uneven: number;
   dryRun: boolean;
-  all: boolean;
 
   accept: (format: ID) => number;
 }
@@ -49,10 +51,12 @@ export const ALIASES = {
   output: ['o', 'out'],
   worker: ['w'],
   checkpoints: ['c', 'checkpoint'],
+  begin: ['b', 'start'],
+  end: ['e', 'finish'],
   threads: ['t', 'thread'],
   processes: ['p', 'processes'],
   maxFiles: ['n', 'files'],
-  batchSize: ['b', 'batch'],
+  batchSize: ['s', 'size', 'batch'],
   debug: ['v', 'verbose'],
   dryRun: ['d', 'dry'],
   uneven: ['u'],
@@ -81,13 +85,17 @@ export function usage(code: number, preamble: string, options: string[] = []) {
   out('');
   out('   -c/--checkpoint=CHECKPOINTS: enable checkpointing and write intermediate information to CHECKPOINTS for recovery');
   out('');
+  out('   -b/--begin=WHEN: if set, only process data which has a timestamp >= WHEN');
+  out('');
+  out('   -e/--end=WHEN: if set, only process data which has a timestamp < WHEN');
+  out('');
   out('   -t/--threads=N: process the logs using N worker threads (default: NUM_CORES-1)');
   out('');
   out('   -p/--processes=N: process the logs using N worker processes (default: NUM_CORES-1)');
   out('');
   out('   -n/--maxFiles=N: open up to N files across all workers (should be < `ulimit -n`, default: 256)');
   out('');
-  out('   -b/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
+  out('   -s/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
   out('');
   out('   -d/--dryRun: skip actually performing any processing (default: false)');
   out('');
@@ -113,9 +121,11 @@ type Option =
   | [number, number]
   | string;
 
-type ComputedFields = 'batchSize' | 'numWorkers' | 'workerType';
+type ComputedFields = 'batchSize' | 'numWorkers' | 'workerType' | 'begin' | 'end';
 export interface Options extends Partial<Omit<Configuration, ComputedFields>> {
   // NOTE: merged with below - input/output/worker are required fields
+  begin?: Date | string | number;
+  end?: Date | string | number;
   threads?: Option;
   processes?: Option;
   batchSize?: Option;
@@ -140,12 +150,13 @@ export class Options {
       throw new Error('Cannot simultaneously run with both threads and processes');
     } else if (options.processes) {
       workerType = 'processes';
-      numWorkers = parse(options.processes, w => typeof w === 'number' ? w : NUM_WORKERS);
+      numWorkers = parseOption(options.processes, w => typeof w === 'number' ? w : NUM_WORKERS);
     } else {
-      numWorkers = parse(options.threads, w => typeof w === 'number' ? w : NUM_WORKERS);
+      numWorkers = parseOption(options.threads, w => typeof w === 'number' ? w : NUM_WORKERS);
     }
 
-    const batchSize = parse(options.batchSize, bs => (!bs || bs > 0 ? bs || BATCH_SIZE : Infinity));
+    const batchSize =
+      parseOption(options.batchSize, bs => (!bs || bs > 0 ? bs || BATCH_SIZE : Infinity));
     const maxFiles =
       typeof options.maxFiles !== 'number'
         ? MAX_FILES
@@ -155,19 +166,20 @@ export class Options {
 
     return {
       ...options,
+      begin: parseDate(options.begin),
+      end: parseDate(options.end),
       workerType,
       numWorkers,
       maxFiles,
       batchSize,
       uneven: options.uneven || (numWorkers.combine ? 1 / numWorkers.combine : 1),
       dryRun: !!options.dryRun,
-      all: !!options.all,
       accept: () => 1,
     };
   }
 }
 
-function parse(opt: Option | undefined, fallback: (n?: number) => number) {
+function parseOption(opt: Option | undefined, fallback: (n?: number) => number) {
   if (typeof opt === 'number') {
     const val = fallback(opt);
     return {apply: val, combine: val};
@@ -184,4 +196,9 @@ function parse(opt: Option | undefined, fallback: (n?: number) => number) {
     const val = fallback();
     return {apply: val, combine: val};
   }
+}
+
+function parseDate(date?: Date | string | number) {
+  if (!date) return undefined;
+  return (typeof date === 'string' || typeof date === 'number') ? new Date(date) : date;
 }

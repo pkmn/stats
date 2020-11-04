@@ -36,5 +36,13 @@ describe('Config', () => {
     expect(config.batchSize).toEqual({apply: Infinity, combine: Infinity});
     expect(config.maxFiles).toEqual(Infinity);
     expect(config.uneven).toEqual(1 / 8);
+    expect(config.begin).toBeUndefined();
+    expect(config.end).toBeUndefined();
+
+    config = Options.toConfiguration({
+      input, output, worker, begin: 'March 2019', end: 1604533496510,
+    });
+    expect(config.begin).toEqual(new Date('March 2019'));
+    expect(config.end).toEqual(new Date(1604533496510));
   });
 });
