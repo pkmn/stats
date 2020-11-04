@@ -106,7 +106,6 @@ export function usage(code: number, preamble: string, options: string[] = []) {
   process.exit(code);
 }
 
-
 type Option =
   | {apply: number; combine: number}
   | {apply?: number; combine?: number}
@@ -117,9 +116,9 @@ type Option =
 type ComputedFields = 'batchSize' | 'numWorkers' | 'workerType';
 export interface Options extends Partial<Omit<Configuration, ComputedFields>> {
   // NOTE: merged with below - input/output/worker are required fields
-  threads: Option;
-  processes: Option;
-  batchSize: Option;
+  threads?: Option;
+  processes?: Option;
+  batchSize?: Option;
 }
 
 export class Options {
@@ -132,6 +131,10 @@ export class Options {
   static toConfiguration(options: Options): Configuration {
     let workerType = 'processes' as Configuration['workerType'];
     let numWorkers: Configuration['numWorkers'];
+
+    if (!options.input) throw new Error('Input must be specified');
+    if (!options.output) throw new Error('Output must be specified');
+    if (!options.worker) throw new Error('Worker must be specified');
 
     if (options.processes && options.threads) {
       throw new Error('Cannot simultaneously run with both threads and processes');
