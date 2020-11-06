@@ -17,5 +17,5 @@
     "target": "es2019",
     "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "include": ["workflows/**/*"]
+  "include": ["workflows/*"]
 }

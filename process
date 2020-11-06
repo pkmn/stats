@@ -1,0 +1,110 @@
+#!/usr/bin/env node
+'use strict';
+
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
+
+const fs = require('fs');
+const path = require('path');
+const logs = require('logs');
+const minimist = require('minimist');
+
+// NOTE: these aliases get added to by each of the workers
+const ALIASES = {...logs.ALIASES, help: ['h', '?']};
+
+const createWorker = (name, p) => {
+  const code = require(p);
+  const options = code.options;
+  if (options) {
+    for (const option in options) {
+      ALIASES[option] = options[option].alias || [];
+    }
+  }
+  return {name, path: p, code, options};
+}
+
+// We pre-register the options for all of the default workers in workflows/
+const WORKERS = fs.readdirSync(path.join(__dirname, 'workflows')).reduce((ws, f) => {
+  const name = f.slice(0, -3);
+  // NOTE: workflows/ workers are all Typescript files and so we need to transform them to their built version
+  ws[name] = createWorker(name, path.join(__dirname, 'build/workflows', `${name}.js`));
+  return ws;
+}, {});
+
+const PREAMBLE =
+`process TYPE INPUT OUTPUT
+
+Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT.
+
+  - TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w.name}'`).join(', ')}', or a path to the worker code.
+  - INPUT and OUTPUT must be a filesystem path or of the form 'db:DATABASE:TABLE' to use a database.
+`;
+
+const usage = code => logs.usage(code, PREAMBLE, Object.values(WORKERS));
+const unknown = arg => {
+  console.error(`Unknown argument: '${arg}'\n`);
+  usage(1);
+};
+const conflict = (arg, a, b) => {
+  console.error(`Conflicting values for ${arg}: '${a}' vs. '${b}'\n`);
+  usage(1);
+};
+
+// We potentially need to parse our the arguments twice - if we're given a worker which isn't in
+// workflows/ we need to register its options and reparse. We can't complain about unknown arguments
+// at this stage because they might be options for the worker that we haven't registered yet.
+let argv = minimist(process.argv.slice(2), {alias: ALIASES});
+if (argv.help) usage(0);
+
+let foreign = false;
+
+let worker;
+if (argv.worker) {
+  if (WORKERS[argv.worker]) {
+    worker = WORKERS[argv.worker];
+  } else {
+    const name = path.basename(argv.worker).slice(-3);
+    worker = WORKERS[name] = createWorker(name, argv.worker);
+    foreign = true;
+  }
+}
+if (argv._[0]) {
+  if (WORKERS[argv._[0]]) {
+    if (worker && worker.code !== WORKERS[argv._[0]].code) conflict('worker', argv.worker, argv._[0]);
+    worker = WORKERS[argv._[0]];
+  } else {
+    const name = path.basename(argv._[0]).slice(-3);
+    WORKERS[name] = createWorker(name, argv._[0]);
+    if (worker && worker.code !== WORKERS[name].code) conflict('worker', argv.worker, argv._[0]);
+    worker = WORKERS[name];
+    foreign = true;
+  }
+}
+if (!worker) usage(1);
+
+if (foreign) {
+  // Reparse now that we know we have registered the foreign worker's options - this time around it
+  // is safe to complain about unknown arguments because we should have the full set registered.
+  argv = minimist(process.argv.slice(2), {alias: ALIASES, unknown});
+}
+
+argv.worker = worker.path;
+if (argv._[1]) {
+  if (argv.input && path.resolve(argv.input) !== path.resolve(argv._[1])) {
+    conflict('input', argv._[1], argv.input);
+  }
+  argv.input = argv._[1];
+}
+if (argv._[2]) {
+  if (argv.output && path.resolve(argv.output) !== path.resolve(argv._[2])) {
+    conflict('output', argv._[2], argv.output);
+  }
+  argv.output = argv._[2];
+}
+
+if (!(argv.worker && argv.input && argv.output)) usage(1);
+if (argv.debug) process.env.DEBUG = +argv.verbose;
+(async () => process.exit(await logs.process(argv)))().catch(console.error);

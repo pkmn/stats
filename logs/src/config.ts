@@ -26,24 +26,30 @@ const NUM_WORKERS = os.cpus().length - 1;
 
 export type ID = (string & { __brand: 'ID' }) | (string & { __isID: true }) | '';
 
+export function toID(text: any): ID {
+  if (text?.id) text = text.id;
+  if (typeof text !== 'string' && typeof text !== 'number') return '';
+  return ('' + text).toLowerCase().replace(/[^a-z0-9]+/g, '') as ID;
+}
+
 export interface Configuration {
   input: string;
   output: string;
-  checkpoints?: string;
+  checkpoints: string;
 
   begin?: Date;
   end?: Date;
 
-  worker: string;
-  workerType: 'threads' | 'processes';
-  numWorkers: {apply: number; combine: number};
+  worker: {
+    type: 'threads' | 'processes';
+    path: string;
+    num: {apply: number; combine: number};
+  };
 
   maxFiles: number;
   batchSize: {apply: number; combine: number};
   uneven: number;
   dryRun: boolean;
-
-  accept: (format: ID) => number;
 }
 
 export const ALIASES = {
@@ -62,7 +68,11 @@ export const ALIASES = {
   uneven: ['u'],
 };
 
-export function usage(code: number, preamble: string, options: string[] = []) {
+export function usage(
+  code: number,
+  preamble: string,
+  options: Array<{name: string, options: Array<{desc: string}>}> = []
+) {
   const out = !code ? console.log : console.error;
 
   for (const [i, line] of preamble.split('\n').entries()) {
@@ -105,9 +115,14 @@ export function usage(code: number, preamble: string, options: string[] = []) {
   out('');
   /* eslint-enable max-len */
 
-  for (const line of options) {
-    out(`   ${line}`);
+  for (const worker of options) {
+    if (!worker.options) continue;
+    out(` [${worker.name}] Worker Options:`);
     out('');
+    for (const option of worker.options) {
+      out(`   ${option.desc}`);
+      out('');
+    }
   }
 
   out('NOTE: A negative value can be used to disable specific default sizes/limits.');
@@ -121,7 +136,7 @@ type Option =
   | [number, number]
   | string;
 
-type ComputedFields = 'batchSize' | 'numWorkers' | 'workerType' | 'begin' | 'end';
+type ComputedFields = 'worker' | 'batchSize' | 'begin' | 'end';
 export interface Options extends Partial<Omit<Configuration, ComputedFields>> {
   // NOTE: merged with below - input/output/worker are required fields
   begin?: Date | string | number;
@@ -135,26 +150,37 @@ export class Options {
   input!: string;
   output!: string;
   worker!: string;
+  checkpoints!: string;
 
   private constructor() {}
 
-  static toConfiguration(options: Options): Configuration {
-    let workerType = 'processes' as Configuration['workerType'];
-    let numWorkers: Configuration['numWorkers'];
+  static toConfiguration(options: Options, parsers: {
+    [option: string]: { parse?: (s: string) => any}
+  } = {}): Configuration {
+    let type = 'processes' as Configuration['worker']['type'];
+    let num: Configuration['worker']['num'];
 
     if (!options.input) throw new Error('Input must be specified');
     if (!options.output) throw new Error('Output must be specified');
     if (!options.worker) throw new Error('Worker must be specified');
 
+    for (const o in options) {
+      const option = o as keyof Options;
+      if (parsers[option]?.parse) {
+        (options as any)[option] = parsers[option].parse!(options[option] as string);
+      }
+    }
+
     if (options.processes && options.threads) {
       throw new Error('Cannot simultaneously run with both threads and processes');
     } else if (options.processes) {
-      workerType = 'processes';
-      numWorkers = parseOption(options.processes, w => typeof w === 'number' ? w : NUM_WORKERS);
+      num = parseOption(options.processes, w => typeof w === 'number' ? w : NUM_WORKERS);
     } else {
-      numWorkers = parseOption(options.threads, w => typeof w === 'number' ? w : NUM_WORKERS);
+      type = 'threads';
+      num = parseOption(options.threads, w => typeof w === 'number' ? w : NUM_WORKERS);
     }
 
+    const worker = {path: options.worker, type, num};
     const batchSize =
       parseOption(options.batchSize, bs => (!bs || bs > 0 ? bs || BATCH_SIZE : Infinity));
     const maxFiles =
@@ -168,14 +194,22 @@ export class Options {
       ...options,
       begin: parseDate(options.begin),
       end: parseDate(options.end),
-      workerType,
-      numWorkers,
+      worker,
       maxFiles,
       batchSize,
-      uneven: options.uneven || (numWorkers.combine ? 1 / numWorkers.combine : 1),
+      uneven: options.uneven || (worker.num.combine ? 1 / worker.num.combine : 1),
       dryRun: !!options.dryRun,
-      accept: () => 1,
     };
+  }
+
+  static number(n: string | number) {
+    if (typeof n === 'number') return n;
+    return Number(n) || undefined;
+  }
+
+  static boolean(b: string | boolean) {
+    if (typeof b === 'boolean') return b;
+    return ['true', 't', '1'].includes(b.toLowerCase());
   }
 }
 

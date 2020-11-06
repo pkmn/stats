@@ -42,4 +42,10 @@ FIXME
     └── moveset
         └── format-N.txt
 
+FIXME
+
+    YYYY-MM
+    └── format
+        └── N.json
+
 Everything in this repository is distributed under the terms of the [MIT License](LICENSE).
