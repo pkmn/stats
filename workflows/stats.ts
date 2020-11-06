@@ -25,6 +25,21 @@ interface StatsConfiguration extends WorkerConfiguration {
 const GENS = new Generations(Dex, e => !!e.exists);
 const MONOTYPES = new Set(Array.from(GENS.get(8).types).map(type => `mono${type.id}` as ID));
 
+const SKIP = [
+  'seasonal', 'random', 'petmod', 'factory', 'challengecup',
+  'hackmonscup', 'digimon', 'metronome', 'superstaff',
+];
+
+const POPULAR = new Set([
+  'ou', 'doublesou', 'randombattle', 'gen7pokebankou', 'gen7ou',
+  'gen7pokebankdoublesou', 'gen8ou', 'gen8doublesou', 'gen8randombattle',
+] as ID[]);
+
+const CUTOFFS = {
+  default: [0, 1500, 1630, 1760],
+  popular: [0, 1500, 1695, 1825],
+};
+
 const StatsWorker = new class implements Worker<StatsConfiguration> {
   options = {
     formats: {
@@ -58,12 +73,8 @@ const StatsWorker = new class implements Worker<StatsConfiguration> {
 
   accept(config: StatsConfiguration) {
     return (format: ID) => {
-      if (
-        (config.formats && !config.formats.has(format)) ||
-        format.startsWith('seasonal') ||
-        format.includes('random') ||
-        format.includes('metronome' || format.includes('superstaff'))
-      ) {
+      if ((config.formats && !config.formats.has(format)) ||
+        format.startsWith('seasonal') || SKIP.some(f => format.includes(f))) {
         return 0;
       } else if (format === 'gen8monotype') {
         // Given that we compute all the monotype team tags for gen8monotype, we need to
@@ -89,6 +100,19 @@ function mkdirs(dir: string) {
   const mkdir = (d: string) => fs.mkdir(path.resolve(dir, d));
   return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
 }
+
+function weightFor(format: ID, date: string) {
+  // Legacy cutoffs finally got addressed a few months into Gen 8
+  if (!format.startsWith('gen8') && date > '2020-01') return CUTOFFS.default;
+  // gen7doublesu ou and smogondoublessuspecttest have used different weights over the years
+  if (format === 'gen7doublesou' && (date < '2017-02' || date > '2020-01')) return CUTOFFS.default;
+  if (format === 'smogondoublessuspecttest' && date === '2015-04') return CUTOFFS.popular;
+  // Otherwise, formats deemed 'popular' are assigned higher weight. Note that legacy format
+  // notation is signficant here: gen6ou was only 'popular' while it was still called 'ou'
+  format = (format.endsWith('suspecttest') ? format.slice(0, -11) : format) as ID;
+  return POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
+}
+
 
 export const init = StatsWorker.init;
 export const accept = StatsWorker.accept;
