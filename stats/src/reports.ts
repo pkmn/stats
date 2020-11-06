@@ -18,26 +18,15 @@ interface MovesetStatistics {
   'Checks and Counters': { [key: string]: util.EncounterStatistics };
 }
 
-type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU' | 'ZU';
-type Tier = UsageTier | 'Uber' | 'UUBL' | 'RUBL' | 'NUBL' | 'PUBL' | 'ZUBL';
-interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T; ZU: T }
+type DoublesUsageTier = 'DOU' | 'DUU';
+type DoublesTier = DoublesUsageTier | 'DUber';
+interface DoublesUsageTiers<T> {
+  DOU: T;
+  DUU: T;
+}
 
-const USAGE_TIERS: UsageTier[] = ['OU', 'UU', 'RU', 'NU', 'PU', 'ZU'];
-const TIERS: Tier[] = [
-  'Uber', 'OU', 'UUBL', 'UU', 'RUBL', 'RU', 'NUBL', 'NU', 'PUBL', 'PU', 'ZUBL', 'ZU',
-];
-
-// TODO: implement!
-
-// type DoublesUsageTier = 'DOU' | 'DUU';
-// type DoublesTier = DoublesUsageTier | 'DUber';
-// interface DoublesUsageTiers<T> {
-//   DOU: T;
-//   DUU: T;
-// }
-
-// const DOUBLES_USAGE_TIERS: DoublesUsageTier[] = ['DOU', 'DUU'];
-// const DOUBLES_TIERS: DoublesTier[] = ['DUber', 'DOU', 'DUU'];
+const DOUBLES_USAGE_TIERS: DoublesUsageTier[] = ['DOU', 'DUU'];
+const DOUBLES_TIERS: DoublesTier[] = ['DUber', 'DOU', 'DUU'];
 
 const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
 
@@ -344,7 +333,6 @@ export const Reports = new class {
     return s;
   }
 
-  // TODO: Add support for Doubles and OM (other metagames)
   async tierUpdateReport(
     gen: Generation,
     months: [string] | [string, string] | [string, string, string],
@@ -352,10 +340,10 @@ export const Reports = new class {
   ) {
     gen = util.ignoreGen(gen);
 
-    const pokemon: Map<ID, UsageTiers<number>> = new Map();
+    const pokemon: Map<ID, DoublesUsageTiers<number>> = new Map();
     for (const [i, month] of months.entries()) {
       const weight = WEIGHTS[months.length - 1][i];
-      for (const tier of USAGE_TIERS) {
+      for (const tier of DOUBLES_USAGE_TIERS) {
         const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
           reports.push( // FIXME: gen8!
@@ -376,7 +364,7 @@ export const Reports = new class {
           for (const [p, usage] of u[suffix].entries()) {
             let v = pokemon.get(p);
             if (!v) {
-              v = {OU: 0, UU: 0, RU: 0, NU: 0, PU: 0, ZU: 0};
+              v = {DOU: 0, DUU: 0};
               pokemon.set(p, v);
             }
             if (p !== 'empty') {
@@ -387,35 +375,34 @@ export const Reports = new class {
       }
     }
 
-    const tiers: UsageTiers<Array<[ID, number]>> = {OU: [], UU: [], RU: [], NU: [], PU: [], ZU: []};
+    const tiers: DoublesUsageTiers<Array<[ID, number]>> = {DOU: [], DUU: []};
 
     for (const [species, usage] of pokemon.entries()) {
-      for (const tier of USAGE_TIERS) {
+      for (const tier of DOUBLES_USAGE_TIERS) {
         if (usage[tier] > 0) tiers[tier].push([species, usage[tier]]);
       }
     }
     let s = '';
-    for (const tier of USAGE_TIERS) {
+    for (const tier of DOUBLES_USAGE_TIERS) {
       const sorted = tiers[tier].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
       s += makeTable(gen, sorted, tier);
     }
 
     const rise = [0.06696700846, 0.04515839608, 0.03406367107][months.length - 1];
     const drop = [0.01717940145, 0.02284003156, 0.03406367107][months.length - 1];
-    const {current, updated, NFE} = updateTiers(gen, pokemon, rise, drop);
+    const {current, updated} = updateTiers(gen, pokemon, rise, drop);
 
     s += '\n';
     const sorted = Array.from(current.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     for (const [id, tier] of sorted) {
       const update = updated.get(id)!;
-      if (tier === 'ZU' && NFE.has(id)) continue;
       if (tier !== update) {
         const species = gen.species.get(id)!;
         if (species.forme &&
           (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'))) {
           const base = toID(species.baseSpecies);
           // Skip if the base is already in a higher tier
-          if (TIERS.indexOf(updated.get(base)!) < TIERS.indexOf(update)) {
+          if (DOUBLES_TIERS.indexOf(updated.get(base)!) < DOUBLES_TIERS.indexOf(update)) {
             continue;
           }
         }
@@ -437,45 +424,14 @@ const SKIP = new Set([
   'pikachucosplay',
 ]);
 
-const BL: {[tier in Tier]?: Set<string>} = {
-  UU: new Set([
-    'alakazam', 'azumarill', 'breloom', 'buzzwole', 'charizardmegay', 'conkeldurr', 'dianciemega',
-    'diggersby', 'dragonite', 'gallademega', 'gardevoirmega', 'gyarados', 'heracrossmega',
-    'hoopaunbound', 'jirachi', 'kyuremblack', 'latiasmega', 'latios', 'latiosmega', 'manaphy',
-    'ninetalesalola', 'porygonz', 'salamence', 'scolipede', 'staraptor', 'thundurus',
-    'thundurustherian', 'tornadustherian', 'venusaurmega', 'victini', 'volcarona', 'weavile',
-    'xurkitree',
-  ]),
-  RU: new Set([
-    'slowbromega', 'suicune', 'hawlucha', 'crawdaunt', 'lucario', 'heracross', 'venomoth',
-    'houndoommega', 'entei', 'sceptilemega', 'sharpedo', 'absolmega', 'zoroark', 'reuniclus',
-    'mienshao', 'durant', 'tornadus', 'kyurem', 'talonflame', 'darmanitan', 'meloetta',
-  ]),
-  NU: new Set([
-    'yanmega', 'slurpuff', 'emboar', 'porygon2', 'noivern', 'moltres', 'ribombee', 'kingdra',
-    'exploud', 'necrozma', 'tyrantrum', 'cofagrigus', 'meloetta', 'barbaracle', 'bruxish',
-    'cameruptmega', 'venusaur', 'gigalith', 'hoopa',
-  ]),
-  PU: new Set([
-    'vivillon', 'klinklang', 'hariyama', 'barbaracle', 'vanilluxe', 'medicham', 'passimian',
-    'magmortar', 'kingler', 'charizard', 'tauros', 'typhlosion', 'gallade', 'samurott', 'sawk',
-    'archeops', 'pyroar', 'aromatisse', 'minior', 'exeggutoralola',
-  ]),
-  ZU: new Set([
-    'carracosta', 'crabominable', 'exeggutor', 'gorebyss', 'jynx', 'musharna', 'raticatealola',
-    'raticatealolatotem', 'throh', 'turtonator', 'typenull', 'ursaring', 'victreebel', 'zangoose',
-  ]),
-};
-
 function updateTiers(
   gen: Generation,
-  pokemon: Map<ID, UsageTiers<number>>,
+  pokemon: Map<ID, DoublesUsageTiers<number>>,
   rise: number,
   drop: number
 ) {
-  const current: Map<ID, Tier> = new Map();
-  const updated: Map<ID, Tier> = new Map();
-  const NFE = new Set<ID>();
+  const current: Map<ID, DoublesTier> = new Map();
+  const updated: Map<ID, DoublesTier> = new Map();
   for (const species of gen.species) {
     if (SKIP.has(species.id) ||
       species.isNonstandard ||
@@ -485,15 +441,13 @@ function updateTiers(
       continue;
     }
     // FIXME: Code which is either undesirable or unused
-    let old = species.tier as string;
-    if (old[0] === '(' && old[1] !== 'P') old = old.slice(1, -1);
-    if (old[0] === '(' && old[1] === 'P') old = 'ZU';
-    if (['NFE', 'LC', 'LC Uber'].includes(old)) NFE.add(species.id);
-    const tier = TIERS.includes(old as Tier) ? (old as Tier) : 'ZU';
+    let old = (species.tier || species.doublesTier) as string;
+    if (old[0] === '(') old = old.slice(1, -1);
+    const tier = DOUBLES_TIERS.includes(old as DoublesTier) ? (old as DoublesTier) : 'DUU';
     current.set(species.id, tier);
 
-    if (tier === 'Uber') {
-      updated.set(species.id, 'Uber');
+    if (tier === 'DUber') {
+      updated.set(species.id, 'DUber');
       continue;
     }
     const update = pokemon.get(species.id);
@@ -503,34 +457,26 @@ function updateTiers(
     }
     if (updated.has(species.id)) continue;
 
-    const riseAndDrop = (r: UsageTier, d: UsageTier, b: Tier) =>
+    const riseAndDrop = (r: DoublesUsageTier, d: DoublesUsageTier) =>
       computeRiseAndDrop(species.id, update, updated, tier, rise, drop, {
         rise: r,
         drop: d,
-        ban: b,
       });
-    if (riseAndDrop('OU', 'UU', 'UUBL')) continue;
-    if (riseAndDrop('UU', 'RU', 'RUBL')) continue;
-    if (riseAndDrop('RU', 'NU', 'NUBL')) continue;
-    if (riseAndDrop('NU', 'PU', 'PUBL')) continue;
-    if (riseAndDrop('PU', 'ZU', 'ZUBL')) continue;
+    if (riseAndDrop('DOU', 'DUU')) continue;
 
-    if (!updated.has(species.id)) updated.set(species.id, 'ZU');
-
-    const newTier = updated.get(species.id);
-    if (newTier && BL[newTier]?.has(species.id)) updated.set(species.id, `${newTier}BL` as Tier);
+    if (!updated.has(species.id)) updated.set(species.id, 'DUU');
   }
-  return {current, updated, NFE};
+  return {current, updated};
 }
 
 function computeRiseAndDrop(
   species: ID,
-  update: UsageTiers<number>,
-  updated: Map<ID, Tier>,
-  tier: Tier,
+  update: DoublesUsageTiers<number>,
+  updated: Map<ID, DoublesTier>,
+  tier: DoublesTier,
   rise: number,
   drop: number,
-  tiers: { rise: UsageTier; drop: UsageTier; ban: Tier }
+  tiers: { rise: DoublesUsageTier; drop: DoublesUsageTier; }
 ) {
   if (update[tiers.rise] > rise) {
     updated.set(species, tiers.rise);
@@ -542,10 +488,6 @@ function computeRiseAndDrop(
     } else {
       updated.set(species, tiers.rise);
     }
-    return true;
-  }
-  if (tier === tiers.ban) {
-    updated.set(species, tiers.ban);
     return true;
   }
   return false;
@@ -649,7 +591,7 @@ function forDetailed(cc: { [key: string]: util.EncounterStatistics }) {
   return obj;
 }
 
-function makeTable(gen: Generation, pokemon: Array<[ID, number]>, tier: UsageTier) {
+function makeTable(gen: Generation, pokemon: Array<[ID, number]>, tier: DoublesUsageTier) {
   let s = `[HIDE=${tier}][CODE]\n`;
   s += `Combined usage for ${tier}\n`;
   s += ' + ---- + ------------------ + ------- + \n';
