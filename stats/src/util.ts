@@ -128,7 +128,7 @@ const NON_6V6_FORMATS = new Set([
   '1v1', 'battlespotdoubles', 'battlespotsingles', 'battlespotspecial7', 'challengecup1v1',
   'gen5gbusingles', 'gen71v1', 'gen7alolafriendly', 'gen7battlespotdoubles',
   'gen7battlespotsingles', 'gen7challengecup1v1', 'gen7vgc2017', 'gen7vgc2017beta', 'pgllittlecup',
-  'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
+  'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017', 'gen81v1',
 ]);
 
 export function isNon6v6Format(format: ID) {

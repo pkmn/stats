@@ -437,33 +437,35 @@ const SKIP = new Set([
   'pikachucosplay',
 ]);
 
-const UUBL = new Set([
-  'alakazam', 'azumarill', 'breloom', 'buzzwole', 'charizardmegay', 'conkeldurr', 'dianciemega',
-  'diggersby', 'dragonite', 'gallademega', 'gardevoirmega', 'gyarados', 'heracrossmega',
-  'hoopaunbound', 'jirachi', 'kyuremblack', 'latiasmega', 'latios', 'latiosmega', 'manaphy',
-  'ninetalesalola', 'porygonz', 'salamence', 'scolipede', 'staraptor', 'thundurus',
-  'thundurustherian', 'tornadustherian', 'venusaurmega', 'victini', 'volcarona', 'weavile',
-  'xurkitree',
-]);
-const RUBL = new Set([
-  'slowbromega', 'suicune', 'hawlucha', 'crawdaunt', 'lucario', 'heracross', 'venomoth',
-  'houndoommega', 'entei', 'sceptilemega', 'sharpedo', 'absolmega', 'zoroark', 'reuniclus',
-  'mienshao', 'durant', 'tornadus', 'kyurem', 'talonflame', 'darmanitan', 'meloetta',
-]);
-const NUBL = new Set([
-  'yanmega', 'slurpuff', 'emboar', 'porygon2', 'noivern', 'moltres', 'ribombee', 'kingdra',
-  'exploud', 'necrozma', 'tyrantrum', 'cofagrigus', 'meloetta', 'barbaracle', 'bruxish',
-  'cameruptmega', 'venusaur', 'gigalith', 'hoopa',
-]);
-const PUBL = new Set([
-  'vivillon', 'klinklang', 'hariyama', 'barbaracle', 'vanilluxe', 'medicham', 'passimian',
-  'magmortar', 'kingler', 'charizard', 'tauros', 'typhlosion', 'gallade', 'samurott', 'sawk',
-  'archeops', 'pyroar', 'aromatisse', 'minior', 'exeggutoralola',
-]);
-const ZUBL = new Set([
-  'carracosta', 'crabominable', 'exeggutor', 'gorebyss', 'jynx', 'musharna', 'raticatealola',
-  'raticatealolatotem', 'throh', 'turtonator', 'typenull', 'ursaring', 'victreebel', 'zangoose',
-]);
+const BL: {[tier in Tier]?: Set<string>} = {
+  UU: new Set([
+    'alakazam', 'azumarill', 'breloom', 'buzzwole', 'charizardmegay', 'conkeldurr', 'dianciemega',
+    'diggersby', 'dragonite', 'gallademega', 'gardevoirmega', 'gyarados', 'heracrossmega',
+    'hoopaunbound', 'jirachi', 'kyuremblack', 'latiasmega', 'latios', 'latiosmega', 'manaphy',
+    'ninetalesalola', 'porygonz', 'salamence', 'scolipede', 'staraptor', 'thundurus',
+    'thundurustherian', 'tornadustherian', 'venusaurmega', 'victini', 'volcarona', 'weavile',
+    'xurkitree',
+  ]),
+  RU: new Set([
+    'slowbromega', 'suicune', 'hawlucha', 'crawdaunt', 'lucario', 'heracross', 'venomoth',
+    'houndoommega', 'entei', 'sceptilemega', 'sharpedo', 'absolmega', 'zoroark', 'reuniclus',
+    'mienshao', 'durant', 'tornadus', 'kyurem', 'talonflame', 'darmanitan', 'meloetta',
+  ]),
+  NU: new Set([
+    'yanmega', 'slurpuff', 'emboar', 'porygon2', 'noivern', 'moltres', 'ribombee', 'kingdra',
+    'exploud', 'necrozma', 'tyrantrum', 'cofagrigus', 'meloetta', 'barbaracle', 'bruxish',
+    'cameruptmega', 'venusaur', 'gigalith', 'hoopa',
+  ]),
+  PU: new Set([
+    'vivillon', 'klinklang', 'hariyama', 'barbaracle', 'vanilluxe', 'medicham', 'passimian',
+    'magmortar', 'kingler', 'charizard', 'tauros', 'typhlosion', 'gallade', 'samurott', 'sawk',
+    'archeops', 'pyroar', 'aromatisse', 'minior', 'exeggutoralola',
+  ]),
+  ZU: new Set([
+    'carracosta', 'crabominable', 'exeggutor', 'gorebyss', 'jynx', 'musharna', 'raticatealola',
+    'raticatealolatotem', 'throh', 'turtonator', 'typenull', 'ursaring', 'victreebel', 'zangoose',
+  ]),
+};
 
 function updateTiers(
   gen: Generation,
@@ -516,11 +518,7 @@ function updateTiers(
     if (!updated.has(species.id)) updated.set(species.id, 'ZU');
 
     const newTier = updated.get(species.id);
-    if (newTier === 'UU' && UUBL.has(species.id)) updated.set(species.id, 'UUBL');
-    if (newTier === 'RU' && RUBL.has(species.id)) updated.set(species.id, 'RUBL');
-    if (newTier === 'NU' && NUBL.has(species.id)) updated.set(species.id, 'NUBL');
-    if (newTier === 'PU' && PUBL.has(species.id)) updated.set(species.id, 'PUBL');
-    if (newTier === 'ZU' && ZUBL.has(species.id)) updated.set(species.id, 'ZUBL');
+    if (newTier && BL[newTier]?.has(species.id)) updated.set(species.id, `${newTier}BL` as Tier);
   }
   return {current, updated, NFE};
 }
