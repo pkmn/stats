@@ -16,7 +16,7 @@
   "dependencies": {
     "7zip-min": "^1.1.3",
     "@types/7zip-min": "^1.1.0",
-    "bthreads": "file:bthreads"
+    "bthreads": "^0.5.1"
   },
   "scripts": {
     "lint": "eslint --cache src --ext ts",
@@ -24,8 +24,7 @@
     "compile": "tsc -p .",
     "test": "jest",
     "pretest": "npm run compile",
-    "posttest": "npm run lint",
-    "postinstall": "npm -C bthreads install"
+    "posttest": "npm run lint"
   },
   "jest": {
     "preset": "ts-jest",
