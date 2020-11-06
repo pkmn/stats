@@ -60,7 +60,7 @@ export const ALIASES = {
   begin: ['b', 'start'],
   end: ['e', 'finish'],
   threads: ['t', 'thread'],
-  processes: ['p', 'processes'],
+  processes: ['p', 'process'],
   maxFiles: ['n', 'files'],
   batchSize: ['s', 'size', 'batch'],
   debug: ['v', 'verbose'],
@@ -157,7 +157,7 @@ export class Options {
   static toConfiguration(options: Options, parsers: {
     [option: string]: { parse?: (s: string) => any}
   } = {}): Configuration {
-    let type = 'processes' as Configuration['worker']['type'];
+    let type: Configuration['worker']['type'] = 'processes';
     let num: Configuration['worker']['num'];
 
     if (!options.input) throw new Error('Input must be specified');

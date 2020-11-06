@@ -20,7 +20,7 @@ export type WorkerOptions<C extends WorkerConfiguration> = {
 export interface Worker<C extends WorkerConfiguration> {
   init?(config: C): Promise<void>;
   accept?(config: C): (format: ID) => number;
-  apply(batches: Batch[], config: C): Promise<void>;
+  apply(batches: Batch[], config: C, stats: Statistics): Promise<void>;
   combine?(formats: ID[], config: C): Promise<void>;
   options?: WorkerOptions<C>;
 }
@@ -30,16 +30,22 @@ export interface WorkerData<C extends WorkerConfiguration> {
   num: number;
   formats: Batch[] | ID[];
   config: C;
+  stats: Statistics;
 }
 
-export const workerData = threads.workerData as unknown;
+export interface Statistics {
+  sizes: {[format: string]: number},
+  total: number;
+}
+
+export var workerData = threads.workerData as unknown;
 
 export async function handle<C extends WorkerConfiguration>(
   worker: Worker<C>,
   data: WorkerData<C>
 ) {
   if (data.type === 'apply') {
-    await worker.apply(data.formats as Batch[], data.config)
+    await worker.apply(data.formats as Batch[], data.config, data.stats)
   } else if (worker?.combine) {
     await worker.combine(data.formats as ID[], data.config);
   }
@@ -56,10 +62,12 @@ export async function process(options: Options, random = new Random()) {
   // FIXME
   const all = await split(config, worker.accept);
 
+  config.worker.type
+
   let failures = 0;
   if (all.batches.length) {
     const batches = partition(all.batches, Math.max(worker.num.apply, 1));
-    failures += await spawn('apply', config, batches, random);
+    failures += await spawn('apply', config, batches, all.stats, random);
   }
   // This partitioning only accounts for the number of logs handled in this processing run,
   // which isn't necesarily equal to the size of the total logs being combined (eg. due to
@@ -69,7 +77,7 @@ export async function process(options: Options, random = new Random()) {
   // the particular format have finished processing.
   if (worker.code.combine && all.sizes.length) {
     const batches = partition(all.sizes, Math.max(worker.num.combine, 1), config.uneven);
-    failures += await spawn('combine', config, batches, random);
+    failures += await spawn('combine', config, batches, all.stats, random);
   }
   return failures;
 }
@@ -100,7 +108,8 @@ async function split(config: Configuration, accept: (format: ID) => number) {
   const all: {
     batches: Array<{data: Batch; size: number}>;
     sizes: Array<{data: ID; size: number}>;
-  } = {batches: [], sizes: []};
+    stats: Statistics;
+  } = {batches: [], sizes: [], stats: {sizes: {}, total: 0}};
   const formatSizes: Map<ID, {remaining: number; total: number}> = new Map();
   for (const [format, {batches, size}] of formatBatches.entries()) {
     let remaining = 0;
@@ -110,6 +119,7 @@ async function split(config: Configuration, accept: (format: ID) => number) {
       remaining += bs;
     }
     formatSizes.set(format, {remaining, total: size});
+    all.stats.total += (all.stats.sizes[format] = size);
   }
   for (const [format, {size}] of formatBatches.entries()) {
     all.sizes.push({data: format, size});
@@ -126,6 +136,7 @@ async function spawn(
   type: 'apply' | 'combine',
   workerConfig: Omit<Configuration, 'accept'>,
   batches: Array<Batch[] | ID[]>,
+  stats: Statistics,
   random: Random,
 ) {
   return 0;

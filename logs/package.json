@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "exports": {
+    ".": "./build/index.js",
+    "./config": "./build/config.js"
+  },
   "description": "Logic for processing Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",
@@ -12,7 +16,7 @@
   "dependencies": {
     "7zip-min": "^1.1.3",
     "@types/7zip-min": "^1.1.0",
-    "bthreads": "^0.5.1"
+    "bthreads": "file:bthreads"
   },
   "scripts": {
     "lint": "eslint --cache src --ext ts",
@@ -20,7 +24,8 @@
     "compile": "tsc -p .",
     "test": "jest",
     "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "posttest": "npm run lint",
+    "postinstall": "npm -C bthreads install"
   },
   "jest": {
     "preset": "ts-jest",

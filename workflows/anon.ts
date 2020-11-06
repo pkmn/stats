@@ -6,6 +6,8 @@ import {
   handle,
   ID,
   Options,
+  Random,
+  Statistics,
   Storage,
   toID,
   Worker,
@@ -25,11 +27,6 @@ interface AnonConfiguration extends WorkerConfiguration {
   public?: boolean;
 }
 
-// TODO first needs to do a count - split stage does a count, can stuff into workerData?
-// TODO can we use `accept` to push sampling up a level? would need accept to work at file level instead of format level...
-/// TODO sum up logs over duration, figure out uniform randomness, max for a given format
-// formats + max number of files + max % of format + relative weighting of files?
-
 const AnonWorker = new class implements Worker<AnonConfiguration> {
   options = {
     formats: {
@@ -39,7 +36,7 @@ const AnonWorker = new class implements Worker<AnonConfiguration> {
     },
     sample: {
       alias: ['sample'],
-      desc: '--sample: TODO',
+      desc: '--sample=SAMPLE: sample at either a fixed \'RATE\' or \'TOTAL,MAX\'',
       parse: (s: string) => {
         const [total, max] = s.split(',');
         if (max) return {total: Number(total), max: Number(max)};
@@ -76,14 +73,22 @@ const AnonWorker = new class implements Worker<AnonConfiguration> {
     return (format: ID) => config.formats?.has(format) ? 1 : 0;
   }
 
-  async apply(batches: Batch[], config: AnonConfiguration) {
+  async apply(batches: Batch[], config: AnonConfiguration, stats: Statistics) {
     const storage = Storage.connect(config);
-
+    const random = new Random((workerData as WorkerData<AnonConfiguration>).num);
+    for (const [i, {format, begin, end}] of batches.entries()) {
+    }
   }
 
   async combine(formats: ID[], config: AnonConfiguration) {
 
   }
+}
+
+function rate(sample: AnonConfiguration['sample'], size: number, total: number) {
+  if (!sample) return 0;
+  if (typeof sample === 'number') return sample;
+  return Math.min((size * sample.total) / (total * total), sample.max);
 }
 
 export const init = AnonWorker.init;

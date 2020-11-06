@@ -9,11 +9,11 @@ try {
 
 const fs = require('fs');
 const path = require('path');
-const logs = require('logs');
+const config = require('logs/config');
 const minimist = require('minimist');
 
 // NOTE: these aliases get added to by each of the workers
-const ALIASES = {...logs.ALIASES, help: ['h', '?']};
+const ALIASES = {...config.ALIASES, help: ['h', '?']};
 
 const createWorker = (name, p) => {
   const code = require(p);
@@ -43,7 +43,7 @@ Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT.
   - INPUT and OUTPUT must be a filesystem path or of the form 'db:DATABASE:TABLE' to use a database.
 `;
 
-const usage = code => logs.usage(code, PREAMBLE, Object.values(WORKERS));
+const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
 const unknown = arg => {
   console.error(`Unknown argument: '${arg}'\n`);
   usage(1);
@@ -107,4 +107,9 @@ if (argv._[2]) {
 
 if (!(argv.worker && argv.input && argv.output)) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
-(async () => process.exit(await logs.process(argv)))().catch(console.error);
+// We have avoided requiring logs directly because the only way to switch out the backend is to set
+// an enviroment variable first. We default to worker_threads, but if the --processes flag was
+// passed we switch to the process backend. If both are passed the config parsing inside of the logs
+// process code will error out, so we don't need to both checking that here.
+process.env.BTHREADS_BACKEND = argv.processes ? 'child_process' : 'worker_threads';
+(async () => process.exit(await require('logs').process(argv)))().catch(console.error);
