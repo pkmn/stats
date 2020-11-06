@@ -48,7 +48,7 @@ const AnonWorker = new class implements Worker<AnonConfiguration> {
     },
     teams: {
       alias: ['team', 'teamsOnly'],
-      desc: '--teamsOnly: anonymize and output teams only and discard the rest of the log',
+      desc: '--teams: anonymize and output teams only and discard the rest of the log',
       parse: Options.boolean,
     },
     public: {

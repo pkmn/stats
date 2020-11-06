@@ -35,7 +35,7 @@
   "scripts": {
     "lint": "eslint --cache workflows --ext ts && subpkg run lint",
     "fix": "eslint --fix workflows --ext ts && subpkg run fix",
-    "compile": "tsc -p . && subpkg run compile",
+    "compile": "subpkg run compile && tsc -p .",
     "test": "subpkg run test",
     "postinstall": "subpkg install",
     "pretest": "tsc -p .",

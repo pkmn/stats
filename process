@@ -29,19 +29,18 @@ const createWorker = (name, p) => {
 // We pre-register the options for all of the default workers in workflows/
 const WORKERS = fs.readdirSync(path.join(__dirname, 'workflows')).reduce((ws, f) => {
   const name = f.slice(0, -3);
-  // NOTE: workflows/ workers are all Typescript files and so we need to transform them to their built version
-  ws[name] = createWorker(name, path.join(__dirname, 'build/workflows', `${name}.js`));
+  // NOTE: workflows/ workers are all Typescript files and but we need the built version
+  ws[name] = createWorker(name, path.join(__dirname, 'build', `${name}.js`));
   return ws;
 }, {});
 
 const PREAMBLE =
-`process TYPE INPUT OUTPUT
+`process <TYPE> <INPUT> <OUTPUT>
 
 Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT.
 
   - TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w.name}'`).join(', ')}', or a path to the worker code.
-  - INPUT and OUTPUT must be a filesystem path or of the form 'db:DATABASE:TABLE' to use a database.
-`;
+  - INPUT and OUTPUT must be a filesystem path or of the form 'db:DATABASE:TABLE' to use a database.`;
 
 const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
 const unknown = arg => {
@@ -107,9 +106,9 @@ if (argv._[2]) {
 
 if (!(argv.worker && argv.input && argv.output)) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
-// We have avoided requiring logs directly because the only way to switch out the backend is to set
-// an enviroment variable first. We default to worker_threads, but if the --processes flag was
-// passed we switch to the process backend. If both are passed the config parsing inside of the logs
-// process code will error out, so we don't need to both checking that here.
+// We have avoided requiring logs directly because the only way to transparently switch out the
+// backend is to set an enviroment variable first. We default to worker_threads, but if the
+// --processes flag was passed we switch to the process backend. If both are passed the config
+// parsing inside of the logs process code will error out, so we don't need to both checking here.
 process.env.BTHREADS_BACKEND = argv.processes ? 'child_process' : 'worker_threads';
 (async () => process.exit(await require('logs').process(argv)))().catch(console.error);

@@ -71,7 +71,7 @@ export const ALIASES = {
 export function usage(
   code: number,
   preamble: string,
-  options: Array<{name: string, options: Array<{desc: string}>}> = []
+  options: Array<{name: string, options: {[option: string]: {desc: string}}}> = []
 ) {
   const out = !code ? console.log : console.error;
 
@@ -119,8 +119,8 @@ export function usage(
     if (!worker.options) continue;
     out(` [${worker.name}] Worker Options:`);
     out('');
-    for (const option of worker.options) {
-      out(`   ${option.desc}`);
+    for (const option in worker.options) {
+      out(`   ${worker.options[option].desc}`);
       out('');
     }
   }
