@@ -40,6 +40,7 @@ export interface Statistics {
 
 export var workerData = threads.workerData as unknown;
 
+// FIXME remove
 export async function handle<C extends WorkerConfiguration>(
   worker: Worker<C>,
   data: WorkerData<C>
@@ -49,6 +50,10 @@ export async function handle<C extends WorkerConfiguration>(
   } else if (worker?.combine) {
     await worker.combine(data.formats as ID[], data.config);
   }
+}
+
+export function register<C extends WorkerConfiguration>(worker: Worker<C>) {
+  // TODO
 }
 
 // Default 'accept' function which accepts all formats with equal weight
@@ -132,6 +137,7 @@ async function split(config: Configuration, accept: (format: ID) => number) {
   return all;
 }
 
+// FIXME remove
 async function spawn(
   type: 'apply' | 'combine',
   workerConfig: Omit<Configuration, 'accept'>,
@@ -141,6 +147,8 @@ async function spawn(
 ) {
   return 0;
 }
+
+// TODO uneven should be removed in favor of handling sharding?
 
 // https://en.wikipedia.org/wiki/Partition_problem#The_greedy_algorithm
 function partition<T>(batches: Array<{data: T; size: number}>, partitions: number, uneven = 1) {

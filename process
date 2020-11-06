@@ -78,7 +78,7 @@ if (argv._[0]) {
     const name = path.basename(argv._[0]).slice(-3);
     WORKERS[name] = createWorker(name, argv._[0]);
     if (worker && worker.code !== WORKERS[name].code) conflict('worker', argv.worker, argv._[0]);
-    worker = WORKERS[name];
+    worker = WORKERS[name];``
     foreign = true;
   }
 }

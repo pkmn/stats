@@ -18,7 +18,7 @@ import {
 
 interface StatsConfiguration extends WorkerConfiguration {
   formats?: Set<ID>;
-  legacy?: boolean;
+  legacy?: string;
   all?: boolean;
 }
 
@@ -34,8 +34,7 @@ const StatsWorker = new class implements Worker<StatsConfiguration> {
     },
     legacy: {
       alias: ['l'],
-      desc: '-l/--legacy: include legacy reports in output',
-      parse: Options.boolean,
+      desc: '-l/--legacy=OUTPUT: generate legacy reports and write them to OUTPUT',
     },
     all: {
       alias: ['a'],
@@ -50,9 +49,10 @@ const StatsWorker = new class implements Worker<StatsConfiguration> {
     await fs.mkdir(config.output, {recursive: true});
 
     if (config.legacy) {
-      const monotype = path.resolve(config.output, 'monotype');
+      await fs.mkdir(config.legacy, {recursive: true});
+      const monotype = path.resolve(config.legacy, 'monotype');
       await fs.mkdir(monotype);
-      await Promise.all([...mkdirs(config.output), ...mkdirs(monotype)]);
+      await Promise.all([...mkdirs(config.legacy), ...mkdirs(monotype)]);
     }
   }
 
@@ -93,6 +93,7 @@ function mkdirs(dir: string) {
 export const init = StatsWorker.init;
 export const accept = StatsWorker.accept;
 export const options = StatsWorker.options;
+// FIXME register(StatsWorker);
 
 if (workerData) {
   handle(StatsWorker, workerData as WorkerData<StatsConfiguration>).catch(console.error);
