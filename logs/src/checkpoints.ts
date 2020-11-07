@@ -73,13 +73,13 @@ export const Checkpoints = new class {
   }
 }
 
-class EmptyCheckpoint extends Checkpoint {
+export class EmptyCheckpoint extends Checkpoint {
   serialize() {
     return '';
   }
 }
 
-class JSONCheckpoint<T> extends Checkpoint {
+export class JSONCheckpoint<T> extends Checkpoint {
   readonly data: T;
 
   constructor(format: ID, begin: Offset, end: Offset, data: T) {

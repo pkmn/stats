@@ -56,6 +56,7 @@ export async function writeGzipFile(path: string, data: string): Promise<void> {
   return writeFile(path, buf);
 }
 
+export const copyFile = fs.copyFile;
 export const appendFile = fs.appendFile;
 export const lstat = fs.lstat;
 

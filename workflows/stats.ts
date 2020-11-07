@@ -3,26 +3,42 @@ import * as path from 'path';
 import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
 
+import { canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics } from '@pkmn/stats';
+
 import {
   Batch,
+  Checkpoints,
   fs,
-  handle,
+  register,
   ID,
   Options,
   toID,
-  Worker,
+  CombineWorker,
+  JSONCheckpoint,
+  LogStorage,
   WorkerConfiguration,
-  workerData,
-  WorkerData,
-} from '../logs';
+} from '@pkmn/logs';
 
-interface StatsConfiguration extends WorkerConfiguration {
+interface Configuration extends WorkerConfiguration {
   formats?: Set<ID>;
   legacy?: string;
   all?: boolean;
 }
 
+interface ApplyState {
+  gen: Generation;
+  format: ID,
+  stats: TaggedStatistics;
+  cutoffs: number[];
+}
+
+interface CombineState {
+
+}
+
 const GENS = new Generations(Dex, e => !!e.exists);
+const forFormat = (format: ID) =>
+  format.startsWith('gen') ? GENS.get(Number(format.charAt(3)) as Generation['num']) : GENS.get(6);
 const MONOTYPES = new Set(Array.from(GENS.get(8).types).map(type => `mono${type.id}` as ID));
 
 const SKIP = [
@@ -40,7 +56,7 @@ const CUTOFFS = {
   popular: [0, 1500, 1695, 1825],
 };
 
-const StatsWorker = new class implements Worker<StatsConfiguration> {
+const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, CombineState> {
   options = {
     formats: {
       alias: ['f', 'format'],
@@ -58,7 +74,7 @@ const StatsWorker = new class implements Worker<StatsConfiguration> {
     },
   };
 
-  async init(config: StatsConfiguration) {
+  async init(config: Configuration) {
     if (config.dryRun) return;
 
     await fs.mkdir(config.output, {recursive: true});
@@ -71,7 +87,7 @@ const StatsWorker = new class implements Worker<StatsConfiguration> {
     }
   }
 
-  accept(config: StatsConfiguration) {
+  accept(config: Configuration) {
     return (format: ID) => {
       if ((config.formats && !config.formats.has(format)) ||
         format.startsWith('seasonal') || SKIP.some(f => format.includes(f))) {
@@ -87,12 +103,37 @@ const StatsWorker = new class implements Worker<StatsConfiguration> {
     };
   }
 
-  async apply(batches: Batch[], config: StatsConfiguration) {
-
+  setupApply(format: ID): ApplyState {
+    format = canonicalizeFormat(format);
+    return {
+      gen: forFormat(format),
+      format,
+      stats: {total: {}, tags: {}},
+      cutoffs: cutoffsFor(format, '2020-09'), // FIXME need date..., batch could leave month :( just use config?
+    };
   }
 
-  async combine(formats: ID[], config: StatsConfiguration) {
+  async readLog(log: string, state: ApplyState) {
+    const raw = JSON.parse(await this.storage.logs.read(log));
+    const battle = Parser.parse(state.gen, state.format, raw);
+    const tags = state.format === 'gen8monotype' ? MONOTYPES : undefined;
+    Stats.updateTagged(state.gen, state.format, battle, state.cutoffs, state.stats, tags);
+  }
 
+  writeCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
+    return Checkpoints.json(batch.format, batch.begin, batch.end, state.stats);
+  }
+
+  setupCombine(format: ID): CombineState {
+    return {}; // TODO
+  }
+
+  async readCheckpoint(batch: Batch, state: CombineState) {
+    // TODO
+  }
+
+  async writeCombined(format: ID, state: CombineState) {
+    // TODO
   }
 }
 
@@ -101,7 +142,7 @@ function mkdirs(dir: string) {
   return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
 }
 
-function weightFor(format: ID, date: string) {
+function cutoffsFor(format: ID, date: string) {
   // Legacy cutoffs finally got addressed a few months into Gen 8
   if (!format.startsWith('gen8') && date > '2020-01') return CUTOFFS.default;
   // gen7doublesu ou and smogondoublessuspecttest have used different weights over the years
@@ -113,12 +154,5 @@ function weightFor(format: ID, date: string) {
   return POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
 }
 
-
-export const init = StatsWorker.init;
-export const accept = StatsWorker.accept;
-export const options = StatsWorker.options;
-// FIXME register(StatsWorker);
-
-if (workerData) {
-  handle(StatsWorker, workerData as WorkerData<StatsConfiguration>).catch(console.error);
-}
+register(StatsWorker);
+export = StatsWorker;

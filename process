@@ -40,7 +40,7 @@ const PREAMBLE =
 Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT.
 
   - TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w.name}'`).join(', ')}', or a path to the worker code.
-  - INPUT and OUTPUT must be a filesystem path or of the form 'db:DATABASE:TABLE' to use a database.`;
+  - INPUT and OUTPUT must be a filesystem path or of the form 'database:DATABASE' to use a database.`;
 
 const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
 const unknown = arg => {

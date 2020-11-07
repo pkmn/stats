@@ -1,22 +1,26 @@
 import * as path from 'path';
 
+import {Anonymizer, Verifier} from '@pkmn/anon';
+import {Dex} from '@pkmn/dex';
+import {Generations, Generation} from '@pkmn/data';
+
 import {
+  ApplyWorker,
   Batch,
+  Checkpoints,
   fs,
-  handle,
   ID,
   Options,
   Random,
+  register,
   Statistics,
-  Storage,
   toID,
-  Worker,
   WorkerConfiguration,
   workerData,
   WorkerData,
-} from '../logs';
+} from '@pkmn/logs';
 
-interface AnonConfiguration extends WorkerConfiguration {
+interface Configuration extends WorkerConfiguration {
   formats?: Set<ID>;
   sample?: number | {
     total: number;
@@ -27,7 +31,18 @@ interface AnonConfiguration extends WorkerConfiguration {
   public?: boolean;
 }
 
-const AnonWorker = new class implements Worker<AnonConfiguration> {
+interface State {
+  gen: Generation;
+  format: ID;
+  random: Random;
+  rate: number;
+}
+
+const GENS = new Generations(Dex, e => !!e.exists);
+const forFormat = (format: ID) =>
+  format.startsWith('gen') ? GENS.get(Number(format.charAt(3)) as Generation['num']) : GENS.get(6);
+
+const AnonWorker = new class extends ApplyWorker<Configuration, State> {
   options = {
     formats: {
       alias: ['f', 'format'],
@@ -58,43 +73,97 @@ const AnonWorker = new class implements Worker<AnonConfiguration> {
     },
   };
 
-  async init(config: AnonConfiguration) {
+  readonly tmp: string;
+
+  constructor() {
+    super();
+    // FIXME in checkpoints = Checkpoints.tmp()
+    this.tmp = path.resolve(this.config.output, '_');
+  }
+
+  async init(config: Configuration) {
     if (config.dryRun || !config.formats) return;
 
     await fs.mkdir(config.output, {recursive: true});
+    await fs.mkdir(this.tmp, {recursive: true});
     const mkdirs = [];
     for (const format of config.formats) {
-      mkdirs.push(fs.mkdir(path.resolve(config.output, format)));
+      mkdirs.push(fs.mkdir(path.join(this.tmp, format)));
     }
     await Promise.all(mkdirs);
   }
 
-  accept(config: AnonConfiguration) {
+  accept(config: Configuration) {
     return (format: ID) => config.formats?.has(format) ? 1 : 0;
   }
 
-  async apply(batches: Batch[], config: AnonConfiguration, stats: Statistics) {
-    const storage = Storage.connect(config);
-    const random = new Random((workerData as WorkerData<AnonConfiguration>).num);
-    for (const [i, {format, begin, end}] of batches.entries()) {
+  setupApply(format: ID, stats: Statistics): State {
+    return {
+      gen: forFormat(format),
+      format,
+      // FIXME base seed on format - need to ensure stable random despite Pool
+      random: new Random((workerData as WorkerData<Configuration>).num),
+      rate: rate(this.config.sample, stats.sizes[format], stats.total),
+    };
+  }
+
+  async readLog(log: string, state: State) {
+    if (state.random.next() > state.rate) return;
+
+    const raw = JSON.parse(await this.storage.logs.read(log));
+    if (raw.private && this.config.public) return;
+
+    if (this.config.teams) {
+      const writes = [];
+      for (const p of ['p1', 'p2']) {
+        const anon = Anonymizer.anonymizeTeam(state.gen, raw[`${p}team`], {salt: this.config.salt});
+        const s = JSON.stringify(anon);
+        const name = path.join(this.tmp, state.format, `${raw.id}.${p}.json`);
+        writes.push(fs.writeFile(name, s));
+      }
+      await Promise.all(writes);
+    } else {
+      const verifier = new Verifier();
+      const anon = Anonymizer.anonymize(state.gen, raw,  {salt: this.config.salt, verifier});
+      if (!verifier.ok()) {
+        const msg = [log, Array.from(verifier.names)];
+        for (const { input, output } of verifier.leaks) {
+          msg.push(`'${input}' -> '${output}'`);
+        }
+        console.error(msg.join('\n') + '\n');
+      }
+      const name = path.join(this.tmp, state.format, `${raw.id}.log.json`);
+      await fs.writeFile(name, JSON.stringify(anon));
     }
   }
 
-  async combine(formats: ID[], config: AnonConfiguration) {
+  writeCheckpoint(batch: Batch) {
+    return Checkpoints.empty(batch.format, batch.begin, batch.end);
+  }
 
+  async combine(formats: ID[]) {
+    for (const format of formats) {
+      const dir = path.resolve(this.config.output, format);
+      await fs.mkdir(dir);
+      await this.parallel(
+        (await fs.readdir(path.join(this.tmp, format))).entries(),
+        ([i, file]) => {
+          const name = `${i}${file.slice(file.endsWith('.log.json') ? - 9 : -8)}`;
+          return fs.copyFile(path.join(this.tmp, file), path.join(dir, name));
+        },
+        n => `Waiting for ${n} log(s) from ${format} to be copied`,
+      );
+      await fs.rmdir(path.join(this.tmp, format), {recursive: true});
+    }
   }
 }
 
-function rate(sample: AnonConfiguration['sample'], size: number, total: number) {
-  if (!sample) return 0;
+// NOTE: Sampling rates are going to be wonky if --public is used
+function rate(sample: Configuration['sample'], size: number, total: number) {
+  if (!sample) return 1;
   if (typeof sample === 'number') return sample;
   return Math.min((size * sample.total) / (total * total), sample.max);
 }
 
-export const init = AnonWorker.init;
-export const accept = AnonWorker.accept;
-export const options = AnonWorker.options;
-
-if (workerData) {
-  handle(AnonWorker, workerData as WorkerData<AnonConfiguration>).catch(console.error);
-}
+register(AnonWorker);
+export = AnonWorker;

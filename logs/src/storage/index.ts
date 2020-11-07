@@ -13,7 +13,7 @@ export interface LogStorage {
 
 export const LogStorage = new class {
   connect(config: {input: string | LogStorage}): LogStorage {
-    // TODO: support DatabaseStorage as well
+    // TODO: support DatabaseStorage as well - allow for query from ENV (like connection settings)
     if (typeof config.input === 'string') {
       return new LogFileStorage(config.input);
     }

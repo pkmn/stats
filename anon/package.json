@@ -13,11 +13,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.2.3",
-    "@pkmn/protocol": "^0.1.1"
+    "@pkmn/data": "^0.3.1",
+    "@pkmn/protocol": "^0.2.0"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.2.3"
+    "@pkmn/dex": "^0.3.1"
   },
   "optionalDependencies": {
     "json-diff": "^0.5.4",

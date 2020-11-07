@@ -1,59 +1,14 @@
 import {LOG} from './debug';
 
-import * as threads from 'bthreads';
 import {ID, Options, Configuration} from './config';
 import {Random} from './random';
 import {Batch, Checkpoints} from './checkpoints';
 import {CheckpointStorage} from './storage';
-
-
-export type WorkerConfiguration = Omit<Configuration, 'worker'>;
-
-export type WorkerOptions<C extends WorkerConfiguration> = {
-  [option in keyof C]?: {
-    desc: string;
-    alias?: string | string[];
-    parse?: (s: string) => C[keyof C];
-  }
-};
-
-export interface Worker<C extends WorkerConfiguration> {
-  init?(config: C): Promise<void>;
-  accept?(config: C): (format: ID) => number;
-  apply(batches: Batch[], config: C, stats: Statistics): Promise<void>;
-  combine?(formats: ID[], config: C): Promise<void>;
-  options?: WorkerOptions<C>;
-}
-
-export interface WorkerData<C extends WorkerConfiguration> {
-  type: 'apply' | 'combine';
-  num: number;
-  formats: Batch[] | ID[];
-  config: C;
-  stats: Statistics;
-}
+import {Worker} from './worker';
 
 export interface Statistics {
   sizes: {[format: string]: number},
   total: number;
-}
-
-export var workerData = threads.workerData as unknown;
-
-// FIXME remove
-export async function handle<C extends WorkerConfiguration>(
-  worker: Worker<C>,
-  data: WorkerData<C>
-) {
-  if (data.type === 'apply') {
-    await worker.apply(data.formats as Batch[], data.config, data.stats)
-  } else if (worker?.combine) {
-    await worker.combine(data.formats as ID[], data.config);
-  }
-}
-
-export function register<C extends WorkerConfiguration>(worker: Worker<C>) {
-  // TODO
 }
 
 // Default 'accept' function which accepts all formats with equal weight

@@ -14,7 +14,7 @@
     "access": "public"
   },
   "dependencies": {
-    "7zip-min": "^1.1.3",
+    "7zip-min": "^1.2.0",
     "@types/7zip-min": "^1.1.0",
     "bthreads": "^0.5.1"
   },
