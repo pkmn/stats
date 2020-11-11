@@ -27,17 +27,6 @@ export function mkdir(path: string, options?: {recursive?: boolean; mode?: numbe
 
 export const readdir = fs.readdir;
 
-export async function opendir(path: string) {
-  const stats = await lstat(path);
-  if (stats.isDirectory()) {
-    return {files: await readdir(path), close: () => {}};
-  } else {
-    const tmp = await mkdtemp('opendir-');
-    await unpack(path, tmp);
-    return {files: await readdir(tmp), close: () => rmdir(tmp, {recursive: true})};
-  }
-}
-
 export async function readFile(path: string) {
   const data = await fs.readFile(path);
   if (!isGzipped(data)) return data.toString('utf8');
@@ -68,6 +57,10 @@ export async function unlink(path: string) {
   }
 }
 
+export async function rmrf(path: string) {
+  return (await lstat(path)).isDirectory() ? rmdir(path, {recursive: true}) : unlink(path);
+}
+
 export function rmdir(path: string, options?: {recursive?: boolean}) {
   return fs.rmdir(path, {maxRetries: 5, ...options});
 }
@@ -76,7 +69,7 @@ function isGzipped(buf: Buffer) {
   return buf.length >= 3 && buf[0] === 0x1f && buf[1] === 0x8b && buf[2] === 0x08;
 }
 
-function unpack(input: string, output: string) {
+export function unpack(input: string, output: string) {
   return new Promise((resolve, reject) => {
     zip.unpack(input, output, err => {
       err ? reject(err) : resolve();

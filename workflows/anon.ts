@@ -13,7 +13,6 @@ import {
   Options,
   Random,
   register,
-  Statistics,
   toID,
   WorkerConfiguration,
   workerData,
@@ -21,11 +20,7 @@ import {
 } from '@pkmn/logs';
 
 interface Configuration extends WorkerConfiguration {
-  formats?: Set<ID>;
-  sample?: number | {
-    total: number;
-    max: number;
-  };
+  formats?: Map<ID, number>;
   salt?: string;
   teams?: boolean;
   public?: boolean;
@@ -46,17 +41,12 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
   options = {
     formats: {
       alias: ['f', 'format'],
-      desc: '-f/--formats: anonymize the formats specified',
-      parse: (s: string) => new Set(s.split(',').map(toID)),
-    },
-    sample: {
-      alias: ['sample'],
-      desc: '--sample=SAMPLE: sample at either a fixed \'RATE\' or \'TOTAL,MAX\'',
-      parse: (s: string) => {
-        const [total, max] = s.split(',');
-        if (max) return {total: Number(total), max: Number(max)};
-        return Number(total);
-      },
+      desc: '-f/--formats=FORMAT(:RATE),FORMAT2(:RATE2) anonymize the formats specified',
+      parse: (s: string) => s.split(',').reduce((m, f) => {
+        const [format, rate] = f.split(':');
+        m.set(toID(format), Number(rate) || 0);
+        return m;
+      }, new Map<ID, number>()),
     },
     salt: {
       desc: '--salt=SALT: anonymize names by hashing them using the provided salt',
@@ -87,7 +77,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
     await fs.mkdir(config.output, {recursive: true});
     await fs.mkdir(this.tmp, {recursive: true});
     const mkdirs = [];
-    for (const format of config.formats) {
+    for (const format of config.formats.keys()) {
       mkdirs.push(fs.mkdir(path.join(this.tmp, format)));
     }
     await Promise.all(mkdirs);
@@ -97,13 +87,13 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
     return (format: ID) => config.formats?.has(format) ? 1 : 0;
   }
 
-  setupApply(format: ID, stats: Statistics): State {
+  setupApply(format: ID): State {
     return {
       gen: forFormat(format),
       format,
       // FIXME base seed on format - need to ensure stable random despite Pool
       random: new Random((workerData as WorkerData<Configuration>).num),
-      rate: rate(this.config.sample, stats.sizes[format], stats.total),
+      rate: this.config.formats?.get(format) || 1,
     };
   }
 
@@ -156,13 +146,6 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
       await fs.rmdir(path.join(this.tmp, format), {recursive: true});
     }
   }
-}
-
-// NOTE: Sampling rates are going to be wonky if --public is used
-function rate(sample: Configuration['sample'], size: number, total: number) {
-  if (!sample) return 1;
-  if (typeof sample === 'number') return sample;
-  return Math.min((size * sample.total) / (total * total), sample.max);
 }
 
 register(AnonWorker);

@@ -6,6 +6,7 @@ import {CheckpointFileStorage, CheckpointMemoryStorage} from './checkpoints';
 export const CMP = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare;
 
 export interface LogStorage {
+  // FIXME problem need begin=DATE end=DATE instead of day
   list(format?: ID, day?: string): Promise<string[]>;
   select(format: ID, offset?: Offset, end?: Offset): Promise<string[]>;
   read(log: string): Promise<string>;
@@ -22,11 +23,17 @@ export const LogStorage = new class {
 };
 
 export interface CheckpointStorage {
+  // creates directory
   init(): Promise<string>;
+  // creates directory for format (BUG need to support shard)
   prepare(format: ID): Promise<void>;
+  // returns all the batches that have been processed (BUG needs to support shard)
   list(format: ID): Promise<Batch[]>;
+  // Just batches by format, (BUG key needs to be tuple (format, shard) or nested map)
   offsets(): Promise<Map<ID, Batch[]>>;
+  // reads a specific checkpoint
   read(format: ID, begin: Offset, end: Offset): Promise<string>;
+  // Writes a gzip checkpoint (calls serialzie)
   write(checkpoint: Checkpoint): Promise<void>;
 }
 

@@ -5,6 +5,7 @@ import {ID,  Configuration} from './config';
 import {Batch, Checkpoints, Checkpoint} from './checkpoints';
 import {CheckpointStorage, LogStorage, Storage} from './storage';
 import {Statistics} from './main';
+import {limit, Limit} from './limit';
 
 export type WorkerConfiguration = Omit<Configuration, 'worker'>;
 
@@ -18,7 +19,7 @@ export type WorkerOptions<C extends WorkerConfiguration> = {
 
 export interface Worker<C extends WorkerConfiguration> {
   options?: WorkerOptions<C>;
-  init?(config: C): Promise<void>;
+  init?(config: C): Promise<string>;
   accept?(config: C): (format: ID) => number;
 
   apply(batches: Batch[], stats: Statistics): Promise<void>;
@@ -31,10 +32,12 @@ export abstract class ApplyWorker<
 > implements Worker<C> {
   readonly config!: C;
   readonly storage!: {logs: LogStorage, checkpoints: CheckpointStorage};
+  readonly limit!: Limit;
 
   constructor() {
     if (workerData) {
       this.config = (workerData as WorkerData<C>).config;
+      this.limit = limit(this.config.maxFiles);
       this.storage = Storage.connect(this.config);
     }
   }
@@ -50,8 +53,7 @@ export abstract class ApplyWorker<
 
       await this.parallel(
         await this.storage.logs.select(format, begin, end),
-        log => this.process(log, state),
-        n => `Waiting for ${n} log(s) from ${format} to be parsed`,
+        log => this.process(log, state)
       );
 
       const checkpoint = this.writeCheckpoint(batch, state);
@@ -65,23 +67,13 @@ export abstract class ApplyWorker<
   async parallel<T>(
     source: Iterable<T>,
     process: (t: T) => Promise<void>,
-    wait: (n: number) => string,
+    throttle = this.limit,
   ) {
     let processed: Array<Promise<void>> = [];
     for (const log of source) {
-      // FIXME allow for min(batchSize.combine) max
-      if (processed.length >= this.config.maxFiles) {
-        LOG(wait(processed.length));
-        await Promise.all(processed);
-        processed = [];
-      }
-
-      processed.push(process(log));
+      processed.push(throttle(process, log));
     }
-    if (processed.length) {
-      LOG(wait(processed.length));
-      await Promise.all(processed);
-    }
+    if (processed.length) await Promise.all(processed);
   }
 
   abstract setupApply(format: ID, stats: Statistics): A;
@@ -94,8 +86,8 @@ export abstract class ApplyWorker<
     try {
       await this.readLog(log, state);
     } catch (err) {
+      if (this.config.strict) throw err;
       console.error(`${log}: ${err.message}`);
-      // FIXME swallows error...., use a --strict=NUM command?
     }
   }
 }
@@ -110,12 +102,10 @@ export abstract class CombineWorker<
       const state = this.setupCombine(format);
       LOG(`Combining checkpoint(s) for ${format}`);
 
-      const checkpoints = await this.storage.checkpoints.list(format);
-      const size = checkpoints.length;
       await this.parallel(
-        checkpoints,
+        await this.storage.checkpoints.list(format),
         batch => this.readCheckpoint(batch, state),
-        n => `Waiting for ${n}/${size} checkpoint(s) for ${format} to be combined`,
+        limit(Math.min(this.config.batchSize.combine, this.config.maxFiles)),
       );
       await this.writeCombined(format, state);
     }
@@ -127,8 +117,8 @@ export abstract class CombineWorker<
     try {
       await this.readLog(log, state);
     } catch (err) {
+      if (this.config.strict) throw err;
       console.error(`${log}: ${err.message}`);
-      // FIXME swallows error...., use a --strict=NUM command?
     }
   }
 

@@ -17,11 +17,13 @@ export abstract class Checkpoint implements Batch {
   readonly format: ID;
   readonly begin: Offset;
   readonly end: Offset;
+  readonly shard?: string;
 
-  constructor(format: ID, begin: Offset, end: Offset) {
+  constructor(format: ID, begin: Offset, end: Offset, shard?: string) {
     this.format = format;
     this.begin = begin;
     this.end = end;
+    this.shard = shard;
   }
 
   abstract serialize(): string;
@@ -29,6 +31,7 @@ export abstract class Checkpoint implements Batch {
   static encodeOffset(offset: Offset) {
     const {log, day, index} = offset;
     const i = log.length - 9;
+
     return (
       day.replace(/-/g, '') +
       '_' +
@@ -48,7 +51,8 @@ export abstract class Checkpoint implements Batch {
   }
 
   toString() {
-    return `${this.format}: ${Checkpoints.formatOffsets(this.begin, this.end)}`;
+    const id = this.format + (this.shard ? `[${this.shard}]` : '');
+    return `${id}: ${Checkpoints.formatOffsets(this.begin, this.end)}`;
   }
 }
 
@@ -64,12 +68,12 @@ export const Checkpoints = new class {
     );
   }
 
-  empty(format: ID, begin: Offset, end: Offset) {
-    return new EmptyCheckpoint(format, begin, end);
+  empty(format: ID, begin: Offset, end: Offset, shard?: string) {
+    return new EmptyCheckpoint(format, begin, end, shard);
   }
 
-  json<T>(format: ID, begin: Offset, end: Offset, data: T) {
-    return new JSONCheckpoint<T>(format, begin, end, data);
+  json<T>(format: ID, begin: Offset, end: Offset, data: T, shard?: string) {
+    return new JSONCheckpoint<T>(format, begin, end, data, shard);
   }
 }
 
@@ -82,8 +86,8 @@ export class EmptyCheckpoint extends Checkpoint {
 export class JSONCheckpoint<T> extends Checkpoint {
   readonly data: T;
 
-  constructor(format: ID, begin: Offset, end: Offset, data: T) {
-    super(format, begin, end);
+  constructor(format: ID, begin: Offset, end: Offset, data: T, shard?: string) {
+    super(format, begin, end, shard);
     this.data = data;
   }
 
@@ -91,9 +95,11 @@ export class JSONCheckpoint<T> extends Checkpoint {
     return JSON.stringify(this.data);
   }
 
-  static async read<T>(storage: CheckpointStorage, format: ID, begin: Offset, end: Offset) {
-    const serialized = await storage.read(format, begin, end);
+  static async read<T>(
+    storage: CheckpointStorage, format: ID, begin: Offset, end: Offset, shard?: string
+  ) {
+    const serialized = await storage.read(format, begin, end, shard);
     const data = JSON.parse(serialized) as T;
-    return new JSONCheckpoint(format, begin, end, data);
+    return new JSONCheckpoint(format, begin, end, data, shard);
   }
 }

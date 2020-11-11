@@ -33,8 +33,52 @@ its "worker". The worker has an `accept` function which determines which formats
 processing, and this in combination with configuration and checkpointing (in the event a prior run
 already handled the same data) allows the main process to accomplish the 'split' step. After
 
+---
 
+### Checkpoints
 
-----
+`@pkmn/logs` relies on 'checkpoints' to track which work has already been done and to seamlessly
+leverage the results of previous runs (often relevant in the case of an abnormal early exit). All
+intermediate results are stored in a directory configured via the `--checkpoints` configuration
+options - if the top level directory is not passed in via the `--checkpoints` flag a temporary directory will be created and will be cleaned up upon termination. Checkpoints are structured such
+that the filesystem can be used as a database:
 
-- worker only ever works at format granularity! need secondary script to work at higher level
+    /tmp/checkpoints-2pA7Hjx
+    ├── WORKER
+    │   ├── checkpoints
+    │   │   └── ... TODO
+    │   └── scratch
+    │       └── ...
+    └── decompressed
+        └── YYYY-MM
+            └── format
+                └── YYYY-MM-DD
+                    └── battle-format-N.log.json
+
+This top level directory actuall contains several files and directories:
+
+- `WORKER/`: Checkpoints are specific to a particular worker, and as such `Worker#init` returns a
+  string which is used to create a directory for data from that particular worker to be stored. This
+  identifier does not necessarily need to be unique to a specific worker, it simply is meant to
+  indicate the checkpoints and intermediate data from a specific worker are compatible with other
+  workers which return the same identifer. Commonly the identifier is a hash of the worker name and
+  relevant configuration values.
+  - `checkpoints/`: The checkpoints folder contains all the checkpoints written by specific worker
+    TODO checkpoints/format/shard/foo.gz, checkpoints/format or checkpoints/format/shard might be
+    turned into
+  - `scratch/`: This directory exists for the worker to store any intermediate results - outside of
+    its initial creation it is never touched by the the framework. It will only be deleted by the
+    framework if the parent directory is deleted, it is up to the worker to manage it as necessary.
+- `decompressed/`: If the input data was compressed it gets decompressed to this directory under
+  the checkpoints directory hierarchy so that it can potentially be reused for future runs. This
+  directory is to be organized exactly like Pokémon Showdown's standard flat file battle log
+  storage hierrachy.
+
+If storage space is a concern the framework can be configured to clean up the `checkpoints/` and
+`decompressed/` directories as it goes (eg. `--cleanup=checkpoints,decompressed`):
+
+- Once a specific shard has completed its combine stage the files for that shard under
+  `checkpoint/` may be deleted and replaced with a 'tombstone' file placeholder (and similarly,
+  once and entire format has completed the the format can be replace with a 'tombstone')
+- After workers have processed all shards for a batch of files the decompressed data can be removed
+  from the `decompressed/` directory.

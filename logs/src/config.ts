@@ -48,7 +48,7 @@ export interface Configuration {
 
   maxFiles: number;
   batchSize: {apply: number; combine: number};
-  uneven: number;
+  strict: boolean;
   dryRun: boolean;
 }
 
@@ -65,7 +65,7 @@ export const ALIASES = {
   batchSize: ['s', 'size', 'batch'],
   debug: ['v', 'verbose'],
   dryRun: ['d', 'dry'],
-  uneven: ['u'],
+  strict: [],
 };
 
 export function usage(
@@ -111,7 +111,7 @@ export function usage(
   out('');
   out('   -v/--verbose: log output while processing (default: false)');
   out('');
-  out('   -u/--uneven=N: fraction which determines which formats can be combined concurrently (default: 1/numWorkers)');
+  out('   --strict: TODO');
   out('');
   /* eslint-enable max-len */
 
@@ -197,7 +197,7 @@ export class Options {
       worker,
       maxFiles,
       batchSize,
-      uneven: options.uneven || (worker.num.combine ? 1 / worker.num.combine : 1),
+      strict: !!options.strict,
       dryRun: !!options.dryRun,
     };
   }
