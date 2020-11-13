@@ -83,35 +83,68 @@ export function usage(
     }
   }
 
+  // FIXME Static Width (Plain Regex)
+const wrap = (s: string) => s.replace(/(?![^\n]{1,80}$)([^\n]{1,80})\s/g, '$1\n');
+
   /* eslint-disable max-len */
   out('');
   out(' Options:');
   out('');
-  out('   -i/--input=INPUT: process data from INPUT');
+  out('   -i INPUT, --input INPUT');
   out('');
-  out('   -o/--output=OUTPUT: export results to OUTPUT');
+  out('      Process data from INPUT (see INPUT above).');
   out('');
-  out('   -w/--worker=WORKER: process data with WORKER');
+  out('   -o OUTPUT, --output OUTPUT');
   out('');
-  out('   -c/--checkpoint=CHECKPOINTS: enable checkpointing and write intermediate information to CHECKPOINTS for recovery');
+  out('      Export results to OUTPUT (see OUPUT above).');
   out('');
-  out('   -b/--begin=WHEN: if set, only process data which has a timestamp >= WHEN');
+  out('   -w WORKER, --worker WORKER');
   out('');
-  out('   -e/--end=WHEN: if set, only process data which has a timestamp < WHEN');
+  out('      Process data with WORKER (see TYPE above).');
   out('');
-  out('   -t/--threads=N: process the logs using N worker threads (default: NUM_CORES-1)');
+  out('   -c WORKSPACE, --workspace WORKSPACE');
   out('');
-  out('   -p/--processes=N: process the logs using N worker processes (default: NUM_CORES-1)');
+  out('      Write intermediate information to WORKSPACE for recovery.');
   out('');
-  out('   -n/--maxFiles=N: open up to N files across all workers (should be < `ulimit -n`, default: 256)');
+  out('   -b WHEN, --begin WHEN');
+  out('')
+  out('      If set, only process data which has a timestamp >= WHEN');
   out('');
-  out('   -s/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
+  out('   -e WHEN, --end WHEN');
+  out('')
+  out('      If set, only process data which has a timestamp < WHEN');
   out('');
-  out('   -d/--dryRun: skip actually performing any processing (default: false)');
+  out('   -t N, --threads N');
+  out('')
+  out('      Process the logs using N worker threads (default: NUM_CORES-1)');
   out('');
-  out('   -v/--verbose: log output while processing (default: false)');
+  out('   -p N, --processes N');
+  out('')
+  out('      Process the logs using N worker processes (default: NUM_CORES-1)');
   out('');
-  out('   --strict: TODO');
+  out('   -n N, --maxFiles N');
+  out('')
+  out('      Open up to N files across all workers (default: 256)');
+  out('');
+  out('   -s N(,M), --batchSize N(,M)');
+  out('')
+  out('      Write checkpoints at least every N files per format (default: 8096)'); // TODO
+  out('');
+  out('   -d, --dryRun');
+  out('')
+  out('      Skip actually performing any processing (default: false)');
+  out('');
+  out('   -v, --verbose');
+  out('')
+  out('      Log output while processing (default: false)');
+  out('');
+  out('   --strict')
+  out('')
+  out('      TODO');
+  out('');
+  out('   --constrained')
+  out('')
+  out('      TODO');
   out('');
   /* eslint-enable max-len */
 

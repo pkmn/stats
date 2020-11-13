@@ -72,19 +72,20 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
   }
 
   async init(config: Configuration) {
-    if (config.dryRun || !config.formats) return;
-
-    await fs.mkdir(config.output, {recursive: true});
-    await fs.mkdir(this.tmp, {recursive: true});
-    const mkdirs = [];
-    for (const format of config.formats.keys()) {
-      mkdirs.push(fs.mkdir(path.join(this.tmp, format)));
+    if (!config.dryRun && config.formats) {
+      await fs.mkdir(config.output, {recursive: true});
+      await fs.mkdir(this.tmp, {recursive: true}); // FIXME
+      const mkdirs = [];
+      for (const format of config.formats.keys()) {
+        mkdirs.push(fs.mkdir(path.join(this.tmp, format)));
+      }
+      await Promise.all(mkdirs);
     }
-    await Promise.all(mkdirs);
+    return 'TODO';
   }
 
   accept(config: Configuration) {
-    return (format: ID) => config.formats?.has(format) ? 1 : 0;
+    return (format: ID) => !!config.formats?.has(format);
   }
 
   setupApply(format: ID): State {

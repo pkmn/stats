@@ -15,14 +15,13 @@ describe('Config', () => {
     ).toThrow('Cannot simultaneously run with both threads and processes');
 
     let config = Options.toConfiguration({
-      input, output, worker, checkpoints, processes: 1, maxFiles: 5, dryRun: true, uneven: 4,
+      input, output, worker, checkpoints, processes: 1, maxFiles: 5, dryRun: true,
     });
     expect(config.checkpoints).toEqual(checkpoints);
     expect(config.worker.num).toEqual({apply: 1, combine: 1});
     expect(config.batchSize).toEqual({apply: 8192, combine: 8192});
     expect(config.maxFiles).toEqual(5);
     expect(config.dryRun).toBe(true);
-    expect(config.uneven).toEqual(4);
 
     config = Options.toConfiguration({
       input, output, worker, checkpoints, threads: '4,8', batchSize: -1, maxFiles: -1,
@@ -30,7 +29,6 @@ describe('Config', () => {
     expect(config.worker.num).toEqual({apply: 4, combine: 8});
     expect(config.batchSize).toEqual({apply: Infinity, combine: Infinity});
     expect(config.maxFiles).toEqual(Infinity);
-    expect(config.uneven).toEqual(1 / 8);
     expect(config.begin).toBeUndefined();
     expect(config.end).toBeUndefined();
 

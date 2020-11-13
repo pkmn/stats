@@ -98,7 +98,7 @@ export class JSONCheckpoint<T> extends Checkpoint {
   static async read<T>(
     storage: CheckpointStorage, format: ID, begin: Offset, end: Offset, shard?: string
   ) {
-    const serialized = await storage.read(format, begin, end, shard);
+    const serialized = await storage.read(format, begin, end);
     const data = JSON.parse(serialized) as T;
     return new JSONCheckpoint(format, begin, end, data, shard);
   }

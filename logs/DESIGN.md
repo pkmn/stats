@@ -35,7 +35,7 @@ already handled the same data) allows the main process to accomplish the 'split'
 
 ---
 
-### Checkpoints
+### Workspace
 
 `@pkmn/logs` relies on 'checkpoints' to track which work has already been done and to seamlessly
 leverage the results of previous runs (often relevant in the case of an abnormal early exit). All

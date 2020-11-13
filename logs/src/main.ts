@@ -11,8 +11,8 @@ export interface Statistics {
   total: number;
 }
 
-// Default 'accept' function which accepts all formats with equal weight
-const ACCEPT = () => 1;
+// Default 'accept' function which accepts all formats
+const ACCEPT = () => true;
 
 export async function process(options: Options, random = new Random()) {
   // Initialializing sets turns our Options into Configuration, initializing the checkpoint storage
@@ -30,13 +30,13 @@ export async function process(options: Options, random = new Random()) {
     failures += await spawn('apply', config, batches, all.stats, random);
   }
   // This partitioning only accounts for the number of logs handled in this processing run,
-  // which isn't necesarily equal to the size of the total logs being combined (eg. due to
+  // which isn't necessarily equal to the size of the total logs being combined (eg. due to
   // restarts). Given the cost of combine is generally small and that this only effects the
   // atypical case it's not really worth bothering to try to get this to be more precise.
   // TODO: We could be immediately creating combine workers immediately after all batches for
   // the particular format have finished processing.
   if (worker.code.combine && all.sizes.length) {
-    const batches = partition(all.sizes, Math.max(worker.num.combine, 1), config.uneven);
+    const batches = partition(all.sizes, Math.max(worker.num.combine, 1));
     failures += await spawn('combine', config, batches, all.stats, random);
   }
   return failures;
@@ -60,34 +60,34 @@ async function init(options: Options) {
   return {config, worker};
 }
 
-async function split(config: Configuration, accept: (format: ID) => number) {
-  LOG('Splitting formats into batches');
-  const formatBatches = await Checkpoints.restore(config, accept);
+async function split(config: Configuration, accept: (format: ID) => boolean | string[]) {
+  // LOG('Splitting formats into batches');
+  // const formatBatches = await Checkpoints.restore(config, accept);
 
-  const batchSize = (b: Batch) => b.end.index.global - b.begin.index.global + 1;
+  // const batchSize = (b: Batch) => b.end.index.global - b.begin.index.global + 1;
   const all: {
     batches: Array<{data: Batch; size: number}>;
     sizes: Array<{data: ID; size: number}>;
     stats: Statistics;
   } = {batches: [], sizes: [], stats: {sizes: {}, total: 0}};
-  const formatSizes: Map<ID, {remaining: number; total: number}> = new Map();
-  for (const [format, {batches, size}] of formatBatches.entries()) {
-    let remaining = 0;
-    for (const batch of batches) {
-      const bs = batchSize(batch);
-      all.batches.push({data: batch, size: accept(format) * bs});
-      remaining += bs;
-    }
-    formatSizes.set(format, {remaining, total: size});
-    all.stats.total += (all.stats.sizes[format] = size);
-  }
-  for (const [format, {size}] of formatBatches.entries()) {
-    all.sizes.push({data: format, size});
-  }
-  if (LOG()) {
-    const sorted = Array.from(formatSizes.entries()).sort((a, b) => b[1].total - a[1].total);
-    LOG(`\n\n${sorted.map(e => `  ${e[0]}: ${e[1].remaining}/${e[1].total}`).join('\n')}\n`);
-  }
+  // const formatSizes: Map<ID, {remaining: number; total: number}> = new Map();
+  // for (const [format, {batches, size}] of formatBatches.entries()) {
+  //   let remaining = 0;
+  //   for (const batch of batches) {
+  //     const bs = batchSize(batch);
+  //     all.batches.push({data: batch, size: accept(format) * bs});
+  //     remaining += bs;
+  //   }
+  //   formatSizes.set(format, {remaining, total: size});
+  //   all.stats.total += (all.stats.sizes[format] = size);
+  // }
+  // for (const [format, {size}] of formatBatches.entries()) {
+  //   all.sizes.push({data: format, size});
+  // }
+  // if (LOG()) {
+  //   const sorted = Array.from(formatSizes.entries()).sort((a, b) => b[1].total - a[1].total);
+  //   LOG(`\n\n${sorted.map(e => `  ${e[0]}: ${e[1].remaining}/${e[1].total}`).join('\n')}\n`);
+  // }
 
   return all;
 }

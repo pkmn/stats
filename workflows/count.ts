@@ -31,12 +31,14 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
   };
 
   async init(config: Configuration) {
-    if (config.dryRun || !config.formats) return;
-    await fs.mkdir(config.output, {recursive: true});
+    if (!config.dryRun && config.formats) {
+      await fs.mkdir(config.output, {recursive: true});
+    }
+    return 'count';
   }
 
   accept(config: Configuration) {
-    return (format: ID) => !config.formats ? 1 : config.formats.has(format) ? 1 : 0;
+    return (format: ID) => !config.formats ? true : config.formats.has(format);
   }
 
   setup(): State {

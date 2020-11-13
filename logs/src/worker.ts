@@ -2,9 +2,8 @@ import {LOG, VLOG} from './debug';
 
 import * as threads from 'bthreads';
 import {ID,  Configuration} from './config';
-import {Batch, Checkpoints, Checkpoint} from './checkpoints';
+import {Batch, Checkpoint} from './checkpoints';
 import {CheckpointStorage, LogStorage, Storage} from './storage';
-import {Statistics} from './main';
 import {limit, Limit} from './limit';
 
 export type WorkerConfiguration = Omit<Configuration, 'worker'>;
@@ -20,10 +19,10 @@ export type WorkerOptions<C extends WorkerConfiguration> = {
 export interface Worker<C extends WorkerConfiguration> {
   options?: WorkerOptions<C>;
   init?(config: C): Promise<string>;
-  accept?(config: C): (format: ID) => number;
+  accept?(config: C): (format: ID) => boolean | string[];
 
-  apply(batches: Batch[], stats: Statistics): Promise<void>;
-  combine?(formats: ID[]): Promise<void>;
+  apply(format: ID, batch: Batch, shard?: string): Promise<void>;
+  combine?(formats: ID, shard?: string): Promise<void>;
 }
 
 export abstract class ApplyWorker<
@@ -32,53 +31,42 @@ export abstract class ApplyWorker<
 > implements Worker<C> {
   readonly config!: C;
   readonly storage!: {logs: LogStorage, checkpoints: CheckpointStorage};
-  readonly limit!: Limit;
+  readonly limit!: {apply: Limit, combine: Limit};
 
   constructor() {
     if (workerData) {
       this.config = (workerData as WorkerData<C>).config;
-      this.limit = limit(this.config.maxFiles);
       this.storage = Storage.connect(this.config);
+      this.limit = {
+        apply: limit(this.config.maxFiles),
+        combine: limit(Math.min(this.config.batchSize.combine, this.config.maxFiles)),
+      };
     }
   }
 
-  async apply(batches: Batch[], stats: Statistics) {
-    for (const [i, batch] of batches.entries()) {
-      const {format, begin, end} = batch;
-      const state = this.setupApply(format, stats);
+  async apply(format: ID, batch: Batch, shard?: string) {
+    const {begin, end} = batch;
+    const state = this.setupApply(format, shard);
 
-      const size = end.index.global - begin.index.global + 1;
-      const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
-      LOG(`Processing ${size} log(s) from batch ${i}/${batches.length} - ${offset}`);
+    // FIXME
+    // const size = end.index.global - begin.index.global + 1;
+    // const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
+    // LOG(`Processing ${size} log(s) from batch ${i}/${batches.length} - ${offset}`);
 
-      await this.parallel(
-        await this.storage.logs.select(format, begin, end),
-        log => this.process(log, state)
-      );
-
-      const checkpoint = this.writeCheckpoint(batch, state);
-      if (checkpoint) {
-        LOG(`Writing checkpoint <${checkpoint}>`);
-        await this.storage.checkpoints.write(checkpoint);
-      }
-    }
-  }
-
-  async parallel<T>(
-    source: Iterable<T>,
-    process: (t: T) => Promise<void>,
-    throttle = this.limit,
-  ) {
     let processed: Array<Promise<void>> = [];
-    for (const log of source) {
-      processed.push(throttle(process, log));
+    for (const log of await this.storage.logs.select(format, begin, end)) { // TODO just begin end
+      processed.push(this.limit.apply(() => this.process(log, state)));
     }
     if (processed.length) await Promise.all(processed);
+
+    const checkpoint = this.writeCheckpoint(batch, state);
+    LOG(`Writing checkpoint <${checkpoint}>`);
+    await this.storage.checkpoints.write(checkpoint);
   }
 
-  abstract setupApply(format: ID, stats: Statistics): A;
+  abstract setupApply(format: ID, shard?: string): A;
   abstract readLog(log: string, state: A): Promise<void>;
-  abstract writeCheckpoint(batch: Batch, state: A): Checkpoint | undefined;
+  abstract writeCheckpoint(batch: Batch, state: A): Checkpoint;
 
   async process(log: string, state: A) {
     VLOG(`Processing ${log}`);
@@ -97,18 +85,16 @@ export abstract class CombineWorker<
   A = undefined,
   B = A
 > extends ApplyWorker<C, A> {
-  async combine(formats: ID[]) {
-    for (const format of formats) {
-      const state = this.setupCombine(format);
-      LOG(`Combining checkpoint(s) for ${format}`);
+  async combine(format: ID, shard?: string) {
+    const state = this.setupCombine(format, shard);
+    LOG(`Combining checkpoint(s) for ${format}`);
 
-      await this.parallel(
-        await this.storage.checkpoints.list(format),
-        batch => this.readCheckpoint(batch, state),
-        limit(Math.min(this.config.batchSize.combine, this.config.maxFiles)),
-      );
-      await this.writeCombined(format, state);
+    let processed: Array<Promise<void>> = [];
+    for (const batch of await this.storage.checkpoints.list(format)) { // FIXME shard
+      processed.push(this.limit.combine(() => this.readCheckpoint(batch, state)));
     }
+    if (processed.length) await Promise.all(processed);
+    await this.writeCombined(format, state);
   }
 
   async aggregate(log: string, state: A) {
@@ -122,29 +108,42 @@ export abstract class CombineWorker<
     }
   }
 
-  abstract setupCombine(format: ID): B;
+  abstract setupCombine(format: ID, shard?: string): B;
   abstract readCheckpoint(batch: Batch, state: B): Promise<void>;
   abstract writeCombined(format: ID, state: B): Promise<void>;
 }
 
 
 export interface WorkerData<C extends WorkerConfiguration> {
-  type: 'apply' | 'combine';
   num: number;
-  formats: Batch[] | ID[];
   config: C;
-  stats: Statistics;
+}
+
+export type WorkerTask = ApplyTask | CombineTask;
+
+interface ApplyTask {
+  type: 'apply';
+  format: ID;
+  shard?: string;
+  batch: Batch;
+}
+
+interface CombineTask {
+  type: 'combine';
+  format: ID;
+  shard?: string;
 }
 
 export const workerData = threads.workerData as unknown;
 
 export async function register<C extends WorkerConfiguration>(worker: Worker<C>) {
-  if (workerData) {
-    const data = workerData as WorkerData<C>;
-    if (data.type === 'apply') {
-      await worker.apply(data.formats as Batch[], data.stats)
-    } else if (worker?.combine) {
-      await worker.combine(data.formats as ID[]);
-    }
-  }
+  // FIXME
+  // if (workerData) {
+  //   const data = workerData as WorkerData<C>;
+  //   if (data.type === 'apply') {
+  //     await worker.apply(data.formats as Batch[], data.stats)
+  //   } else if (worker?.combine) {
+  //     await worker.combine(data.formats as ID[]);
+  //   }
+  // }
 }

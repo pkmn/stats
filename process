@@ -9,7 +9,7 @@ try {
 
 const fs = require('fs');
 const path = require('path');
-const config = require('logs/config');
+const config = require('@pkmn/logs/config');
 const minimist = require('minimist');
 
 // NOTE: these aliases get added to by each of the workers
@@ -34,13 +34,14 @@ const WORKERS = fs.readdirSync(path.join(__dirname, 'workflows')).reduce((ws, f)
   return ws;
 }, {});
 
-const PREAMBLE =
-`process <TYPE> <INPUT> <OUTPUT>
+const wrap = (s) => s.replace(/(?![^\n]{1,80}$)([^\n]{1,80})\s/g, '$1\n');
+const PREAMBLE = `process <TYPE> <INPUT> <OUTPUT>\n\n` + wrap(
+  `Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT. ` +
+  `TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w.name}'`).join(', ')}', ` +
+  `or a path to the worker code. INPUT and OUTPUT must be a filesystem path or of the form ` +
+  `database:DATABASE' to use a database.`
+);
 
-Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT.
-
-  - TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w.name}'`).join(', ')}', or a path to the worker code.
-  - INPUT and OUTPUT must be a filesystem path or of the form 'database:DATABASE' to use a database.`;
 
 const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
 const unknown = arg => {
