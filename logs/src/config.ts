@@ -83,70 +83,92 @@ export function usage(
     }
   }
 
-  // FIXME Static Width (Plain Regex)
-const wrap = (s: string) => s.replace(/(?![^\n]{1,80}$)([^\n]{1,80})\s/g, '$1\n');
-
-  /* eslint-disable max-len */
   out('');
   out(' Options:');
   out('');
   out('   -i INPUT, --input INPUT');
   out('');
-  out('      Process data from INPUT (see INPUT above).');
+  out('      Process data from INPUT. This can either be a path to the root of a logs');
+  out('      corpus (e.g. smogon/pokemon-showdown\'s logs/ directory), a list of');
+  out('      comma-separated paths to months of logs (eg. 2020-01,2020-02,2020-03), a');
+  out('      single month of log files, or \'database:DATABASE\' where DATABASE is the');
+  out('      name of a database. If pointing at logs files, the logs may be compressed');
+  out('      any stage of the hierachy provided no additional nesting is introduced.');
   out('');
   out('   -o OUTPUT, --output OUTPUT');
   out('');
-  out('      Export results to OUTPUT (see OUPUT above).');
+  out('      Export results to OUTPUT - this currently must be a path to a directory');
+  out('      that will be created if it does not already exist.');
   out('');
   out('   -w WORKER, --worker WORKER');
   out('');
-  out('      Process data with WORKER (see TYPE above).');
+  out('      Process data with WORKER, where the worker may either be a predefined');
+  out('      identifier or the path to the worker code to be used.');
   out('');
   out('   -c WORKSPACE, --workspace WORKSPACE');
   out('');
-  out('      Write intermediate information to WORKSPACE for recovery.');
+  out('      Write intermediate information to WORKSPACE for recovery. If this flag is');
+  out('      not provided, a temporary directory will be created to serve as the');
+  out('      workspace and will be deleted upon exit. To allow for rerunning in the');
+  out('      event that an error occurs, passing in a path to a directory here is');
+  out('      strongly recommended. The directory will be created if it does not already');
+  out('      exist.');
   out('');
   out('   -b WHEN, --begin WHEN');
-  out('')
-  out('      If set, only process data which has a timestamp >= WHEN');
+  out('');
+  out('      If set, only process data which has a timestamp >= WHEN. WHEN can be any');
+  out('      value that can be parsed by JavaScript\'s Date constructor. Note that');
+  out('      smogon/pokemon-showdown logs are written in the server\'s local time zone');
+  out('      (not UTC), and that certain strings (eg. \'2020-07\' vs. \'2020 07\') will be');
+  out('      handled unintuitivity and potentially result in subtle errors.');
   out('');
   out('   -e WHEN, --end WHEN');
-  out('')
-  out('      If set, only process data which has a timestamp < WHEN');
+  out('');
+  out('      If set, only process data which has a timestamp < WHEN. WHEN can be any');
+  out('      value that can be parsed by JavaScript\'s Date constructor. Note that');
+  out('      smogon/pokemon-showdown logs are written in the server\'s local time zone');
+  out('      (not UTC), and that certain strings (eg. \'2020-07\' vs. \'2020 07\') will be');
+  out('      handled unintuitivity and potentially result in subtle errors.');
   out('');
   out('   -t N, --threads N');
-  out('')
-  out('      Process the logs using N worker threads (default: NUM_CORES-1)');
+  out('');
+  out('      Process the logs using N worker threads (default: NUM_CORES-1). Using this');
+  out('      in combination with the --processes flag will result in an error. Threads');
+  out('      will be used as the concurrency primitive by default.');
   out('');
   out('   -p N, --processes N');
   out('')
-  out('      Process the logs using N worker processes (default: NUM_CORES-1)');
+  out('      Process the logs using N worker processes (default: NUM_CORES-1). Using');
+  out('      this in combination with the --threads flag will result in an error.');
+  out('      Threads will be used as the concurrency primitive by default.');
   out('');
   out('   -n N, --maxFiles N');
-  out('')
-  out('      Open up to N files across all workers (default: 256)');
+  out('');
+  out('      Open up to N files across all workers (default: 256). This should always');
+  out('      be configured to be less than `ulimit -n`.');
   out('');
   out('   -s N(,M), --batchSize N(,M)');
   out('')
   out('      Write checkpoints at least every N files per format (default: 8096)'); // TODO
   out('');
   out('   -d, --dryRun');
-  out('')
-  out('      Skip actually performing any processing (default: false)');
+  out('');
+  out('      Skip actually performing any processing (default: false). Useful when');
+  out('      combined with the --verbose flag to see what work might be done.');
   out('');
   out('   -v, --verbose');
-  out('')
-  out('      Log output while processing (default: false)');
+  out('');
+  out('      Log output while processing (default: false). Logging output (especially');
+  out('      to a terminal) will naturally have negative performance implications.');
   out('');
   out('   --strict')
-  out('')
+  out('');
   out('      TODO');
   out('');
   out('   --constrained')
-  out('')
+  out('');
   out('      TODO');
   out('');
-  /* eslint-enable max-len */
 
   for (const worker of options) {
     if (!worker.options) continue;

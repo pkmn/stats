@@ -42,7 +42,6 @@ const PREAMBLE = `process <TYPE> <INPUT> <OUTPUT>\n\n` + wrap(
   `database:DATABASE' to use a database.`
 );
 
-
 const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
 const unknown = arg => {
   console.error(`Unknown argument: '${arg}'\n`);
