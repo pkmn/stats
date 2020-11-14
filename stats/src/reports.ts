@@ -18,21 +18,37 @@ interface MovesetStatistics {
   'Checks and Counters': { [key: string]: util.EncounterStatistics };
 }
 
-type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU' | 'ZU';
-type Tier = UsageTier | 'Uber' | 'UUBL' | 'RUBL' | 'NUBL' | 'PUBL' | 'ZUBL';
-interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T; ZU: T }
-
-const USAGE_TIERS: UsageTier[] = ['OU', 'UU', 'RU', 'NU', 'PU', 'ZU'];
-const TIERS: Tier[] = [
-  'Uber', 'OU', 'UUBL', 'UU', 'RUBL', 'RU', 'NUBL', 'NU', 'PUBL', 'PU', 'ZUBL', 'ZU',
-];
+type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
+type Tier = UsageTier | 'Uber' | 'UUBL' | 'RUBL' | 'NUBL' | 'PUBL' | 'ZUBL' | 'ZU';
+interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T }
 
 type DoublesUsageTier = 'DOU' | 'DUU';
-type DoublesTier = DoublesUsageTier | 'DUber';
+type DoublesTier = DoublesUsageTier | 'DUber' | 'DNU';
 interface DoublesUsageTiers<T> { DOU: T; DUU: T }
 
-const DOUBLES_USAGE_TIERS: DoublesUsageTier[] = ['DOU', 'DUU'];
-const DOUBLES_TIERS: DoublesTier[] = ['DUber', 'DOU', 'DUU'];
+type NationalDexUsageTier = 'ND';
+type NationalDexTier = NationalDexUsageTier | 'NDUU';
+interface NationalDexUsageTiers<T> { ND: T }
+
+type LittleCupUsageTier = 'LC';
+type LittleCupTier = LittleCupUsageTier | 'LCUU';
+interface LittleCupUsageTiers<T> { LC: T }
+
+const USAGE_TIERS = {
+  singles: ['OU', 'UU', 'RU', 'NU', 'PU'] as UsageTier[],
+  doubles: ['DOU', 'DUU'] as DoublesUsageTier[],
+  nationaldex: ['ND'] as NationalDexUsageTier[],
+  littlecup: ['LC'] as LittleCupUsageTier[],
+};
+
+const TIERS = {
+  singles: [
+    'Uber', 'OU', 'UUBL', 'UU', 'RUBL', 'RU', 'NUBL', 'NU', 'PUBL', 'PU', 'ZUBL', 'ZU',
+  ] as Tier[],
+  doubles: ['DUber', 'DOU', 'DUU', 'DNU'] as DoublesTier[],
+  nationaldex: ['ND', 'NDBL'] as NationalDexTier[],
+  littlecup: ['LC', 'LCBL'] as LittleCupTier[],
+};
 
 const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
 
@@ -284,7 +300,7 @@ export const Reports = new class {
     const data: { [key: string]: object } = {}; // eslint-disable-line
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
-      const m: any = Object.assign({}, moveset);
+      const m: any = {...moveset};
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
       data[util.displaySpecies(gen, species)] = m;
     }
@@ -344,21 +360,24 @@ export const Reports = new class {
     gen: Generation,
     months: [string] | [string, string] | [string, string, string],
     read: (month: string, format: string) => Promise<string | undefined>,
-    doubles = false,
+    type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles',
   ) {
     gen = util.ignoreGen(gen);
-    const TS = doubles ? DOUBLES_TIERS : TIERS;
-    const UTS = doubles ? DOUBLES_USAGE_TIERS : USAGE_TIERS;
 
-    const pokemon: Map<ID, UsageTiers<number> | DoublesUsageTiers<number>> = new Map();
+    const pokemon: Map<ID,
+    UsageTiers<number> |
+    DoublesUsageTiers<number> |
+    NationalDexUsageTiers<number> |
+    LittleCupUsageTiers<number>
+    > = new Map();
     for (const [i, month] of months.entries()) {
       const weight = WEIGHTS[months.length - 1][i];
-      for (const tier of UTS) {
+      for (const tier of USAGE_TIERS[type]) {
         const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
-          reports.push( // FIXME: gen8!
-            maybeParseUsageReport(read(month, `gen7${toID(tier)}${suffix}`)).then(r => [suffix, r])
-          );
+          reports.push(maybeParseUsageReport(
+            read(month, `gen8${usageTierName(tier)}${suffix}`)
+          ).then(r => [suffix, r]));
         }
 
         const n: { [suffix: string]: number } = {};
@@ -372,11 +391,8 @@ export const Reports = new class {
         }
         for (const suffix in u) {
           for (const [p, usage] of u[suffix].entries()) {
-            let v = pokemon.get(p);
-            if (!v) {
-              v = (doubles ? {DOU: 0, DUU: 0} : {OU: 0, UU: 0, RU: 0, NU: 0, PU: 0, ZU: 0});
-              pokemon.set(p, v);
-            }
+            const v = pokemon.get(p);
+            if (!v) pokemon.set(p, usageTiers(type, 0));
             if (p !== 'empty') {
               (v as any)[tier] += (((weight * n[suffix]) / ntot) * usage) / 24;
             }
@@ -385,38 +401,61 @@ export const Reports = new class {
       }
     }
 
-    const tiers: UsageTiers<Array<[ID, number]>> | DoublesUsageTiers<Array<[ID, number]>> =
-      doubles ? {DOU: [], DUU: []} : {OU: [], UU: [], RU: [], NU: [], PU: [], ZU: []};
+    const tiers:
+    UsageTiers<Array<[ID, number]>> |
+    DoublesUsageTiers<Array<[ID, number]>> |
+    NationalDexUsageTiers<Array<[ID, number]>> |
+    LittleCupUsageTiers<Array<[ID, number]>> = usageTiers(type, []);
 
     for (const [species, usage] of pokemon.entries()) {
-      for (const tier of UTS) {
+      for (const tier of USAGE_TIERS[type]) {
         const ut: number = (usage as any)[tier];
         if (ut > 0) (tiers as any)[tier].push([species, ut]);
       }
     }
     let s = '';
-    for (const tier of UTS) {
+    for (const tier of USAGE_TIERS[type]) {
       const sorted = (tiers as any)[tier].sort((a: [string, number], b: [string, number]) =>
         b[1] - a[1] || a[0].localeCompare(b[0]));
       s += makeTable(gen, sorted, tier);
     }
+    s += '\n';
 
     const rise = [0.06696700846, 0.04515839608, 0.03406367107][months.length - 1];
     const drop = [0.01717940145, 0.02284003156, 0.03406367107][months.length - 1];
-    const {current, updated, NFE} = updateTiers(gen, pokemon, rise, drop, doubles);
 
-    s += '\n';
+    if (type === 'nationaldex' || type === 'littlecup') {
+      const bl = [];
+      for (const [species, usage] of pokemon.entries()) {
+        if ((usage as any)[type === 'nationaldex' ? 'ND' : 'LC'] > drop) {
+          bl.push(species);
+        }
+      }
+      s += '[b]National Dex UU Banlist:[/b] ';
+      s += bl.sort().map(p => gen.species.get(p)!.name).join(', ');
+      return s;
+    }
+
+    const {current, updated, NFE} = updateTiers(
+      gen,
+      pokemon as Map<ID, UsageTiers<number> | DoublesUsageTiers<number>>,
+      rise,
+      drop,
+      type === 'doubles'
+    );
+
     const sorted = Array.from(current.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     for (const [id, tier] of sorted) {
       const update = updated.get(id)!;
-      if (!doubles && (tier === 'ZU' && NFE.has(id))) continue;
+      if (type !== 'doubles' && (tier === 'ZU' && NFE.has(id))) continue;
       if (tier !== update) {
         const species = gen.species.get(id)!;
         if (species.forme &&
           (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'))) {
           const base = toID(species.baseSpecies);
           // Skip if the base is already in a higher tier
-          if ((TS as any).indexOf(updated.get(base)!) < (TS as any).indexOf(update)) {
+          const t = TIERS[type] as any;
+          if (t.indexOf(updated.get(base)!) < t.indexOf(update)) {
             continue;
           }
         }
@@ -440,33 +479,49 @@ const SKIP = new Set([
 
 const BL: {[tier in Tier]?: Set<string>} = {
   UU: new Set([
-    'alakazam', 'azumarill', 'breloom', 'buzzwole', 'charizardmegay', 'conkeldurr', 'dianciemega',
-    'diggersby', 'dragonite', 'gallademega', 'gardevoirmega', 'gyarados', 'heracrossmega',
-    'hoopaunbound', 'jirachi', 'kyuremblack', 'latiasmega', 'latios', 'latiosmega', 'manaphy',
-    'ninetalesalola', 'porygonz', 'salamence', 'scolipede', 'staraptor', 'thundurus',
-    'thundurustherian', 'tornadustherian', 'venusaurmega', 'victini', 'volcarona', 'weavile',
-    'xurkitree',
+    'hawlucha', 'dracozolt', 'diggersby', 'durant', 'weavile', 'ninetalesalola', 'gyarados',
+    'primarina', 'venusaur', 'haxorus', 'aegislash', 'conkeldurr', 'gengar', 'scolipede',
+    'lycanrocdusk',
   ]),
   RU: new Set([
-    'slowbromega', 'suicune', 'hawlucha', 'crawdaunt', 'lucario', 'heracross', 'venomoth',
-    'houndoommega', 'entei', 'sceptilemega', 'sharpedo', 'absolmega', 'zoroark', 'reuniclus',
-    'mienshao', 'durant', 'tornadus', 'kyurem', 'talonflame', 'darmanitan', 'meloetta',
+    'barbaracle', 'pangoro', 'shiftry', 'slurpuff', 'chansey', 'indeedee', 'raichualola', 'linoone',
+    'sharpedo', 'zoroark', 'lucario', 'reuniclus', 'sirfetchd', 'heracross', 'sigilyph',
   ]),
   NU: new Set([
-    'yanmega', 'slurpuff', 'emboar', 'porygon2', 'noivern', 'moltres', 'ribombee', 'kingdra',
-    'exploud', 'necrozma', 'tyrantrum', 'cofagrigus', 'meloetta', 'barbaracle', 'bruxish',
-    'cameruptmega', 'venusaur', 'gigalith', 'hoopa',
+    'slurpuff', 'scrafty', 'haunter', 'linoone', 'chansey', 'indeedeef', 'porygon2', 'tauros',
+    'exeggutoralola', 'sneasel', 'snorlax', 'zygarde10', 'tyrantrum', 'kingdra',
   ]),
   PU: new Set([
-    'vivillon', 'klinklang', 'hariyama', 'barbaracle', 'vanilluxe', 'medicham', 'passimian',
-    'magmortar', 'kingler', 'charizard', 'tauros', 'typhlosion', 'gallade', 'samurott', 'sawk',
-    'archeops', 'pyroar', 'aromatisse', 'minior', 'exeggutoralola',
+    'arctozolt', 'arctovish', 'silvally', 'noctowl', 'silvallyground', 'silvallyfire',
+    'silvallyflying', 'silvallyfighting', 'scyther', 'magneton', 'porygon2', 'basculin',
+    'hitmontop', 'silvallypsychic', 'silvallyelectric', 'silvallygrass', 'rotomfrost', 'orbeetle',
+    'butterfree', 'golurk', 'flapple', 'thievul', 'sawk', 'galvantula', 'silvallydark', 'exeggutor',
+    'mesprit', 'guzzlord', 'magmortar', 'zygarde10', 'kingler', 'absol',
   ]),
-  ZU: new Set([
-    'carracosta', 'crabominable', 'exeggutor', 'gorebyss', 'jynx', 'musharna', 'raticatealola',
-    'raticatealolatotem', 'throh', 'turtonator', 'typenull', 'ursaring', 'victreebel', 'zangoose',
-  ]),
+  ZU: new Set(['silvallyelectric', 'thwackey', 'ludicolo', 'musharna', 'grapploct', 'swoobat']),
 };
+
+function usageTiers<T>(
+  type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: T
+): UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T> {
+  switch (type) {
+  case 'singles': return {OU: t, UU: t, RU: t, NU: t, PU: t};
+  case 'doubles': return {DOU: t, DUU: t};
+  case 'nationaldex': return {ND: t};
+  default: return {LC: t};
+  }
+}
+
+function usageTierName(
+  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
+) {
+  switch (tier) {
+  case 'DOU': return 'doublesou';
+  case 'DUU': return 'doublesuu';
+  case 'ND': return 'nationaldex';
+  default: return toID(tier);
+  }
+}
 
 function updateTiers(
   gen: Generation,
@@ -491,14 +546,13 @@ function updateTiers(
       let old = (species.tier || species.doublesTier) as string;
       if (old[0] === '(') old = old.slice(1, -1);
       if (['NFE', 'LC'].includes(old)) NFE.add(species.id);
-      tier = DOUBLES_TIERS.includes(old as DoublesTier) ? (old as DoublesTier) : 'DUU';
+      tier = TIERS.doubles.includes(old as DoublesTier) ? (old as DoublesTier) : 'DUU';
     } else {
-      // FIXME: Code which is either undesirable or unused
       let old = species.tier as string;
       if (old[0] === '(' && old[1] !== 'P') old = old.slice(1, -1);
       if (old[0] === '(' && old[1] === 'P') old = 'ZU';
       if (['NFE', 'LC', 'LC Uber'].includes(old)) NFE.add(species.id);
-      tier = TIERS.includes(old as Tier) ? (old as Tier) : 'ZU';
+      tier = TIERS.singles.includes(old as Tier) ? (old as Tier) : 'ZU';
     }
     current.set(species.id, tier);
 
@@ -515,7 +569,7 @@ function updateTiers(
     if (updated.has(species.id)) continue;
 
     const riseAndDrop =
-      (r: UsageTier | DoublesUsageTier, d: UsageTier | DoublesUsageTier, b?: Tier) =>
+      (r: UsageTier | DoublesUsageTier, d: Tier | DoublesTier, b?: Tier) =>
         computeRiseAndDrop(species.id, update, updated, tier, rise, drop, {
           rise: r,
           drop: d,
@@ -523,6 +577,7 @@ function updateTiers(
         });
     if (doubles) {
       if (riseAndDrop('DOU', 'DUU')) continue;
+      if (riseAndDrop('DUU', 'DNU')) continue;
     } else {
       if (riseAndDrop('OU', 'UU', 'UUBL')) continue;
       if (riseAndDrop('UU', 'RU', 'RUBL')) continue;
@@ -531,7 +586,7 @@ function updateTiers(
       if (riseAndDrop('PU', 'ZU', 'ZUBL')) continue;
     }
 
-    if (!updated.has(species.id)) updated.set(species.id, doubles ? 'DUU' : 'ZU');
+    if (!updated.has(species.id)) updated.set(species.id, doubles ? 'DNU' : 'ZU');
 
     const newTier = updated.get(species.id);
     if (newTier && BL[newTier as Tier]?.has(species.id)) {
@@ -550,7 +605,7 @@ function computeRiseAndDrop(
   drop: number,
   tiers: {
     rise: UsageTier | DoublesUsageTier;
-    drop: UsageTier | DoublesUsageTier;
+    drop: Tier | DoublesTier;
     ban?: Tier | DoublesTier;
   }
 ) {
@@ -672,7 +727,9 @@ function forDetailed(cc: { [key: string]: util.EncounterStatistics }) {
 }
 
 function makeTable(
-  gen: Generation, pokemon: Array<[ID, number]>, tier: UsageTier | DoublesUsageTier
+  gen: Generation,
+  pokemon: Array<[ID, number]>,
+  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
 ) {
   let s = `[HIDE=${tier}][CODE]\n`;
   s += `Combined usage for ${tier}\n`;
