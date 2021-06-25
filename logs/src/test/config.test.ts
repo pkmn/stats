@@ -11,8 +11,7 @@ describe('Config', () => {
     expect(() => Options.toConfiguration({input, output} as Options))
       .toThrow('Worker must be specified');
     expect(() =>
-      Options.toConfiguration({input, output, worker, threads: 1, processes: 1, checkpoints})
-    ).toThrow('Cannot simultaneously run with both threads and processes');
+      Options.toConfiguration({input, output, worker, threads: 1, processes: 1, checkpoints})).toThrow('Cannot simultaneously run with both threads and processes');
 
     let config = Options.toConfiguration({
       input, output, worker, checkpoints, processes: 1, maxFiles: 5, dryRun: true,

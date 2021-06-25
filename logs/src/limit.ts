@@ -52,16 +52,16 @@ export function limit(concurrency: number) {
     new Promise(resolve => enqueue(fn, resolve, ...args));
   Object.defineProperties(generator, {
     activeCount: {
-      get: () => activeCount
+      get: () => activeCount,
     },
     pendingCount: {
-      get: () => queue.length
+      get: () => queue.length,
     },
     clearQueue: {
       value: () => {
         queue.length = 0;
-      }
-    }
+      },
+    },
   });
 
   return generator as Limit;

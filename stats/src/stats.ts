@@ -1,4 +1,4 @@
-import {Generation, ID, PokemonSet, Nature, StatName, StatsTable} from '@pkmn/data';
+import {Generation, ID, PokemonSet, Nature, StatID, StatsTable} from '@pkmn/data';
 
 import {Battle, Player, Pokemon} from './parser';
 import {Outcome} from './util';
@@ -390,7 +390,7 @@ function getSpread<T>(
 ) {
   const evs: number[] = [];
 
-  let stat: StatName;
+  let stat: StatID;
   for (stat in pokemon.evs) {
     // FIXME: The intention of the original code was to clearly round all EVs
     if (stat === 'def') {
@@ -412,7 +412,7 @@ function computeStats<T>(
   pokemon: PokemonSet<T>
 ) {
   const stats: number[] = [];
-  let stat: StatName;
+  let stat: StatID;
   for (stat in pokemon.evs) {
     stats.push(
       gen.stats.calc(stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature)
@@ -423,7 +423,7 @@ function computeStats<T>(
 
 function statToEV(
   gen: Generation,
-  stat: StatName,
+  stat: StatID,
   val: number,
   base: number,
   iv: number,

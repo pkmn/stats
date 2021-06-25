@@ -46,7 +46,7 @@ export abstract class Checkpoint implements Batch {
     return {
       day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}`,
       log: `battle-${format}-${log}.log.json`,
-      index: { local: Number(il), global: Number(ig) },
+      index: {local: Number(il), global: Number(ig)},
     };
   }
 
@@ -75,7 +75,7 @@ export const Checkpoints = new class {
   json<T>(format: ID, begin: Offset, end: Offset, data: T, shard?: string) {
     return new JSONCheckpoint<T>(format, begin, end, data, shard);
   }
-}
+};
 
 export class EmptyCheckpoint extends Checkpoint {
   serialize() {

@@ -1,7 +1,7 @@
 import {LOG, VLOG} from './debug';
 
 import * as threads from 'bthreads';
-import {ID,  Configuration} from './config';
+import {ID, Configuration} from './config';
 import {Batch, Checkpoint} from './checkpoints';
 import {CheckpointStorage, LogStorage, Storage} from './storage';
 import {limit, Limit} from './limit';
@@ -30,8 +30,8 @@ export abstract class ApplyWorker<
   A = undefined
 > implements Worker<C> {
   readonly config!: C;
-  readonly storage!: {logs: LogStorage, checkpoints: CheckpointStorage};
-  readonly limit!: {apply: Limit, combine: Limit};
+  readonly storage!: {logs: LogStorage; checkpoints: CheckpointStorage};
+  readonly limit!: {apply: Limit; combine: Limit};
 
   constructor() {
     if (workerData) {
@@ -53,7 +53,7 @@ export abstract class ApplyWorker<
     // const offset = `${format}: ${Checkpoints.formatOffsets(begin, end)}`;
     // LOG(`Processing ${size} log(s) from batch ${i}/${batches.length} - ${offset}`);
 
-    let processed: Array<Promise<void>> = [];
+    const processed: Array<Promise<void>> = [];
     for (const log of await this.storage.logs.select(format, begin, end)) { // TODO just begin end
       processed.push(this.limit.apply(() => this.process(log, state)));
     }
@@ -89,7 +89,7 @@ export abstract class CombineWorker<
     const state = this.setupCombine(format, shard);
     LOG(`Combining checkpoint(s) for ${format}`);
 
-    let processed: Array<Promise<void>> = [];
+    const processed: Array<Promise<void>> = [];
     for (const batch of await this.storage.checkpoints.list(format)) { // FIXME shard
       processed.push(this.limit.combine(() => this.readCheckpoint(batch, state)));
     }

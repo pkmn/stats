@@ -1,4 +1,4 @@
-import {Generation, ID, toID, PokemonSet, StatName, TypeName} from '@pkmn/data';
+import {Generation, ID, toID, PokemonSet, StatID, TypeName} from '@pkmn/data';
 import * as util from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)
@@ -133,7 +133,7 @@ function calcFormeStats(gen: Generation, pokemon: PokemonSet<ID>) {
   const species = util.getSpecies(gen, pokemon.species);
   const nature = util.ignoreGen(gen).natures.get(pokemon.nature)!;
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
-  let stat: StatName;
+  let stat: StatID;
   for (stat in stats) {
     stats[stat] = gen.stats.calc(
       stat,

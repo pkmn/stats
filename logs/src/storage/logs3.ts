@@ -27,7 +27,7 @@ export type Task = {
 } & ({
   batch: Batch;
 } | {
-  done(): Promise<void>
+  done(): Promise<void>;
 });
 
 const YYYYMM = /^(\d{4}-\d{2})/;
@@ -36,7 +36,7 @@ const YYYYMMDD = /^(\d{4}-\d{2}-\d{2})/;
 // BUG:
 // - Date ranges only work with UTC, PS main doesnt use UTC so date ranges going to be off
 // - Issue if multiple directory with the same date exist (eg. 2020-08.tar & 2020-08)
-export class LogFileStorage /*implements LogStorage*/ {
+export class LogFileStorage /* implements LogStorage*/ {
   readonly dir: string;
   readonly workspace: Workspace;
   readonly constrained: boolean;
@@ -56,7 +56,7 @@ export class LogFileStorage /*implements LogStorage*/ {
     end?: Date
   ) {
     let root;
-    const months: Array<{path: string, date: Date}> = [];
+    const months: Array<{path: string; date: Date}> = [];
     let match = YYYYMM.exec(path.basename(this.dir));
     if (match) {
       root = path.dirname(this.dir);
@@ -74,7 +74,7 @@ export class LogFileStorage /*implements LogStorage*/ {
     }
 
     const opens = [];
-    const formats = new Map<ID, {shards: string[] | [undefined], months: string[]}>();
+    const formats = new Map<ID, {shards: string[] | [undefined]; months: string[]}>();
     for (const month of months) {
       if (begin && begin > month.date) continue;
       if (end && end <= month.date) break;
@@ -90,7 +90,7 @@ export class LogFileStorage /*implements LogStorage*/ {
           }
 
           // TODO if checkpoints have been tombstoned we can delete format as well...
-          let shards = accept(format);
+          const shards = accept(format);
           if (!shards) {
             if (this.constrained && opened.tmp) await fs.rmrf(opened.path);
             continue;
@@ -98,7 +98,7 @@ export class LogFileStorage /*implements LogStorage*/ {
 
           formats.set(format, {
             shards: shards === true ? [undefined] : shards,
-            months: [path.join(opened.path, f)]
+            months: [path.join(opened.path, f)],
           });
         }
       }));
@@ -117,12 +117,11 @@ export class LogFileStorage /*implements LogStorage*/ {
   async processFormat(
     root: string,
     format: ID,
-    data: {shards: string[] | [undefined], months: string[]},
+    data: {shards: string[] | [undefined]; months: string[]},
     fn: (task: Task) => void,
     begin?: Date,
     end?: Date
   ) {
-
     for (const month of data.months) {
       // FIXME expand format dir,
       // TODO handle days in parallel as well
@@ -155,12 +154,12 @@ export class LogFileStorage /*implements LogStorage*/ {
   }
 
   private async open(dir: string, root: string, to: string, tmp = false) {
-    let stats = await fs.lstat(dir);
+    const stats = await fs.lstat(dir);
     if (stats.isDirectory()) {
       return {path: dir, files: await fs.readdir(dir), tmp};
     } else {
       const unpacked = path.join(to, dir.slice(root.length));
-      let stats = await fs.lstat(unpacked)
+      const stats = await fs.lstat(unpacked);
       if (!stats.isDirectory()) await fs.unpack(dir, unpacked);
       return {path: unpacked, files: await fs.readdir(unpacked), tmp: true};
     }
@@ -213,7 +212,7 @@ const encode = (log: string) => {
   const day = path.basename(path.dirname(log));
   const [, format, num] = path.basename(log).split('-');
   return `${day}_${format}_${parseInt(num)}`;
-}
+};
 // 2020-08-14_gen1ou_24687621 -> 2020-08/gen1ou/2020-08-14/battle-gen1ou-24687621.log.json
 const decode = (offset: string) => {
   const [day, format, num] = path.basename(offset).split('_');
@@ -223,4 +222,4 @@ const decode = (offset: string) => {
     day,
     `battle-${format}-${num}.log.json`
   );
-}
+};

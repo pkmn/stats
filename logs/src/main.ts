@@ -7,7 +7,7 @@ import {CheckpointStorage} from './storage';
 import {Worker} from './worker';
 
 export interface Statistics {
-  sizes: {[format: string]: number},
+  sizes: {[format: string]: number};
   total: number;
 }
 
@@ -22,7 +22,7 @@ export async function process(options: Options, random = new Random()) {
   // FIXME
   const all = await split(config, worker.accept);
 
-  config.worker.type
+  config.worker.type;
 
   let failures = 0;
   if (all.batches.length) {

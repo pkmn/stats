@@ -13,14 +13,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.3.1"
+    "@pkmn/data": "^0.4.8",
+    "source-map-support": "^0.5.19"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.3.1",
-    "json-stringify-pretty-compact": "^2.0.0"
-  },
-  "optionalDependencies": {
-    "source-map-support": "^0.5.19"
+    "@pkmn/dex": "^0.4.8",
+    "json-stringify-pretty-compact": "^3.0.0"
   },
   "scripts": {
     "lint": "eslint --cache src --ext ts",

@@ -16,7 +16,7 @@ export class CheckpointFileStorage implements CheckpointStorage {
       this.dir = await fs.mkdtemp('checkpoints-');
     } else {
       try {
-        await fs.mkdir(this.dir, { recursive: true });
+        await fs.mkdir(this.dir, {recursive: true});
       } catch (err) {
         if (err.code !== 'EEXIST') throw err;
       }

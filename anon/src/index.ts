@@ -453,8 +453,8 @@ function copyPokemonSet(pokemon: PokemonSet) {
     moves: pokemon.moves.slice(),
     nature: pokemon.nature,
     gender: pokemon.gender,
-    evs: Object.assign({}, pokemon.evs),
-    ivs: Object.assign({}, pokemon.ivs),
+    evs: {...pokemon.evs},
+    ivs: {...pokemon.ivs},
     level: pokemon.level,
   };
   if ((pokemon as any).forcedLevel !== undefined) {

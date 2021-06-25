@@ -1,4 +1,4 @@
-import {Generation, ID, toID, PokemonSet, StatName} from '@pkmn/data';
+import {Generation, ID, toID, PokemonSet, StatID} from '@pkmn/data';
 
 import {Classifier} from './classifier';
 import {Outcome} from './util';
@@ -281,11 +281,11 @@ export const Parser = new class {
 
       const evs = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
       for (const [stat, ev] of Object.entries(pokemon.evs)) {
-        evs[stat as StatName] = Number(ev);
+        evs[stat as StatID] = Number(ev);
       }
       const ivs = {hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31};
       for (const [stat, iv] of Object.entries(pokemon.ivs)) {
-        ivs[stat as StatName] = Number(iv);
+        ivs[stat as StatID] = Number(iv);
       }
       pokemon.evs = evs;
       pokemon.ivs = ivs;

@@ -13,15 +13,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.3.1",
-    "@pkmn/protocol": "^0.2.0"
+    "@pkmn/data": "^0.4.8",
+    "@pkmn/protocol": "^0.3.4"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.3.1"
-  },
-  "optionalDependencies": {
-    "json-diff": "^0.5.4",
-    "source-map-support": "^0.5.19"
+    "@pkmn/dex": "^0.4.8"
   },
   "scripts": {
     "lint": "eslint --cache src --ext ts",

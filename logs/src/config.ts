@@ -71,7 +71,7 @@ export const ALIASES = {
 export function usage(
   code: number,
   preamble: string,
-  options: Array<{name: string, options: {[option: string]: {desc: string}}}> = []
+  options: Array<{name: string; options: {[option: string]: {desc: string}}}> = []
 ) {
   const out = !code ? console.log : console.error;
 
@@ -137,7 +137,7 @@ export function usage(
   out('      will be used as the concurrency primitive by default.');
   out('');
   out('   -p N, --processes N');
-  out('')
+  out('');
   out('      Process the logs using N worker processes (default: NUM_CORES-1). Using');
   out('      this in combination with the --threads flag will result in an error.');
   out('      Threads will be used as the concurrency primitive by default.');
@@ -148,7 +148,7 @@ export function usage(
   out('      be configured to be less than `ulimit -n`.');
   out('');
   out('   -s N(,M), --batchSize N(,M)');
-  out('')
+  out('');
   out('      Write checkpoints at least every N files per format (default: 8096)'); // TODO
   out('');
   out('   -d, --dryRun');
@@ -161,11 +161,11 @@ export function usage(
   out('      Log output while processing (default: false). Logging output (especially');
   out('      to a terminal) will naturally have negative performance implications.');
   out('');
-  out('   --strict')
+  out('   --strict');
   out('');
   out('      TODO');
   out('');
-  out('   --constrained')
+  out('   --constrained');
   out('');
   out('      TODO');
   out('');
@@ -210,7 +210,7 @@ export class Options {
   private constructor() {}
 
   static toConfiguration(options: Options, parsers: {
-    [option: string]: { parse?: (s: string) => any}
+    [option: string]: { parse?: (s: string) => any};
   } = {}): Configuration {
     let type: Configuration['worker']['type'] = 'processes';
     let num: Configuration['worker']['num'];
