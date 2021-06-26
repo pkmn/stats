@@ -115,8 +115,10 @@ const NON_SINGLES_FORMATS = new Set([
   'gen7pokebankdoublesou', 'gen7pokebankdoublesoubeta', 'gen7randomdoublesbattle',
   'gen7vgc2017', 'gen7vgc2017beta', 'orassmogondoubles', 'randomdoublesbattle', 'smogondoublesuu',
   'randomtriplesbattle', 'smogondoubles', 'smogondoublessuspecttest', 'smogondoublesubers',
-  'smogontriples', 'smogontriples', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017', 'gen8doublesou',
-  'gen8doublesubers', 'gen8doublesuu',
+  'smogontriples', 'smogontriples', 'gen8doublesou', 'gen8doublesubers', 'gen8doublesuu',
+  'vgc2014', 'vgc2015', 'vgc2016', 'gen6vgc2016', 'gen7vgc2017', 'gen7vgc2018', 'gen7vgc2018',
+  'gen7vgc2019sunseries', 'gen7vgc2019moonseries', 'fen7vgc2019ultraseries', 'gen8vgc2020',
+  'gen8vgc2021', 'gen8vgc2021series9', 'gen8vgc2021series9limitonerestrictedrestrictedlegendary',
 ]);
 
 export function isNonSinglesFormat(format: ID) {
@@ -126,9 +128,11 @@ export function isNonSinglesFormat(format: ID) {
 // FIXME: Generate this based on teamLength from config/formats.js
 const NON_6V6_FORMATS = new Set([
   '1v1', 'battlespotdoubles', 'battlespotsingles', 'battlespotspecial7', 'challengecup1v1',
-  'gen5gbusingles', 'gen71v1', 'gen7alolafriendly', 'gen7battlespotdoubles',
+  'gen5gbusingles', 'gen71v1', 'gen7alolafriendly', 'gen7battlespotdoubles', 'gen81v1',
   'gen7battlespotsingles', 'gen7challengecup1v1', 'gen7vgc2017', 'gen7vgc2017beta', 'pgllittlecup',
-  'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017', 'gen81v1',
+  'vgc2014', 'vgc2015', 'vgc2016', 'gen6vgc2016', 'gen7vgc2017', 'gen7vgc2018', 'gen7vgc2018',
+  'gen7vgc2019sunseries', 'gen7vgc2019moonseries', 'fen7vgc2019ultraseries', 'gen8vgc2020',
+  'gen8vgc2021', 'gen8vgc2021series9', 'gen8vgc2021series9limitonerestrictedrestrictedlegendary',
 ]);
 
 export function isNon6v6Format(format: ID) {

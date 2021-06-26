@@ -105,11 +105,12 @@ necessary.
 
 ### CLI
 
-A [`convert`](convert) tool is packaged with `@pkmn/stats` that takes in a reports directory and
-cutoff as input and converts the reports to the [new output format](OUTPUT.md#Legacy).
+A [`convert`](convert) tool is packaged with `@pkmn/stats` that takes in a reports directory as
+input and a location to write the transformed reports and converts the legacy reports to the [new
+output format](OUTPUT.md#Legacy).
 
 ```sh
-$ convert src/test/testdata/reports/gen7ubers 1630
+$ convert path/to/reports path/to/output
 ```
 
 There is no CLI tool for actually generating reports - [`@pkmn/logs`](../logs) should be used to

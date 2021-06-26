@@ -3,12 +3,18 @@ export {Battle, Parser, Player, Pokemon, Rating, Team} from './parser';
 export {Reports} from './reports';
 export {
   Display,
+  DisplayMetagameStatistics,
   DisplayStatistics,
   DisplayUsageStatistics,
   LegacyDisplayUsageStatistics,
-  DisplayMetagameStatistics,
 } from './display';
-export {Outcome, canonicalizeFormat, newGenerations, genForFormat} from './util';
+export {
+  canonicalizeFormat,
+  genForFormat,
+  isNonSinglesFormat,
+  newGenerations,
+  Outcome,
+} from './util';
 export {
   MetagameStatistics,
   Statistics,

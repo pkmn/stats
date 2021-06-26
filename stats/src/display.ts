@@ -15,11 +15,11 @@ const R = (v: number) => util.round(v, 1e4);
 export interface DisplayStatistics<T = DisplayUsageStatistics> {
   battles: number;
   pokemon: { [name: string]: T };
-  metagame: DisplayMetagameStatistics;
+  metagame?: DisplayMetagameStatistics;
 }
 
 export interface DisplayUsageStatistics {
-  lead: Usage;
+  lead?: Usage;
   usage: Usage;
   unique: Usage;
   win: Usage;
@@ -38,7 +38,7 @@ export interface DisplayUsageStatistics {
 
 export interface LegacyDisplayUsageStatistics
   extends Omit<DisplayUsageStatistics, 'unique' | 'win' | 'stats'> {
-  happinesses: { [happiness: string]: number };
+  happinesses?: { [happiness: string]: number };
   spreads: { [spreads: string]: number };
 }
 
@@ -71,7 +71,7 @@ export interface DetailedMovesetStatistics {
   Abilities: { [ability: string]: number };
   Items: { [item: string]: number };
   Spreads: { [spread: string]: number };
-  Happiness: { [happiness: string]: number };
+  Happiness?: { [happiness: string]: number };
   Moves: { [move: string]: number };
   Teammates: { [pokemon: string]: number };
   // n = sum(POKE1_KOED...DOUBLE_SWITCH)
@@ -80,12 +80,17 @@ export interface DetailedMovesetStatistics {
   'Checks and Counters': { [pokemon: string]: [number, number, number] };
 }
 
+// Corrections for Pokémon who have had their names changed over time by developers.
+const FIX: {[id: string]: string } = {
+  mimikyutotembusted: 'mimikyubustedtotem',
+};
+
 const SPECIES = /\| (.*) [-+.0-9]+ \([-+.0-9]+±[-+.0-9]+\)/;
 const OUTCOME = /\|\W+\(([-+.0-9]+)% KOed \/ ([-+.0-9]+)% switched out\)/;
 
 export const Display = new class {
   fromStatistics(gen: Generation, format: ID, stats: Statistics, min = 20): DisplayStatistics {
-    const N = (n: string) => gen.species.get(n)?.name as string;
+    const N = (n: string) => gen.species.get(FIX[toID(n)] || n)!.name;
 
     const q = Object.entries(stats.pokemon);
     const real = ['challengecup1v1', '1v1'].includes(format);
@@ -108,7 +113,7 @@ export const Display = new class {
 
       const u = unique.pokemon[species];
       pokemon[N(species)] = {
-        lead: calcUsage(p.lead, stats.lead),
+        lead: calcUsage(p.lead, stats.lead), // BUG: remove for non singles?
         usage,
         unique: calcUsage(u.usage, unique.total),
         win: calcUsage(p.win, stats.win),
@@ -164,18 +169,18 @@ export const Display = new class {
   fromReports(
     gen: Generation,
     usageReport: string,
-    leadsReport: string,
     movesetReport: string,
     detailedReport: string,
-    metagameReport: string
+    metagameReport?: string,
+    leadsReport?: string
   ): DisplayStatistics<LegacyDisplayUsageStatistics> {
-    const N = (n: string) => gen.species.get(n)?.name as string;
+    const N = (n: string) => gen.species.get(FIX[toID(n)] || n)!.name;
 
     const dr = JSON.parse(detailedReport) as DetailedUsageStatistics;
     const ur = parseUsageReport(usageReport);
-    const lr = parseLeadsReport(leadsReport);
     const pmr = partialParseMovesetReport(movesetReport);
-    const mr = parseMetagameReport(metagameReport);
+    const mr = metagameReport ? parseMetagameReport(metagameReport) : undefined;
+    const lr = leadsReport ? parseLeadsReport(leadsReport) : undefined;
 
     const pokemon: { [name: string]: LegacyDisplayUsageStatistics } = {};
     for (const [species, {weight: w, outcomes}] of Object.entries(pmr)) {
@@ -196,25 +201,24 @@ export const Display = new class {
       };
       if (!usage.weighted) break;
 
-      const lead = {raw: 0, real: 0, weighted: 0};
-      const lrp = lr.usage[id];
+      let lead: Usage | undefined = undefined;
+      const lrp = lr?.usage[id];
       if (lrp) {
-        lead.raw = R(lrp.rawp);
+        lead = {raw: R(lrp.rawp), real: 0, weighted: R(lrp.weightedp)};
         lead.real = lead.raw;
-        lead.weighted = R(lrp.weightedp);
       }
 
       const counters: LegacyDisplayUsageStatistics['counters'] = {};
       for (const [k, [n]] of Object.entries(p['Checks and Counters'])) {
         const {koedn, switchedn} = outcomes[k] ?? {koedn: 0, switchedn: 0};
-        counters[gen.species.get(k)!.name] = [R(n), R(koedn), R(switchedn)];
+        counters[N(k)] = [R(n), R(koedn), R(switchedn)];
       }
 
       const teammates: LegacyDisplayUsageStatistics['teammates'] = {};
       for (const [k, v] of Object.entries(p.Teammates)) {
         const r = R(v / rawWeight);
         if (!r) break;
-        teammates[gen.species.get(k)!.name] = r;
+        teammates[N(k)] = r;
       }
 
       pokemon[N(species)] = {
@@ -233,7 +237,7 @@ export const Display = new class {
           const o = gen.items.get(item);
           return (o?.name) ?? item;
         }),
-        happinesses: toDisplayObject(p.Happiness, rawWeight),
+        happinesses: p.Happiness ? toDisplayObject(p.Happiness, rawWeight) : undefined,
         spreads: toDisplayObject(p.Spreads, rawWeight),
         moves: toDisplayObject(p.Moves, rawWeight, move => {
           if (move === '') return 'Nothing';
@@ -245,26 +249,30 @@ export const Display = new class {
       };
     }
 
-    const tags: { [tag: string]: number } = {};
-    for (const tag in mr.tags) {
-      const r = R(mr.tags[tag]);
-      if (!r) break;
-      tags[tag] = r;
-    }
+    let metagame: DisplayMetagameStatistics | undefined = undefined;
+    if (mr) {
+      const tags: { [tag: string]: number } = {};
+      for (const tag in mr.tags) {
+        const r = R(mr.tags[tag]);
+        if (!r) break;
+        tags[tag] = r;
+      }
 
-    // BUG: this probably wrong
-    const total = mr.histogram.reduce((acc, [, num]) => acc + num, 0) / Math.E;
-    const stalliness = {
-      histogram: mr.histogram.map(([bin, num]) =>
-        [R(bin), R(num * mr.legend * total)] as [number, number]),
-      mean: R(mr.mean),
-      total: R(total),
-    };
+      // BUG: this probably wrong
+      const total = mr.histogram.reduce((acc, [, num]) => acc + num, 0) / Math.E;
+      const stalliness = {
+        histogram: mr.histogram.map(([bin, num]) =>
+          [R(bin), R(num * mr.legend * total)] as [number, number]),
+        mean: R(mr.mean),
+        total: R(total),
+      };
+      metagame = {tags, stalliness};
+    }
 
     return {
       battles: dr.info['number of battles'],
       pokemon,
-      metagame: {tags, stalliness},
+      metagame,
     };
   }
 };
@@ -493,6 +501,7 @@ function parseMetagameReport(report: string) {
     (start as number) += step!;
   }
   i++;
-  const legend = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100;
+  const legend =
+    lines[i] ? Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100 : 0;
   return {tags, mean, histogram, legend};
 }
