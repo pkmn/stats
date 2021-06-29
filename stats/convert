@@ -17,17 +17,7 @@ const stringify = require('json-stringify-pretty-compact');
 
 const MONTH = /^\d{4}-\d{2}$/;
 const UNSUPPORTED = ['1v1', 'challengecup1vs1'];
-const MISSING = {
-  '2015-01': ['gen5ubers-0', 'gen5ubers-1500', 'statswitch-0', 'statswitch-1500'],
-  '2015-03': [
-    'classichackmons-0', 'classichackmons-1500', 'classichackmons-1630', 'classichackmons-1760',
-    'gen5smogondoubles-0', 'gen5smogondoubles-1500', 'gen5ubers-0', 'gen5ubers-1500',
-    'gen5uu-0', 'gen5uu-1500', 'randombattle-1695', 'seasonalsuperstaffbros-0',
-    'seasonalsuperstaffbros-1500', 'seasonalsuperstaffbros-1630', 'seasonalsuperstaffbros-1760',
-  ],
-  '2016-02': ['anythinggoes-1630'],
-  '2016-10': ['cap-0', 'cap-1500', 'cap-1630', 'cap-1760'],
-};
+
 const KEYS = [
   'weight', 'viability', 'abilities', 'items', 'stats',
   'moves', 'teammates', 'counters', 'happinesses', 'spreads',
@@ -88,9 +78,13 @@ async function convert(month, out, split) {
       if (err.code !== 'EEXIST') throw err;
     }
     const gen = gens.get(file.startsWith('gen') ? +file.charAt(3) : 6);
-    // NOTE: deliberately limiting concurrency to avoid opening too many files
-    await write(path.join(out, format, cutoff), gen, month, base, split);
-    processed++;
+    try {
+      // NOTE: deliberately limiting concurrency to avoid opening too many files
+      await write(path.join(out, format, cutoff), gen, month, base, split);
+      processed++;
+    } catch (err) {
+      console.error(`Error converting '${base}': ${err}`);
+    }
   }
   if (!processed) usage(`No reports found in ${month}.`);
 }
