@@ -90,7 +90,7 @@ const OUTCOME = /\|\W+\(([-+.0-9]+)% KOed \/ ([-+.0-9]+)% switched out\)/;
 
 export const Display = new class {
   fromStatistics(gen: Generation, format: ID, stats: Statistics, min = 20): DisplayStatistics {
-    const N = (n: string) => gen.species.get(FIX[toID(n)] || n)!.name;
+    const N = (n: string) => gen.species.get(FIX[toID(n)] || n)?.name || n;
 
     const q = Object.entries(stats.pokemon);
     const real = ['challengecup1v1', '1v1'].includes(format);
@@ -174,12 +174,12 @@ export const Display = new class {
     metagameReport?: string,
     leadsReport?: string
   ): DisplayStatistics<LegacyDisplayUsageStatistics> {
-    const N = (n: string) => gen.species.get(FIX[toID(n)] || n)!.name;
+    const N = (n: string) => gen.species.get(FIX[toID(n)] || n)?.name || n;
 
     const dr = JSON.parse(detailedReport) as DetailedUsageStatistics;
     const ur = parseUsageReport(usageReport);
     const pmr = partialParseMovesetReport(movesetReport);
-    const mr = metagameReport ? parseMetagameReport(metagameReport) : undefined;
+    const mr = metagameReport ? parseMetagameReport(metagameReport) : undefined;
     const lr = leadsReport ? parseLeadsReport(leadsReport) : undefined;
 
     const pokemon: { [name: string]: LegacyDisplayUsageStatistics } = {};
@@ -208,19 +208,24 @@ export const Display = new class {
         lead.real = lead.raw;
       }
 
-      const counters: LegacyDisplayUsageStatistics['counters'] = {};
+      const scored: { [name: string]: {score: number; val: [number, number, number]} } = {};
       for (const [k, [n]] of Object.entries(p['Checks and Counters'])) {
-        const {koedn, switchedn} = outcomes[k] ?? {koedn: 0, switchedn: 0};
-        counters[N(k)] = [R(n), R(koedn), R(switchedn)];
+        if (!outcomes[k]) continue;
+        const {koedn, switchedn} = outcomes[k];
+        const q = R((koedn * n + switchedn * n) / n);
+        const d = R(Math.sqrt((q * (1.0 - q)) / n));
+        const score = R(q - 4 * d);
+        scored[N(k)] = {score, val: [R(n), R(koedn), R(switchedn)]};
       }
 
-      const teammates: LegacyDisplayUsageStatistics['teammates'] = {};
-      for (const [k, v] of Object.entries(p.Teammates)) {
-        const r = R(v / rawWeight);
-        if (!r) break;
-        teammates[N(k)] = r;
+      const counters: LegacyDisplayUsageStatistics['counters'] = {};
+      const sorted = Object.entries(scored).sort((a, b) =>
+        b[1].score - a[1].score || a[0].localeCompare(b[0]));
+      for (const [k, v] of sorted) {
+        counters[k] = v.val;
       }
 
+      delete p.Teammates.empty;
       pokemon[N(species)] = {
         lead,
         usage,
@@ -244,7 +249,7 @@ export const Display = new class {
           const o = gen.moves.get(move);
           return (o?.name) ?? move;
         }),
-        teammates,
+        teammates: toDisplayObject(p.Teammates, rawWeight, N),
         counters,
       };
     }
