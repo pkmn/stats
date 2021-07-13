@@ -12,12 +12,17 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "build",
+    "!build/test",
+    "src",
+    "!src/test"
+  ],
   "dependencies": {
-    "@pkmn/data": "^0.4.8",
-    "source-map-support": "^0.5.19"
+    "@pkmn/data": "^0.4.11"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.4.8",
+    "@pkmn/dex": "^0.4.11",
     "json-stringify-pretty-compact": "^3.0.0"
   },
   "scripts": {

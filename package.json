@@ -8,24 +8,24 @@
     "source-map-support": "^0.5.19"
   },
   "optionalDependencies": {
-    "@pkmn/data": "^0.4.8",
-    "@pkmn/dex": "^0.4.8",
+    "@pkmn/data": "^0.4.11",
+    "@pkmn/dex": "^0.4.11",
     "@pkmn/anon": "file:anon",
     "@pkmn/stats": "file:stats"
   },
   "devDependencies": {
-    "@pkmn/eslint-config": "^1.1.0",
-    "@types/jest": "^26.0.23",
-    "@types/node": "^15.12.4",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
-    "@typescript-eslint/parser": "^4.28.0",
-    "eslint": "^7.29.0",
+    "@pkmn/eslint-config": "^1.3.0",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
+    "eslint": "^7.30.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.3.6",
-    "jest": "^27.0.5",
+    "jest": "^27.0.6",
     "subpkg": "^4.1.0",
     "ts-jest": "^27.0.3",
-    "typescript": "^4.3.4"
+    "typescript": "^4.3.5"
   },
   "subPackages": [
     "anon",
