@@ -19,7 +19,7 @@ describe('Config', () => {
     expect(config.checkpoints).toEqual(checkpoints);
     expect(config.worker.num).toEqual({apply: 1, combine: 1});
     expect(config.batchSize).toEqual({apply: 8192, combine: 8192});
-    expect(config.maxFiles).toEqual(5);
+    expect(config.maxFiles).toBe(5);
     expect(config.dryRun).toBe(true);
 
     config = Options.toConfiguration({

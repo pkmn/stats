@@ -1,3 +1,4 @@
+/* eslint-disable */ // FIXME
 import * as path from 'path';
 
 import {
@@ -27,7 +28,7 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
       alias: ['f', 'format'],
       desc: '-f/--formats: tally counts for players in just the formats specified',
       parse: (s: string) => new Set(s.split(',').map(toID)),
-    }
+    },
   };
 
   async init(config: Configuration) {
@@ -71,7 +72,8 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
 
   async readCheckpoint(batch: Batch, state: State) {
     const checkpoint = await JSONCheckpoint.read<State>(
-      this.storage.checkpoints, batch.format, batch.begin, batch.end);
+      this.storage.checkpoints, batch.format, batch.begin, batch.end
+    );
 
     LOG(`Combining checkpoint <${checkpoint}>`);
     for (const p in checkpoint.data) {
@@ -91,7 +93,7 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
     const name = path.resolve(this.config.output, `${format}.json`);
     return fs.writeFile(name, JSON.stringify(sorted));
   }
-}
+};
 
 register(CountWorker);
 export = CountWorker;

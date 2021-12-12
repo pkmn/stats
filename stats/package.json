@@ -1,6 +1,6 @@
 {
   "name": "@pkmn/stats",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "bin": {
@@ -19,10 +19,10 @@
     "!src/test"
   ],
   "dependencies": {
-    "@pkmn/data": "^0.4.11"
+    "@pkmn/data": "^0.5.1"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.4.11",
+    "@pkmn/dex": "^0.5.1",
     "json-stringify-pretty-compact": "^3.0.0"
   },
   "scripts": {

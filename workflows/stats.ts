@@ -1,9 +1,10 @@
+/* eslint-disable */ // FIXME
 import * as path from 'path';
 
 import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
 
-import { canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics } from '@pkmn/stats';
+import {canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics} from '@pkmn/stats';
 
 import {
   Batch,
@@ -27,7 +28,7 @@ interface Configuration extends WorkerConfiguration {
 
 interface ApplyState {
   gen: Generation;
-  format: ID,
+  format: ID;
   stats: TaggedStatistics;
   cutoffs: number[];
 }
@@ -135,7 +136,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
   async writeCombined(format: ID, state: CombineState) {
     // TODO
   }
-}
+};
 
 function mkdirs(dir: string) {
   const mkdir = (d: string) => fs.mkdir(path.resolve(dir, d));

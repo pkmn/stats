@@ -1,3 +1,4 @@
+/* eslint-disable */ // FIXME
 import * as path from 'path';
 
 import {Anonymizer, Verifier} from '@pkmn/anon';
@@ -115,10 +116,10 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
       await Promise.all(writes);
     } else {
       const verifier = new Verifier();
-      const anon = Anonymizer.anonymize(state.gen, raw,  {salt: this.config.salt, verifier});
+      const anon = Anonymizer.anonymize(state.gen, raw, {salt: this.config.salt, verifier});
       if (!verifier.ok()) {
         const msg = [log, Array.from(verifier.names)];
-        for (const { input, output } of verifier.leaks) {
+        for (const {input, output} of verifier.leaks) {
           msg.push(`'${input}' -> '${output}'`);
         }
         console.error(msg.join('\n') + '\n');
@@ -139,7 +140,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
       await this.parallel(
         (await fs.readdir(path.join(this.tmp, format))).entries(),
         ([i, file]) => {
-          const name = `${i}${file.slice(file.endsWith('.log.json') ? - 9 : -8)}`;
+          const name = `${i}${file.slice(file.endsWith('.log.json') ? -9 : -8)}`;
           return fs.copyFile(path.join(this.tmp, file), path.join(dir, name));
         },
         n => `Waiting for ${n} log(s) from ${format} to be copied`,
@@ -147,7 +148,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
       await fs.rmdir(path.join(this.tmp, format), {recursive: true});
     }
   }
-}
+};
 
 register(AnonWorker);
 export = AnonWorker;
