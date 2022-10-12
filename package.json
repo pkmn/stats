@@ -4,41 +4,38 @@
   "license": "MIT",
   "dependencies": {
     "@pkmn/logs": "file:logs",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.7",
     "source-map-support": "^0.5.21"
   },
   "optionalDependencies": {
-    "@pkmn/data": "^0.5.1",
-    "@pkmn/dex": "^0.5.1",
+    "@pkmn/data": "^0.5.28",
+    "@pkmn/dex": "^0.5.28",
     "@pkmn/anon": "file:anon",
     "@pkmn/stats": "file:stats"
   },
   "devDependencies": {
-    "@pkmn/eslint-config": "^2.1.0",
-    "@types/jest": "^27.0.3",
-    "@types/node": "^16.11.12",
-    "@typescript-eslint/eslint-plugin": "^5.6.0",
-    "@typescript-eslint/parser": "^5.6.0",
-    "eslint": "^8.4.1",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jest": "^25.3.0",
-    "jest": "^27.4.4",
+    "@pkmn/eslint-config": "^2.11.0",
+    "@types/jest": "^29.1.2",
+    "@types/node": "^18.8.4",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "eslint": "^8.25.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.1",
+    "jest": "^29.1.2",
     "subpkg": "^4.1.0",
-    "ts-jest": "^27.1.1",
-    "typescript": "^4.5.3"
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.8.4"
   },
   "subPackages": [
     "anon",
-    "stats",
-    "logs"
+    "stats"
   ],
   "scripts": {
-    "lint": "eslint --cache workflows --ext ts && subpkg run lint",
-    "fix": "eslint --fix workflows --ext ts && subpkg run fix",
-    "compile": "subpkg run compile && tsc -p .",
+    "lint": "subpkg run lint",
+    "fix": "subpkg run fix",
+    "compile": "subpkg run compile",
     "test": "subpkg run test",
-    "postinstall": "subpkg install",
-    "pretest": "tsc -p .",
-    "posttest": "eslint --cache workflows --ext ts"
+    "postinstall": "subpkg install"
   }
 }

@@ -11,11 +11,12 @@
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "sourceMap": true,
     "outDir": "build",
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "strict": true,
     "target": "es2019",
     "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "include": ["workflows/*"]
+  "exclude": ["workflows/*", "logs", "node_modules", "build"]
 }
