@@ -12,12 +12,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "build",
-    "!build/test",
-    "src",
-    "!src/test"
-  ],
+  "files": ["build", "!build/test", "src", "!src/test"],
   "dependencies": {
     "@pkmn/data": "^0.5.28"
   },
@@ -34,11 +29,13 @@
     "posttest": "npm run lint"
   },
   "jest": {
-    "preset": "ts-jest",
     "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "node_modules/",
-      "build/"
+    "testPathIgnorePatterns": ["node_modules/", "build/"]
+  },
+  "babel": {
+    "presets": [
+        "@babel/preset-typescript",
+        ["@babel/preset-env", {"targets": {"node": "current"}}]
     ]
   }
 }
