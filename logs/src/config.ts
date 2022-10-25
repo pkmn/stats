@@ -11,6 +11,8 @@ const MAX_FILES = 256;
 // collection and other system tasks.
 const NUM_WORKERS = os.cpus().length - 1;
 
+export const _ = '\n\n     ';
+
 export type ID = (string & { __brand: 'ID' }) | (string & { __isID: true }) | '';
 
 export function toID(text: any): ID {
@@ -74,11 +76,8 @@ export function usage(
   out('   -i INPUT, --input INPUT');
   out('');
   out('      Process data from INPUT. This can either be a path to the root of a logs');
-  out('      corpus (e.g. smogon/pokemon-showdown\'s logs/ directory), a list of');
-  out('      comma-separated paths to months of logs (eg. 2020-01,2020-02,2020-03), a');
-  out('      single month of log files, or \'database:DATABASE\' where DATABASE is the');
-  out('      name of a database. If pointing at logs files, the logs may be compressed');
-  out('      any stage of the hierachy provided no additional nesting is introduced.');
+  out('      corpus (e.g. smogon/pokemon-showdown\'s logs/ directory) or the path to a');
+  out('      logs archive, organized in the supported format.');
   out('');
   out('   -o OUTPUT, --output OUTPUT');
   out('');
@@ -140,7 +139,7 @@ export function usage(
   out('');
   out('   --strict');
   out('');
-  out('      Exit immediately when an error occurs as opposed to simply logging/');
+  out('      Exit immediately when an error occurs as opposed to simply logging.');
   out('');
 
   for (const worker of options) {

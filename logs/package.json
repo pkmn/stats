@@ -3,10 +3,6 @@
   "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "exports": {
-    ".": "./build/index.js",
-    "./config": "./build/config.js"
-  },
   "description": "Logic for processing Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",

@@ -6,6 +6,7 @@ import {Generations, Generation} from '@pkmn/data';
 import {canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics} from '@pkmn/stats';
 
 import {
+  _,
   Batch,
   Checkpoints,
   CombineWorker,
@@ -60,16 +61,16 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     formats: {
       alias: ['f', 'format'],
       desc:
-      '-f/--formats: only generate reports for the formats specified instead of all formats',
+        `-f, --formats${_}only generate reports for the formats specified instead of all formats`,
       parse: (s: string) => new Set(s.split(',').map(toID)),
     },
     legacy: {
       alias: ['l'],
-      desc: '-l/--legacy=OUTPUT: generate legacy reports and write them to OUTPUT',
+      desc: `-l, --legacy=OUTPUT${_}generate legacy reports and write them to OUTPUT`,
     },
     all: {
       alias: ['a'],
-      desc: '-a/--all: include all checks and counters in moveset reports (default: false)',
+      desc: `-a, --all${_}include all checks and counters in moveset reports (default: false)`,
       parse: Options.boolean,
     },
   };
