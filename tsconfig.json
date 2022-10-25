@@ -18,5 +18,5 @@
     "target": "es2019",
     "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "exclude": ["workflows/*", "logs", "node_modules", "build"]
+  "include": ["workflows/**/*"]
 }

@@ -11,7 +11,7 @@ const gunzip = promisify<zlib.InputType, Buffer>(zlib.gunzip);
 export async function exists(path: string) {
   try {
     await fs.stat(path);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code !== 'ENOENT') throw err;
   }
   return true;
@@ -52,7 +52,7 @@ export const lstat = fs.lstat;
 export async function unlink(path: string) {
   try {
     await fs.unlink(path);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code !== 'ENOENT') throw err;
   }
 }
@@ -70,7 +70,7 @@ function isGzipped(buf: Buffer) {
 }
 
 export function unpack(input: string, output: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     zip.unpack(input, output, err => {
       err ? reject(err) : resolve();
     });

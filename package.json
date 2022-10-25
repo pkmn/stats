@@ -28,12 +28,17 @@
     "subpkg": "^4.1.0",
     "typescript": "^4.8.4"
   },
-  "subPackages": ["anon", "stats"],
+  "subPackages": ["anon", "logs", "stats"],
   "scripts": {
-    "lint": "subpkg run lint",
-    "fix": "subpkg run fix",
-    "compile": "subpkg run compile",
+    "lint": "eslint --cache workflows --ext ts && subpkg run lint",
+    "fix": "eslint --fix workflows --ext ts && subpkg run fix",
+    "compile": "subpkg run compile && subpkg run compile",
     "test": "subpkg run test",
+    "pretest": "tsc -p .",
+    "posttest": "eslint --cache workflows --ext ts",
     "postinstall": "subpkg install"
+  },
+  "eslintConfig": {
+    "extends": "@pkmn"
   }
 }

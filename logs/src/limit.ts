@@ -28,8 +28,8 @@ export function limit(concurrency: number) {
 
   const run = async (fn: any, resolve: any, ...args: unknown[]) => {
     activeCount++;
-    const result = new Promise(resolve => {
-      resolve(fn(...args));
+    const result = new Promise(res => {
+      res(fn(...args));
     });
     resolve(result);
     try {
