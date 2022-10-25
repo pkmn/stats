@@ -4,6 +4,7 @@ import {Generation, ID, toID, PokemonSet, SpeciesName} from '@pkmn/data';
 import {Protocol, Username, Nickname, PokemonIdent, PokemonDetails} from '@pkmn/protocol';
 
 export interface Log {
+  roomid: string;
   id: string;
   format: string;
   timestamp: string;

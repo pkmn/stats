@@ -7,19 +7,6 @@ import * as os from 'os';
 // likely not worth the complexity or coordination overhead.
 const MAX_FILES = 256;
 
-// The maximum number of logs for a particular format that will be processed as a batch before the
-// results are persisted as a checkpoint. Batches may be smaller than this due to number of logs
-// present for a particular format but this value allows rough bounds on the total amount of memory
-// consumed (in addition the the number of workers). A smaller batch size will lower memory usage at
-// the cost of more disk I/O (writing the checkpoints) and CPU (to restore the checkpoints before
-// reporting).
-//
-// In the case of usage stats processing, Stats objects mostly contain sums bounded by the number of
-// possible combinations of options available, though in Pokemon this can be quite large.
-// Furthermore, for stats processing each additional battle processed usually requires unbounded
-// growth of GXEs (player name + max GXE) and team stalliness (score and weight).
-const BATCH_SIZE = 8192;
-
 // The default number of workers to use - one per core after setting aside a core for garbage
 // collection and other system tasks.
 const NUM_WORKERS = os.cpus().length - 1;
@@ -37,17 +24,16 @@ export interface Configuration {
   output: string;
   checkpoints: string;
 
-  begin?: Date;
-  end?: Date;
+  begin?: string;
+  end?: string;
 
   worker: {
     type: 'threads' | 'processes';
     path: string;
-    num: {apply: number; combine: number};
+    num: number;
   };
 
   maxFiles: number;
-  batchSize: {apply: number; combine: number};
   strict: boolean;
   dryRun: boolean;
 }
@@ -62,7 +48,6 @@ export const ALIASES = {
   threads: ['t', 'thread'],
   processes: ['p', 'process'],
   maxFiles: ['n', 'files'],
-  batchSize: ['s', 'size', 'batch'],
   debug: ['v', 'verbose'],
   dryRun: ['d', 'dry'],
   strict: [],
@@ -116,19 +101,15 @@ export function usage(
   out('');
   out('   -b WHEN, --begin WHEN');
   out('');
-  out('      If set, only process data which has a timestamp >= WHEN. WHEN can be any');
-  out('      value that can be parsed by JavaScript\'s Date constructor. Note that');
-  out('      smogon/pokemon-showdown logs are written in the server\'s local time zone');
-  out('      (not UTC), and that certain strings (eg. \'2020-07\' vs. \'2020 07\') will be');
-  out('      handled unintuitivity and potentially result in subtle errors.');
+  out('      If set, only process data from directories in the INPUT that are >= WHEN, where ');
+  out('      WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
+  out('      written in the server\'s local time zone (not UTC).');
   out('');
   out('   -e WHEN, --end WHEN');
   out('');
-  out('      If set, only process data which has a timestamp < WHEN. WHEN can be any');
-  out('      value that can be parsed by JavaScript\'s Date constructor. Note that');
-  out('      smogon/pokemon-showdown logs are written in the server\'s local time zone');
-  out('      (not UTC), and that certain strings (eg. \'2020-07\' vs. \'2020 07\') will be');
-  out('      handled unintuitivity and potentially result in subtle errors.');
+  out('      If set, only process data from directories in the INPUT that are < WHEN, where ');
+  out('      WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
+  out('      written in the server\'s local time zone (not UTC).');
   out('');
   out('   -t N, --threads N');
   out('');
@@ -147,10 +128,6 @@ export function usage(
   out('      Open up to N files across all workers (default: 256). This should always');
   out('      be configured to be less than `ulimit -n`.');
   out('');
-  out('   -s N(,M), --batchSize N(,M)');
-  out('');
-  out('      Write checkpoints at least every N files per format (default: 8096)'); // TODO
-  out('');
   out('   -d, --dryRun');
   out('');
   out('      Skip actually performing any processing (default: false). Useful when');
@@ -163,11 +140,7 @@ export function usage(
   out('');
   out('   --strict');
   out('');
-  out('      TODO');
-  out('');
-  out('   --constrained');
-  out('');
-  out('      TODO');
+  out('      Exit immediately when an error occurs as opposed to simply logging/');
   out('');
 
   for (const worker of options) {
@@ -184,21 +157,13 @@ export function usage(
   process.exit(code);
 }
 
-type Option =
-  | {apply: number; combine: number}
-  | {apply?: number; combine?: number}
-  | number
-  | [number, number]
-  | string;
-
-type ComputedFields = 'worker' | 'batchSize' | 'begin' | 'end';
+type ComputedFields = 'worker' | 'begin' | 'end';
 export interface Options extends Partial<Omit<Configuration, ComputedFields>> {
   // NOTE: merged with below - input/output/worker are required fields
-  begin?: Date | string | number;
-  end?: Date | string | number;
-  threads?: Option;
-  processes?: Option;
-  batchSize?: Option;
+  begin?: string;
+  end?: string;
+  threads?: number | string;
+  processes?: number | string;
 }
 
 export class Options {
@@ -213,7 +178,7 @@ export class Options {
     [option: string]: { parse?: (s: string) => any};
   } = {}): Configuration {
     let type: Configuration['worker']['type'] = 'processes';
-    let num: Configuration['worker']['num'];
+    let num: number;
 
     if (!options.input) throw new Error('Input must be specified');
     if (!options.output) throw new Error('Output must be specified');
@@ -229,15 +194,13 @@ export class Options {
     if (options.processes && options.threads) {
       throw new Error('Cannot simultaneously run with both threads and processes');
     } else if (options.processes) {
-      num = parseOption(options.processes, w => typeof w === 'number' ? w : NUM_WORKERS);
+      num = Options.number(options.processes) ?? NUM_WORKERS;
     } else {
       type = 'threads';
-      num = parseOption(options.threads, w => typeof w === 'number' ? w : NUM_WORKERS);
+      num = Options.number(options.threads!) ?? NUM_WORKERS;
     }
 
     const worker = {path: options.worker, type, num};
-    const batchSize =
-      parseOption(options.batchSize, bs => (!bs || bs > 0 ? bs || BATCH_SIZE : Infinity));
     const maxFiles =
       typeof options.maxFiles !== 'number'
         ? MAX_FILES
@@ -251,7 +214,6 @@ export class Options {
       end: parseDate(options.end),
       worker,
       maxFiles,
-      batchSize,
       strict: !!options.strict,
       dryRun: !!options.dryRun,
     };
@@ -259,7 +221,7 @@ export class Options {
 
   static number(n: string | number) {
     if (typeof n === 'number') return n;
-    return Number(n) || undefined;
+    return isNaN(Number(n)) ? undefined : Number(n);
   }
 
   static boolean(b: string | boolean) {
@@ -268,26 +230,10 @@ export class Options {
   }
 }
 
-function parseOption(opt: Option | undefined, fallback: (n?: number) => number) {
-  if (typeof opt === 'number') {
-    const val = fallback(opt);
-    return {apply: val, combine: val};
-  } else if (typeof opt === 'string') {
-    const [a, c] = opt.split(',').map(n => Number(n));
-    const val = fallback(a);
-    return {apply: val, combine: c ? fallback(c) : val};
-  } else if (Array.isArray(opt)) {
-    const val = fallback(opt[0]);
-    return {apply: val, combine: opt.length > 1 ? fallback(opt[1]) : val};
-  } else if (typeof opt === 'object') {
-    return {apply: fallback(opt.apply), combine: fallback(opt.combine)};
-  } else {
-    const val = fallback();
-    return {apply: val, combine: val};
-  }
-}
+const YYYYMM = /^\d{4}-\d{2}$/;
 
-function parseDate(date?: Date | string | number) {
+function parseDate(date?: string) {
   if (!date) return undefined;
-  return (typeof date === 'string' || typeof date === 'number') ? new Date(date) : date;
+  if (!YYYYMM.test(date)) throw new Error(`Invalid YYYY-MM data: '${date}'`);
+  return date;
 }

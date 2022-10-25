@@ -15,15 +15,15 @@ const minimist = require('minimist');
 // NOTE: these aliases get added to by each of the workers
 const ALIASES = {...config.ALIASES, help: ['h', '?']};
 
-const createWorker = (name, p) => {
-  const code = require(p);
+const createWorker = (name, src) => {
+  const code = require(src);
   const options = code.options;
   if (options) {
     for (const option in options) {
       ALIASES[option] = options[option].alias || [];
     }
   }
-  return {name, path: p, code, options};
+  return {name, path: src, code, options};
 }
 
 // We pre-register the options for all of the default workers in workflows/
@@ -38,8 +38,7 @@ const wrap = (s) => s.replace(/(?![^\n]{1,80}$)([^\n]{1,80})\s/g, '$1\n');
 const PREAMBLE = `process <TYPE> <INPUT> <OUTPUT>\n\n` + wrap(
   `Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT. ` +
   `TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w.name}'`).join(', ')}', ` +
-  `or a path to the worker code. INPUT and OUTPUT must be a filesystem path or of the form ` +
-  `database:DATABASE' to use a database.`
+  `or a path to the worker code.`
 );
 
 const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
@@ -72,13 +71,17 @@ if (argv.worker) {
 }
 if (argv._[0]) {
   if (WORKERS[argv._[0]]) {
-    if (worker && worker.code !== WORKERS[argv._[0]].code) conflict('worker', argv.worker, argv._[0]);
+    if (worker && worker.code !== WORKERS[argv._[0]].code) {
+      conflict('worker', argv.worker, argv._[0]);
+    }
     worker = WORKERS[argv._[0]];
   } else {
     const name = path.basename(argv._[0]).slice(-3);
     WORKERS[name] = createWorker(name, argv._[0]);
-    if (worker && worker.code !== WORKERS[name].code) conflict('worker', argv.worker, argv._[0]);
-    worker = WORKERS[name];``
+    if (worker && worker.code !== WORKERS[name].code) {
+      conflict('worker', argv.worker, argv._[0]);
+    }
+    worker = WORKERS[name];
     foreign = true;
   }
 }
@@ -107,7 +110,7 @@ if (argv._[2]) {
 if (!(argv.worker && argv.input && argv.output)) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
 // We have avoided requiring logs directly because the only way to transparently switch out the
-// backend is to set an enviroment variable first. We default to worker_threads, but if the
+// backend is to set an environment variable first. We default to worker_threads, but if the
 // --processes flag was passed we switch to the process backend. If both are passed the config
 // parsing inside of the logs process code will error out, so we don't need to both checking here.
 process.env.BTHREADS_BACKEND = argv.processes ? 'child_process' : 'worker_threads';

@@ -35,5 +35,14 @@
         "@babel/preset-typescript",
         ["@babel/preset-env", {"targets": {"node": "current"}}]
     ]
+  },
+  "eslintConfig": {
+    "extends": "@pkmn",
+    "overrides": [{
+      "files": ["src/storage.ts"],
+      "rules": {
+        "@typescript-eslint/require-await": "off"
+      }
+    }]
   }
 }
