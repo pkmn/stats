@@ -56,6 +56,8 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 
 const MIN = [20, 0.5];
 
+const legacy = true;
+
 export const Reports = new class {
   usageReport(gen: Generation, format: ID, stats: Statistics) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
@@ -86,7 +88,7 @@ export const Reports = new class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = util.displaySpecies(gen, species).padEnd(18);
+      const poke = util.displaySpecies(gen, species, legacy).padEnd(18);
       const use = (((100 * usage.weighted) / total.weighted) * 6).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const rawp = (((100 * usage.raw) / total.raw) * 6).toFixed(3).padStart(6);
@@ -122,7 +124,7 @@ export const Reports = new class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = util.displaySpecies(gen, species).padEnd(18);
+      const poke = util.displaySpecies(gen, species, legacy).padEnd(18);
       const use = ((100 * usage.weighted) / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = ((100 * usage.raw) / total.raw).toFixed(3).padStart(6);
@@ -157,7 +159,7 @@ export const Reports = new class {
   ) {
     movesetStats = movesetStats || toMovesetStatistics(gen, format, stats, min[0]);
 
-    gen = util.ignoreGen(gen);
+    gen = util.ignoreGen(gen, legacy);
     const WIDTH = 40;
 
     const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
@@ -176,7 +178,7 @@ export const Reports = new class {
       const p = stats.pokemon[species]!;
 
       s += sep;
-      s += ` | ${util.displaySpecies(gen, species)}`.padEnd(WIDTH + 2) + '| \n';
+      s += ` | ${util.displaySpecies(gen, species, legacy)}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
       const avg = p.saved.count ? util.roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
@@ -296,13 +298,13 @@ export const Reports = new class {
       'number of battles': stats.battles,
     };
 
-    gen = util.ignoreGen(gen);
+    gen = util.ignoreGen(gen, legacy);
     const data: { [key: string]: object } = {}; // eslint-disable-line
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
       const m: any = {...moveset};
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
-      data[util.displaySpecies(gen, species)] = m;
+      data[util.displaySpecies(gen, species, legacy)] = m;
     }
 
     return JSON.stringify({info, data});
@@ -362,7 +364,7 @@ export const Reports = new class {
     read: (month: string, format: string) => Promise<string | undefined>,
     type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles',
   ) {
-    gen = util.ignoreGen(gen);
+    gen = util.ignoreGen(gen, legacy);
 
     const pokemon: Map<ID,
     UsageTiers<number> |
@@ -651,7 +653,7 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
       (a, b) => usage(b[1].usage.weighted) - usage(a[1].usage.weighted) || a[0].localeCompare(b[0])
     );
   }
-  gen = util.ignoreGen(gen);
+  gen = util.ignoreGen(gen, legacy);
 
   const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {
@@ -686,7 +688,7 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
       Teammates: getTeammates(gen, format, pokemon.teammates, pokemon.raw.weight, total, stats),
       'Checks and Counters': util.getChecksAndCounters(
         pokemon.encounters,
-        [s => util.displaySpecies(gen, s), es => es],
+        [s => util.displaySpecies(gen, s, legacy), es => es],
         min
       ),
     });
@@ -706,7 +708,7 @@ function getTeammates(
   const real = ['challengecup1v1', '1v1'].includes(format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
-    const species = util.displaySpecies(gen, id);
+    const species = util.displaySpecies(gen, id, legacy);
     const s = stats.pokemon[id];
     if (!s) {
       m[species] = 0;
@@ -740,7 +742,7 @@ function makeTable(
     const [id, usage] = pair;
     if (usage < 0.001) break;
     const rank = (i + 1).toFixed().padEnd(4);
-    const poke = util.displaySpecies(gen, id).padEnd(18);
+    const poke = util.displaySpecies(gen, id, legacy).padEnd(18);
     const percent = (100 * usage).toFixed(3).padStart(6);
     s += ` | ${rank} | ${poke} | ${percent}% |\n`;
   }

@@ -61,6 +61,8 @@ export interface MetagameStatistics {
 
 const EMPTY: Set<ID> = new Set();
 
+const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
+
 export const Stats = new class {
   create() {
     return {
@@ -79,18 +81,19 @@ export const Stats = new class {
     battle: Battle,
     cutoff: number,
     stats?: Statistics,
-    tag?: ID
+    legacy = false,
+    tag?: ID,
   ) {
     const tagged: TaggedStatistics = {total: {}, tags: {}};
     if (tag) {
       tagged.tags[tag] = {};
       tagged.tags[tag][cutoff] = stats || this.create();
-      this.updateTagged(gen, format, battle, [cutoff], tagged, new Set([tag]), true);
+      this.updateTagged(gen, format, battle, [cutoff], tagged, legacy, new Set([tag]), true);
       return tagged.tags[tag][cutoff];
     } else {
       tagged.total = {};
       tagged.total[cutoff] = stats || this.create();
-      this.updateTagged(gen, format, battle, [cutoff], tagged);
+      this.updateTagged(gen, format, battle, [cutoff], tagged, legacy);
       return tagged.total[cutoff];
     }
   }
@@ -101,16 +104,17 @@ export const Stats = new class {
     battle: Battle,
     cutoffs: number[],
     stats?: WeightedStatistics,
+    legacy = false,
     tag?: ID
   ) {
     const tagged: TaggedStatistics = {total: {}, tags: {}};
     if (tag) {
       tagged.tags[tag] = stats || {};
-      this.updateTagged(gen, format, battle, cutoffs, tagged, new Set([tag]), true);
+      this.updateTagged(gen, format, battle, cutoffs, tagged, legacy, new Set([tag]), true);
       return tagged.tags[tag];
     } else {
       tagged.total = stats || {};
-      this.updateTagged(gen, format, battle, cutoffs, tagged);
+      this.updateTagged(gen, format, battle, cutoffs, tagged, legacy);
       return tagged.total;
     }
   }
@@ -121,6 +125,7 @@ export const Stats = new class {
     battle: Battle,
     cutoffs: number[],
     stats?: TaggedStatistics,
+    legacy = false,
     tags = EMPTY,
     tagsOnly = false
   ) {
@@ -132,7 +137,7 @@ export const Stats = new class {
 
     const playerWeights: number[][] = [];
     for (const player of [battle.p1, battle.p2]) {
-      const [ws, save] = getWeights(player, cutoffs);
+      const [ws, save] = getWeights(player, cutoffs, legacy);
       const gxe = player.rating
         ? Math.round(100 * util.victoryChance(player.rating.rpr, player.rating.rprd, 1500, 130))
         : undefined;
@@ -146,7 +151,7 @@ export const Stats = new class {
             s = this.create();
             stats.total[cutoff] = s;
           }
-          updateStats(gen, player, wsm, gxe, save, short, s);
+          updateStats(gen, player, wsm, gxe, save, short, s, legacy);
         }
 
         for (const tag of tags) {
@@ -161,7 +166,7 @@ export const Stats = new class {
             t[cutoff] = s;
           }
           if (player.team.classification.tags.has(tag)) {
-            updateStats(gen, player, wsm, gxe, save, short, s);
+            updateStats(gen, player, wsm, gxe, save, short, s, legacy);
           }
         }
       }
@@ -237,11 +242,10 @@ export const Stats = new class {
   }
 };
 
-function getWeights(player: Player, cutoffs: number[]): [Array<{ s: number; m: number }>, boolean] {
+function getWeights(player: Player, cutoffs: number[], legacy: boolean) {
   let save = false;
   let rpr = 1500;
   let rprd = 130;
-  // FIXME: StatCounter and batchMovesetCounter treat rprd === 0 differently :(
   const valid = player.rating && player.rating.rprd !== 0;
   if (valid) {
     rpr = player.rating!.rpr;
@@ -255,14 +259,14 @@ function getWeights(player: Player, cutoffs: number[]): [Array<{ s: number; m: n
   const weights = [];
   for (const cutoff of cutoffs) {
     const w = util.weighting(rpr, rprd, cutoff);
-    if (!valid) {
+    if (legacy && !valid) {
       weights.push({s: w, m: util.weighting(1500, 130, cutoff)});
     } else {
       weights.push({s: w, m: w});
     }
   }
 
-  return [weights, save];
+  return [weights, save] as [Array<{ s: number; m: number }>, boolean];
 }
 
 function updateStats(
@@ -272,9 +276,10 @@ function updateStats(
   gxe: number | undefined,
   save: boolean,
   short: boolean,
-  stats: Statistics
+  stats: Statistics,
+  legacy: boolean,
 ) {
-  gen = util.ignoreGen(gen);
+  gen = util.ignoreGen(gen, legacy);
   const win = player.outcome === 'win';
   for (const [index, pokemon] of player.team.pokemon.entries()) {
     if (!short) {
@@ -291,8 +296,7 @@ function updateStats(
       stats.metagame.stalliness.push([player.team.classification.stalliness, weights.s]);
     }
     if (pokemon.species === 'empty') {
-      // FIXME: Stop including 'empty' in teammate stats!
-      if (!short) {
+      if (legacy && !short) {
         updateTeammates(player.team.pokemon, index, pokemon.species, {}, stats, weights.s);
       }
       continue;
@@ -330,11 +334,10 @@ function updateStats(
     const i = p.items[set.item];
     p.items[set.item] = (i || 0) + weights.m;
 
-    // FIXME: batchMovesetCounter is actually outputing 'Serious' instead of 'Hardy'...
-    // const NEUTRAL = new Set(['serious', 'docile', 'quirky', 'bashful']);
-    const nature = gen.natures.get(/* NEUTRAL.has(set.nature) ? 'hardy' as ID : */ set.nature)!;
-    const baseStats = util.getSpecies(gen, pokemon.species).baseStats;
-    const spread = getSpread(gen, nature, baseStats, pokemon.set);
+    const nature =
+      gen.natures.get(!legacy && NEUTRAL.has(set.nature) ? 'hardy' as ID : set.nature)!;
+    const baseStats = util.getSpecies(gen, pokemon.species, legacy).baseStats;
+    const spread = getSpread(gen, nature, baseStats, pokemon.set, legacy);
     const s = p.spreads[spread];
     p.spreads[spread] = (s || 0) + weights.m;
     const computed = computeStats(gen, nature, baseStats, pokemon.set);
@@ -386,14 +389,14 @@ function getSpread<T>(
   gen: Generation,
   nature: Nature,
   base: StatsTable,
-  pokemon: PokemonSet<T>
+  pokemon: PokemonSet<T>,
+  legacy: boolean,
 ) {
   const evs: number[] = [];
 
   let stat: StatID;
   for (stat in pokemon.evs) {
-    // FIXME: The intention of the original code was to clearly round all EVs
-    if (stat === 'def') {
+    if (!legacy || stat === 'def') {
       const val = gen.stats.calc(
         stat, base[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, nature
       );

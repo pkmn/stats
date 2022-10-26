@@ -66,7 +66,7 @@ const ROAR = new Set(['Roar', 'Whirlwind', 'Circle Throw', 'Dragon Tail']);
 const UTURN = new Set(['U-Turn', 'U-turn', 'Volt Switch', 'Baton Pass']);
 
 export const Parser = new class {
-  parse(gen: Generation, format: ID, raw: Log) {
+  parse(gen: Generation, format: ID, raw: Log, legacy = false) {
     // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
     if ((raw as unknown) === '"log"') throw new Error('Log = "log"');
 
@@ -90,12 +90,13 @@ export const Parser = new class {
       endType: raw.endType,
     } as unknown) as Battle;
     for (const side of ['p1', 'p2'] as Array<'p1' | 'p2'>) {
-      const team = this.canonicalizeTeam(gen, format, raw[side === 'p1' ? 'p1team' : 'p2team']);
+      const team =
+        this.canonicalizeTeam(gen, format, raw[side === 'p1' ? 'p1team' : 'p2team'], legacy);
 
-      // TODO: Stop tracking empty slots?
       const mons = [];
       for (let i = 0; i < 6; i++) {
         const pokemon = team[i];
+        if (!legacy && !pokemon) continue;
         idents[side].push(pokemon ? pokemon.name || pokemon.species : 'empty');
         mons.push({
           species: pokemon ? pokemon.species : ('empty' as ID),
@@ -110,7 +111,7 @@ export const Parser = new class {
         rating: raw[side === 'p1' ? 'p1rating' : 'p2rating'] || undefined,
         team: {
           pokemon: mons,
-          classification: Classifier.classifyTeam(gen, team),
+          classification: Classifier.classifyTeam(gen, team, legacy),
         },
       };
       if (winner !== 'tie') player.outcome = winner === side ? 'win' : 'loss';
@@ -208,7 +209,7 @@ export const Parser = new class {
         const side = line[2].startsWith('p1') ? 'p1' : 'p2';
         if (line[1] === 'replace') {
           // NOTE: Ideally we'd be able to go back and fix the previously affected matchups
-          active[side] = identify(gen, name, side, battle, idents);
+          active[side] = identify(gen, name, side, battle, idents, legacy);
           break;
         }
 
@@ -221,8 +222,12 @@ export const Parser = new class {
             if (!flags.ko.p1 && !flags.ko.p2) {
               matchup[2] = Outcome.DOUBLE_SWITCH;
             } else if (flags.ko.p1 && flags.ko.p2) {
-              // FIXME: Shouldn't both pokemon be incremented in a double down?
-              battle[p].team.pokemon[active[p]!].kos++;
+              if (legacy) {
+                battle[p].team.pokemon[active[p]!].kos++;
+              } else {
+                battle.p1.team.pokemon[active.p1].kos++;
+                battle.p2.team.pokemon[active.p2].kos++;
+              }
               matchup[2] = Outcome.DOUBLE_DOWN;
             } else {
               // NOTE: includes hit-by-red-card-and-dies and roar-then-die-by-residual-damage
@@ -260,7 +265,7 @@ export const Parser = new class {
           flags.hazard = true;
         }
 
-        active[side] = identify(gen, name, side, battle, idents);
+        active[side] = identify(gen, name, side, battle, idents, legacy);
         break;
       }
       }
@@ -269,9 +274,14 @@ export const Parser = new class {
     return battle;
   }
 
-  canonicalizeTeam(gen: Generation, format: ID, team: Array<PokemonSet & {forcedLevel?: number}>) {
+  canonicalizeTeam(
+    gen: Generation,
+    format: ID,
+    team: Array<PokemonSet & {forcedLevel?: number}>,
+    legacy = false,
+  ) {
     const mray = util.isMegaRayquazaAllowed(format);
-    gen = util.ignoreGen(gen);
+    gen = util.ignoreGen(gen, legacy);
     for (const pokemon of team) {
       const item = pokemon.item && gen.items.get(pokemon.item);
       pokemon.item = item ? item.id : 'nothing';
@@ -302,14 +312,15 @@ export const Parser = new class {
       pokemon.level = pokemon.forcedLevel || pokemon.level || 100;
       const ability = pokemon.ability && gen.abilities.get(pokemon.ability);
       pokemon.ability = ability ? ability.id : 'unknown';
-      pokemon.species = util.getSpecies(gen, util.fromAlias(pokemon.species || pokemon.name)).id;
+      pokemon.species =
+        util.getSpecies(gen, util.fromAlias(pokemon.species || pokemon.name), legacy).id;
       if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
         pokemon.species = 'rayquazamega';
         pokemon.ability = 'deltastream';
       } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
         pokemon.species = 'greninjaash';
       } else {
-        const mega = util.getMegaEvolution(gen, pokemon);
+        const mega = util.getMegaEvolution(gen, pokemon, legacy);
         if (mega) {
           pokemon.species = mega.species;
           pokemon.ability = mega.ability;
@@ -321,7 +332,6 @@ export const Parser = new class {
   }
 };
 
-// FIXME: meloettapiroutte? darmanitanzen?
 // prettier-ignore
 const FORMES = new Set([
   'greninjaash', 'zygardecomplete', 'mimikyubusted',
@@ -333,7 +343,8 @@ function identify(
   name: string,
   side: 'p1' | 'p2',
   battle: Battle,
-  idents: { p1: string[]; p2: string[] }
+  idents: { p1: string[]; p2: string[] },
+  legacy: boolean,
 ) {
   const team = battle[side].team.pokemon;
   const names = idents[side];
@@ -361,13 +372,14 @@ function identify(
     }
   } else {
     // Maybe its a pokemon name (or possibly an alias)?
-    let species = util.getSpecies(gen, util.fromAlias(name));
+    let species = util.getSpecies(gen, util.fromAlias(name), legacy);
     let index = team.findIndex(p => p.species === species.id);
     if (index !== -1) return index as Slot;
 
     // Try undoing a forme change to see if that solves things?
-    if (util.isMega(species) || FORMES.has(species.id)) {
-      species = util.getBaseSpecies(gen, species.id);
+    if (util.isMega(species, legacy) || FORMES.has(species.id) ||
+      !legacy && ['meloettapiroutte', 'darmanitanzen'].includes(species.id)) {
+      species = util.getBaseSpecies(gen, species.id, legacy);
     }
     index = team.findIndex(p => p.species.startsWith(species.id));
     if (index !== -1) return index as Slot;
@@ -377,7 +389,7 @@ function identify(
     p1: {team: battle.p1.team.pokemon.map(p => p.species), idents: idents.p1},
     p2: {team: battle.p2.team.pokemon.map(p => p.species), idents: idents.p2},
   };
-  // BUG: This occurs due to interactons between Illusion and Transform/Imposter (which is
+  // BUG: This occurs due to interactions between Illusion and Transform/Imposter (which is
   // exclusively an issue in Hackmons formats). We don't have enough information in a single
   // log line to be able to disambiguate this :(.
   throw new Error(`Unable to locate ${side}'s '${name}' in ${JSON.stringify(state)}`);

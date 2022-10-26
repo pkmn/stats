@@ -43,7 +43,7 @@ export function process() {
     for (const log of fs.readdirSync(path.resolve(base, dir))) {
       const raw = JSON.parse(fs.readFileSync(path.resolve(base, dir, log), 'utf8'));
       const gen = genForFormat(gens, format);
-      battles.push(stats.Parser.parse(gen, format, raw));
+      battles.push(stats.Parser.parse(gen, format, raw, true));
     }
     parsed.set(format, battles);
   }
@@ -53,7 +53,7 @@ export function process() {
     const gen = genForFormat(gens, format);
     const taggedStats = {total: {}, tags: {}};
     for (const battle of battles) {
-      stats.Stats.updateTagged(gen, format, battle, CUTOFFS, taggedStats /* , TAGS */);
+      stats.Stats.updateTagged(gen, format, battle, CUTOFFS, taggedStats, true/* , TAGS */);
     }
 
     const trs = {total: new Map(), tags: new Map()};

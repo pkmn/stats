@@ -5,17 +5,17 @@ import * as util from './util';
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new class {
-  classifyTeam(gen: Generation, team: Array<PokemonSet<ID>>) {
+  classifyTeam(gen: Generation, team: Array<PokemonSet<ID>>, legacy = false) {
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
-      const {bias, stalliness} = this.classifyPokemon(gen, pokemon);
+      const {bias, stalliness} = this.classifyPokemon(gen, pokemon, legacy);
       teamBias += bias;
       teamStalliness.push(stalliness);
     }
 
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
-    const tags = tag(gen, team, stalliness);
+    const tags = tag(gen, team, stalliness, legacy);
 
     return {bias: teamBias, stalliness, tags};
   }
@@ -23,13 +23,13 @@ export const Classifier = new class {
   // For stats and moveset purposes we're now counting Mega Pokemon seperately,
   // but for team analysis we still want to consider the base (which presumably
   // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(gen: Generation, pokemon: PokemonSet<ID>) {
+  classifyPokemon(gen: Generation, pokemon: PokemonSet<ID>, legacy = false) {
     const originalSpecies = pokemon.species;
     const originalAbility = pokemon.ability;
 
-    const species = util.getSpecies(gen, pokemon.species);
+    const species = util.getSpecies(gen, pokemon.species, legacy);
     let mega: { species: ID; ability: ID } | undefined;
-    if (util.isMega(species)) {
+    if (util.isMega(species, legacy)) {
       mega = {
         species: toID(species.name),
         ability: toID(species.abilities['0']),
@@ -37,26 +37,27 @@ export const Classifier = new class {
       pokemon.species = toID(species.baseSpecies);
     }
 
-    let {bias, stalliness} = classifyForme(gen, pokemon);
-    // FIXME: Intended behavior, but not used for compatibility:
-    // if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong')) {
-    //   pokemon.species = 'meloettapirouette';
-    //   stalliness = (stalliness + classifyForme(gen, pokemon).stalliness) / 2;
-    // } else if (
-    //     pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
-    //   pokemon.species = 'darmanitanzen' ;
-    //   stalliness = (stalliness + classifyForme(gen, pokemon).stalliness) / 2;
-    // } else if (
-    //     pokemon.species === 'rayquaza' &&
-    //     pokemon.moves.includes('dragonascent')) {
-    //   pokemon.species = 'rayquazamega';
-    //   pokemon.ability = 'deltastream';
-    //   stalliness = (stalliness + classifyForme(gen, pokemon).stalliness) / 2;
-    // } else {
+    let {bias, stalliness} = classifyForme(gen, pokemon, legacy);
+    if (!legacy) {
+      if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong' as ID)) {
+        pokemon.species = 'meloettapirouette' as ID;
+        stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
+      } else if (
+        pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
+        pokemon.species = 'darmanitanzen' as ID;
+        stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
+      } else if (
+        pokemon.species === 'rayquaza' &&
+          pokemon.moves.includes('dragonascent' as ID)) {
+        pokemon.species = 'rayquazamega' as ID;
+        pokemon.ability = 'deltastream' as ID;
+        stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
+      }
+    }
     if (mega) {
-      // pokemon.species = mega.species; FIXME see above
+      if (!legacy) pokemon.species = mega.species;
       pokemon.ability = mega.ability;
-      stalliness = (stalliness + classifyForme(gen, pokemon).stalliness) / 2;
+      stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
     }
 
     // Make sure to revert back to the original values
@@ -71,8 +72,8 @@ const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(gen: Generation, pokemon: PokemonSet<ID>) {
-  let stalliness = baseStalliness(gen, pokemon);
+function classifyForme(gen: Generation, pokemon: PokemonSet<ID>, legacy: boolean) {
+  let stalliness = baseStalliness(gen, pokemon, legacy);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
   stalliness += movesStallinessModifier(pokemon);
@@ -99,11 +100,11 @@ function classifyForme(gen: Generation, pokemon: PokemonSet<ID>) {
   return {bias, stalliness};
 }
 
-function baseStalliness(gen: Generation, pokemon: PokemonSet<ID>) {
+function baseStalliness(gen: Generation, pokemon: PokemonSet<ID>, legacy: boolean) {
   if (pokemon.species === 'shedinja') return 0;
   // TODO: replace this with mean stalliness for the tier
   if (pokemon.species === 'ditto') return LOG3_LOG2;
-  const stats = calcStats(gen, pokemon);
+  const stats = calcStats(gen, pokemon, legacy);
   return (
     -Math.log(
       (((((Math.floor(2.0 * pokemon.level + 10) / 250) * Math.max(stats.atk, stats.spa)) /
@@ -116,11 +117,11 @@ function baseStalliness(gen: Generation, pokemon: PokemonSet<ID>) {
   );
 }
 
-function calcStats(gen: Generation, pokemon: PokemonSet<ID>) {
-  const stats = calcFormeStats(gen, pokemon);
+function calcStats(gen: Generation, pokemon: PokemonSet<ID>, legacy: boolean) {
+  const stats = calcFormeStats(gen, pokemon, legacy);
   if (pokemon.species === 'aegislash' && pokemon.ability === 'stancechange') {
     pokemon.species = 'aegislashblade' as ID;
-    const blade = calcFormeStats(gen, pokemon);
+    const blade = calcFormeStats(gen, pokemon, legacy);
     pokemon.species = 'aegislash' as ID;
     blade.def = Math.floor((blade.def + stats.def) / 2);
     blade.spd = Math.floor((blade.spd + stats.spd) / 2);
@@ -129,9 +130,9 @@ function calcStats(gen: Generation, pokemon: PokemonSet<ID>) {
   return stats;
 }
 
-function calcFormeStats(gen: Generation, pokemon: PokemonSet<ID>) {
-  const species = util.getSpecies(gen, pokemon.species);
-  const nature = util.ignoreGen(gen).natures.get(pokemon.nature)!;
+function calcFormeStats(gen: Generation, pokemon: PokemonSet<ID>, legacy: boolean) {
+  const species = util.getSpecies(gen, pokemon.species, legacy);
+  const nature = util.ignoreGen(gen, legacy).natures.get(pokemon.nature)!;
   const stats = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
   let stat: StatID;
   for (stat in stats) {
@@ -178,7 +179,7 @@ const GRAVITY_MOVES = new Set([
   'earthquake', 'magnitude', 'mudbomb', 'mudshot', 'mudslap', 'sandattack', 'spikes', 'toxicspikes',
 ]);
 
-function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number) {
+function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number, legacy: boolean) {
   const weather = {rain: 0, sun: 0, sand: 0, hail: 0};
   const style = {
     batonpass: 0, tailwind: 0, trickroom: 0, slow: 0, gravityMoves: 0, gravity: 0, voltturn: 0,
@@ -187,8 +188,8 @@ function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number) {
 
   let possibleTypes: TypeName[] | undefined;
   for (const pokemon of team) {
-    let species = util.getSpecies(gen, pokemon.species);
-    if (util.isMega(species)) species = util.getBaseSpecies(gen, species.id);
+    let species = util.getSpecies(gen, pokemon.species, legacy);
+    if (util.isMega(species, legacy)) species = util.getBaseSpecies(gen, species.id, legacy);
 
     const moves = new Set(pokemon.moves as string[]);
     possibleTypes = possibleTypes

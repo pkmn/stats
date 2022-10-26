@@ -137,7 +137,7 @@ interface Usage {
   trivially affecting the quality of data offered. Weights can still be obtained by simply
   multiplying by the usage weight in O(1) time if they were actually desired instead of requiring
   O(N) computation.
-- **<ins>All</ins> of the data is present in a single location**, not spread out over 5 and
+- **<ins>All</ins> of the data is present in a single location**, not spread across 5 files and
   requiring ASCII table parsing.
 
 ### Data Changes

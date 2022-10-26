@@ -2,7 +2,6 @@
 import {
   Generations,
   Generation,
-  GenerationNum,
   Dex,
   ID,
   toID,
@@ -31,7 +30,6 @@ export const enum Outcome {
 
 const ALIASES: Readonly<{ [id: string]: string }> = aliases;
 
-// FIXME: Remove newGenerations and ignoreGen in favor of using the normal APIs!
 let DEFAULT!: Generation;
 export function newGenerations(dex: Dex) {
   const gens = new Generations(dex, e => !!e.exists);
@@ -39,8 +37,9 @@ export function newGenerations(dex: Dex) {
   return gens;
 }
 
-export function ignoreGen(gen: Generation) {
+export function ignoreGen(gen: Generation, legacy: boolean) {
   if (!gen) throw new Error('ignoreGen called without a gen to ignore!');
+  if (!legacy) return gen;
   if (!DEFAULT) throw new Error('Default generation not set - call newGenerations');
   return DEFAULT;
 }
@@ -49,22 +48,22 @@ export function fromAlias(name: string) {
   return ALIASES[toID(name)] || name;
 }
 
-export function getSpecies(gen: Generation, name: string) {
-  const species = ignoreGen(gen).species.get(name);
+export function getSpecies(gen: Generation, name: string, legacy: boolean) {
+  const species = ignoreGen(gen, legacy).species.get(name);
   if (!species) throw new Error(`Unknown species '${name}'`);
   return species;
 }
 
-export function getBaseSpecies(gen: Generation, name: string): Specie {
-  const species = getSpecies(gen, name);
+export function getBaseSpecies(gen: Generation, name: string, legacy: boolean): Specie {
+  const species = getSpecies(gen, name, legacy);
   return species.baseSpecies && species.baseSpecies !== species.name
-    ? getBaseSpecies(gen, species.baseSpecies)
+    ? getBaseSpecies(gen, species.baseSpecies, legacy)
     : species;
 }
 
 export function genForFormat(gens: Generations, format: ID) {
   const m = /gen(\d)/.exec(format);
-  return gens.get(m ? Number(m[1]) as GenerationNum : 6);
+  return gens.get(m ? m[1] : 6);
 }
 
 const MEGA_RAYQUAZA_BANNED = new Set([
@@ -75,15 +74,19 @@ export function isMegaRayquazaAllowed(format: ID) {
   return !MEGA_RAYQUAZA_BANNED.has(format);
 }
 
-export function isMega(species: Specie) {
-  // FIXME: Ultra Burst?
-  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
+export function isMega(species: Specie, legacy: boolean) {
+  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal') ||
+    (!legacy && species.forme.startsWith('Ultra')));
 }
 
-export function getMegaEvolution(gen: Generation, pokemon: PokemonSet<string | ID>) {
-  const item = ignoreGen(gen).items.get(pokemon.item);
+export function getMegaEvolution(
+  gen: Generation,
+  pokemon: PokemonSet<string | ID>,
+  legacy: boolean,
+) {
+  const item = ignoreGen(gen, legacy).items.get(pokemon.item);
   if (!item) return undefined;
-  const species = getSpecies(gen, pokemon.species);
+  const species = getSpecies(gen, pokemon.species, legacy);
   if (item.name === 'Blue Orb' &&
     (species.name === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
     return {species: 'kyogreprimal' as ID, ability: 'primordialsea' as ID};
@@ -92,19 +95,22 @@ export function getMegaEvolution(gen: Generation, pokemon: PokemonSet<string | I
     (species.name === 'Groudon' || species.baseSpecies === 'Groudon')) {
     return {species: 'groudonprimal' as ID, ability: 'desolateland' as ID};
   }
-  // FIXME: Ultra Burst?
+  if (!legacy && item.name === 'Ultranecrozium Z' &&
+    (species.name === 'Necrozma' || species.baseSpecies === 'Necrozma')) {
+    return {species: 'necrozmaultra' as ID, ability: 'neuroforce' as ID};
+  }
   if (!item.megaEvolves || item.megaEvolves !== species.name || !item.megaStone) {
     return undefined;
   }
-  const mega = getSpecies(gen, item.megaStone);
+  const mega = getSpecies(gen, item.megaStone, legacy);
   if (!mega) return undefined;
   return {species: toID(mega.name), ability: toID(mega.abilities['0'])};
 }
 
-export function revertFormes(gen: Generation, id: ID) {
-  const species = getSpecies(gen, id);
-  if (!species.forme || isMega(species)) return id;
-  return getBaseSpecies(gen, species.id).id;
+export function revertFormes(gen: Generation, id: ID, legacy: boolean) {
+  const species = getSpecies(gen, id, legacy);
+  if (!species.forme || isMega(species, legacy)) return id;
+  return getBaseSpecies(gen, species.id, legacy).id;
 }
 
 // FIXME: Generate this based on gameType from config/formats.js
@@ -165,13 +171,14 @@ export function roundStr(v: number, p = PRECISION) {
   return num === Math.floor(num) ? `${num.toFixed(1)}` : `${num}`;
 }
 
-export function displaySpecies(gen: Generation, name: string) {
-  // FIXME: Seriously, we don't filter 'empty'?
-  if (name === 'empty') return name;
-  const species = getSpecies(gen, name).name;
+export function displaySpecies(gen: Generation, name: string, legacy: boolean) {
+  if (name === 'empty') {
+    if (!legacy) throw new Error('empty passed to displaySpecies');
+    return name;
+  }
+  const species = getSpecies(gen, name, legacy).name;
   if (name === 'Flabébé') return 'Flabebe';
-  // FIXME: remove bad display of Nidoran-M / Nidoran-F
-  return species.startsWith('Nidoran') ? species.replace('-', '') : species;
+  return legacy && species.startsWith('Nidoran') ? species.replace('-', '') : species;
 }
 
 export function toDisplayObject(

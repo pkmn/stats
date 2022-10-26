@@ -26,7 +26,7 @@ All complicated file processing logic has been split off to the `@pkmn/logs` pac
 opposed to the logs themselves.
 
 In addition to the high-level architectural changes, Smogon-Usage-Stats has a number of bugs and
-quirks that have been corrected by `@pkmn/stats`:
+quirks that have been corrected by `@pkmn/stats` unless "legacy" mode is opted into:
 
 - The ordering of output from Smogon-Usage-Stats often depends on Python 2's internal **sort
   ordering** for dictionaries, `@pkmn/stats` does not base its sort orders on a particular

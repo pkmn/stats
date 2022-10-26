@@ -14,7 +14,7 @@ function setup() {
   const LOG = path.resolve(TESTDATA, 'logs', FORMAT, 'log.1.json');
 
   const read = () => JSON.parse(fs.readFileSync(LOG, 'utf8'));
-  const parse = (log: Log) => Parser.parse(GEN, FORMAT, log);
+  const parse = (log: Log) => Parser.parse(GEN, FORMAT, log, true);
   return {read, parse};
 }
 

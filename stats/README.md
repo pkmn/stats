@@ -46,8 +46,9 @@ for (const log of logs) {
 console.log(Display.fromStatistics(gen, format, stats));
 ```
 
-In practice, `@pkmn/stats` should be used in tandem with [`@pkmn/logs`](../logs) to produce the
- statistics and reports that are desired by your application.
+When attempting to generate statistics for a large (100GiB+) corpus, `@pkmn/stats` can be used in
+tandem with [`@pkmn/logs`](../logs) to efficiently produce the statistics and reports that are
+desired by your application.
 
 #### `Parser`
 
@@ -125,7 +126,7 @@ application.
 
 ## Tests
 
-The 'update' report test depends on the current tiering information of every Pokéemon to determine
+The 'update' report test depends on the current tiering information of every Pokémon to determine
 what the correct updates are. Because tiers changes over time, when the `@pkmn/dex` dependency gets
 updated the 'golden' expected output will need to be updated as well. To update the golden files,
 run the update script and check in its output after inspection:
