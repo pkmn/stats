@@ -42,7 +42,7 @@ export abstract class ApplyWorker<
   }
 
   async apply(batch: Batch, shard?: string) {
-    const state = this.setupApply(batch.format, shard);
+    const state = this.setupApply(batch, shard);
 
     const applied: Array<Promise<void>> = [];
     for (const log of await this.storage.logs.select(batch.format, batch.day)) { // FIXME
@@ -55,7 +55,7 @@ export abstract class ApplyWorker<
     await this.storage.checkpoints.write(checkpoint);
   }
 
-  abstract setupApply(format: ID, shard?: string): A;
+  abstract setupApply(batch: Batch, shard?: string): A;
   abstract processLog(log: string, state: A, shard?: string): Promise<void>;
   abstract writeCheckpoint(batch: Batch, state: A, shard?: string): Checkpoint;
 

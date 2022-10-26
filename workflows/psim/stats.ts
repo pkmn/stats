@@ -93,14 +93,13 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     };
   }
 
-  setupApply(format: ID): ApplyState {
-    format = canonicalizeFormat(format);
+  setupApply(batch: Batch): ApplyState {
+    const format = canonicalizeFormat(batch.format);
     return {
       gen: forFormat(format),
       format,
       stats: {total: {}, tags: {}},
-      // FIXME need date..., batch could leave month :( just use config?
-      cutoffs: cutoffsFor(format, '2020-09'),
+      cutoffs: cutoffsFor(format, batch.day.slice(0, -3)),
     };
   }
 

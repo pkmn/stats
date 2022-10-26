@@ -79,12 +79,12 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     return (format: ID) => !!config.formats?.has(format);
   }
 
-  setupApply(format: ID): State {
+  setupApply(batch: Batch): State {
     return {
-      gen: forFormat(format),
-      format,
-      random: new Random(hash(format)),
-      rate: this.config.formats?.get(format) || 1,
+      gen: forFormat(batch.format),
+      format: batch.format,
+      random: new Random(hash(batch.format)),
+      rate: this.config.formats?.get(batch.format) || 1,
     };
   }
 
