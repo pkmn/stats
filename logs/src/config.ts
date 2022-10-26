@@ -30,7 +30,7 @@ export interface Configuration {
   worker: {
     type: 'threads' | 'processes';
     path: string;
-    num: number;
+    num: {apply: number; combine: number};
   };
 
   maxFiles: number;
@@ -99,26 +99,30 @@ export function usage(
   out('  -b WHEN, --begin WHEN');
   out('');
   out('    If set, only process data from directories in the INPUT that are >= WHEN, where ');
-  out('    WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
-  out('    written in the server\'s local time zone (not UTC).');
+  out('    WHEN is a \'YYYY-MM\' or \'YYYY-MM-DD\' date string. Note that smogon/pokemon-showdown');
+  out('    logs are written in the server\'s local time zone (not UTC).');
   out('');
   out('  -e WHEN, --end WHEN');
   out('');
   out('    If set, only process data from directories in the INPUT that are < WHEN, where ');
-  out('    WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
-  out('    written in the server\'s local time zone (not UTC).');
+  out('    WHEN is a \'YYYY-MM\' or \'YYYY-MM-DD\' date string. Note that smogon/pokemon-showdown');
+  out('    logs are written in the server\'s local time zone (not UTC).');
   out('');
-  out('  -t N, --threads N');
+  out('  -t N(,M), --threads N(,M)');
   out('');
   out('    Process the logs using N worker threads (default: NUM_CORES-1). Using this');
   out('    in combination with the --processes flag will result in an error. Threads');
-  out('    will be used as the concurrency primitive by default.');
+  out('    will be used as the concurrency primitive by default. If M is also provided');
+  out('    then max{N, M} threads will be started but at most N workers will be used');
+  out('    concurrently during the apply stage and M during the combine stage.');
   out('');
-  out('  -p N, --processes N');
+  out('  -p N(,M), --processes N(,M)');
   out('');
   out('    Process the logs using N worker processes (default: NUM_CORES-1). Using');
   out('    this in combination with the --threads flag will result in an error.');
-  out('    Threads will be used as the concurrency primitive by default.');
+  out('    Threads will be used as the concurrency primitive by default. If M is also');
+  out('    provided then max{N, M} processes will be started but at most N workers will');
+  out('    be sed concurrently during the apply stage and M during the combine stage.');
   out('');
   out('  -n N, --maxFiles N');
   out('');
@@ -145,12 +149,13 @@ export function usage(
     out(`[${worker.name}] Worker Options:`);
     out('');
     for (const option in worker.options) {
-      if (typeof worker.options[option].desc === 'string') {
-        out(`   ${worker.options[option].desc}`);
+      const desc = worker.options[option].desc;
+      if (typeof desc === 'string') {
+        out(`   ${desc}`);
       } else {
-        for (const [i, desc] of (worker.options[option].desc as string[]).entries()) {
-          out(`${i ? '    ' : '  '}${desc}`);
-          if (!i && worker.options[option].desc.length > 1) out('');
+        for (const [i, d] of desc.entries()) {
+          out(`${i ? '    ' : '  '}${d}`);
+          if (!i && desc.length > 1) out('');
         }
       }
       out('');
@@ -161,13 +166,20 @@ export function usage(
   process.exit(code);
 }
 
+type Option =
+  | {apply: number; combine: number}
+  | {apply?: number; combine?: number}
+  | number
+  | [number, number]
+  | string;
+
 type ComputedFields = 'worker' | 'begin' | 'end';
 export interface Options extends Partial<Omit<Configuration, ComputedFields>> {
   // NOTE: merged with below - input/output/worker are required fields
   begin?: string;
   end?: string;
-  threads?: number | string;
-  processes?: number | string;
+  threads?: Option;
+  processes?: Option;
 }
 
 export class Options {
@@ -182,7 +194,7 @@ export class Options {
     [option: string]: { parse?: (s: string) => any};
   } = {}): Configuration {
     let type: Configuration['worker']['type'] = 'processes';
-    let num: number;
+    let num: Configuration['worker']['num'];
 
     if (!options.input) throw new Error('Input must be specified');
     if (!options.output) throw new Error('Output must be specified');
@@ -198,10 +210,10 @@ export class Options {
     if (options.processes && options.threads) {
       throw new Error('Cannot simultaneously run with both threads and processes');
     } else if (options.processes) {
-      num = Options.number(options.processes) ?? NUM_WORKERS;
+      num = parseOption(options.processes, w => typeof w === 'number' ? w : NUM_WORKERS);
     } else {
       type = 'threads';
-      num = Options.number(options.threads!) ?? NUM_WORKERS;
+      num = parseOption(options.threads, w => typeof w === 'number' ? w : NUM_WORKERS);
     }
 
     const worker = {path: options.worker, type, num};
@@ -234,10 +246,29 @@ export class Options {
   }
 }
 
-const YYYYMM = /^\d{4}-\d{2}$/;
+function parseOption(opt: Option | undefined, fallback: (n?: number) => number) {
+  if (typeof opt === 'number') {
+    const val = fallback(opt);
+    return {apply: val, combine: val};
+  } else if (typeof opt === 'string') {
+    const [a, c] = opt.split(',').map(n => Number(n));
+    const val = fallback(a);
+    return {apply: val, combine: c ? fallback(c) : val};
+  } else if (Array.isArray(opt)) {
+    const val = fallback(opt[0]);
+    return {apply: val, combine: opt.length > 1 ? fallback(opt[1]) : val};
+  } else if (typeof opt === 'object') {
+    return {apply: fallback(opt.apply), combine: fallback(opt.combine)};
+  } else {
+    const val = fallback();
+    return {apply: val, combine: val};
+  }
+}
+
+const DATE = /^\d{4}-\d{2}(-\d{2})?$/;
 
 function parseDate(date?: string) {
   if (!date) return undefined;
-  if (!YYYYMM.test(date)) throw new Error(`Invalid YYYY-MM data: '${date}'`);
+  if (!DATE.test(date)) throw new Error(`Invalid YYYY-MM(-DD) date '${date}'`);
   return date;
 }
