@@ -30,13 +30,13 @@ export abstract class ApplyWorker<
   A = undefined
 > implements Worker<C> {
   readonly config!: C;
-  readonly storage!: {logs: LogStorage; checkpoints: CheckpointStorage};
+  readonly storage!: {logs: LogStorage; checkpoints: CheckpointStorage; scratch: string};
   readonly limit!: Limit;
 
   constructor() {
     if (workerData) {
       this.config = (workerData as WorkerData<C>).config;
-      this.storage = Storage.connect(this.config);
+      this.storage = {...Storage.connect(this.config), scratch: 'TODO'};
       this.limit = limit(this.config.maxFiles);
     }
   }

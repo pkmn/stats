@@ -48,6 +48,7 @@ export async function writeGzipFile(path: string, data: string): Promise<void> {
 export const copyFile = fs.copyFile;
 export const appendFile = fs.appendFile;
 export const lstat = fs.lstat;
+export const rename = fs.rename;
 
 export async function unlink(path: string) {
   try {

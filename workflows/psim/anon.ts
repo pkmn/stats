@@ -4,7 +4,7 @@ import {Anonymizer, Log, Verifier} from '@pkmn/anon';
 import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
 import {
-  ApplyWorker, Batch, Checkpoints, fs, ID, toID,
+  Batch, Checkpoints, CombineWorker, fs, ID, toID,
   Options, Random, register, WorkerConfiguration,
 } from '@pkmn/logs';
 
@@ -37,7 +37,7 @@ const hash = (s: string) => {
   return h;
 };
 
-const AnonWorker = new class extends ApplyWorker<Configuration, State> {
+const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
   options = {
     formats: {
       alias: ['f', 'format'],
@@ -68,7 +68,8 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
       await fs.mkdir(config.output, {recursive: true});
       const mkdirs = [];
       for (const format of config.formats.keys()) {
-        mkdirs.push(fs.mkdir(path.join(config.output, format)));
+        mkdirs.push(this.limit(() => fs.mkdir(path.join(this.storage.scratch, format))));
+        mkdirs.push(this.limit(() => fs.mkdir(path.join(config.output, format))));
       }
       await Promise.all(mkdirs);
     }
@@ -100,7 +101,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
           state.gen, raw[`${p}team` as 'p1team' | 'p2team'], {salt: this.config.salt}
         );
         const s = JSON.stringify(anon);
-        const name = path.join(this.config.output, state.format, `${raw.id}.${p}.json`);
+        const name = path.join(this.storage.scratch, state.format, `${raw.id}.${p}.json`);
         writes.push(fs.writeFile(name, s));
       }
       await Promise.all(writes);
@@ -112,15 +113,34 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
         for (const {input, output} of verifier.leaks) {
           msg.push(`'${input}' -> '${output}'`);
         }
+        if (this.config.strict) throw new Error(msg.join('\n'));
         console.error(msg.join('\n') + '\n');
       }
-      const name = path.join(this.config.output, state.format, `${raw.id}.log.json`);
+      const name = path.join(this.storage.scratch, state.format, `${raw.id}.log.json`);
       await fs.writeFile(name, JSON.stringify(anon));
     }
   }
 
   writeCheckpoint(batch: Batch) {
     return Checkpoints.empty(batch.format, batch.day);
+  }
+
+  setupCombine() {}
+  async aggregateCheckpoint() {}
+
+  async writeResults(format: ID) {
+    const logs = await fs.readdir(path.join(this.storage.scratch, format));
+    const digits = Math.floor(Math.log10(logs.length)) + 1;
+    let i = 0;
+    const renames: Array<Promise<void>> = [];
+    for (const log of logs) {
+      const ordinal = `${++i}`.padStart(digits, '0');
+      renames.push(this.limit(() => fs.rename(
+        path.join(this.storage.scratch, format, log),
+        path.join(this.config.output, format, `battle-${format}-${ordinal}.log.json`),
+      )));
+    }
+    if (renames.length) await Promise.all(renames);
   }
 };
 

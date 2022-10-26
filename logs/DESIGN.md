@@ -43,17 +43,20 @@ intermediate results are stored in a directory configured via the `--checkpoints
 options - if the top level directory is not passed in via the `--checkpoints` flag a temporary directory will be created and will be cleaned up upon termination. Checkpoints are structured such
 that the filesystem can be used as a database:
 
-    /tmp/checkpoints-2pA7Hjx
-    ├── WORKER
-    │   ├── checkpoints
-    │   │   └── ... TODO
-    │   └── scratch
-    │       └── ...
-    └── decompressed
-        └── YYYY-MM
-            └── format
-                └── YYYY-MM-DD
-                    └── battle-format-N.log.json
+/tmp/workspace-2pA7Hjx/
+└── stats-acbd18db4cc2f85cedef654fccc4a4d8
+    ├── checkpoints
+    │   ├── format
+    │   │   └── YYYY-MM-DD
+    │   └── format-shard
+    │       └── YYYY-MM-DD
+    ├── decompressed
+    │   └── YYYY-MM
+    │       └── format
+    │           └── YYYY-MM-DD
+    │               └── battle-format-N.log.json
+    └── scratch
+        └── ...
 
 This top level directory actuall contains several files and directories:
 
@@ -61,7 +64,7 @@ This top level directory actuall contains several files and directories:
   string which is used to create a directory for data from that particular worker to be stored. This
   identifier does not necessarily need to be unique to a specific worker, it simply is meant to
   indicate the checkpoints and intermediate data from a specific worker are compatible with other
-  workers which return the same identifer. Commonly the identifier is a hash of the worker name and
+  workers which return the same identifier. Commonly the identifier is a hash of the worker name and
   relevant configuration values.
   - `checkpoints/`: The checkpoints folder contains all the checkpoints written by specific worker
     TODO checkpoints/format/shard/foo.gz, checkpoints/format or checkpoints/format/shard might be
