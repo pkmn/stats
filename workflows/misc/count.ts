@@ -1,7 +1,6 @@
 import * as path from 'path';
 
 import {
-  _,
   Batch,
   Checkpoints,
   CombineWorker,
@@ -26,7 +25,7 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
   options = {
     formats: {
       alias: ['f', 'format'],
-      desc: `-f, --formats${_}Tally counts for players in just the formats specified`,
+      desc: ['-f, --formats', 'Tally counts for players in just the formats specified.'],
       parse: (s: string) => new Set(s.split(',').map(toID)),
     },
   };

@@ -11,8 +11,6 @@ const MAX_FILES = 256;
 // collection and other system tasks.
 const NUM_WORKERS = os.cpus().length - 1;
 
-export const _ = '\n\n     ';
-
 export type ID = (string & { __brand: 'ID' }) | (string & { __isID: true }) | '';
 
 export function toID(text: any): ID {
@@ -58,96 +56,103 @@ export const ALIASES = {
 export function usage(
   code: number,
   preamble: string,
-  options: Array<{name: string; options: {[option: string]: {desc: string}}}> = []
+  options: Array<{name: string; options: {[option: string]: {desc: string | string[]}}}> = []
 ) {
   const out = !code ? console.log : console.error;
 
   for (const [i, line] of preamble.split('\n').entries()) {
     if (line) {
-      out(i ? ` ${line}` : line);
+      out(i ? `  ${line}` : line);
     } else {
       out('');
     }
   }
 
   out('');
-  out(' Options:');
+  out('Options:');
   out('');
-  out('   -i INPUT, --input INPUT');
+  out('  -i INPUT, --input INPUT');
   out('');
-  out('      Process data from INPUT. This can either be a path to the root of a logs');
-  out('      corpus (e.g. smogon/pokemon-showdown\'s logs/ directory) or the path to a');
-  out('      logs archive, organized in the supported format.');
+  out('    Process data from INPUT. This can either be a path to the root of a logs');
+  out('    corpus (e.g. smogon/pokemon-showdown\'s logs/ directory) or the path to a');
+  out('    logs archive, organized in the supported format.');
   out('');
-  out('   -o OUTPUT, --output OUTPUT');
+  out('  -o OUTPUT, --output OUTPUT');
   out('');
-  out('      Export results to OUTPUT - this currently must be a path to a directory');
-  out('      that will be created if it does not already exist.');
+  out('    Export results to OUTPUT - this currently must be a path to a directory');
+  out('    that will be created if it does not already exist.');
   out('');
-  out('   -w WORKER, --worker WORKER');
+  out('  -w WORKER, --worker WORKER');
   out('');
-  out('      Process data with WORKER, where the worker may either be a predefined');
-  out('      identifier or the path to the worker code to be used.');
+  out('    Process data with WORKER, where the worker may either be a predefined');
+  out('    identifier or the path to the worker code to be used.');
   out('');
-  out('   -c WORKSPACE, --workspace WORKSPACE');
+  out('  -c WORKSPACE, --workspace WORKSPACE');
   out('');
-  out('      Write intermediate information to WORKSPACE for recovery. If this flag is');
-  out('      not provided, a temporary directory will be created to serve as the');
-  out('      workspace and will be deleted upon exit. To allow for rerunning in the');
-  out('      event that an error occurs, passing in a path to a directory here is');
-  out('      strongly recommended. The directory will be created if it does not already');
-  out('      exist.');
+  out('    Write intermediate information to WORKSPACE for recovery. If this flag is');
+  out('    not provided, a temporary directory will be created to serve as the');
+  out('    workspace and will be deleted upon exit. To allow for rerunning in the');
+  out('    event that an error occurs, passing in a path to a directory here is');
+  out('    strongly recommended. The directory will be created if it does not already');
+  out('    exist.');
   out('');
-  out('   -b WHEN, --begin WHEN');
+  out('  -b WHEN, --begin WHEN');
   out('');
-  out('      If set, only process data from directories in the INPUT that are >= WHEN, where ');
-  out('      WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
-  out('      written in the server\'s local time zone (not UTC).');
+  out('    If set, only process data from directories in the INPUT that are >= WHEN, where ');
+  out('    WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
+  out('    written in the server\'s local time zone (not UTC).');
   out('');
-  out('   -e WHEN, --end WHEN');
+  out('  -e WHEN, --end WHEN');
   out('');
-  out('      If set, only process data from directories in the INPUT that are < WHEN, where ');
-  out('      WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
-  out('      written in the server\'s local time zone (not UTC).');
+  out('    If set, only process data from directories in the INPUT that are < WHEN, where ');
+  out('    WHEN is a \'YYYY-MM\' date string. Note that smogon/pokemon-showdown logs are');
+  out('    written in the server\'s local time zone (not UTC).');
   out('');
-  out('   -t N, --threads N');
+  out('  -t N, --threads N');
   out('');
-  out('      Process the logs using N worker threads (default: NUM_CORES-1). Using this');
-  out('      in combination with the --processes flag will result in an error. Threads');
-  out('      will be used as the concurrency primitive by default.');
+  out('    Process the logs using N worker threads (default: NUM_CORES-1). Using this');
+  out('    in combination with the --processes flag will result in an error. Threads');
+  out('    will be used as the concurrency primitive by default.');
   out('');
-  out('   -p N, --processes N');
+  out('  -p N, --processes N');
   out('');
-  out('      Process the logs using N worker processes (default: NUM_CORES-1). Using');
-  out('      this in combination with the --threads flag will result in an error.');
-  out('      Threads will be used as the concurrency primitive by default.');
+  out('    Process the logs using N worker processes (default: NUM_CORES-1). Using');
+  out('    this in combination with the --threads flag will result in an error.');
+  out('    Threads will be used as the concurrency primitive by default.');
   out('');
-  out('   -n N, --maxFiles N');
+  out('  -n N, --maxFiles N');
   out('');
-  out('      Open up to N files across all workers (default: 256). This should always');
-  out('      be configured to be less than `ulimit -n`.');
+  out('    Open up to N files across all workers (default: 256). This should always');
+  out('    be configured to be less than `ulimit -n`.');
   out('');
-  out('   -d, --dryRun');
+  out('  -d, --dryRun');
   out('');
-  out('      Skip actually performing any processing (default: false). Useful when');
-  out('      combined with the --verbose flag to see what work might be done.');
+  out('    Skip actually performing any processing (default: false). Useful when');
+  out('    combined with the --verbose flag to see what work might be done.');
   out('');
-  out('   -v, --verbose');
+  out('  -v, --verbose');
   out('');
-  out('      Log output while processing (default: false). Logging output (especially');
-  out('      to a terminal) will naturally have negative performance implications.');
+  out('    Log output while processing (default: false). Logging output (especially');
+  out('    to a terminal) will naturally have negative performance implications.');
   out('');
-  out('   --strict');
+  out('  --strict');
   out('');
-  out('      Exit immediately when an error occurs as opposed to simply logging.');
+  out('    Exit immediately when an error occurs as opposed to simply logging.');
   out('');
 
   for (const worker of options) {
     if (!worker.options) continue;
-    out(` [${worker.name}] Worker Options:`);
+    out(`[${worker.name}] Worker Options:`);
     out('');
     for (const option in worker.options) {
-      out(`   ${worker.options[option].desc}`);
+      if (typeof worker.options[option].desc === 'string') {
+        out(`   ${worker.options[option].desc}`);
+      } else {
+        for (const [i, desc] of (worker.options[option].desc as string[]).entries()) {
+          out(`${i ? '    ' : '  '}${desc}`);
+          if (!i && worker.options[option].desc.length > 1) out('');
+        }
+      }
       out('');
     }
   }

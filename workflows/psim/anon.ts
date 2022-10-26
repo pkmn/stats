@@ -5,7 +5,6 @@ import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
 
 import {
-  _,
   ApplyWorker,
   Batch,
   Checkpoints,
@@ -42,7 +41,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
   options = {
     formats: {
       alias: ['f', 'format'],
-      desc: `-f, --formats=FORMAT(:RATE),FORMAT2(:RATE2)${_}Anonymize the formats specified`,
+      desc: ['-f, --formats=FORMAT(:RATE),FORMAT2(:RATE2)', 'Anonymize the formats specified.'],
       parse: (s: string) => s.split(',').reduce((m, f) => {
         const [format, rate] = f.split(':');
         m.set(toID(format), Number(rate) || 0);
@@ -50,16 +49,16 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
       }, new Map<ID, number>()),
     },
     salt: {
-      desc: `--salt=SALT${_}anonymize names by hashing them using the provided salt`,
+      desc: ['--salt=SALT', 'Anonymize names by hashing them using the provided salt.'],
     },
     teams: {
       alias: ['team', 'teamsOnly'],
-      desc: `--teams${_}anonymize and output teams only and discard the rest of the log`,
+      desc: ['--teams', 'Anonymize and output teams only and discard the rest of the log.'],
       parse: Options.boolean,
     },
     public: {
       alias: ['publicOnly'],
-      desc: `--public${_}only anonymize battles which were played publicly`,
+      desc: ['--public', 'Only anonymize battles which were played publicly.'],
       parse: Options.boolean,
     },
   };

@@ -6,7 +6,6 @@ import {Generations, Generation} from '@pkmn/data';
 import {canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics} from '@pkmn/stats';
 
 import {
-  _,
   Batch,
   Checkpoints,
   CombineWorker,
@@ -21,7 +20,7 @@ import {
 
 interface Configuration extends WorkerConfiguration {
   formats?: Set<ID>;
-  legacy?: string;
+  legacy?: boolean;
   all?: boolean;
 }
 
@@ -60,17 +59,20 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
   options = {
     formats: {
       alias: ['f', 'format'],
-      desc:
-        `-f, --formats${_}only generate reports for the formats specified instead of all formats`,
+      desc: [
+        '-f, --formats',
+        'Only generate reports for the formats specified instead of all formats.',
+      ],
       parse: (s: string) => new Set(s.split(',').map(toID)),
     },
     legacy: {
       alias: ['l'],
-      desc: `-l, --legacy=OUTPUT${_}generate legacy reports and write them to OUTPUT`,
+      desc: ['-l, --legacy', 'Generate legacy reports and use legacy compatibility mode.'],
+      parse: Options.boolean,
     },
     all: {
       alias: ['a'],
-      desc: `-a, --all${_}include all checks and counters in moveset reports (default: false)`,
+      desc: ['-a, --all', 'Include all checks and counters in moveset reports (default: false).'],
       parse: Options.boolean,
     },
   };
@@ -79,13 +81,11 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     if (config.dryRun) return;
 
     await fs.mkdir(config.output, {recursive: true});
-
     if (config.legacy) {
-      await fs.mkdir(config.legacy, {recursive: true});
       if (!(config.formats && !config.formats.has('gen8monotype' as ID))) {
-        const monotype = path.resolve(config.legacy, 'monotype');
+        const monotype = path.resolve(config.output, 'monotype');
         await fs.mkdir(monotype);
-        await Promise.all([...mkdirs(config.legacy), ...mkdirs(monotype)]);
+        await Promise.all([...mkdirs(config.output), ...mkdirs(monotype)]);
       }
     }
   }
@@ -118,7 +118,8 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     const raw = JSON.parse(await this.storage.logs.read(log));
     const battle = Parser.parse(state.gen, state.format, raw);
     const tags = state.format === 'gen8monotype' ? new Set([shard! as ID]) : undefined;
-    Stats.updateTagged(state.gen, state.format, battle, state.cutoffs, state.stats, tags);
+    Stats.updateTagged(
+      state.gen, state.format, battle, state.cutoffs, state.stats, this.config.legacy, tags);
   }
 
   writeCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
