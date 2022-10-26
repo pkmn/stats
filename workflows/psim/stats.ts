@@ -2,20 +2,10 @@ import * as path from 'path';
 
 import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
-
 import {canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics} from '@pkmn/stats';
-
 import {
-  Batch,
-  Checkpoints,
-  CombineWorker,
-  fs,
-  ID,
-  JSONCheckpoint,
-  Options,
-  register,
-  toID,
-  WorkerConfiguration,
+  Batch, Checkpoints, CombineWorker, fs, ID, toID,
+  JSONCheckpoint, Options, register, WorkerConfiguration,
 } from '@pkmn/logs';
 
 interface Configuration extends WorkerConfiguration {
@@ -94,11 +84,11 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     return (format: ID) => {
       if ((config.formats && !config.formats.has(format)) ||
         format.startsWith('seasonal') || SKIP.some(f => format.includes(f))) {
-        return 0;
+        return false;
       } else if (format === 'gen8monotype') {
         return [...MONOTYPES, ''];
       } else {
-        return 1;
+        return true;
       }
     };
   }
@@ -119,7 +109,8 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     const battle = Parser.parse(state.gen, state.format, raw);
     const tags = state.format === 'gen8monotype' ? new Set([shard! as ID]) : undefined;
     Stats.updateTagged(
-      state.gen, state.format, battle, state.cutoffs, state.stats, this.config.legacy, tags);
+      state.gen, state.format, battle, state.cutoffs, state.stats, this.config.legacy, tags
+    );
   }
 
   writeCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
@@ -138,7 +129,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
   writeResults(format: ID, state: CombineState): Promise<void> {
     throw new Error('Method not implemented.'); // TODO
   }
-} as CombineWorker<Configuration, ApplyState, CombineState>;
+};
 
 function mkdirs(dir: string) {
   const mkdir = (d: string) => fs.mkdir(path.resolve(dir, d));

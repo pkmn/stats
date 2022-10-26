@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
-import {
-  Generations,
-  Generation,
-  Dex,
-  ID,
-  toID,
-  PokemonSet,
-  Specie,
-} from '@pkmn/data';
+import {Generations, Generation, Dex, ID, toID, PokemonSet, Specie} from '@pkmn/data';
 import * as aliases from './aliases.json';
 
 export const PRECISION = 1e10;

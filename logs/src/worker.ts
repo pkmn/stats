@@ -10,7 +10,7 @@ export type WorkerConfiguration = Omit<Configuration, 'worker'>;
 
 export type WorkerOptions<C extends WorkerConfiguration> = {
   [option in keyof C]?: {
-    desc: string;
+    desc: string | string[];
     alias?: string | string[];
     parse?: (s: string) => C[keyof C];
   }
@@ -18,7 +18,7 @@ export type WorkerOptions<C extends WorkerConfiguration> = {
 
 export interface Worker<C extends WorkerConfiguration> {
   options?: WorkerOptions<C>;
-  init?(config: C): Promise<string | undefined>;
+  init?(config: C): Promise<void>;
   accept?(config: C): (format: ID) => boolean | string[];
 
   apply(batch: Batch, shard?: string): Promise<void>;

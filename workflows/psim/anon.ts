@@ -3,20 +3,9 @@ import * as path from 'path';
 import {Anonymizer, Log, Verifier} from '@pkmn/anon';
 import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
-
 import {
-  ApplyWorker,
-  Batch,
-  Checkpoints,
-  fs,
-  ID,
-  Options,
-  Random,
-  register,
-  toID,
-  WorkerConfiguration,
-  workerData,
-  WorkerData,
+  ApplyWorker, Batch, Checkpoints, fs, ID, toID,
+  Options, Random, register, WorkerConfiguration,
 } from '@pkmn/logs';
 
 interface Configuration extends WorkerConfiguration {
@@ -36,6 +25,17 @@ interface State {
 const GENS = new Generations(Dex, e => !!e.exists);
 const forFormat = (format: ID) =>
   format.startsWith('gen') ? GENS.get(format.charAt(3)) : GENS.get(6);
+
+const hash = (s: string) => {
+  let h = 0;
+  if (s.length === 0) return h;
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    h = ((h << 5) - h) + c;
+    h |= 0;
+  }
+  return h;
+};
 
 const AnonWorker = new class extends ApplyWorker<Configuration, State> {
   options = {
@@ -82,8 +82,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
     return {
       gen: forFormat(format),
       format,
-      // FIXME base seed on format - need to ensure stable random despite Pool
-      random: new Random((workerData as WorkerData<Configuration>).num),
+      random: new Random(hash(format)),
       rate: this.config.formats?.get(format) || 1,
     };
   }
@@ -123,7 +122,7 @@ const AnonWorker = new class extends ApplyWorker<Configuration, State> {
   writeCheckpoint(batch: Batch) {
     return Checkpoints.empty(batch.format, batch.day);
   }
-} as ApplyWorker<Configuration, State>;
+};
 
 void register(AnonWorker);
 export = AnonWorker;

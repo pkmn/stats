@@ -1,11 +1,6 @@
 import {Generation, ID, toID} from '@pkmn/data';
 import {
-  Usage,
-  Statistics,
-  UsageStatistics,
-  UniqueStatistics,
-  newUsage,
-  combineUnique,
+  Usage, Statistics, UsageStatistics, UniqueStatistics, newUsage, combineUnique,
 } from './stats';
 
 import * as util from './util';

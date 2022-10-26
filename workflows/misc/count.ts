@@ -1,16 +1,8 @@
 import * as path from 'path';
 
 import {
-  Batch,
-  Checkpoints,
-  CombineWorker,
-  fs,
-  ID,
-  JSONCheckpoint,
-  LOG,
-  register,
-  toID,
-  WorkerConfiguration,
+  Batch, Checkpoints, CombineWorker, fs, ID, toID,
+  JSONCheckpoint, register, WorkerConfiguration,
 } from '@pkmn/logs';
 
 interface Configuration extends WorkerConfiguration {
@@ -18,7 +10,7 @@ interface Configuration extends WorkerConfiguration {
 }
 
 interface State {
-  [player: string]: [number, number, number];
+  [player: string]: [number, number, number]; // win, lose, draw
 }
 
 const CountWorker = new class extends CombineWorker<Configuration, State> {
@@ -31,7 +23,7 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
   };
 
   async init(config: Configuration) {
-    if (!config.dryRun && config.formats) await fs.mkdir(config.output, {recursive: true});
+    if (!config.dryRun) await fs.mkdir(config.output, {recursive: true});
   }
 
   accept(config: Configuration) {
@@ -71,7 +63,6 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
     const checkpoint =
       await JSONCheckpoint.read<State>(this.storage.checkpoints, batch.format, batch.day);
 
-    LOG(`Combining checkpoint <${checkpoint.toString()}>`);
     for (const p in checkpoint.data) {
       const a = state[p] || (state[p] = [0, 0, 0]);
       const b = checkpoint.data[p];
@@ -89,7 +80,7 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
     const name = path.resolve(this.config.output, `${format}.json`);
     return fs.writeFile(name, JSON.stringify(sorted));
   }
-} as CombineWorker<Configuration, State>;
+};
 
 void register(CountWorker);
 export = CountWorker;
