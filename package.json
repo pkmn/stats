@@ -34,9 +34,12 @@
   "scripts": {
     "lint": "subpkg run lint && eslint --cache workflows --ext ts",
     "fix": "subpkg run fix && eslint --fix workflows --ext ts",
-    "compile": "subpkg run compile && tsc -p .",
+    "compile:smogon": "tsc -p .",
+    "compile:pkmn": "tsc -p tsconfig.pkmn.json",
+    "compile": "subpkg run compile && npm run compile:smogon",
+    "build": "npm run compile && npm run compile:pkmn",
     "test": "subpkg run test",
-    "posttest": "tsc -p . && eslint --cache workflows --ext ts",
+    "posttest": "npm run compile:smogon && npm run compile:pkmn && eslint --cache workflows --ext ts",
     "postinstall": "subpkg install"
   },
   "eslintConfig": {

@@ -4,6 +4,6 @@ build/
 Thumbs.db
 *package-lock.json
 .eslintcache
-.tsbuildinfo
+.tsbuildinfo*
 .vscode
 *-debug.log
