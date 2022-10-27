@@ -79,7 +79,7 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     return (format: ID) => !!formats?.has(format);
   }
 
-  setupApply({format}: Batch): State {
+  async setupApply({format}: Batch) {
     return {
       gen: forFormat(format),
       format,
@@ -121,11 +121,11 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     }
   }
 
-  writeCheckpoint({format, day}: Batch) {
+  createCheckpoint({format, day}: Batch) {
     return Checkpoints.empty(format, day);
   }
 
-  setupCombine() {}
+  async setupCombine() {}
   async aggregateCheckpoint() {}
 
   async writeResults(format: ID) {

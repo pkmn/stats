@@ -30,7 +30,7 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
     return (format: ID) => !config.formats ? true : config.formats.has(format);
   }
 
-  setupApply(): State {
+  async setupApply() {
     return {};
   }
 
@@ -51,11 +51,11 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
     }
   }
 
-  writeCheckpoint({format, day}: Batch, state: State): JSONCheckpoint<State> {
+  createCheckpoint({format, day}: Batch, state: State): JSONCheckpoint<State> {
     return Checkpoints.json(format, day, state);
   }
 
-  setupCombine(): State {
+  async setupCombine() {
     return {};
   }
 

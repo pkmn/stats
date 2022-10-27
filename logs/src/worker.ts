@@ -42,7 +42,7 @@ export abstract class ApplyWorker<
   }
 
   async apply(batch: Batch, shard?: string) {
-    const state = this.setupApply(batch, shard);
+    const state = await this.setupApply(batch, shard);
 
     const applied: Array<Promise<void>> = [];
     for (const log of await this.storage.logs.select(batch.format, batch.day)) { // FIXME
@@ -50,14 +50,14 @@ export abstract class ApplyWorker<
     }
     if (applied.length) await Promise.all(applied);
 
-    const checkpoint = this.writeCheckpoint(batch, state, shard);
+    const checkpoint = this.createCheckpoint(batch, state, shard);
     LOG(`Writing checkpoint <${checkpoint.toString()}>`);
     await this.storage.checkpoints.write(checkpoint);
   }
 
-  abstract setupApply(batch: Batch, shard?: string): A;
+  abstract setupApply(batch: Batch, shard?: string): Promise<A>;
   abstract processLog(log: string, state: A, shard?: string): Promise<void>;
-  abstract writeCheckpoint(batch: Batch, state: A, shard?: string): Checkpoint;
+  abstract createCheckpoint(batch: Batch, state: A, shard?: string): Checkpoint;
 
   async process(log: string, state: A, shard?: string) {
     VLOG(`Processing ${log}${shard ? ` (${shard})` : ''}`);
@@ -77,7 +77,7 @@ export abstract class CombineWorker<
   B = A
 > extends ApplyWorker<C, A> {
   async combine(format: ID, shard?: string) {
-    const state = this.setupCombine(format, shard);
+    const state = await this.setupCombine(format, shard);
     LOG(`Combining checkpoint(s) for ${format}${shard ? ` (${shard})` : ''}`);
 
     const combined: Array<Promise<void>> = [];
@@ -101,7 +101,7 @@ export abstract class CombineWorker<
     }
   }
 
-  abstract setupCombine(format: ID, shard?: string): B;
+  abstract setupCombine(format: ID, shard?: string): Promise<B>;
   abstract aggregateCheckpoint(batch: Batch, state: B, shard?: string): Promise<void>;
   abstract writeResults(format: ID, state: B, shard?: string): Promise<void>;
 }

@@ -12,6 +12,7 @@
     "@pkmn/data": "^0.6.1",
     "@pkmn/dex": "^0.6.1",
     "@pkmn/engine": "file:../engine",
+    "@pkmn/sets": "4.0.0",
     "@pkmn/stats": "file:stats"
   },
   "devDependencies": {
@@ -43,7 +44,8 @@
     "overrides": [{
       "files": ["workflows/**/*.ts"],
       "rules": {
-        "@typescript-eslint/no-floating-promises": ["error", {"ignoreVoid": true}]
+        "@typescript-eslint/no-floating-promises": ["error", {"ignoreVoid": true}],
+        "@typescript-eslint/require-await": "off"
       }
     }]
   }

@@ -161,14 +161,13 @@ export const Binary = new class {
     lookup: Binary.Lookup,
     canonicalize: (team: Partial<PokemonSet>[], dex: Dex) => Partial<PokemonSet>[],
     log: Log,
+    buf: Buffer,
+    offset = 0
   ) {
     if (gen.num >= 3) throw new Error(`Unsupported gen ${gen.num}`); // TODO
 
-    const N = 6 * this.Sizes[gen.num as keyof typeof this.Sizes];
-    const buf = Buffer.alloc(17 + 2 * N);
-
-    Write.u64(buf, new Date(log.timestamp).getTime(), 0);
-    Write.u16(buf, log.turns, 8);
+    Write.u64(buf, new Date(log.timestamp).getTime(), offset);
+    Write.u16(buf, log.turns, offset + 8);
 
     const winner: 'p1' | 'p2' = log.winner === log.p2 ? 'p2' : 'p1';
     const loser: 'p1' | 'p2' = winner === 'p1' ? 'p2' : 'p1';
@@ -181,19 +180,20 @@ export const Binary = new class {
     } else if (log.endType === 'forfeit') {
       endType = EndType.FORFEIT;
     }
-    Write.u8(buf, endType, 10);
+    Write.u8(buf, endType, offset + 10);
 
     if (log[`${winner}rating`]) {
-      Write.u16(buf, Math.round(log[`${winner}rating`]!.rpr), 11);
-      Write.u8(buf, Math.round(log[`${winner}rating`]!.rprd), 13);
+      Write.u16(buf, Math.round(log[`${winner}rating`]!.rpr), offset + 11);
+      Write.u8(buf, Math.round(log[`${winner}rating`]!.rprd), offset + 13);
     }
     if (log[`${loser}rating`]) {
-      Write.u16(buf, Math.round(log[`${loser}rating`]!.rpr), 14);
-      Write.u8(buf, Math.round(log[`${loser}rating`]!.rprd), 16);
+      Write.u16(buf, Math.round(log[`${loser}rating`]!.rpr), offset + 14);
+      Write.u8(buf, Math.round(log[`${loser}rating`]!.rprd), offset + 16);
     }
 
-    this.encodeTeam(gen, lookup, canonicalize(log[`${winner}team`], gen.dex), buf, 17);
-    this.encodeTeam(gen, lookup, canonicalize(log[`${loser}team`], gen.dex), buf, 17 + N);
+    const N = 6 * this.Sizes[gen.num as keyof typeof this.Sizes];
+    this.encodeTeam(gen, lookup, canonicalize(log[`${winner}team`], gen.dex), buf, offset + 17);
+    this.encodeTeam(gen, lookup, canonicalize(log[`${loser}team`], gen.dex), buf, offset + 17 + N);
 
     return buf;
   }

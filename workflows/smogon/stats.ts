@@ -93,7 +93,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     };
   }
 
-  setupApply(batch: Batch): ApplyState {
+  async setupApply(batch: Batch) {
     const format = canonicalizeFormat(batch.format);
     return {
       gen: forFormat(format),
@@ -112,12 +112,12 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     );
   }
 
-  writeCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
+  createCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
     // FIXME need shard!
     return Checkpoints.json(batch.format, batch.day, state.stats);
   }
 
-  setupCombine(format: ID): CombineState {
+  async setupCombine(format: ID): Promise<CombineState> {
     throw new Error('Method not implemented.'); // TODO
   }
 
