@@ -8,9 +8,10 @@
     "source-map-support": "^0.5.21"
   },
   "optionalDependencies": {
+    "@pkmn/anon": "file:anon",
     "@pkmn/data": "^0.6.1",
     "@pkmn/dex": "^0.6.1",
-    "@pkmn/anon": "file:anon",
+    "@pkmn/engine": "file:../egine",
     "@pkmn/stats": "file:stats"
   },
   "devDependencies": {
