@@ -12,3 +12,5 @@ export {
   MetagameStatistics, Statistics, Stats, TaggedStatistics,
   Usage, UsageStatistics, WeightedStatistics,
 } from './stats';
+
+export {Binary} from './binary';
