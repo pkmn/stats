@@ -1,4 +1,5 @@
 import * as os from 'os';
+import * as path from 'path';
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
 // should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
@@ -22,7 +23,7 @@ export function toID(text: any): ID {
 export interface Configuration {
   input: string;
   output: string;
-  checkpoints: string;
+  workspace: string;
 
   begin?: string;
   end?: string;
@@ -42,7 +43,7 @@ export const ALIASES = {
   input: ['i', 'in'],
   output: ['o', 'out'],
   worker: ['w'],
-  checkpoints: ['c', 'checkpoint'],
+  workspace: ['s'],
   begin: ['b', 'start'],
   end: ['e', 'finish'],
   threads: ['t', 'thread'],
@@ -74,8 +75,9 @@ export function usage(
   out('  -i INPUT, --input INPUT');
   out('');
   out('    Process data from INPUT. This can either be a path to the root of a logs');
-  out('    corpus (e.g. smogon/pokemon-showdown\'s logs/ directory) or the path to a');
-  out('    logs archive, organized in the supported format.');
+  out('    corpus (e.g. smogon/pokemon-showdown\'s logs/ directory), the path to a');
+  out('    logs archive, or an individual month worth of logs (in which case --begin');
+  out('    and --end are inferred');
   out('');
   out('  -o OUTPUT, --output OUTPUT');
   out('');
@@ -87,7 +89,7 @@ export function usage(
   out('    Process data with WORKER, where the worker may either be a predefined');
   out('    identifier or the path to the worker code to be used.');
   out('');
-  out('  -c WORKSPACE, --workspace WORKSPACE');
+  out('  -s WORKSPACE, --workspace WORKSPACE');
   out('');
   out('    Write intermediate information to WORKSPACE for recovery. If this flag is');
   out('    not provided, a temporary directory will be created to serve as the');
@@ -98,15 +100,17 @@ export function usage(
   out('');
   out('  -b WHEN, --begin WHEN');
   out('');
-  out('    If set, only process data from directories in the INPUT that are >= WHEN, where ');
-  out('    WHEN is a \'YYYY-MM\' or \'YYYY-MM-DD\' date string. Note that smogon/pokemon-showdown');
-  out('    logs are written in the server\'s local time zone (not UTC).');
+  out('    If set, only process data from directories in the INPUT that are >= WHEN,');
+  out('    where WHEN is a \'YYYY-MM\' or \'YYYY-MM-DD\' date string. Note that');
+  out('    smogon/pokemon-showdown logs are written in the server\'s local time zone');
+  out('    (not UTC). Note *both* --begin and --end are inclusive.');
   out('');
   out('  -e WHEN, --end WHEN');
   out('');
-  out('    If set, only process data from directories in the INPUT that are < WHEN, where ');
-  out('    WHEN is a \'YYYY-MM\' or \'YYYY-MM-DD\' date string. Note that smogon/pokemon-showdown');
-  out('    logs are written in the server\'s local time zone (not UTC).');
+  out('    If set, only process data from directories in the INPUT that are <= WHEN,');
+  out('    where WHEN is a \'YYYY-MM\' or \'YYYY-MM-DD\' date string. Note that');
+  out('    smogon/pokemon-showdown logs are written in the server\'s local time zone');
+  out('    (not UTC). Note *both* --begin and --end are inclusive.');
   out('');
   out('  -t N(,M), --threads N(,M)');
   out('');
@@ -121,8 +125,9 @@ export function usage(
   out('    Process the logs using N worker processes (default: NUM_CORES-1). Using');
   out('    this in combination with the --threads flag will result in an error.');
   out('    Threads will be used as the concurrency primitive by default. If M is also');
-  out('    provided then max{N, M} processes will be started but at most N workers will');
-  out('    be sed concurrently during the apply stage and M during the combine stage.');
+  out('    provided then max{N, M} processes will be started but at most N workers');
+  out('    will be used concurrently during the apply stage and M during the combine');
+  out('    stage.');
   out('');
   out('  -n N, --maxFiles N');
   out('');
@@ -182,11 +187,14 @@ export interface Options extends Partial<Omit<Configuration, ComputedFields>> {
   processes?: Option;
 }
 
+const YYYYMM = /^\d{4}-\d{2}$/;
+const DATE = /^\d{4}-\d{2}(-\d{2})?$/;
+
 export class Options {
   input!: string;
   output!: string;
   worker!: string;
-  checkpoints!: string;
+  workspace!: string;
 
   private constructor() {}
 
@@ -199,6 +207,14 @@ export class Options {
     if (!options.input) throw new Error('Input must be specified');
     if (!options.output) throw new Error('Output must be specified');
     if (!options.worker) throw new Error('Worker must be specified');
+
+    let input = options.input;
+    let begin: string | undefined;
+    let end: string | undefined;
+    if (YYYYMM.test(path.basename(options.input))) {
+      input = path.dirname(options.input);
+      begin = end = path.basename(options.input);
+    }
 
     for (const o in options) {
       const option = o as keyof Options;
@@ -226,8 +242,9 @@ export class Options {
 
     return {
       ...options,
-      begin: parseDate(options.begin),
-      end: parseDate(options.end),
+      input,
+      begin: parseDate(options.begin, begin),
+      end: parseDate(options.end, end),
       worker,
       maxFiles,
       strict: !!options.strict,
@@ -265,10 +282,11 @@ function parseOption(opt: Option | undefined, fallback: (n?: number) => number) 
   }
 }
 
-const DATE = /^\d{4}-\d{2}(-\d{2})?$/;
-
-function parseDate(date?: string) {
-  if (!date) return undefined;
+function parseDate(date?: string, fallback?: string) {
+  if (!date) return fallback;
   if (!DATE.test(date)) throw new Error(`Invalid YYYY-MM(-DD) date '${date}'`);
+  if (fallback && date && !date.startsWith(fallback)) {
+    throw new Error(`'${date}' is outside the range of logs in '${fallback}'`);
+  }
   return date;
 }

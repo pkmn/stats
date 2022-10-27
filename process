@@ -38,7 +38,7 @@ const WORKERS = fs.readdirSync(path.join(__dirname, 'workflows')).reduce((ws, di
   return ws;
 }, {});
 
-const wrap = (s) => s.replace(/(?![^\n]{1,80}$)([^\n]{1,80})\s/g, '$1\n');
+const wrap = (s) => s.replace(/(?![^\n]{1,78}$)([^\n]{1,78})\s/g, '$1\n');
 const PREAMBLE = `process <TYPE> <INPUT> <OUTPUT>\n\n` + wrap(
   `Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT. ` +
   `TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w}'`).join(', ')}, ` +
