@@ -13,11 +13,19 @@ jobs:
         node-version: [16.x]
     steps:
     - uses: actions/checkout@v3
+      with:
+        path: stats
+    - uses: actions/checkout@v3
+      with:
+        repository: pkmn/engine
+        path: engine
     - name: Use Node.js ${{ matrix.node-version }}
       uses: Zarel/setup-node@patch-1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run test
+    - run: npm -C engine install --ignore-scripts
+    - run: npm -C engine run compile
+    - run: npm -C stats install
+    - run: npm -C stats run test
       env:
         CI: true
