@@ -104,6 +104,14 @@ export abstract class CombineWorker<
   abstract setupCombine(format: ID, shard?: string): Promise<B>;
   abstract aggregateCheckpoint(batch: Batch, state: B, shard?: string): Promise<void>;
   abstract writeResults(format: ID, state: B, shard?: string): Promise<void>;
+
+  merge<T>(left: T[], right: T[], cmp: (a: T, b: T) => number) {
+    const merged = [];
+    while (left.length && right.length) {
+      merged.push((cmp(left[0], right[0]) < 0 ? left : right).shift());
+    }
+    return [...merged, ...left, ...right];
+  }
 }
 
 export interface WorkerData<C extends WorkerConfiguration> {

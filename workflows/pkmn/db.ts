@@ -1,9 +1,12 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import {Dex} from '@pkmn/dex';
 import {Generation, Generations, PokemonSet} from '@pkmn/data';
 import {Lookup} from '@pkmn/engine';
 import {Team} from '@pkmn/sets';
 import {Batch, Checkpoints, CombineWorker, ID, register, WorkerConfiguration} from '@pkmn/logs';
-import {Binary} from '@pkmn/stats';
+import {Binary, Read} from '@pkmn/stats';
 
 interface ApplyState {
   gen: Generation;
@@ -24,6 +27,8 @@ const GENS = new Generations(Dex);
 const forFormat = (format: ID) =>
   format.startsWith('gen') ? GENS.get(format.charAt(3)) : GENS.get(6);
 const rowsize = (gen: Generation) => 17 + 2 * (6 * Binary.Sizes[gen.num]);
+
+const CMP = (a: Buffer, b: Buffer) => Number(Read.u64(a, 0) - Read.u64(b, 0));
 
 const BinaryWorker =
   new class extends CombineWorker<WorkerConfiguration, ApplyState, CombineState> {
@@ -64,13 +69,18 @@ const BinaryWorker =
 
     async aggregateCheckpoint({format, day}: Batch, state: CombineState) {
       const buf = await this.storage.checkpoints.read(format, day, '.db');
-      // TODO: split into individual rows
-      const bufs = [];
-      // TODO: sort individual bufs, then merge sort bufs into state.bufs
+      const bufs = new Array(buf.length / state.size);
+      for (let i = 0; i * state.size < buf.length; i++) {
+        bufs[i] = buf.subarray(i * state.size, (i + 1) * state.size);
+      }
+      this.merge(state.bufs, bufs.sort(CMP), CMP);
     }
 
     async writeResults(format: ID, state: CombineState) {
-      // TODO: write all bufs from state to output file
+      const db = fs.createWriteStream(path.join(this.config.output, `${format}.db`));
+      for (const buf of state.bufs) {
+        db.write(buf);
+      }
     }
   };
 

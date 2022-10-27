@@ -17,7 +17,7 @@ const LE = (() => {
   return !!((u16[0] = 1) & u16[0]);
 })();
 
-class Read {
+export class Read {
   private constructor() {}
 
   static u8(buf: Buffer, offset: number) {
@@ -37,7 +37,7 @@ class Read {
   }
 }
 
-class Write {
+export class Write {
   private constructor() {}
 
   static u8(buf: Buffer, value: number, offset: number) {

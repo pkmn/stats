@@ -13,4 +13,4 @@ export {
   Usage, UsageStatistics, WeightedStatistics,
 } from './stats';
 
-export {Binary} from './binary';
+export {Binary, Read, Write} from './binary';
