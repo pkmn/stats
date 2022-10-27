@@ -31,12 +31,11 @@
   },
   "subPackages": ["anon", "logs", "stats"],
   "scripts": {
-    "lint": "eslint --cache workflows --ext ts && subpkg run lint",
-    "fix": "eslint --fix workflows --ext ts && subpkg run fix",
-    "compile": "tsc -p . && subpkg run compile",
+    "lint": "subpkg run lint && eslint --cache workflows --ext ts",
+    "fix": "subpkg run fix && eslint --fix workflows --ext ts",
+    "compile": "subpkg run compile && tsc -p .",
     "test": "subpkg run test",
-    "pretest": "tsc -p .",
-    "posttest": "eslint --cache workflows --ext ts",
+    "posttest": "tsc -p . && eslint --cache workflows --ext ts",
     "postinstall": "subpkg install"
   },
   "eslintConfig": {
