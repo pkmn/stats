@@ -52,8 +52,8 @@ export class LogFileStorage implements LogStorage {
     return range;
   }
 
-  read(log: string) {
-    return fs.readFile(path.resolve(this.dir, log));
+  async read(log: string) {
+    return (await fs.readFile(path.resolve(this.dir, log))).toString('utf8');
   }
 }
 
@@ -67,8 +67,8 @@ export interface CheckpointStorage {
   // FIXME
   offsets(): Promise<Map<ID, Batch[]>>;
   // reads a specific checkpoint
-  read(format: ID, day: string, shard?: string): Promise<string>;
-  // Writes a gzip checkpoint (calls serialize)
+  read(format: ID, day: string, shard?: string, suffix?: string): Promise<Buffer>;
+  // Writes a checkpoint (calls serialize)
   write(checkpoint: Checkpoint): Promise<void>;
 }
 
@@ -94,10 +94,6 @@ export const Storage = new class {
 
 export class CheckpointFileStorage implements CheckpointStorage {
   private dir: string;
-
-  // FIXME
-  private suffix = 'json.gz';
-  private compress = false;
 
   constructor(dir?: string) {
     this.dir = dir!; // set below in init()
@@ -140,26 +136,29 @@ export class CheckpointFileStorage implements CheckpointStorage {
     return checkpoints;
   }
 
-  read(format: ID, day: string) {
-    return fs.readFile(this.toName(format, day));
+  read(format: ID, day: string, suffix?: string) {
+    return fs.readFile(this.toName(format, day, suffix));
   }
 
   write(checkpoint: Checkpoint) {
-    const filename = this.toName(checkpoint.format, checkpoint.day);
-    return (this.compress ? fs.writeGzipFile : fs.writeFile)(filename, checkpoint.serialize());
+    const filename = this.toName(checkpoint.format, checkpoint.day, checkpoint.suffix);
+    const compress = checkpoint.suffix.endsWith('.gz') || checkpoint.suffix.endsWith('.gzip');
+    return (compress ? fs.writeGzipFile : fs.writeFile)(filename, checkpoint.serialize());
   }
 
-  private toName(format: ID, day: string) {
-    return path.resolve(this.dir, format, `${day}.${this.suffix}`);
+  private toName(format: ID, day: string, suffix?: string) {
+    return path.resolve(this.dir, format, `${day}${suffix || ''}`);
   }
 
   private fromName(format: ID, filename: string) {
-    return {format, day: path.basename(filename, this.suffix)};
+    const base = path.basename(filename);
+    const ext = base.indexOf('.');
+    return {format, day: ext > 0 ? base.slice(0, ext) : base};
   }
 }
 
 export class CheckpointMemoryStorage implements CheckpointStorage {
-  readonly checkpoints: Map<ID, Map<string, string>> = new Map();
+  readonly checkpoints: Map<ID, Map<string, Buffer>> = new Map();
 
   async init() {
     return '<MEMORY>';
@@ -170,7 +169,7 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
   }
 
   async list(format: ID) {
-    const days = Array.from(this.checkpoints.get(format)!.values()).sort(CMP);
+    const days = Array.from(this.checkpoints.get(format)!.keys()).sort(CMP);
     return days.map(day => ({format, day}));
   }
 
@@ -183,7 +182,7 @@ export class CheckpointMemoryStorage implements CheckpointStorage {
     return checkpoints;
   }
 
-  async read(format: ID, day: string): Promise<string> {
+  async read(format: ID, day: string): Promise<Buffer> {
     return this.checkpoints.get(format)!.get(day)!;
   }
 

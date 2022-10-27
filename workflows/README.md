@@ -5,6 +5,6 @@ specific formats).
 
 ## [pkmn/db](pkmn/db.ts)
 
-## [psim/anon](psim/anon.ts)
+## [smogon/anon](smogon/anon.ts)
 
-## [psim/stats](psim/stats.ts)
+## [smogon/stats](smogon/stats.ts)

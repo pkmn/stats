@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import {Dex} from '@pkmn/dex';
 import {Generations, Generation} from '@pkmn/data';
-import {canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics} from '@pkmn/stats';
+import {smogon} from '@pkmn/stats';
 import {
   Batch, Checkpoints, CombineWorker, fs, ID, toID,
   JSONCheckpoint, Options, register, WorkerConfiguration,
@@ -17,7 +17,7 @@ interface Configuration extends WorkerConfiguration {
 interface ApplyState {
   gen: Generation;
   format: ID;
-  stats: TaggedStatistics;
+  stats: smogon.TaggedStatistics;
   cutoffs: number[];
 }
 
@@ -94,7 +94,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
   }
 
   setupApply(batch: Batch): ApplyState {
-    const format = canonicalizeFormat(batch.format);
+    const format = smogon.canonicalizeFormat(batch.format);
     return {
       gen: forFormat(format),
       format,
@@ -105,14 +105,14 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
 
   async processLog(log: string, state: ApplyState, shard?: string) {
     const raw = JSON.parse(await this.storage.logs.read(log));
-    const battle = Parser.parse(state.gen, state.format, raw);
+    const battle = smogon.Parser.parse(state.gen, state.format, raw);
     const tags = state.format === 'gen8monotype' ? new Set([shard! as ID]) : undefined;
-    Stats.updateTagged(
+    smogon.Stats.updateTagged(
       state.gen, state.format, battle, state.cutoffs, state.stats, this.config.legacy, tags
     );
   }
 
-  writeCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
+  writeCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<smogon.TaggedStatistics> {
     // FIXME need shard!
     return Checkpoints.json(batch.format, batch.day, state.stats);
   }

@@ -29,16 +29,16 @@ export const readdir = fs.readdir;
 
 export async function readFile(path: string) {
   const data = await fs.readFile(path);
-  if (!isGzipped(data)) return data.toString('utf8');
+  if (!isGzipped(data)) return data;
   // NOTE: nodejs/node#8871
   // const buf = zlib.gunzipSync(data);
   const buf = await gunzip(data);
-  return buf.toString('utf8');
+  return buf;
 }
 
 export const writeFile = fs.writeFile;
 
-export async function writeGzipFile(path: string, data: string): Promise<void> {
+export async function writeGzipFile(path: string, data: string | Buffer): Promise<void> {
   // NOTE: nodejs/node#8871
   // const buf = zlib.gzipSync(data);
   const buf = await gzip(data);

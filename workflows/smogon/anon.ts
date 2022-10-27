@@ -75,16 +75,16 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     }
   }
 
-  accept(config: Configuration) {
-    return (format: ID) => !!config.formats?.has(format);
+  accept({formats}: Configuration) {
+    return (format: ID) => !!formats?.has(format);
   }
 
-  setupApply(batch: Batch): State {
+  setupApply({format}: Batch): State {
     return {
-      gen: forFormat(batch.format),
-      format: batch.format,
-      random: new Random(hash(batch.format)),
-      rate: this.config.formats?.get(batch.format) || 1,
+      gen: forFormat(format),
+      format,
+      random: new Random(hash(format)),
+      rate: this.config.formats?.get(format) || 1,
     };
   }
 
@@ -121,8 +121,8 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     }
   }
 
-  writeCheckpoint(batch: Batch) {
-    return Checkpoints.empty(batch.format, batch.day);
+  writeCheckpoint({format, day}: Batch) {
+    return Checkpoints.empty(format, day);
   }
 
   setupCombine() {}

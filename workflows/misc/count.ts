@@ -51,17 +51,17 @@ const CountWorker = new class extends CombineWorker<Configuration, State> {
     }
   }
 
-  writeCheckpoint(batch: Batch, state: State): JSONCheckpoint<State> {
-    return Checkpoints.json(batch.format, batch.day, state);
+  writeCheckpoint({format, day}: Batch, state: State): JSONCheckpoint<State> {
+    return Checkpoints.json(format, day, state);
   }
 
   setupCombine(): State {
     return {};
   }
 
-  async aggregateCheckpoint(batch: Batch, state: State) {
+  async aggregateCheckpoint({format, day}: Batch, state: State) {
     const checkpoint =
-      await JSONCheckpoint.read<State>(this.storage.checkpoints, batch.format, batch.day);
+      await JSONCheckpoint.read<State>(this.storage.checkpoints, format, day);
 
     for (const p in checkpoint.data) {
       const a = state[p] || (state[p] = [0, 0, 0]);
