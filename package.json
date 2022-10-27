@@ -32,14 +32,14 @@
   },
   "subPackages": ["anon", "logs", "stats"],
   "scripts": {
-    "lint": "subpkg run lint && eslint --cache workflows --ext ts",
-    "fix": "subpkg run fix && eslint --fix workflows --ext ts",
+    "lint": "subpkg run lint && eslint --cache workflows tools/{stats,teams} --ext ts",
+    "fix": "subpkg run fix && eslint --fix workflows tools/{stats,teams} --ext ts",
     "compile:smogon": "tsc -p .",
     "compile:pkmn": "tsc -p tsconfig.pkmn.json",
     "compile": "subpkg run compile && npm run compile:smogon",
     "build": "npm run compile && npm run compile:pkmn",
     "test": "subpkg run test",
-    "posttest": "npm run compile:smogon && npm run compile:pkmn && eslint --cache workflows --ext ts",
+    "posttest": "npm run compile:smogon && npm run compile:pkmn && eslint --cache workflows tools/{stats,teams} --ext ts",
     "postinstall": "subpkg install"
   },
   "eslintConfig": {

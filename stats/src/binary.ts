@@ -61,7 +61,6 @@ export class Write {
 function round(v: number, p = 1e4) {
   return Math.round(v * p);
 }
-
 function bias(stats: StatsTable) {
   const [first, second] = Object.entries(stats).sort((a, b) => b[1] - a[1]);
   // TODO: convert this pair (eg. 'atkhp') to a number

@@ -1,0 +1,249 @@
+#!/usr/bin/env node
+'use strict';
+
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
+
+const fs = require('fs');
+const path = require('path');
+const minimist = require('minimist');
+
+const {Generations} = require('@pkmn/data');
+const {Dex} = require('@pkmn/dex');
+const {Lookup} = require('@pkmn/engine');
+const {Binary, Read, Write} = require('@pkmn/stats');
+
+const ptile = (arr, p) => {
+  if (!arr.length) return 0;
+  if (p <= 0) return arr[0];
+  if (p >= 1) return arr[arr.length - 1];
+
+  const index = (arr.length - 1) * p;
+  const lower = Math.floor(index);
+  const upper = lower + 1;
+  const weight = index % 1;
+
+  if (upper >= arr.length) return arr[lower];
+  return arr[lower] * (1 - weight) + arr[upper] * weight;
+};
+
+const round = (v, p = 1e4) => Math.round(v * p);
+
+const exit = msg => {
+  if (msg) console.error(msg);
+  console.error('Usage: stats <compute|display|sizes|cutoff> ...');
+  process.exit(1);
+};
+
+if (process.argv.length < 3) exit();
+const cmd = process.argv[2];
+const argv = minimist(process.argv.slice(3));
+
+if (!argv.gen) exit('No --gen provided');
+const gens = new Generations(Dex);
+const gen = gens.get(argv.gen);
+if (gen.num >= 3) exit(`Unsupported gen ${gen.num}`); // TODO
+const lookup = Lookup.get(gen);
+
+argv.moves = argv.moves || (gen.num === 1 ? 15 : 20);
+argv.items = argv.items || 5;
+
+switch (cmd) {
+case 'display': {
+  // display --gen=1 --report=<pokemon|teammates>
+  const sizes = {
+    species: lookup.sizes.species,
+    moves: lookup.sizes.moves,
+    items: gen.num < 2 ? 0 : lookup.sizes.items + 1,
+  };
+
+  const db = fs.readFileSync(
+    path.resolve(__dirname, '..', '..', 'src', 'lib', `gen${gen.num}`, 'data', 'stats.db')
+  );
+
+  const N = (sizes.species * 2) + (sizes.species * 2) +
+    (sizes.species * argv.moves * 3) +
+    (gen.num >= 2 ? sizes.species * argv.items * 3 : 0);
+    // (sizes.Species * sizes.Species * 2);
+  if (db.length !== N) {
+    exit(`Corrupted stats.db of size ${db.length} (${N})`);
+  }
+
+  switch (argv.report) {
+  case 'pokemon': {
+    const pokemon = [];
+
+    for (let i = 0; i < sizes.species; i++) {
+      let offset = 0;
+      const id = lookup.speciesByNum(i + 1);
+
+      const lead = Read.u16(db, offset + (i * 2)) / 100;
+      offset += sizes.species * 2;
+
+      const nonlead = Read.u16(db, offset + (i * 2)) / 100;
+      offset += sizes.species * 2;
+
+      const usage = nonlead; // TODO: compute based on nonlead and lead!
+
+      const moves = {};
+      for (let j = 0; j < argv.moves; j++) {
+        const off = offset + (i * argv.moves * 3) + (j * 3);
+        const move = Read.u8(db, off);
+        if (move === 0) break;
+        moves[lookup.moveByNum(move)] = Read.u16(db, off + 1) / 100;
+      }
+      offset += sizes.species * argv.moves * 3;
+
+      let items = undefined;
+      if (gen.num >= 2) {
+        items = {};
+        for (let j = 0; j < argv.moves; j++) {
+          const off = offset + (i * argv.moves * 3) + (j * 3);
+          const item = Read.u8(db, off);
+          const val = Read.u16(db, off + 1);
+          if (item === 0 && val === 0) break;
+          moves[lookup.itemByNum(item)] = val / 100;
+        }
+        offset += sizes.species * argv.items * 3;
+      }
+
+      pokemon.push({id, usage, lead, moves, items});
+    }
+
+    for (const p of pokemon.sort((a, b) => b.usage - a.usage)) {
+      console.log(JSON.stringify(p, null, 2));
+    }
+
+    break;
+  }
+  case 'teammates': {
+    break;
+  }
+  default: exit(`Unknown report type ${argv.report || ''}`);
+  }
+  break;
+}
+case 'cutoff': {
+  // cutoff --gen=1 -logs=logs.db --percentile=0.5
+  if (!argv.percentile || argv.percentile < 0 || argv.percentile > 100) {
+    exit(argv.percentile
+      ? `Invalid percentile ${argv.percentile}` : 'No --percentile provided');
+  }
+  const ratings = [];
+  const read = () => 0; // TODO
+  for (const data of read(gen, argv, exit)) {
+    for (const player of [data.winner, data.loser]) {
+      if (player.rating) ratings.push(player.rating.rpr);
+    }
+  }
+  console.log(ptile(ratings.sort(), argv.percentile));
+  break;
+}
+case 'sizes': {
+  // sizes --gen=1 --logs=logs.db --cutoff=1500
+  if (!argv.cutoff || argv.cutoff < 1000) {
+    exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
+  }
+
+  const db = {}; // TODO
+  const stats = Binary.computeStats(gen, lookup, db, argv);
+
+  const sizes = {moves: [], items: []};
+  for (let i = 0; i < stats.species.length; i++) {
+    let move = 0;
+    for (const weight of Object.values(stats.move_species[i])) {
+      if (round(weight / stats.species[i]) > 100) move++;
+    }
+    sizes.moves.push(move);
+
+    if (gen.num >= 2) {
+      let item = 0;
+      for (const weight of Object.values(stats.item_species[i])) {
+        if (round(weight / stats.species[i]) > 100) item++;
+      }
+      sizes.items.push(item);
+    }
+  }
+
+  sizes.moves.sort((a, b) => a - b);
+  sizes.items.sort((a, b) => a - b);
+  for (let i = 0; i < 101; i++) {
+    let msg = `${i}%: ${ptile(sizes.moves, i / 100)}`;
+    if (gen.num >= 2) msg = `${msg} ${ptile(sizes.items, i / 100)}`;
+    console.log(msg);
+  }
+  break;
+}
+case 'compute': {
+  // compute --gen=1 --logs=logs.db --cutoff=1500 --moves=10 --items=5
+  if (!argv.cutoff || argv.cutoff < 1000) {
+    exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
+  }
+
+  const sizes = {
+    species: lookup.sizes.species,
+    moves: lookup.sizes.moves,
+    items: gen.num < 2 ? 0 : lookup.sizes.items + 1,
+  };
+  const db = {}; // TODO
+  const stats = Binary.computeStats(gen, lookup, db, argv);
+
+  const BY_VAL = (a, b) => b[1] - a[1];
+
+  let buf = Buffer.alloc(sizes.species * 2);
+  for (let i = 0; i < stats.species_lead.length; i++) {
+    Write.u16(buf, round(stats.species_lead[i] / stats.total.lead), i * 2);
+  }
+  process.stdout.write(buf);
+
+  // FIXME: want to track only NON lead statistics for other pokemon!
+  buf = Buffer.alloc(sizes.species * 2);
+  for (let i = 0; i < stats.species.length; i++) {
+    Write.u16(buf, round((stats.species[i] / stats.total.usage) * 6), i * 2);
+  }
+  process.stdout.write(buf);
+
+  buf = Buffer.alloc(sizes.species * argv.moves * 3);
+  for (let i = 0; i < stats.move_species.length; i++) {
+    const moves = Object.entries(stats.move_species[i]).sort(BY_VAL);
+    for (let j = 0; j < Math.min(moves.length, argv.moves); j++) {
+      const [key, weight] = moves[j];
+      const offset = (i * argv.moves * 3) + (j * 3);
+      Write.u8(buf, +key, offset);
+      Write.u16(buf, round(weight / stats.species[i]), offset + 1);
+    }
+  }
+  process.stdout.write(buf);
+
+  if (gen.num >= 2) {
+    buf = Buffer.alloc(sizes.species * argv.items * 3);
+    for (let i = 0; i < stats.item_species.length; i++) {
+      const items = Object.entries(stats.item_species[i]).sort(BY_VAL);
+      for (let j = 0; j < Math.min(items.length, argv.items); j++) {
+        const [key, weight] = items[j];
+        const offset = (i * argv.items * 3) + (j * 3);
+        Write.u8(buf, +key, offset);
+        Write.u16(buf, round(weight / stats.species[i]), offset + 1);
+      }
+    }
+    process.stdout.write(buf);
+  }
+
+  // buf = Buffer.alloc(sizes.species * sizes.species * 2);
+  // for (let i = 0; i < sizes.species; i++) {
+  //   for (let j = 0; j < sizes.species; j++) {
+  //     const offset = (i * sizes.species) + (j * 2);
+  //     const weight = stats.species[i];
+  //     const w = stats.species_species[i][j];
+  //     const usage = (stats.species[j] / stats.total.usage) * 6;
+  //     Write.u16(buf, round((w - weight * usage) / weight), offset);
+  //   }
+  // }
+  // process.stdout.write(buf);
+  break;
+}
+default: exit(`Unknown command: ${cmd}`);
+}
