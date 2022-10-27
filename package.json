@@ -11,7 +11,7 @@
     "@pkmn/anon": "file:anon",
     "@pkmn/data": "^0.6.1",
     "@pkmn/dex": "^0.6.1",
-    "@pkmn/engine": "file:../egine",
+    "@pkmn/engine": "file:../engine",
     "@pkmn/stats": "file:stats"
   },
   "devDependencies": {
