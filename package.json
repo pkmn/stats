@@ -3,17 +3,17 @@
   "repository": "github:pkmn/stats",
   "license": "MIT",
   "dependencies": {
+    "@pkmn/anon": "file:anon",
+    "@pkmn/data": "^0.6.1",
+    "@pkmn/dex": "^0.6.1",
     "@pkmn/logs": "file:logs",
+    "@pkmn/stats": "file:stats",
     "minimist": "^1.2.7",
     "source-map-support": "^0.5.21"
   },
   "optionalDependencies": {
-    "@pkmn/anon": "file:anon",
-    "@pkmn/data": "^0.6.1",
-    "@pkmn/dex": "^0.6.1",
     "@pkmn/engine": "file:../engine",
-    "@pkmn/sets": "4.0.0",
-    "@pkmn/stats": "file:stats"
+    "@pkmn/sets": "4.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.19.4",
