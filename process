@@ -32,8 +32,12 @@ const WORKERS = fs.readdirSync(path.join(__dirname, 'workflows')).reduce((ws, di
   for (const f of fs.readdirSync(path.join(__dirname, 'workflows', dir))) {
     const name = f.slice(0, -3);
     // NOTE: workflows/ workers are all Typescript files and but we need the built version
+    try {
     ws[`${dir}/${name}`] =
       createWorker(`${dir}/${name}`, path.join(__dirname, 'build', dir, `${name}.js`));
+    } catch (err) {
+      if (err.code !== 'MODULE_NOT_FOUND') throw err;
+    }
   }
   return ws;
 }, {});
