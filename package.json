@@ -50,6 +50,11 @@
         "@typescript-eslint/no-floating-promises": ["error", {"ignoreVoid": true}],
         "@typescript-eslint/require-await": "off"
       }
+    }, {
+      "files": ["workflows/pkmn/*.ts"],
+      "parserOptions": {
+        "project": ["./tsconfig.pkmn.json"]
+      }
     }]
   }
 }
