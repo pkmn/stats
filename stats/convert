@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+'use strict';
+
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
+
+const fs = require('fs/promises');
+const path = require('path');
+
+const stats = require('./build');
+const {Dex, toID} = require('@pkmn/dex');
+const gens = stats.newGenerations(Dex);
+const stringify = require('json-stringify-pretty-compact');
+
+const MONTH = /^\d{4}-\d{2}$/;
+const UNSUPPORTED = ['1v1', 'challengecup1vs1'];
+
+const KEYS = [
+  'weight', 'viability', 'abilities', 'items', 'stats',
+  'moves', 'teammates', 'counters', 'happinesses', 'spreads',
+];
+
+// TODO: support converting monotype
+(async () => {
+  if (process.argv.length < 4 || process.argv.length > 5) usage();
+
+  const index = process.argv.indexOf('--split');
+  const split = index > 0;
+  if (index) process.argv.splice(index, 1);
+
+  const out = process.argv[3];
+  try {
+    if (!(await fs.stat(out)).isDirectory()) usage(`'${out}' is not a valid output directory.`);
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+    await fs.mkdir(out, {mode: 0o755});
+  }
+
+  const dir = process.argv[2];
+  try {
+    if (!(await fs.stat(dir)).isDirectory()) usage(`'${dir}' is not a valid input directory.`);
+  } catch {
+    usage(`'${dir}' is not a valid input directory.`);
+  }
+
+  if (MONTH.test(path.basename(dir))) {
+    await convert(dir, out, split);
+  } else {
+    const months = [];
+    for (const d of await fs.readdir(dir)) {
+      if (!MONTH.test(d)) continue;
+      const o = path.join(out, d);
+      try {
+        await fs.mkdir(o, {mode: 0o755});
+      } catch (err) {
+        if (err.code !== 'EEXIST') throw err;
+      }
+      months.push(convert(path.join(dir, d), o, split));
+    }
+    if (!months.length) usage(`No reports found in ${dir}.`);
+    await Promise.all(months);
+  }
+})();
+
+async function convert(month, out, split) {
+  let processed = 0;
+  for (const file of await fs.readdir(month)) {
+    if (!file.endsWith('txt')) continue;
+    const base = file.slice(0, -4); // .txt
+    if (MISSING[path.basename(month)]?.includes(base)) continue; // sigh
+    const [format, cutoff] = base.split('-')
+    try {
+      await fs.mkdir(path.join(out, format), {mode: 0o755});
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err;
+    }
+    const gen = gens.get(file.startsWith('gen') ? +file.charAt(3) : 6);
+    try {
+      // NOTE: deliberately limiting concurrency to avoid opening too many files
+      await write(path.join(out, format, cutoff), gen, month, base, split);
+      processed++;
+    } catch (err) {
+      console.error(`Error converting '${base}': ${err}`);
+    }
+  }
+  if (!processed) usage(`No reports found in ${month}.`);
+}
+
+async function write(out, gen, dir, base, split) {
+  const format = base.slice(0, base.lastIndexOf('-'));
+  const leads = !stats.isNonSinglesFormat(format) && !UNSUPPORTED.includes(format);
+  const metagame = !UNSUPPORTED.includes(format);
+
+  const display = stats.Display.fromReports(gen,
+    await fs.readFile(path.join(dir, `${base}.txt`), 'utf8'),
+    await fs.readFile(path.join(dir, 'moveset', `${base}.txt`), 'utf8'),
+    await fs.readFile(path.join(dir, 'chaos', `${base}.json`), 'utf8'),
+    metagame ? await fs.readFile(path.join(dir, 'metagame', `${base}.txt`), 'utf8') : undefined,
+    leads ? await fs.readFile(path.join(dir, 'leads', `${base}.txt`), 'utf8') : undefined);
+
+  if (split) {
+    try {
+      await fs.mkdir(out, {mode: 0o755});
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err;
+    }
+
+    const index = JSON.parse(JSON.stringify(display));
+    for (const pokemon in index.pokemon) {
+      for (const key of KEYS) index.pokemon[pokemon][key] = undefined;
+    }
+    await fs.writeFile(path.join(out, 'index.json'), JSON.stringify(index));
+    for (const pokemon in display.pokemon) {
+      // NOTE: deliberately limiting concurrency to avoid opening too many files
+      await fs.writeFile(
+        path.join(out, `${toID(pokemon)}.json`),
+        JSON.stringify(display.pokemon[pokemon]));
+    }
+  } else {
+    return fs.writeFile(`${out}.json`, stringify(display));
+  }
+}
+
+function usage(msg) {
+  if (msg) console.error(msg);
+  console.error(`Usage: convert <path/to/input> <path/to/output> [--split]`);
+  process.exit(1);
+}

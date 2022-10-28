@@ -1,42 +1,61 @@
 {
-  "name": "smogon-stats",
   "private": true,
-  "version": "0.0.1",
-  "description": "The stats processing logic for the Pokémon Showdown battle simulator",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pkmn-cc/Pokemon-Showdown-Stats.git"
-  },
-  "author": "Kirk Scheibelhut",
+  "repository": "github:pkmn/stats",
   "license": "MIT",
   "dependencies": {
-    "anon": "file:anon",
-    "logs": "file:logs",
-    "ps": "file:ps",
-    "stats": "file:stats"
-  },
-  "devDependencies": {
-    "source-map-support": "^0.5.16",
-    "subpkg": "^0.0.1"
+    "@pkmn/anon": "file:anon",
+    "@pkmn/data": "^0.6.1",
+    "@pkmn/dex": "^0.6.1",
+    "@pkmn/logs": "file:logs",
+    "@pkmn/stats": "file:stats",
+    "json-stringify-pretty-compact": "3.0.0",
+    "minimist": "^1.2.7",
+    "source-map-support": "^0.5.21"
   },
   "optionalDependencies": {
-    "minimist": "^1.2.0"
+    "@pkmn/engine": "file:../engine",
+    "@pkmn/sets": "4.0.0"
   },
+  "devDependencies": {
+    "@babel/preset-env": "^7.19.4",
+    "@babel/preset-typescript": "^7.18.6",
+    "@pkmn/eslint-config": "^2.11.0",
+    "@types/jest": "^29.2.0",
+    "@types/node": "^18.11.5",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "eslint": "^8.26.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.3",
+    "jest": "^29.2.2",
+    "subpkg": "^4.1.0",
+    "typescript": "^4.8.4"
+  },
+  "subPackages": ["anon", "logs", "stats"],
   "scripts": {
-    "check": "subpkg run check",
-    "clean": "subpkg run clean",
-    "compile": "subpkg run compile",
-    "fix": "subpkg run fix",
+    "lint": "subpkg run lint && eslint --cache workflows tools/{stats,teams} --ext ts",
+    "fix": "subpkg run fix && eslint --fix workflows tools/{stats,teams} --ext ts",
+    "compile:smogon": "tsc -p .",
+    "compile:pkmn": "tsc -p tsconfig.pkmn.json",
+    "compile": "subpkg run compile && npm run compile:smogon",
+    "build": "npm run compile && npm run compile:pkmn",
     "test": "subpkg run test",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run check",
+    "posttest": "npm run compile:smogon && npm run compile:pkmn && eslint --cache workflows tools/{stats,teams} --ext ts",
     "postinstall": "subpkg install"
   },
-  "subPackages": [
-    "anon",
-    "logs",
-    "ps",
-    "stats"
-  ]
+  "eslintConfig": {
+    "extends": "@pkmn",
+    "overrides": [{
+      "files": ["workflows/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-floating-promises": ["error", {"ignoreVoid": true}],
+        "@typescript-eslint/require-await": "off"
+      }
+    }, {
+      "files": ["workflows/pkmn/*.ts"],
+      "parserOptions": {
+        "project": ["./tsconfig.pkmn.json"]
+      }
+    }]
+  }
 }

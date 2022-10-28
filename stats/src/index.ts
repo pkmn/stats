@@ -1,19 +1,15 @@
-export { Classifier } from './classifier';
-export { Battle, Parser, Player, Pokemon, Rating, Team } from './parser';
-export { Reports } from './reports';
+export {Binary} from './binary';
+export {Classifier} from './classifier';
+export {Battle, Parser, Player, Pokemon, Rating, Team} from './parser';
+export {Reports} from './reports';
 export {
-  Display,
-  DisplayStatistics,
-  DisplayUsageStatistics,
-  DisplayMetagameStatistics,
+  Display, DisplayMetagameStatistics, DisplayStatistics,
+  DisplayUsageStatistics, LegacyDisplayUsageStatistics,
 } from './display';
-export { Outcome, canonicalizeFormat } from './util';
 export {
-  MetagameStatistics,
-  Statistics,
-  Stats,
-  TaggedStatistics,
-  Usage,
-  UsageStatistics,
-  WeightedStatistics,
+  canonicalizeFormat, genForFormat, isNonSinglesFormat, newGenerations, Outcome,
+} from './util';
+export {
+  MetagameStatistics, Statistics, Stats, TaggedStatistics,
+  Usage, UsageStatistics, WeightedStatistics,
 } from './stats';

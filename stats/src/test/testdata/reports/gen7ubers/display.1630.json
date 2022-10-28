@@ -5,16 +5,12 @@
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.4167, "real": 0.375, "weighted": 0.419},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0511},
       "count": 7,
       "weight": 0.577,
       "viability": [1, 89, 89, 89],
       "abilities": {"Serene Grace": 1},
       "items": {"Red Card": 0.6534, "Life Orb": 0.3466},
-      "happinesses": {"255": 1},
-      "spreads": {
-        "Timid:0/0/0/252/4/252": 0.6534,
-        "Timid:0/0/56/196/4/252": 0.3466
-      },
       "stats": {
         "341/143/190/355/293/306": 0.6534,
         "341/143/204/341/293/306": 0.3466
@@ -44,19 +40,15 @@
       }
     },
     "Rayquaza": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.0001},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0},
       "usage": {"raw": 0.4167, "real": 0.5, "weighted": 0.419},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0511},
       "count": 7,
       "weight": 0.577,
       "viability": [1, 89, 89, 89],
       "abilities": {"Air Lock": 1},
       "items": {"Eject Button": 1},
-      "happinesses": {"255": 1},
-      "spreads": {
-        "Adamant:0/252/0/0/4/252": 0.6534,
-        "Adamant:0/180/0/0/132/196": 0.3466
-      },
       "stats": {
         "351/438/216/302/217/289": 0.6534,
         "351/419/216/302/249/275": 0.3466
@@ -81,24 +73,20 @@
       },
       "counters": {
         "Gastrodon": [0.8851, 0, 0],
-        "Zygarde": [1.8851, 0.5306, 0.3635],
-        "Darmanitan": [1.8849, 0.4695, 0.3635]
+        "Zygarde": [1.8851, 0.5305, 0.0001],
+        "Darmanitan": [1.8849, 0, 0.4695]
       }
     },
     "Zoroark": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.4167, "real": 0.125, "weighted": 0.419},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0511},
       "count": 7,
       "weight": 0.577,
       "viability": [1, 89, 89, 89],
       "abilities": {"Illusion": 1},
       "items": {"Life Orb": 1},
-      "happinesses": {"0": 1},
-      "spreads": {
-        "Jolly:0/252/0/0/4/252": 0.6534,
-        "Timid:96/0/24/152/4/232": 0.3466
-      },
       "stats": {
         "261/309/156/248/157/339": 0.6534,
         "285/193/162/314/157/334": 0.3466
@@ -123,22 +111,18 @@
         "Lycanroc-Dusk": 0.2014,
         "Nidoran-M": 0.2014
       },
-      "counters": {
-        "Darmanitan": [0.8849, 0, 0],
-        "Mimikyu": [1.8849, 0.5305, 0.3635]
-      }
+      "counters": {"Darmanitan": [0.8849, 0, 0], "Mimikyu": [1.8849, 0.5305, 0]}
     },
     "Darmanitan": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8714},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1452},
       "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0556, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [1, 89, 89, 89],
       "abilities": {"Zen Mode": 0.5, "Sheer Force": 0.5},
       "items": {"Assault Vest": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Modest:251/0/0/252/4/0": 0.5, "Jolly:0/252/0/0/4/252": 0.5},
       "stats": {"397/284/146/174/147/226": 0.5, "351/379/146/86/147/317": 0.5},
       "moves": {
         "Fire Blast": 0.5,
@@ -158,28 +142,27 @@
         "Zygarde": 0.7095
       },
       "counters": {
-        "Ditto": [0.8849, 1, 0],
-        "Lycanroc-Dusk": [1, 1, 0],
+        "Ditto": [0.8849, 0, 1],
+        "Lycanroc-Dusk": [1, 0, 1],
         "Greninja": [1, 0, 0],
         "Meloetta": [0.8849, 0, 0],
         "Nidoran-M": [1, 0, 0],
         "Rayquaza": [1.8849, 0, 0],
         "Shedinja": [0.8849, 0, 0],
         "Zoroark": [0.8849, 0, 0],
-        "Greninja-Ash": [1.7699, 0.5, 0.3758]
+        "Greninja-Ash": [1.7699, 0, 0.5]
       }
     },
     "Dugtrio": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8714},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1452},
       "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0556, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [1, 89, 89, 89],
       "abilities": {"Arena Trap": 1},
       "items": {"Choice Band": 0.5, "Focus Sash": 0.5},
-      "happinesses": {"255": 1},
-      "spreads": {"Hasty:0/252/0/4/0/252": 0.5, "Hasty:20/232/0/4/0/252": 0.5},
       "stats": {"211/298/122/136/176/372": 0.5, "216/294/122/136/176/372": 0.5},
       "moves": {
         "Earthquake": 1,
@@ -199,16 +182,15 @@
       "counters": {"Greninja": [1, 1, 0], "Greninja-Ash": [0.8849, 1, 0]}
     },
     "Gastrodon": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.0001},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0},
       "usage": {"raw": 0.25, "real": 0.375, "weighted": 0.2905},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0556, "real": 0.0833, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [1, 89, 89, 89],
       "abilities": {"Storm Drain": 0.5, "Sticky Hold": 0.5},
       "items": {"Eject Button": 0.5, "Rocky Helmet": 0.5},
-      "happinesses": {"255": 1},
-      "spreads": {"Sassy:252/4/0/0/252/0": 0.5, "Modest:252/0/0/252/4/0": 0.5},
       "stats": {"426/203/172/220/289/102": 0.5, "426/153/172/311/201/114": 0.5},
       "moves": {
         "Ice Beam": 1,
@@ -226,9 +208,9 @@
         "Zygarde": 0.7095
       },
       "counters": {
-        "Greninja": [1, 1, 0],
-        "Meloetta": [0.8849, 1, 0],
-        "Rayquaza": [0.8851, 1, 0],
+        "Greninja": [1, 0, 1],
+        "Meloetta": [0.8849, 0, 1],
+        "Rayquaza": [0.8851, 0.9998, 0.0002],
         "Greninja-Ash": [0.8849, 0, 0],
         "Lycanroc-Dusk": [1, 0, 0]
       }
@@ -237,13 +219,12 @@
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0556, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [1, 89, 89, 89],
       "abilities": {"Disguise": 1},
       "items": {"Life Orb": 0.5, "Choice Band": 0.5},
-      "happinesses": {"0": 0.5, "255": 0.5},
-      "spreads": {"Jolly:0/252/0/0/4/252": 1},
       "stats": {"251/279/196/122/247/320": 1},
       "moves": {
         "Play Rough": 1,
@@ -262,24 +243,23 @@
         "Zygarde": 0.7095
       },
       "counters": {
-        "Greninja": [1, 1, 0],
-        "Lycanroc-Dusk": [2, 1, 0],
+        "Greninja": [1, 0, 1],
+        "Lycanroc-Dusk": [2, 0.5, 0.5],
         "Ditto": [0.8849, 0, 0],
         "Meloetta": [1, 0, 0],
-        "Zoroark": [1.8849, 0.4695, 0.3635]
+        "Zoroark": [1.8849, 0.4695, 0]
       }
     },
     "Shaymin-Sky": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.25, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0556, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [1, 89, 89, 89],
       "abilities": {"Serene Grace": 1},
       "items": {"Nothing": 0.5, "Life Orb": 0.5},
-      "happinesses": {"255": 1},
-      "spreads": {"Timid:0/0/0/252/4/252": 0.5, "Timid:68/0/0/184/4/252": 0.5},
       "stats": {"341/189/186/339/187/388": 0.5, "358/189/186/322/187/388": 0.5},
       "moves": {
         "Air Slash": 1,
@@ -295,19 +275,18 @@
         "Mimikyu": 0.7095,
         "Zygarde": 0.7095
       },
-      "counters": {"Ditto": [0.8849, 1, 0], "Lycanroc-Dusk": [2, 0.5, 0.3536]}
+      "counters": {"Ditto": [0.8849, 1, 0], "Lycanroc-Dusk": [2, 0.5, 0]}
     },
     "Zygarde": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.25, "real": 0.375, "weighted": 0.2905},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0556, "real": 0.0833, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [1, 89, 89, 89],
       "abilities": {"Power Construct": 0.5, "Aura Break": 0.5},
       "items": {"Assault Vest": 0.5, "Choice Band": 0.5},
-      "happinesses": {"255": 1},
-      "spreads": {"Careful:252/4/0/0/252/0": 0.5, "Jolly:0/252/0/0/4/252": 0.5},
       "stats": {"420/237/278/178/317/226": 0.5, "357/299/278/178/227/317": 0.5},
       "moves": {
         "Glare": 1,
@@ -326,24 +305,23 @@
       },
       "counters": {
         "Meloetta": [1, 1, 0],
-        "Shedinja": [0.8849, 1, 0],
+        "Shedinja": [0.8849, 0, 1],
         "Greninja": [1, 0, 0],
         "Greninja-Ash": [0.8849, 0, 0],
         "Nidoran-M": [1, 0, 0],
-        "Rayquaza": [1.8851, 0.4694, 0.3635]
+        "Rayquaza": [1.8851, 0.4694, 0]
       }
     },
     "Aegislash": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 1, "real": 1, "weighted": 1},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [2, 89, 89, 89],
       "abilities": {"Stance Change": 1},
       "items": {"Leftovers": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Adamant:252/252/0/0/4/0": 1},
       "stats": {"324/218/316/122/317/156": 1},
       "moves": {
         "Iron Head": 1,
@@ -363,13 +341,12 @@
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1667, "real": 0.125, "weighted": 0.2905},
       "unique": {"raw": 1, "real": 0.5, "weighted": 1},
+      "win": {"raw": 0.0278, "real": 0, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [2, 89, 89, 89],
       "abilities": {"Download": 1},
       "items": {"Burn Drive": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Hasty:0/4/0/252/0/252": 1},
       "stats": {"283/277/203/339/226/326": 1},
       "moves": {
         "Explosion": 1,
@@ -386,16 +363,15 @@
       "counters": {}
     },
     "Magnezone": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8714},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1452},
       "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 1, "real": 1, "weighted": 1},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [2, 89, 89, 89],
       "abilities": {"Magnet Pull": 1},
       "items": {"Assault Vest": 1},
-      "happinesses": {"240": 1},
-      "spreads": {"Quiet:248/8/0/252/0/0": 1},
       "stats": {"343/178/266/394/216/140": 1},
       "moves": {
         "Explosion": 1,
@@ -415,13 +391,12 @@
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.1667, "real": 0.125, "weighted": 0.2905},
       "unique": {"raw": 1, "real": 0.5, "weighted": 1},
+      "win": {"raw": 0.0278, "real": 0, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [2, 89, 89, 89],
       "abilities": {"Tough Claws": 1},
       "items": {"Metagrossite": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Hardy:0/250/0/0/0/250": 1},
       "stats": {"301/388/336/246/256/318": 1},
       "moves": {"Nothing": 2, "Earthquake": 1, "Explosion": 1},
       "teammates": {
@@ -433,16 +408,15 @@
       "counters": {}
     },
     "Necrozma-Dusk-Mane": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8714},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1452},
       "usage": {"raw": 0.1667, "real": 0.25, "weighted": 0.2905},
       "unique": {"raw": 1, "real": 1, "weighted": 1},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0578},
       "count": 3,
       "weight": 0.6667,
       "viability": [2, 89, 89, 89],
       "abilities": {"Prism Armor": 1},
       "items": {"Ultranecrozium Z": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Brave:252/252/0/4/0/0": 1},
       "stats": {"398/454/290/263/254/171": 1},
       "moves": {
         "Brick Break": 1,
@@ -459,16 +433,15 @@
       "counters": {}
     },
     "Ditto": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0},
       "usage": {"raw": 0.3333, "real": 0.375, "weighted": 0.2738},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0511},
       "count": 6,
       "weight": 0.4713,
       "viability": [1, 89, 89, 89],
       "abilities": {"Imposter": 1},
       "items": {"Nothing": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Impish:248/8/252/0/0/0": 1},
       "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
@@ -479,22 +452,21 @@
         "Zoroark": 0.5809
       },
       "counters": {
-        "Mimikyu": [0.8849, 1, 0],
+        "Mimikyu": [0.8849, 0, 1],
         "Darmanitan": [0.8849, 0, 0],
         "Shaymin-Sky": [0.8849, 0, 0]
       }
     },
     "Greninja-Ash": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.7712},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1285},
       "usage": {"raw": 0.3333, "real": 0.375, "weighted": 0.2738},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0511},
       "count": 6,
       "weight": 0.4713,
       "viability": [1, 89, 89, 89],
       "abilities": {"Battle Bond": 1},
       "items": {"Life Orb": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Timid:0/0/0/252/4/252": 1},
       "stats": {"285/293/159/405/168/399": 1},
       "moves": {
         "Hidden Power Ghost": 1,
@@ -510,23 +482,22 @@
         "Zoroark": 0.5809
       },
       "counters": {
-        "Gastrodon": [0.8849, 1, 0],
+        "Gastrodon": [0.8849, 0, 1],
         "Zygarde": [0.8849, 1, 0],
         "Dugtrio": [0.8849, 0, 0],
-        "Darmanitan": [1.7699, 0.5, 0.3758]
+        "Darmanitan": [1.7699, 0, 0.5]
       }
     },
     "Shedinja": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8714},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1452},
       "usage": {"raw": 0.3333, "real": 0.25, "weighted": 0.2738},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0.0278, "real": 0.0417, "weighted": 0.0511},
       "count": 6,
       "weight": 0.4713,
       "viability": [1, 89, 89, 89],
       "abilities": {"Wonder Guard": 1},
       "items": {"Focus Sash": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Naive:0/196/0/4/0/232": 1},
       "stats": {"1/265/126/97/86/191": 1},
       "moves": {
         "Facade": 1,
@@ -547,13 +518,12 @@
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.0833, "real": 0.125, "weighted": 0.1452},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 1,
       "viability": [1, 89, 89, 89],
       "abilities": {"Protean": 1},
       "items": {"Choice Specs": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Timid:40/0/12/212/0/244": 1},
       "stats": {"295/175/173/295/178/375": 1},
       "moves": {
         "Dark Pulse": 1,
@@ -570,7 +540,7 @@
       },
       "counters": {
         "Darmanitan": [1, 1, 0],
-        "Zygarde": [1, 1, 0],
+        "Zygarde": [1, 0, 1],
         "Dugtrio": [1, 0, 0],
         "Gastrodon": [1, 0, 0],
         "Mimikyu": [1, 0, 0]
@@ -580,13 +550,12 @@
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.0833, "real": 0.125, "weighted": 0.1452},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 1,
       "viability": [1, 89, 89, 89],
       "abilities": {"Tough Claws": 1},
       "items": {"Choice Band": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Jolly:0/252/0/0/4/252": 1},
       "stats": {"291/333/166/131/167/350": 1},
       "moves": {"Accelerock": 1, "Brick Break": 1, "Crunch": 1, "Drill Run": 1},
       "teammates": {
@@ -604,16 +573,15 @@
       }
     },
     "Nidoran-M": {
-      "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8714},
+      "lead": {"raw": 0.0833, "real": 0.0833, "weighted": 0.1452},
       "usage": {"raw": 0.0833, "real": 0.125, "weighted": 0.1452},
       "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.5},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 1,
       "viability": [1, 89, 89, 89],
       "abilities": {"Poison Point": 1},
       "items": {"Eviolite": 1},
-      "happinesses": {"255": 1},
-      "spreads": {"Adamant:140/252/52/0/64/0": 1},
       "stats": {"268/234/129/104/132/136": 1},
       "moves": {
         "Head Smash": 1,
@@ -628,7 +596,7 @@
         "Rayquaza": 0.581,
         "Zoroark": 0.581
       },
-      "counters": {"Darmanitan": [1, 1, 0], "Zygarde": [1, 1, 0]}
+      "counters": {"Darmanitan": [1, 0, 1], "Zygarde": [1, 1, 0]}
     }
   },
   "metagame": {

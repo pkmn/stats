@@ -1,0 +1,101 @@
+#!/usr/bin/env node
+'use strict';
+
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
+
+const fs = require('fs');
+const minimist = require('minimist');
+
+const {Generations} = require('@pkmn/data');
+const {Dex} = require('@pkmn/dex');
+const {Lookup} = require('@pkmn/engine');
+const {Binary} = require('@pkmn/stats');
+
+const usage = msg => {
+  if (msg) console.error(msg);
+  console.error('Usage: teams <display|compute> --gen=<GEN> --logs=<LOGS?> --num=<NUM?>');
+  process.exit(1);
+};
+
+if (process.argv.length < 3) usage();
+const cmd = process.argv[2];
+const argv = minimist(process.argv.slice(3), {default: {num: 10000}});
+
+if (!argv.gen) usage('No --gen provided');
+const gens = new Generations(Dex);
+const gen = gens.get(argv.gen);
+if (gen.num >= 3) usage(`Unsupported gen ${gen.num}`); // TODO
+const lookup = Lookup.get(gen);
+
+const N = 6 * Binary.Sizes[gen.num];
+
+switch (cmd) {
+case 'display': {
+  if (!argv.teams || !fs.existsSync(argv.teams)) {
+    usage(argv.teams ? `Invalid teams.db ${argv.teams}` : '--teams not provided');
+  }
+
+  const db = fs.readFileSync(argv.teams);
+  if (db.length % N !== 0) usage(`Corrupted teams.db of size ${db.length} (${N})`);
+
+  for (let i = 0; i < db.length; i += N) {
+    console.log(JSON.stringify(Binary.decodeTeam(gen, lookup, db, i)));
+  }
+  break;
+}
+case 'compute': {
+  if (!argv.logs || !fs.existsSync(argv.logs)) {
+    usage(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
+  }
+
+  const db = fs.readFileSync(argv.logs);
+  const row = 17 + 2 * N;
+  if (db.length % row !== 0) usage(`Corrupted logs.db of size ${db.length} (${row})`);
+
+  const TEAMS = {};
+  for (let offset = 0; offset < db.length; offset += row) {
+    const data = Binary.deserializeLog(gen, lookup, db, offset);
+    for (const player of [data.winner, data.loser]) {
+      const rating = player.rating ? player.rating.rpr - player.rating.rprd : 0;
+      // TODO: in gen 3+ we must use computed stats for dedupe key!
+      const team = gen.num === 1
+        ? player.team.map(s => `${s.species}|${s.moves.join(',')}`).join(']')
+        : player.team.map(s => `${s.species}|${s.item || ''}|${s.moves.join(',')}`).join(']');
+      TEAMS[team] = Math.max(TEAMS[team] || 0, rating);
+    }
+  }
+
+  const sorted = Object.entries(TEAMS).sort((a, b) => b[1] - a[1]);
+  if (sorted.length < argv.num) {
+    console.error(`Requested ${argv.num} teams but only ${sorted.length} unique teams`);
+    process.exit(1);
+  }
+
+  for (let i = 0; i < argv.num; i++) {
+    const team = [];
+    for (const s of sorted[i][0].split(']')) {
+      const set = {};
+      if (gen.num === 1) {
+        const [species, moves] = s.split('|');
+        set.species = species;
+        set.moves = moves.split(',');
+      } else {
+        const [species, item, moves] = s.split('|');
+        set.species = species;
+        set.item = item;
+        set.moves = moves.split(',');
+      }
+      team.push(set);
+    }
+    const buf = Buffer.alloc(N);
+    Binary.encodeTeam(gen, lookup, team, buf);
+    process.stdout.write(buf);
+  }
+  break;
+}
+default: usage(`Unknown command: ${cmd}`);
+}

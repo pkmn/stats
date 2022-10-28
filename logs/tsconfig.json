@@ -1,18 +1,9 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    "allowJs": true,
     "outDir": "build",
-    "resolveJsonModule": true,
-    "incremental": true,
-    "target": "es6",
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "tsBuildInfoFile": ".tsbuildinfo",
   },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "ps",
-    "build"
-  ]
+  "include": ["src/**/*"]
 }

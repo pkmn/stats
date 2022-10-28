@@ -1,6 +1,6 @@
-import { Dex, ID, toID } from 'ps';
+import {Generation, ID, toID} from '@pkmn/data';
 
-import { Statistics } from './stats';
+import {Statistics} from './stats';
 import * as util from './util';
 
 const round = (v: number, p = util.PRECISION) => util.round(v, p);
@@ -19,23 +19,36 @@ interface MovesetStatistics {
 }
 
 type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
-// FIXME: Should BL{1,2,3,4} not be {UU,RU,NU,PU}BL instead?
-type Tier = UsageTier | 'Uber' | 'BL' | 'BL2' | 'BL3' | 'BL4';
-// prettier-ignore
-interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T; }
+type Tier = UsageTier | 'Uber' | 'UUBL' | 'RUBL' | 'NUBL' | 'PUBL' | 'ZUBL' | 'ZU';
+interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T }
 
 type DoublesUsageTier = 'DOU' | 'DUU';
-type DoublesTier = DoublesUsageTier | 'DUber';
-interface DoublesUsageTiers<T> {
-  DOU: T;
-  DUU: T;
-}
+type DoublesTier = DoublesUsageTier | 'DUber' | 'DNU';
+interface DoublesUsageTiers<T> { DOU: T; DUU: T }
 
-const USAGE_TIERS: UsageTier[] = ['OU', 'UU', 'RU', 'NU', 'PU'];
-const TIERS: Tier[] = ['Uber', 'OU', 'BL', 'UU', 'BL2', 'RU', 'BL3', 'NU', 'BL4', 'PU'];
+type NationalDexUsageTier = 'ND';
+type NationalDexTier = NationalDexUsageTier | 'NDUU';
+interface NationalDexUsageTiers<T> { ND: T }
 
-const DOUBLES_USAGE_TIERS: DoublesUsageTier[] = ['DOU', 'DUU'];
-const DOUBLES_TIERS: DoublesTier[] = ['DUber', 'DOU', 'DUU'];
+type LittleCupUsageTier = 'LC';
+type LittleCupTier = LittleCupUsageTier | 'LCUU';
+interface LittleCupUsageTiers<T> { LC: T }
+
+const USAGE_TIERS = {
+  singles: ['OU', 'UU', 'RU', 'NU', 'PU'] as UsageTier[],
+  doubles: ['DOU', 'DUU'] as DoublesUsageTier[],
+  nationaldex: ['ND'] as NationalDexUsageTier[],
+  littlecup: ['LC'] as LittleCupUsageTier[],
+};
+
+const TIERS = {
+  singles: [
+    'Uber', 'OU', 'UUBL', 'UU', 'RUBL', 'RU', 'NUBL', 'NU', 'PUBL', 'PU', 'ZUBL', 'ZU',
+  ] as Tier[],
+  doubles: ['DUber', 'DOU', 'DUU', 'DNU'] as DoublesTier[],
+  nationaldex: ['ND', 'NDBL'] as NationalDexTier[],
+  littlecup: ['LC', 'LCBL'] as LittleCupTier[],
+};
 
 const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
 
@@ -43,10 +56,12 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 
 const MIN = [20, 0.5];
 
-export const Reports = new (class {
-  usageReport(dex: Dex, stats: Statistics) {
+const legacy = true;
+
+export const Reports = new class {
+  usageReport(gen: Generation, format: ID, stats: Statistics) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
-    if (['challengecup1v1', '1v1'].includes(dex.format)) {
+    if (['challengecup1v1', '1v1'].includes(format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
     } else {
       sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
@@ -57,9 +72,9 @@ export const Reports = new (class {
       ? util.roundStr(stats.usage.weighted / stats.battles / 12, 1e3)
       : '0.0';
     s += ` Avg. weight/team: ${avg}\n`;
-    s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
-    s += ` | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n`;
-    s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    s += ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
+    s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n';
+    s += ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
 
     const total = {
       raw: Math.max(1.0, stats.usage.raw),
@@ -73,7 +88,7 @@ export const Reports = new (class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = util.displaySpecies(species, dex).padEnd(18);
+      const poke = util.displaySpecies(gen, species, legacy).padEnd(18);
       const use = (((100 * usage.weighted) / total.weighted) * 6).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const rawp = (((100 * usage.raw) / total.raw) * 6).toFixed(3).padStart(6);
@@ -81,17 +96,17 @@ export const Reports = new (class {
       const realp = (((100 * usage.real) / total.real) * 6).toFixed(3).padStart(6);
       s += ` | ${rank} | ${poke} | ${use}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
     }
-    s += ` + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n`;
+    s += ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
     return s;
   }
 
-  leadsReport(dex: Dex, stats: Statistics) {
+  leadsReport(gen: Generation, stats: Statistics) {
     let s = ` Total leads: ${stats.battles * 2}\n`;
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
 
-    const total = { raw: 0, weighted: 0 };
+    const total = {raw: 0, weighted: 0};
     total.raw = Math.max(1.0, stats.lead.raw);
     total.weighted = Math.max(1.0, stats.lead.weighted);
 
@@ -109,7 +124,7 @@ export const Reports = new (class {
       if (usage.raw === 0) break;
 
       const rank = (i + 1).toFixed().padEnd(4);
-      const poke = util.displaySpecies(species, dex).padEnd(18);
+      const poke = util.displaySpecies(gen, species, legacy).padEnd(18);
       const use = ((100 * usage.weighted) / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = ((100 * usage.raw) / total.raw).toFixed(3).padStart(6);
@@ -120,17 +135,31 @@ export const Reports = new (class {
     return s;
   }
 
-  movesetReports(dex: Dex, stats: Statistics, cutoff = 1500, tag: ID | null = null, min = MIN) {
-    const movesetStats = toMovesetStatistics(dex, stats, min[0]);
-    const basic = this.movesetReport(dex, stats, movesetStats, min);
-    const detailed = this.detailedMovesetReport(dex, stats, cutoff, tag, movesetStats, min[0]);
-    return { basic, detailed };
+  movesetReports(
+    gen: Generation,
+    format: ID,
+    stats: Statistics,
+    cutoff = 1500,
+    tag: ID | null = null,
+    min = MIN
+  ) {
+    const movesetStats = toMovesetStatistics(gen, format, stats, min[0]);
+    const basic = this.movesetReport(gen, format, stats, movesetStats, min);
+    const detailed =
+      this.detailedMovesetReport(gen, format, stats, cutoff, tag, movesetStats, min[0]);
+    return {basic, detailed};
   }
 
-  movesetReport(dex: Dex, stats: Statistics, movesetStats?: Map<ID, MovesetStatistics>, min = MIN) {
-    movesetStats = movesetStats || toMovesetStatistics(dex, stats, min[0]);
+  movesetReport(
+    gen: Generation,
+    format: ID,
+    stats: Statistics,
+    movesetStats?: Map<ID, MovesetStatistics>,
+    min = MIN
+  ) {
+    movesetStats = movesetStats || toMovesetStatistics(gen, format, stats, min[0]);
 
-    dex = util.dexForFormat(dex);
+    gen = util.ignoreGen(gen, legacy);
     const WIDTH = 40;
 
     const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
@@ -149,7 +178,7 @@ export const Reports = new (class {
       const p = stats.pokemon[species]!;
 
       s += sep;
-      s += ` | ${util.displaySpecies(species, dex)}`.padEnd(WIDTH + 2) + '| \n';
+      s += ` | ${util.displaySpecies(gen, species, legacy)}`.padEnd(WIDTH + 2) + '| \n';
       s += sep;
       s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
       const avg = p.saved.count ? util.roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
@@ -166,21 +195,21 @@ export const Reports = new (class {
           break;
         }
         const weight = moveset['Abilities'][ability] / p.raw.weight;
-        const o = dex.getAbility(ability);
-        s += display((o && o.name) || ability, weight);
+        const o = gen.abilities.get(ability);
+        s += display((o?.name) ?? ability, weight);
         total += weight;
       }
       s += sep;
       total = 0;
       s += heading('Items');
-      for (const [i, item] of Object.keys(moveset['Items']).entries()) {
+      for (const item of Object.keys(moveset['Items'])) {
         if (total > 0.95) {
           s += other(total);
           break;
         }
         const weight = moveset['Items'][item] / p.raw.weight;
-        const o = dex.getItem(item);
-        s += display(item === 'nothing' ? 'Nothing' : (o && o.name) || item, weight);
+        const o = gen.items.get(item);
+        s += display(item === 'nothing' ? 'Nothing' : (o?.name) ?? item, weight);
         total += weight;
       }
       s += sep;
@@ -198,14 +227,14 @@ export const Reports = new (class {
       s += sep;
       total = 0;
       s += heading('Moves');
-      for (const [i, move] of Object.keys(moveset['Moves']).entries()) {
+      for (const move of Object.keys(moveset['Moves'])) {
         if (total > 0.95) {
           s += other(total, 4);
           break;
         }
         const weight = moveset['Moves'][move] / p.raw.weight;
-        const o = dex.getMove(move);
-        s += display(move === '' ? 'Nothing' : (o && o.name) || move, weight);
+        const o = gen.moves.get(move);
+        s += display(move === '' ? 'Nothing' : (o?.name) ?? move, weight);
         total += weight / 4;
       }
       s += sep;
@@ -229,9 +258,9 @@ export const Reports = new (class {
         if (v.score < min[1]) break;
 
         const score = (100 * v.score).toFixed(3).padStart(6);
-        const p = (100 * v.p).toFixed(2).padStart(3);
-        const d = (100 * v.d).toFixed(2).padStart(3);
-        let line = ` | ${cc} ${score} (${p}\u00b1${d})`.padEnd(WIDTH + 1) + ' |\n';
+        const vp = (100 * v.p).toFixed(2).padStart(3);
+        const vd = (100 * v.d).toFixed(2).padStart(3);
+        let line = ` | ${cc} ${score} (${vp}\u00b1${vd})`.padEnd(WIDTH + 1) + ' |\n';
 
         const ko = (100 * v.koed) / v.n;
         const koed = ko.toFixed(1).padStart(2);
@@ -251,33 +280,34 @@ export const Reports = new (class {
 
   // FIXME: Just use names everywhere instead of a hybrid of names and IDs.
   detailedMovesetReport(
-    dex: Dex,
+    gen: Generation,
+    format: ID,
     stats: Statistics,
     cutoff = 1500,
     tag: ID | null = null,
     movesetStats?: Map<ID, MovesetStatistics>,
     min = 20
   ) {
-    movesetStats = movesetStats || toMovesetStatistics(dex, stats, min);
+    movesetStats = movesetStats || toMovesetStatistics(gen, format, stats, min);
 
     const info = {
-      metagame: dex.format,
+      metagame: format,
       cutoff,
       'cutoff deviation': 0,
       'team type': tag,
       'number of battles': stats.battles,
     };
 
-    const d = util.dexForFormat(dex);
-    const data: { [key: string]: object } = {};
+    gen = util.ignoreGen(gen, legacy);
+    const data: { [key: string]: object } = {}; // eslint-disable-line
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
-      const m: any = Object.assign({}, moveset);
+      const m: any = {...moveset};
       m['Checks and Counters'] = forDetailed(m['Checks and Counters']);
-      data[util.displaySpecies(species, d)] = m;
+      data[util.displaySpecies(gen, species, legacy)] = m;
     }
 
-    return JSON.stringify({ info, data });
+    return JSON.stringify({info, data});
   }
 
   metagameReport(stats: Statistics) {
@@ -295,11 +325,11 @@ export const Reports = new (class {
     s += '\n';
 
     if (!metagame.stalliness.length) return s;
-    const { histogram, binSize, mean, total } = util.stallinessHistogram(metagame.stalliness);
+    const {histogram, binSize, mean, total} = util.stallinessHistogram(metagame.stalliness);
 
     let max = 0;
-    for (let i = 0; i < histogram.length; i++) {
-      if (histogram[i][1] > max) max = histogram[i][1];
+    for (const h of histogram) {
+      if (h[1] > max) max = h[1];
     }
 
     // Maximum number of blocks to go across
@@ -322,27 +352,34 @@ export const Reports = new (class {
       }
       s += line + '#'.repeat(Math.floor((h[1] + blockSize / 2) / blockSize)) + '\n';
     }
-    s += ` more negative = more offensive, more positive = more stall\n`;
+    s += ' more negative = more offensive, more positive = more stall\n';
     s += ` one # = ${((100.0 * blockSize) / total).toFixed(2).padStart(5)}%\n`;
     return s;
   }
 
-  // TODO: Add support for OM (other metagames)
+  // TODO: Add support for Doubles and OM (other metagames)
   async tierUpdateReport(
+    gen: Generation,
     months: [string] | [string, string] | [string, string, string],
-    read: (month: string, format: string) => Promise<string | undefined>
+    read: (month: string, format: string) => Promise<string | undefined>,
+    type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles',
   ) {
-    const dex = Dex.get();
+    gen = util.ignoreGen(gen, legacy);
 
-    const pokemon: Map<ID, UsageTiers<number>> = new Map();
+    const pokemon: Map<ID,
+    UsageTiers<number> |
+    DoublesUsageTiers<number> |
+    NationalDexUsageTiers<number> |
+    LittleCupUsageTiers<number>
+    > = new Map();
     for (const [i, month] of months.entries()) {
       const weight = WEIGHTS[months.length - 1][i];
-      for (const tier of USAGE_TIERS) {
+      for (const tier of USAGE_TIERS[type]) {
         const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
-          reports.push(
-            maybeParseUsageReport(read(month, `gen7${toID(tier)}${suffix}`)).then(r => [suffix, r])
-          );
+          reports.push(maybeParseUsageReport(
+            read(month, `gen8${usageTierName(tier)}${suffix}`)
+          ).then(r => [suffix, r]));
         }
 
         const n: { [suffix: string]: number } = {};
@@ -356,51 +393,71 @@ export const Reports = new (class {
         }
         for (const suffix in u) {
           for (const [p, usage] of u[suffix].entries()) {
-            let v = pokemon.get(p);
-            if (!v) {
-              v = { OU: 0, UU: 0, RU: 0, NU: 0, PU: 0 };
-              pokemon.set(p, v);
-            }
+            const v = pokemon.get(p);
+            if (!v) pokemon.set(p, usageTiers(type, 0));
             if (p !== 'empty') {
-              v[tier] += (((weight * n[suffix]) / ntot) * usage) / 24;
+              (v as any)[tier] += (((weight * n[suffix]) / ntot) * usage) / 24;
             }
           }
         }
       }
     }
 
-    // prettier-ignore
-    const tiers: UsageTiers<Array<[ID, number]>> =
-      { OU: [], UU: [], RU: [], NU: [], PU: [] };
+    const tiers:
+    UsageTiers<Array<[ID, number]>> |
+    DoublesUsageTiers<Array<[ID, number]>> |
+    NationalDexUsageTiers<Array<[ID, number]>> |
+    LittleCupUsageTiers<Array<[ID, number]>> = usageTiers(type, []);
 
     for (const [species, usage] of pokemon.entries()) {
-      for (const tier of USAGE_TIERS) {
-        if (usage[tier] > 0) tiers[tier].push([species, usage[tier]]);
+      for (const tier of USAGE_TIERS[type]) {
+        const ut: number = (usage as any)[tier];
+        if (ut > 0) (tiers as any)[tier].push([species, ut]);
       }
     }
     let s = '';
-    for (const tier of USAGE_TIERS) {
-      const sorted = tiers[tier].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-      s += makeTable(sorted, tier, dex);
+    for (const tier of USAGE_TIERS[type]) {
+      const sorted = (tiers as any)[tier].sort((a: [string, number], b: [string, number]) =>
+        b[1] - a[1] || a[0].localeCompare(b[0]));
+      s += makeTable(gen, sorted, tier);
     }
+    s += '\n';
 
     const rise = [0.06696700846, 0.04515839608, 0.03406367107][months.length - 1];
     const drop = [0.01717940145, 0.02284003156, 0.03406367107][months.length - 1];
-    const { current, updated } = updateTiers(pokemon, rise, drop, dex);
 
-    s += '\n';
+    if (type === 'nationaldex' || type === 'littlecup') {
+      const bl = [];
+      for (const [species, usage] of pokemon.entries()) {
+        if ((usage as any)[type === 'nationaldex' ? 'ND' : 'LC'] > drop) {
+          bl.push(species);
+        }
+      }
+      s += '[b]National Dex UU Banlist:[/b] ';
+      s += bl.sort().map(p => gen.species.get(p)!.name).join(', ');
+      return s;
+    }
+
+    const {current, updated, NFE} = updateTiers(
+      gen,
+      pokemon as Map<ID, UsageTiers<number> | DoublesUsageTiers<number>>,
+      rise,
+      drop,
+      type === 'doubles'
+    );
+
     const sorted = Array.from(current.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     for (const [id, tier] of sorted) {
       const update = updated.get(id)!;
+      if (type !== 'doubles' && (tier === 'ZU' && NFE.has(id))) continue;
       if (tier !== update) {
-        const species = dex.getSpecies(id)!;
-        if (
-          species.forme &&
-          (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'))
-        ) {
+        const species = gen.species.get(id)!;
+        if (species.forme &&
+          (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'))) {
           const base = toID(species.baseSpecies);
           // Skip if the base is already in a higher tier
-          if (TIERS.indexOf(updated.get(base)!) < TIERS.indexOf(update)) {
+          const t = TIERS[type] as any;
+          if (t.indexOf(updated.get(base)!) < t.indexOf(update)) {
             continue;
           }
         }
@@ -409,9 +466,8 @@ export const Reports = new (class {
     }
     return s;
   }
-})();
+};
 
-// prettier-ignore
 const SKIP = new Set([
   'pichuspikyeared', 'unownb', 'unownc', 'unownd', 'unowne', 'unownf', 'unowng', 'unownh',
   'unowni', 'unownj', 'unownk', 'unownl', 'unownm', 'unownn', 'unowno', 'unownp', 'unownq',
@@ -423,29 +479,88 @@ const SKIP = new Set([
   'pikachucosplay',
 ]);
 
-function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: number, dex: Dex) {
-  const current: Map<ID, Tier> = new Map();
-  const updated: Map<ID, Tier> = new Map();
-  for (const name of Object.keys(dex.Species)) {
-    const species = dex.getSpecies(name)!;
-    if (
-      SKIP.has(species.id) ||
+const BL: {[tier in Tier]?: Set<string>} = {
+  UU: new Set([
+    'hawlucha', 'dracozolt', 'diggersby', 'durant', 'weavile', 'ninetalesalola', 'gyarados',
+    'primarina', 'venusaur', 'haxorus', 'aegislash', 'conkeldurr', 'gengar', 'scolipede',
+    'lycanrocdusk',
+  ]),
+  RU: new Set([
+    'barbaracle', 'pangoro', 'shiftry', 'slurpuff', 'chansey', 'indeedee', 'raichualola', 'linoone',
+    'sharpedo', 'zoroark', 'lucario', 'reuniclus', 'sirfetchd', 'heracross', 'sigilyph',
+  ]),
+  NU: new Set([
+    'slurpuff', 'scrafty', 'haunter', 'linoone', 'chansey', 'indeedeef', 'porygon2', 'tauros',
+    'exeggutoralola', 'sneasel', 'snorlax', 'zygarde10', 'tyrantrum', 'kingdra',
+  ]),
+  PU: new Set([
+    'arctozolt', 'arctovish', 'silvally', 'noctowl', 'silvallyground', 'silvallyfire',
+    'silvallyflying', 'silvallyfighting', 'scyther', 'magneton', 'porygon2', 'basculin',
+    'hitmontop', 'silvallypsychic', 'silvallyelectric', 'silvallygrass', 'rotomfrost', 'orbeetle',
+    'butterfree', 'golurk', 'flapple', 'thievul', 'sawk', 'galvantula', 'silvallydark', 'exeggutor',
+    'mesprit', 'guzzlord', 'magmortar', 'zygarde10', 'kingler', 'absol',
+  ]),
+  ZU: new Set(['silvallyelectric', 'thwackey', 'ludicolo', 'musharna', 'grapploct', 'swoobat']),
+};
+
+function usageTiers<T>(
+  type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: T
+): UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T> {
+  switch (type) {
+  case 'singles': return {OU: t, UU: t, RU: t, NU: t, PU: t};
+  case 'doubles': return {DOU: t, DUU: t};
+  case 'nationaldex': return {ND: t};
+  default: return {LC: t};
+  }
+}
+
+function usageTierName(
+  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
+) {
+  switch (tier) {
+  case 'DOU': return 'doublesou';
+  case 'DUU': return 'doublesuu';
+  case 'ND': return 'nationaldex';
+  default: return toID(tier);
+  }
+}
+
+function updateTiers(
+  gen: Generation,
+  pokemon: Map<ID, UsageTiers<number> | DoublesUsageTiers<number>>,
+  rise: number,
+  drop: number,
+  doubles: boolean,
+) {
+  const current: Map<ID, Tier | DoublesTier> = new Map();
+  const updated: Map<ID, Tier | DoublesTier> = new Map();
+  const NFE = new Set<ID>();
+  for (const species of gen.species) {
+    if (SKIP.has(species.id) ||
       species.isNonstandard ||
-      !dex.hasFormatsDataTier(species.id) ||
       !species.tier ||
       species.tier === 'Illegal' ||
-      species.tier === 'Unreleased'
-    ) {
+      species.tier === 'Unreleased') {
       continue;
     }
-    // FIXME: Code which is either undesirable or unused
-    // if (old[0] === '(') old = old.slice(1, -1);
-    // if (species.tier === 'NFE' || species.tier === 'LC') NFE.push(species.id);
-    const tier = TIERS.includes(species.tier as Tier) ? (species.tier as Tier) : 'PU';
+    let tier: Tier | DoublesTier;
+    if (doubles) {
+      let old = (species.tier || species.doublesTier) as string;
+      if (old[0] === '(') old = old.slice(1, -1);
+      if (['NFE', 'LC'].includes(old)) NFE.add(species.id);
+      tier = TIERS.doubles.includes(old as DoublesTier) ? (old as DoublesTier) : 'DUU';
+    } else {
+      let old = species.tier as string;
+      if (old[0] === '(' && old[1] !== 'P') old = old.slice(1, -1);
+      if (old[0] === '(' && old[1] === 'P') old = 'ZU';
+      if (['NFE', 'LC', 'LC Uber'].includes(old)) NFE.add(species.id);
+      tier = TIERS.singles.includes(old as Tier) ? (old as Tier) : 'ZU';
+    }
     current.set(species.id, tier);
 
-    if (tier === 'Uber') {
-      updated.set(species.id, 'Uber');
+    const uber = doubles ? 'DUber' : 'Uber';
+    if (tier === uber) {
+      updated.set(species.id, uber);
       continue;
     }
     const update = pokemon.get(species.id);
@@ -455,37 +570,53 @@ function updateTiers(pokemon: Map<ID, UsageTiers<number>>, rise: number, drop: n
     }
     if (updated.has(species.id)) continue;
 
-    const riseAndDrop = (r: UsageTier, d: UsageTier, b: Tier) =>
-      computeRiseAndDrop(species.id, update, updated, tier, rise, drop, {
-        rise: r,
-        drop: d,
-        ban: b,
-      });
-    if (riseAndDrop('OU', 'UU', 'BL')) continue;
-    if (riseAndDrop('UU', 'RU', 'BL2')) continue;
-    if (riseAndDrop('RU', 'NU', 'BL3')) continue;
-    if (riseAndDrop('NU', 'PU', 'BL4')) continue;
+    const riseAndDrop =
+      (r: UsageTier | DoublesUsageTier, d: Tier | DoublesTier, b?: Tier) =>
+        computeRiseAndDrop(species.id, update, updated, tier, rise, drop, {
+          rise: r,
+          drop: d,
+          ban: b,
+        });
+    if (doubles) {
+      if (riseAndDrop('DOU', 'DUU')) continue;
+      if (riseAndDrop('DUU', 'DNU')) continue;
+    } else {
+      if (riseAndDrop('OU', 'UU', 'UUBL')) continue;
+      if (riseAndDrop('UU', 'RU', 'RUBL')) continue;
+      if (riseAndDrop('RU', 'NU', 'NUBL')) continue;
+      if (riseAndDrop('NU', 'PU', 'PUBL')) continue;
+      if (riseAndDrop('PU', 'ZU', 'ZUBL')) continue;
+    }
 
-    if (!updated.has(species.id)) updated.set(species.id, 'PU');
+    if (!updated.has(species.id)) updated.set(species.id, doubles ? 'DNU' : 'ZU');
+
+    const newTier = updated.get(species.id);
+    if (newTier && BL[newTier as Tier]?.has(species.id)) {
+      updated.set(species.id, `${newTier}BL` as Tier);
+    }
   }
-  return { current, updated };
+  return {current, updated, NFE};
 }
 
 function computeRiseAndDrop(
   species: ID,
-  update: UsageTiers<number>,
-  updated: Map<ID, Tier>,
-  tier: Tier,
+  update: UsageTiers<number> | DoublesUsageTiers<number>,
+  updated: Map<ID, Tier | DoublesTier>,
+  tier: Tier | DoublesTier,
   rise: number,
   drop: number,
-  tiers: { rise: UsageTier; drop: UsageTier; ban: Tier }
+  tiers: {
+    rise: UsageTier | DoublesUsageTier;
+    drop: Tier | DoublesTier;
+    ban?: Tier | DoublesTier;
+  }
 ) {
-  if (update[tiers.rise] > rise) {
+  if ((update as any)[tiers.rise] > rise) {
     updated.set(species, tiers.rise);
     return true;
   }
   if (tier === tiers.rise) {
-    if (update[tiers.rise] < drop) {
+    if ((update as any)[tiers.rise] < drop) {
       updated.set(species, tiers.drop);
     } else {
       updated.set(species, tiers.rise);
@@ -505,13 +636,13 @@ function fmod(a: number, b: number, f = 1e3) {
   return (Math.abs(a * f) % (b * f)) / f;
 }
 
-function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
+function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min = 20) {
   const sorted = Object.entries(stats.pokemon);
-  const real = ['challengecup1v1', '1v1'].includes(dex.format);
+  const real = ['challengecup1v1', '1v1'].includes(format);
   const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
   // FIXME: Sort without this stupid rounding to avoid incorrect ordering
   const usage = (n: number) => round((n / total) * 6, 1e7);
-  if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(dex.format)) {
+  if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
     sorted.sort((a, b) => a[0].localeCompare(b[0]));
   } else if (real) {
     sorted.sort(
@@ -522,7 +653,7 @@ function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
       (a, b) => usage(b[1].usage.weighted) - usage(a[1].usage.weighted) || a[0].localeCompare(b[0])
     );
   }
-  dex = util.dexForFormat(dex);
+  gen = util.ignoreGen(gen, legacy);
 
   const movesets: Map<ID, MovesetStatistics> = new Map();
   for (const entry of sorted) {
@@ -539,25 +670,25 @@ function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
       usage: usage(real ? pokemon.usage.real : pokemon.usage.weighted),
       'Viability Ceiling': viability,
       Abilities: util.toDisplayObject(pokemon.abilities, ability => {
-        const o = dex.getAbility(ability);
-        return (o && o.name) || ability;
+        const o = gen.abilities.get(ability);
+        return (o?.name) ?? ability;
       }),
       Items: util.toDisplayObject(pokemon.items, item => {
         if (item === 'nothing') return 'Nothing';
-        const o = dex.getItem(item);
-        return (o && o.name) || item;
+        const o = gen.items.get(item);
+        return (o?.name) ?? item;
       }),
       Spreads: util.toDisplayObject(pokemon.spreads),
       Happiness: util.toDisplayObject(pokemon.happinesses),
       Moves: util.toDisplayObject(pokemon.moves, move => {
         if (move === '') return 'Nothing';
-        const o = dex.getMove(move);
-        return (o && o.name) || move;
+        const o = gen.moves.get(move);
+        return (o?.name) ?? move;
       }),
-      Teammates: getTeammates(dex, pokemon.teammates, pokemon.raw.weight, total, stats),
+      Teammates: getTeammates(gen, format, pokemon.teammates, pokemon.raw.weight, total, stats),
       'Checks and Counters': util.getChecksAndCounters(
         pokemon.encounters,
-        [s => util.displaySpecies(s, dex), es => es],
+        [s => util.displaySpecies(gen, s, legacy), es => es],
         min
       ),
     });
@@ -567,16 +698,17 @@ function toMovesetStatistics(dex: Dex, stats: Statistics, min = 20) {
 }
 
 function getTeammates(
-  dex: Dex,
+  gen: Generation,
+  format: ID,
   teammates: { [id: string /* ID */]: number },
   weight: number,
   total: number,
   stats: Statistics
 ): { [key: string]: number } {
-  const real = ['challengecup1v1', '1v1'].includes(dex.format);
+  const real = ['challengecup1v1', '1v1'].includes(format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
-    const species = util.displaySpecies(id, dex);
+    const species = util.displaySpecies(gen, id, legacy);
     const s = stats.pokemon[id];
     if (!s) {
       m[species] = 0;
@@ -596,7 +728,11 @@ function forDetailed(cc: { [key: string]: util.EncounterStatistics }) {
   return obj;
 }
 
-function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, dex: Dex) {
+function makeTable(
+  gen: Generation,
+  pokemon: Array<[ID, number]>,
+  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
+) {
   let s = `[HIDE=${tier}][CODE]\n`;
   s += `Combined usage for ${tier}\n`;
   s += ' + ---- + ------------------ + ------- + \n';
@@ -606,7 +742,7 @@ function makeTable(pokemon: Array<[ID, number]>, tier: UsageTier, dex: Dex) {
     const [id, usage] = pair;
     if (usage < 0.001) break;
     const rank = (i + 1).toFixed().padEnd(4);
-    const poke = util.displaySpecies(id, dex).padEnd(18);
+    const poke = util.displaySpecies(gen, id, legacy).padEnd(18);
     const percent = (100 * usage).toFixed(3).padStart(6);
     s += ` | ${rank} | ${poke} | ${percent}% |\n`;
   }

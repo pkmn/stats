@@ -1,28 +1,41 @@
 #!/usr/bin/env node
 'use strict';
 
-require('source-map-support').install();
-const {Anonymizer, Verifier} = require('./build/index');
-const {Dex} = require('ps');
-const diff = require('json-diff');
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
 
-const path = require('path');
 const fs = require('fs');
-const raw = JSON.parse(fs.readFileSync(path.resolve(__dirname, process.argv[2]), 'utf8'));
 
-const log = JSON.parse(JSON.stringify(raw));
+const {Anonymizer, Verifier} = require('./build/index');
+const {Generations} = require('@pkmn/data');
+const {Dex} = require('@pkmn/dex');
+
+const raw = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+const copy = JSON.parse(JSON.stringify(raw));
+
+const gens = new Generations(Dex);
+const gen = gens.get(raw.format.startsWith('gen') ? +raw.format.charAt(3) : 6);
+
 const verifier = new Verifier();
+const anon = Anonymizer.anonymize(gen, raw, {verifier});
 
-(async () => {
-  const dex = await Dex.forFormat(process.argv[3]);
-  const anon = Anonymizer.anonymize(raw, dex, undefined, verifier);
-
-  if (!verifier.ok()) {
-    const msg = `Potentially leaked name from {${Array.from(verifier.names)}} in log`;
-    for (const {input, output} of verifier.leaks) {
-      console.error(`\x1b[91m${msg}:\x1b[0m\n${input}\n${output}\n`);
-    }
+if (!verifier.ok()) {
+  const msg = `Potentially leaked name from {${Array.from(verifier.names)}} in log`;
+  for (const {input, output} of verifier.leaks) {
+    console.error(`\x1b[91m${msg}:\x1b[0m\n${input}\n${output}\n`);
   }
+} else if (process.argv.length <= 4) {
+  console.log(JSON.stringify(anon, null, 2));
+}
 
-  if (process.argv.length <= 4) console.log(diff.diffString(log, anon));
-})();
+if (process.argv.length > 4) {
+  try {
+    const diff = require('json-diff');
+    console.log(diff.diffString(copy, anon));
+  } catch (err) {
+    if (err.code !== 'MODULE_NOT_FOUND') throw err;
+  }
+}

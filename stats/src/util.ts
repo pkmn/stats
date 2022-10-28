@@ -1,4 +1,5 @@
-import { Dex, ID, PokemonSet, Species, toID } from 'ps';
+/* eslint-disable @typescript-eslint/no-loss-of-precision */
+import {Generations, Generation, Dex, ID, toID, PokemonSet, Specie} from '@pkmn/data';
 import * as aliases from './aliases.json';
 
 export const PRECISION = 1e10;
@@ -21,72 +22,90 @@ export const enum Outcome {
 
 const ALIASES: Readonly<{ [id: string]: string }> = aliases;
 
+let DEFAULT!: Generation;
+export function newGenerations(dex: Dex) {
+  const gens = new Generations(dex, e => !!e.exists);
+  DEFAULT = gens.get(8);
+  return gens;
+}
+
+export function ignoreGen(gen: Generation, legacy: boolean) {
+  if (!gen) throw new Error('ignoreGen called without a gen to ignore!');
+  if (!legacy) return gen;
+  if (!DEFAULT) throw new Error('Default generation not set - call newGenerations');
+  return DEFAULT;
+}
+
 export function fromAlias(name: string) {
   return ALIASES[toID(name)] || name;
 }
 
-export function getSpecies(name: string, dex: Dex) {
-  const species = dexForFormat(dex).getSpecies(name);
+export function getSpecies(gen: Generation, name: string, legacy: boolean) {
+  const species = ignoreGen(gen, legacy).species.get(name);
   if (!species) throw new Error(`Unknown species '${name}'`);
   return species;
 }
 
-export function getBaseSpecies(name: string, dex: Dex): Species {
-  const species = getSpecies(name, dex);
+export function getBaseSpecies(gen: Generation, name: string, legacy: boolean): Specie {
+  const species = getSpecies(gen, name, legacy);
   return species.baseSpecies && species.baseSpecies !== species.name
-    ? getBaseSpecies(species.baseSpecies, dex)
+    ? getBaseSpecies(gen, species.baseSpecies, legacy)
     : species;
 }
 
-// TODO: Remove this function in favor of using the actual dex calls once format is fixed.
-export function dexForFormat(dex?: Dex) {
-  return /* dex || FIXME */ Dex.get();
+export function genForFormat(gens: Generations, format: ID) {
+  const m = /gen(\d)/.exec(format);
+  return gens.get(m ? m[1] : 6);
 }
 
-// prettier-ignore
 const MEGA_RAYQUAZA_BANNED = new Set([
   'ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers',
 ]);
 
-export function isMegaRayquazaAllowed(dex?: Dex) {
-  return !MEGA_RAYQUAZA_BANNED.has((dex || Dex.get()).format);
+export function isMegaRayquazaAllowed(format: ID) {
+  return !MEGA_RAYQUAZA_BANNED.has(format);
 }
 
-export function isMega(species: Species) {
-  // FIXME: Ultra Burst?
-  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal'));
+export function isMega(species: Specie, legacy: boolean) {
+  return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal') ||
+    (!legacy && species.forme.startsWith('Ultra')));
 }
 
-export function getMegaEvolution(pokemon: PokemonSet<string | ID>, dex: Dex) {
-  const item = dexForFormat(dex).getItem(pokemon.item);
+export function getMegaEvolution(
+  gen: Generation,
+  pokemon: PokemonSet<string | ID>,
+  legacy: boolean,
+) {
+  const item = ignoreGen(gen, legacy).items.get(pokemon.item);
   if (!item) return undefined;
-  const species = getSpecies(pokemon.species, dex);
-  if (item.name === 'Blue Orb' && (species.name === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
-    return { species: 'kyogreprimal' as ID, ability: 'primordialsea' as ID };
+  const species = getSpecies(gen, pokemon.species, legacy);
+  if (item.name === 'Blue Orb' &&
+    (species.name === 'Kyogre' || species.baseSpecies === 'Kyogre')) {
+    return {species: 'kyogreprimal' as ID, ability: 'primordialsea' as ID};
   }
-  if (
-    item.name === 'Red Orb' &&
-    (species.name === 'Groudon' || species.baseSpecies === 'Groudon')
-  ) {
-    return { species: 'groudonprimal' as ID, ability: 'desolateland' as ID };
+  if (item.name === 'Red Orb' &&
+    (species.name === 'Groudon' || species.baseSpecies === 'Groudon')) {
+    return {species: 'groudonprimal' as ID, ability: 'desolateland' as ID};
   }
-  // FIXME: Ultra Burst?
+  if (!legacy && item.name === 'Ultranecrozium Z' &&
+    (species.name === 'Necrozma' || species.baseSpecies === 'Necrozma')) {
+    return {species: 'necrozmaultra' as ID, ability: 'neuroforce' as ID};
+  }
   if (!item.megaEvolves || item.megaEvolves !== species.name || !item.megaStone) {
     return undefined;
   }
-  const mega = getSpecies(item.megaStone, dex);
+  const mega = getSpecies(gen, item.megaStone, legacy);
   if (!mega) return undefined;
-  return { species: toID(mega.name), ability: toID(mega.abilities['0']) };
+  return {species: toID(mega.name), ability: toID(mega.abilities['0'])};
 }
 
-export function revertFormes(id: ID, dex: Dex) {
-  const species = getSpecies(id, dex);
-  if (!species.forme || isMega(species)) return id;
-  return getBaseSpecies(species.id, dex).id;
+export function revertFormes(gen: Generation, id: ID, legacy: boolean) {
+  const species = getSpecies(gen, id, legacy);
+  if (!species.forme || isMega(species, legacy)) return id;
+  return getBaseSpecies(gen, species.id, legacy).id;
 }
 
 // FIXME: Generate this based on gameType from config/formats.js
-// prettier-ignore
 const NON_SINGLES_FORMATS = new Set([
   'battlespotdoubles', 'battlespotspecial7', 'battlespottriples', 'doublesou', 'doublesubers',
   'doublesuu', 'gen5doublesou', 'gen5smogondoubles', 'gen7battlespotdoubles',
@@ -94,28 +113,29 @@ const NON_SINGLES_FORMATS = new Set([
   'gen7pokebankdoubleaanythinggoes', 'gen7pokebankdoublesag', 'gen7pokebankdoublesanythinggoes',
   'gen7pokebankdoublesou', 'gen7pokebankdoublesoubeta', 'gen7randomdoublesbattle',
   'gen7vgc2017', 'gen7vgc2017beta', 'orassmogondoubles', 'randomdoublesbattle', 'smogondoublesuu',
-  'randomtriplesbattle', 'smogondoubles', 'smogondoublessuspecttest', 'smogondoublesubers',
-  'smogontriples', 'smogontriples', 'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017', 'gen8doublesou',
-  'gen8doublesubers', 'gen8doublesuu',
+  'randomtriplesbattle', 'smogondoubles', 'smogondoublesubers', 'smogontriples', 'smogontriples',
+  'gen8doublesou', 'gen8doublesubers', 'gen8doublesuu', 'vgc2014', 'vgc2015', 'vgc2016',
+  'gen6vgc2016', 'gen7vgc2017', 'gen7vgc2018', 'gen7vgc2018', 'gen7vgc2019sunseries',
+  'gen7vgc2019moonseries', 'gen7vgc2019ultraseries', 'gen8vgc2020', 'gen8vgc2021',
+  'gen8vgc2021series9', 'gen8vgc2021series9limitonerestrictedrestrictedlegendary',
 ]);
 
-export function isNonSinglesFormat(dex: Dex) {
-  const f = dex.format;
-  return NON_SINGLES_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
+export function isNonSinglesFormat(format: ID) {
+  return NON_SINGLES_FORMATS.has(format.endsWith('suspecttest') ? format.slice(0, -11) : format);
 }
 
 // FIXME: Generate this based on teamLength from config/formats.js
-// prettier-ignore
 const NON_6V6_FORMATS = new Set([
   '1v1', 'battlespotdoubles', 'battlespotsingles', 'battlespotspecial7', 'challengecup1v1',
-  'gen5gbusingles', 'gen71v1', 'gen7alolafriendly', 'gen7battlespotdoubles',
+  'gen5gbusingles', 'gen71v1', 'gen7alolafriendly', 'gen7battlespotdoubles', 'gen81v1',
   'gen7battlespotsingles', 'gen7challengecup1v1', 'gen7vgc2017', 'gen7vgc2017beta', 'pgllittlecup',
-  'vgc2014', 'vgc2015', 'vgc2016', 'vgc2017',
+  'vgc2014', 'vgc2015', 'vgc2016', 'gen6vgc2016', 'gen7vgc2017', 'gen7vgc2018', 'gen7vgc2018',
+  'gen7vgc2019sunseries', 'gen7vgc2019moonseries', 'fen7vgc2019ultraseries', 'gen8vgc2020',
+  'gen8vgc2021', 'gen8vgc2021series9', 'gen8vgc2021series9limitonerestrictedrestrictedlegendary',
 ]);
 
-export function isNon6v6Format(dex: Dex) {
-  const f = dex.format;
-  return NON_6V6_FORMATS.has(f.endsWith('suspecttest') ? f.slice(0, -11) : f);
+export function isNon6v6Format(format: ID) {
+  return NON_6V6_FORMATS.has(format.endsWith('suspecttest') ? format.slice(0, -11) : format);
 }
 
 export function canonicalizeFormat(format: ID) {
@@ -127,13 +147,11 @@ export function canonicalizeFormat(format: ID) {
   if (format.startsWith('xybattlespot') && format.endsWith('beta')) {
     format = format.slice(0, -4) as ID;
   }
-  if (['battlespotdoubles', 'battlespotdoublesvgc2015'].includes(format)) {
-    return 'vgc2015' as ID;
-  }
+  if (['battlespotdoubles', 'battlespotdoublesvgc2015'].includes(format)) return 'vgc2015' as ID;
   if (format === 'smogondoubles') return 'doublesou' as ID;
   if (format === 'smogondoublesubers') return 'doublesubers' as ID;
   if (format === 'smogondoublesuu') return 'doublesuu' as ID;
-  return format as ID;
+  return format;
 }
 
 export function round(v: number, p = PRECISION) {
@@ -145,13 +163,14 @@ export function roundStr(v: number, p = PRECISION) {
   return num === Math.floor(num) ? `${num.toFixed(1)}` : `${num}`;
 }
 
-export function displaySpecies(name: string, dex: Dex) {
-  // FIXME: Seriously, we don't filter 'empty'?
-  if (name === 'empty') return name;
-  const species = getSpecies(name, dex).name;
+export function displaySpecies(gen: Generation, name: string, legacy: boolean) {
+  if (name === 'empty') {
+    if (!legacy) throw new Error('empty passed to displaySpecies');
+    return name;
+  }
+  const species = getSpecies(gen, name, legacy).name;
   if (name === 'Flabébé') return 'Flabebe';
-  // FIXME: remove bad display of Nidoran-M / Nidoran-F
-  return species.startsWith('Nidoran') ? species.replace('-', '') : species;
+  return legacy && species.startsWith('Nidoran') ? species.replace('-', '') : species;
 }
 
 export function toDisplayObject(
@@ -206,7 +225,7 @@ export function getChecksAndCounters<T>(
     const p = round((koed + switched) / n);
     const d = round(Math.sqrt((p * (1.0 - p)) / n));
     const score = round(p - 4 * d);
-    cc.push([id, { koed, switched, n, p, d, score }]);
+    cc.push([id, {koed, switched, n, p, d, score}]);
   }
 
   const sorted = cc.sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]));
@@ -265,7 +284,7 @@ export function stallinessHistogram(stalliness: Array<[number, number]>) {
   }
   const mean = x / total;
 
-  return { histogram, binSize, mean, total };
+  return {histogram, binSize, mean, total};
 }
 
 export function victoryChance(r1: number, d1: number, r2: number, d2: number) {
@@ -282,7 +301,6 @@ export function weighting(rating: number, deviation: number, cutoff: number) {
 const MAX_NUM = Math.pow(2, 53);
 const THRESH = 0.46875;
 const SQRPI = 5.6418958354775628695e-1;
-// prettier-ignore
 const P = [
   [
     3.1611237438705656, 1.13864154151050156e2, 3.77485237685302021e2,
@@ -298,11 +316,10 @@ const P = [
     1.60837851487422766e-2, 6.58749161529837803e-4, 1.63153871373020978e-2,
   ],
 ];
-// prettier-ignore
 const Q = [
   [
     2.36012909523441209e1, 2.44024637934444173e2, 1.28261652607737228e3,
-    2.84423683343917062e3
+    2.84423683343917062e3,
   ],
   [
     1.57449261107098347e1, 1.17693950891312499e2, 5.37181101862009858e2,
@@ -315,13 +332,12 @@ const Q = [
   ],
 ];
 
-// Compute the erf function of a value using a rational Chebyshev
-// approximations for different intervals of x.
+// Compute the erf function of a value using a rational Chebyshev approximations for
+// different intervals of x.
 //
-// This is a translation of W. J. Cody's Fortran implementation from
-// 1987 (https://www.netlib.org/specfun/erf). See the AMS publication
-// "Rational Chebyshev Approximations for the Error Function" by W. J.
-// Cody for an explanation of this process.
+// This is a translation of W. J. Cody's Fortran implementation from 1987
+// (https://www.netlib.org/specfun/erf). See the AMS publication "Rational Chebyshev
+// Approximations for the Error Function" by W. J. Cody for an explanation of this process.
 function erf(x: number) {
   const y = Math.abs(x);
   if (y >= MAX_NUM) return Math.sign(x);
@@ -330,8 +346,7 @@ function erf(x: number) {
   return Math.sign(x) * (1 - erfc3(y));
 }
 
-// Approximates the error function erf() for x <= 0.46875 using this
-// function:
+// Approximates the error function erf() for x <= 0.46875 using this function:
 //               n
 // erf(x) = x * sum (p_j * x^(2j)) / (q_j * x^(2j))
 //              j=0
@@ -348,8 +363,8 @@ function erf1(y: number) {
   return (y * (xnum + P[0][3])) / (xden + Q[0][3]);
 }
 
-// Approximates the complement of the error function erfc() for
-// 0.46875 <= x <= 4.0 using this function:
+// Approximates the complement of the error function erfc() for 0.46875 <= x <= 4.0
+// using this function:
 //                       n
 // erfc(x) = e^(-x^2) * sum (p_j * x^j) / (q_j * x^j)
 //                      j=0
@@ -368,8 +383,7 @@ function erfc2(y: number) {
   return Math.exp(-ysq * ysq) * Math.exp(-del) * result;
 }
 
-// Approximates the complement of the error function erfc() for x > 4.0
-// using this function:
+// Approximates the complement of the error function erfc() for x > 4.0 using this function:
 //
 // erfc(x) = (e^(-x^2) / x) * [ 1/sqrt(pi) +
 //               n

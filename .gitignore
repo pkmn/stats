@@ -1,7 +1,9 @@
-node_modules
-build
-package-lock.json
-.tsbuildinfo
-src/test/testdata/result/
-Reports
-tmp
+node_modules/
+build/
+.DS_Store
+Thumbs.db
+*package-lock.json
+.eslintcache
+.tsbuildinfo*
+.vscode
+*-debug.log

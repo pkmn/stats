@@ -1,36 +1,41 @@
 {
-  "name": "@smogon/stats",
-  "version": "0.0.1",
-  "description": "Logic for processing stats from Pokémon Showdown battle simulator logs",
+  "name": "@pkmn/stats",
+  "version": "0.1.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pkmn-cc/Pokemon-Showdown-Stats.git"
+  "bin": {
+    "convert": "./convert"
   },
-  "author": "Kirk Scheibelhut",
+  "description": "Logic for processing usage stats from Pokémon Showdown battle simulator logs",
+  "repository": "github:pkmn/stats",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["build", "!build/test", "src", "!src/test"],
   "dependencies": {
-    "@types/node": "^13.7.7",
-    "ps": "file:../ps"
+    "@pkmn/data": "^0.6.1"
   },
   "devDependencies": {
-    "@types/jest": "^25.1.3",
-    "gts": "^1.1.2",
-    "jest": "^25.1.0",
-    "json-stringify-pretty-compact": "^2.0.0",
-    "source-map-support": "^0.5.16",
-    "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
+    "@pkmn/dex": "^0.6.1",
+    "json-stringify-pretty-compact": "3.0.0"
   },
   "scripts": {
-    "check": "gts check",
-    "clean": "gts clean",
+    "lint": "eslint --cache src --ext ts",
+    "fix": "eslint --fix src --ext ts",
     "compile": "tsc -p .",
-    "fix": "gts fix",
     "test": "jest",
-    "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run lint"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": ["node_modules/", "build/"]
+  },
+  "babel": {
+    "presets": [
+        "@babel/preset-typescript",
+        ["@babel/preset-env", {"targets": {"node": "current"}}]
+    ]
   }
 }

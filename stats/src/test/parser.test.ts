@@ -1,54 +1,56 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Dex } from 'ps';
+import {Dex, ID} from '@pkmn/dex';
 
-import { Log, Parser } from '../parser';
+import {Log, Parser} from '../parser';
+import {newGenerations} from '../util';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 
-async function setup() {
-  const DEX = await Dex.forFormat('gen7anythinggoes');
-  const LOG = path.resolve(TESTDATA, 'logs', DEX.format, 'log.1.json');
+function setup() {
+  const GEN = newGenerations(Dex).get(7);
+  const FORMAT = 'gen7anythinggoes' as ID;
+  const LOG = path.resolve(TESTDATA, 'logs', FORMAT, 'log.1.json');
 
   const read = () => JSON.parse(fs.readFileSync(LOG, 'utf8'));
-  const parse = (log: Log) => Parser.parse(log, DEX);
-  return { read, parse };
+  const parse = (log: Log) => Parser.parse(GEN, FORMAT, log, true);
+  return {read, parse};
 }
 
 describe('Parser', () => {
-  test('log = "log"', async () => {
-    const { parse } = await setup();
+  test('log = "log"', () => {
+    const {parse} = setup();
     expect(() => {
       parse(('"log"' as unknown) as Log);
     }).toThrow('Log = "log"');
   });
-  test('no turn count', async () => {
-    const { read, parse } = await setup();
+  test('no turn count', () => {
+    const {read, parse} = setup();
     expect(() => {
       const raw = read();
       delete raw.turns;
       parse(raw);
     }).toThrow('No turn count');
   });
-  test('two winners', async () => {
-    const { read, parse } = await setup();
+  test('two winners', () => {
+    const {read, parse} = setup();
     expect(() => {
       const raw = read();
       raw.log.push('|win|test-player-b');
       parse(raw);
     }).toThrow('Battle had two winners');
   });
-  test('self battle', async () => {
-    const { read, parse } = await setup();
+  test('self battle', () => {
+    const {read, parse} = setup();
     expect(() => {
       const raw = read();
       raw.p2 = raw.p1;
       parse(raw);
     }).toThrow('Player battling themself');
   });
-  test('bad log', async () => {
-    const { read, parse } = await setup();
+  test('bad log', () => {
+    const {read, parse} = setup();
     const raw = read();
     const log = raw.log.slice();
     for (const line of ['|move|Bad', '|switch|Bad']) {
@@ -58,12 +60,12 @@ describe('Parser', () => {
       }).toThrow(`Could not parse line: '${line}'`);
     }
   });
-  test('unknown species', async () => {
-    const { read, parse } = await setup();
+  test('unknown species', () => {
+    const {read, parse} = setup();
     expect(() => {
       const raw = read();
       raw.log.push('|switch|p1a: Oops|Oops|100/100');
       parse(raw);
-    }).toThrow(`Unknown species 'Oops'`);
+    }).toThrow('Unknown species \'Oops\'');
   });
 });

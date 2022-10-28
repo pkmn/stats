@@ -1,128 +1,125 @@
 #!/usr/bin/env node
 'use strict';
 
-// Produces the standard Smogon reports in an output directory specified by
-// its second argument based on data from a logs directory provided by its
-// first argument.
-//
-// Expects the logs (YYYY-MM) directory to be structured as follows:
-//
-//     YYYY-MM
-//     └── format
-//         └── YYYY-MM-DD
-//             └── battle-format-N.log.json
-//
-// The resulting reports will be written out in the following directory structure:
-//
-//     YYYY-MM
-//     ├── chaos
-//     │   └── format-N.json
-//     ├── format-N.txt
-//     ├── leads
-//     │   └── format-N.txt
-//     ├── metagame
-//     │   └── format-N.txt
-//     ├── monotype
-//     │   ├── chaos
-//     │   │   └── format-monoT-N.json
-//     │   ├── format-monoT-N.txt
-//     │   ├── leads
-//     │   │   └── format-monoT-N.txt
-//     │   ├── metagame
-//     │   │   └── format-monoT-N.txt
-//     │   └── moveset
-//     │       └── format-monoT-N.txt
-//     └── moveset
-//         └── format-N.txt
-//
-// Makes use of an internal checkpoints directory which is structured as follows:
-//
-//     <checkpoints>
-//     └── format
-//         └── YYYYMMDD_N_i-YYYYMMDD-M_j.json.gz
-//
-// By default, <checkpoints> is a temp directory, but may be specified with a flag.
-//
-// Usage:
-//
-//   $ ./process ../Pokemon-Showdown{logs,Stats}/2019-05
+try {
+  require('source-map-support').install();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
 
-require('source-map-support').install();
-const logs = require('logs');
-const child_process = require('child_process');
+const fs = require('fs');
 const path = require('path');
-const shell = cmd => child_process.execSync(cmd, {stdio: 'inherit', cwd: __dirname});
+const config = require('@pkmn/logs').config;
+const minimist = require('minimist');
 
-function missing(dep) {
-  try {
-    require.resolve(dep);
-    return false;
-  } catch (err) {
-    if (err.code !== 'MODULE_NOT_FOUND') throw err;
-    return true;
+// NOTE: these aliases get added to by each of the workers
+const ALIASES = {...config.ALIASES, help: ['h', '?']};
+
+const createWorker = (name, src) => {
+  const code = require(src);
+  const options = code.options;
+  if (options) {
+    for (const option in options) {
+      ALIASES[option] = options[option].alias || [];
+    }
+  }
+  return {name, path: src, code, options};
+}
+
+// We pre-register the options for all of the default workers in workflows/
+const WORKERS = fs.readdirSync(path.join(__dirname, 'workflows')).reduce((ws, dir) => {
+  if (dir === 'README.md') return ws;
+  for (const f of fs.readdirSync(path.join(__dirname, 'workflows', dir))) {
+    const name = f.slice(0, -3);
+    // NOTE: workflows/ workers are all Typescript files and but we need the built version
+    try {
+    ws[`${dir}/${name}`] =
+      createWorker(`${dir}/${name}`, path.join(__dirname, 'build', dir, `${name}.js`));
+    } catch (err) {
+      if (err.code !== 'MODULE_NOT_FOUND') throw err;
+    }
+  }
+  return ws;
+}, {});
+
+const wrap = (s) => s.replace(/(?![^\n]{1,78}$)([^\n]{1,78})\s/g, '$1\n');
+const PREAMBLE = `process <TYPE> <INPUT> <OUTPUT>\n\n` + wrap(
+  `Runs a worker of type TYPE on the data found in INPUT to produce OUTPUT. ` +
+  `TYPE can be one of ${Object.keys(WORKERS).map(w => `'${w}'`).join(', ')}, ` +
+  `or a path to the worker code.`
+);
+
+const usage = code => config.usage(code, PREAMBLE, Object.values(WORKERS));
+const unknown = arg => {
+  console.error(`Unknown argument: '${arg}'\n`);
+  usage(1);
+};
+const conflict = (arg, a, b) => {
+  console.error(`Conflicting values for ${arg}: '${a}' vs. '${b}'\n`);
+  usage(1);
+};
+
+// We potentially need to parse our the arguments twice - if we're given a worker which isn't in
+// workflows/ we need to register its options and reparse. We can't complain about unknown arguments
+// at this stage because they might be options for the worker that we haven't registered yet.
+let argv = minimist(process.argv.slice(2), {alias: ALIASES});
+if (argv.help) usage(0);
+
+let foreign = false;
+
+let worker;
+if (argv.worker) {
+  if (WORKERS[argv.worker]) {
+    worker = WORKERS[argv.worker];
+  } else {
+    const name = path.basename(argv.worker).slice(-3);
+    worker = WORKERS[name] = createWorker(name, argv.worker);
+    foreign = true;
   }
 }
-
-function usage(code) {
-  const out = !code ? console.log : console.error;
-  out('process path/to/logs path/to/output/reports');
-  out('');
-  out(' Produces the standard Smogon reports in an output directory specified by the');
-  out(' second argument based on data from a logs directory provided by the first argument.');
-  out('');
-  out(' Options:');
-  out('');
-  out('   -i/--input=PATH: process logs found under PATH');
-  out('');
-  out('   -o/--output=PATH: output to PATH');
-  out('');
-  out('   -c/--checkpoint=PATH: enable checkpointing and write intermediate files to PATH for recovery');
-  out('');
-  out('   -p/--numWorkers=N: process the logs using N workers (default: NUM_CORES-1)');
-  out('');
-  out('   -n/--maxFiles=N: open up to N files across all workers (should be < `ulimit -n`, default: 256)');
-  out('');
-  out('   -b/--batchSize=N: if checkpointing, write checkpoints at least every N files per format (default: 8096)');
-  out('');
-  out('   -d/--dryRun: skip actually performing any processing (default: false)');
-  out('');
-  out('   -v/--verbose: log output while processing (default: false)');
-  out('');
-  out('   -u/--uneven=N: fraction which determines which formats can be combined concurrently (default: 1/numWorkers)');
-  out('');
-  out('   -a/--all: include all checks and counters in moveset reports (default: false)');
-  out('');
-  out('   -f/--anonymize=FORMATS: anonymize formats specified instead of processing stats (default: \'\')');
-  out('');
-  out ('NOTE: A negative value can be used to disable specific default sizes/limits.');
-  process.exit(code);
-}
-
-if (process.argv.length < 3) usage(1);
-if (['help', '-help', '--help', 'h', '-h', '--help', '?', '-?', '--?'].includes(process.argv[2])) usage(0);
-if (missing('minimist')) shell('npm install minimist');
-const argv = require('minimist')(process.argv.slice(2), {
-  alias: {
-    input: ['i', 'in', 'l', 'logs', 'src'],
-    output: ['o', 'out', 'r', 'reports', 'dest', 'dst'],
-    checkpoints: ['c', 'checkpoint'],
-    numWorkers: ['p', 'parallel', 'w', 'workers', 'maxWorkers', 't', 'threads'],
-    maxFiles: ['n', 'm', 'numFiles', 'files', 'maxOpenFiles'],
-    batchSize: ['b', 'perBatch', 'maxBatch', 'maxBatchSize'],
-    debug: ['v', 'verbose'],
-    dryRun: ['d', 'dry'],
-    uneven: ['u'],
-    all: ['a'],
-    formats: ['f', 'anon', 'anonymize'],
+if (argv._[0]) {
+  if (WORKERS[argv._[0]]) {
+    if (worker && worker.code !== WORKERS[argv._[0]].code) {
+      conflict('worker', argv.worker, argv._[0]);
+    }
+    worker = WORKERS[argv._[0]];
+  } else {
+    const name = path.basename(argv._[0]).slice(-3);
+    WORKERS[name] = createWorker(name, argv._[0]);
+    if (worker && worker.code !== WORKERS[name].code) {
+      conflict('worker', argv.worker, argv._[0]);
+    }
+    worker = WORKERS[name];
+    foreign = true;
   }
-});
-if (argv._.length) {
-  argv.input = argv._[0];
-  if (argv._.length > 1) argv.output = argv._[1];
 }
-if (argv._.length > 2 || !argv.input || !argv.output) usage(1);
+if (!worker) usage(1);
+
+if (foreign) {
+  // Reparse now that we know we have registered the foreign worker's options - this time around it
+  // is safe to complain about unknown arguments because we should have the full set registered.
+  argv = minimist(process.argv.slice(2), {alias: ALIASES, unknown});
+}
+
+argv.worker = worker.path;
+if (argv._[1]) {
+  if (argv.input && path.resolve(argv.input) !== path.resolve(argv._[1])) {
+    conflict('input', argv._[1], argv.input);
+  }
+  argv.input = argv._[1];
+}
+if (argv._[2]) {
+  if (argv.output && path.resolve(argv.output) !== path.resolve(argv._[2])) {
+    conflict('output', argv._[2], argv.output);
+  }
+  argv.output = argv._[2];
+}
+
+if (!(argv.worker && argv.input && argv.output)) usage(1);
 if (argv.debug) process.env.DEBUG = +argv.verbose;
-//argv.worker = argv.formats ? 'anon' : 'stats';
-argv.worker = 'load'; // TODO
-
-(async () => process.exit(await logs.process(argv)))().catch(err => console.error(err));
+// We have avoided requiring logs directly because the only way to transparently switch out the
+// backend is to set an environment variable first. We default to worker_threads, but if the
+// --processes flag was passed we switch to the process backend. If both are passed the config
+// parsing inside of the logs process code will error out, so we don't need to both checking here.
+process.env.BTHREADS_BACKEND = argv.processes ? 'child_process' : 'worker_threads';
+(async () => process.exit(await require('logs').process(argv)))().catch(console.error);

@@ -1,0 +1,43 @@
+#!/bin/bash -ex
+# $ compress pokemon-showdown/logs/2020-09
+
+# YYYY-MM
+# └── format
+#     └── YYYY-MM-DD
+#         └── battle-format-N.log.json
+INPUT=$1
+if [[ -z "$INPUT" ]]; then
+    echo "Must specify an input directory"
+    exit 1;
+fi
+
+# YYYY-MM.tar
+# └── format
+#     └── YYYY-MM-DD.7z
+#         └── battle-format-N.log.json
+OUTPUT=${2:-$INPUT}
+if [[ $OUTPUT != *.tar ]]; then
+    OUTPUT="${OUTPUT}.tar"
+fi
+
+TMP=$(mktemp -d)
+trap "rm -rf $TMP" 0 2 3 15
+
+compress() {
+    TMP=$1
+    INPUT=$2
+    format=$3
+    day=$4
+
+    cd "${INPUT}/${format}/${day}"
+    7z a "${TMP}/${format}/${day}.7z" *
+}
+export -f compress
+
+for format in `ls $INPUT`; do
+    mkdir "${TMP}/${format}"
+    parallel compress $TMP $INPUT $format ::: `ls ${INPUT}/${format}`
+done
+
+cd $TMP
+tar cvf $OUTPUT *
