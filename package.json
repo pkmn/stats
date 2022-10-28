@@ -8,6 +8,7 @@
     "@pkmn/dex": "^0.6.1",
     "@pkmn/logs": "file:logs",
     "@pkmn/stats": "file:stats",
+    "json-stringify-pretty-compact": "3.0.0",
     "minimist": "^1.2.7",
     "source-map-support": "^0.5.21"
   },

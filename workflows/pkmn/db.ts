@@ -6,7 +6,7 @@ import {Generation, Generations, PokemonSet} from '@pkmn/data';
 import {Lookup} from '@pkmn/engine';
 import {Team} from '@pkmn/sets';
 import {Batch, Checkpoints, CombineWorker, ID, register, WorkerConfiguration} from '@pkmn/logs';
-import {Binary, Read} from '@pkmn/stats';
+import {Binary} from '@pkmn/stats';
 
 interface ApplyState {
   gen: Generation;
@@ -28,7 +28,7 @@ const forFormat = (format: ID) =>
   format.startsWith('gen') ? GENS.get(format.charAt(3)) : GENS.get(6);
 const rowsize = (gen: Generation) => 17 + 2 * (6 * Binary.Sizes[gen.num]);
 
-const CMP = (a: Buffer, b: Buffer) => Number(Read.u64(a, 0) - Read.u64(b, 0));
+const CMP = (a: Buffer, b: Buffer) => Number(Binary.Read.u64(a, 0) - Binary.Read.u64(b, 0));
 
 const BinaryWorker =
   new class extends CombineWorker<WorkerConfiguration, ApplyState, CombineState> {
@@ -52,9 +52,7 @@ const BinaryWorker =
 
     async processLog(log: string, state: ApplyState) {
       const raw = JSON.parse(await this.storage.logs.read(log));
-      Binary.serializeLog(
-        state.gen, state.lookup, state.canonicalize, raw, state.buf, state.offset
-      );
+      Binary.Log.encode(state.gen, state.lookup, state.canonicalize, raw, state.buf, state.offset);
       state.offset += state.size;
     }
 

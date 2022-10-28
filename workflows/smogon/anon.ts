@@ -79,11 +79,11 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     return (format: ID) => !!formats?.has(format);
   }
 
-  async setupApply({format}: Batch) {
+  async setupApply({format, day}: Batch) {
     return {
       gen: forFormat(format),
       format,
-      random: new Random(hash(format)),
+      random: new Random(hash(format) + hash(day)),
       rate: this.config.formats?.get(format) || 1,
     };
   }
@@ -135,9 +135,10 @@ const AnonWorker = new class extends CombineWorker<Configuration, State, void> {
     const renames: Array<Promise<void>> = [];
     for (const log of logs) {
       const ordinal = `${++i}`.padStart(digits, '0');
+      const suffix = log.endsWith('.log.json') ? '.log.json' : '.team.json';
       renames.push(this.limit(() => fs.rename(
         path.join(this.storage.scratch, format, log),
-        path.join(this.config.output, format, `battle-${format}-${ordinal}.log.json`),
+        path.join(this.config.output, format, `battle-${format}-${ordinal}.${suffix}.json`),
       )));
     }
     if (renames.length) await Promise.all(renames);

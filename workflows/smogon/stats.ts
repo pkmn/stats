@@ -1,8 +1,11 @@
 import * as path from 'path';
+import stringify from 'json-stringify-pretty-compact';
 
 import {Dex} from '@pkmn/dex';
-import {Generations, Generation} from '@pkmn/data';
-import {canonicalizeFormat, Parser, Reports, Stats, TaggedStatistics} from '@pkmn/stats';
+import {Generation} from '@pkmn/data';
+import {
+  canonicalizeFormat, Parser, newGenerations, Stats, WeightedStatistics, Reports,
+} from '@pkmn/stats';
 import {
   Batch, Checkpoints, CombineWorker, fs, ID, toID,
   JSONCheckpoint, Options, register, WorkerConfiguration,
@@ -17,15 +20,16 @@ interface Configuration extends WorkerConfiguration {
 interface ApplyState {
   gen: Generation;
   format: ID;
-  stats: TaggedStatistics;
+  stats: WeightedStatistics;
   cutoffs: number[];
 }
 
 interface CombineState {
-  TODO: undefined;
+  gen: Generation;
+  stats: WeightedStatistics;
 }
 
-const GENS = new Generations(Dex, e => !!e.exists);
+const GENS = newGenerations(Dex);
 const forFormat = (format: ID) =>
   format.startsWith('gen') ? GENS.get(format.charAt(3)) : GENS.get(6);
 const MONOTYPES = new Set(Array.from(GENS.get(8).types).map(type => `mono${type.id}` as ID));
@@ -35,15 +39,35 @@ const SKIP = [
   'hackmonscup', 'digimon', 'metronome', 'superstaff',
 ];
 
-const POPULAR = new Set([
-  'ou', 'doublesou', 'randombattle', 'gen7pokebankou', 'gen7ou',
-  'gen7pokebankdoublesou', 'gen8ou', 'gen8doublesou', 'gen8randombattle',
-] as ID[]);
+const POPULAR = {
+  6: [
+    'ou', 'oususpecttest', 'doublesou', 'randombattle',
+    'smogondoubles', 'doublesou', 'doublesoususpecttest',
+  ],
+  7: [
+    'gen7ou', 'gen7oususpecttest', 'gen7doublesou', 'gen7doublesoususpecttest',
+    'gen7pokebankou', 'gen7pokebankoususpecttest', 'gen7pokebankdoublesou',
+  ],
+  8: ['gen8doublesou', 'gen8ou', 'gen8oususpecttest'],
+};
 
 const CUTOFFS = {
   default: [0, 1500, 1630, 1760],
   popular: [0, 1500, 1695, 1825],
 };
+
+function cutoffsFor(format: ID, date: string) {
+  // NOTE: Legacy format notation is signficant here: gen6ou was only 'popular' while it was still
+  // called 'ou' and thus we don't really care about the date.
+  if (POPULAR[6].includes(format)) return CUTOFFS.popular;
+  // Gen 7 formats ceased to be 'popular' from 2020-02 onwards, though we need to check
+  // gen7doublesou first as it had a weird discontinuity at the beginning of the format.
+  if (format === 'gen7doublesou' && date < '2017-02') return CUTOFFS.default;
+  if (POPULAR[7].includes(format)) return date > '2020-01' ? CUTOFFS.default : CUTOFFS.popular;
+  // smogondoublessuspecttest only has two months of date, but 2015-04 had a higher weighting.
+  if (format === 'smogondoublessuspecttest' && date === '2015-04') return CUTOFFS.popular;
+  return POPULAR[8].includes(format) ? CUTOFFS.popular : CUTOFFS.default;
+}
 
 const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, CombineState> {
   options = {
@@ -75,6 +99,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
       if (!(config.formats && !config.formats.has('gen8monotype' as ID))) {
         const monotype = path.resolve(config.output, 'monotype');
         await fs.mkdir(monotype);
+        // we're just assuming here that maxFiles is > 10 for each worker ¯\_(ツ)_/¯
         await Promise.all([...mkdirs(config.output), ...mkdirs(monotype)]);
       }
     }
@@ -98,7 +123,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     return {
       gen: forFormat(format),
       format,
-      stats: {total: {}, tags: {}},
+      stats: {},
       cutoffs: cutoffsFor(format, batch.day.slice(0, -3)),
     };
   }
@@ -106,47 +131,71 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
   async processLog(log: string, state: ApplyState, shard?: string) {
     const raw = JSON.parse(await this.storage.logs.read(log));
     const battle = Parser.parse(state.gen, state.format, raw);
-    const tags = state.format === 'gen8monotype' ? new Set([shard! as ID]) : undefined;
-    Stats.updateTagged(
-      state.gen, state.format, battle, state.cutoffs, state.stats, this.config.legacy, tags
+    Stats.updateWeighted(
+      state.gen, state.format, battle, state.cutoffs, state.stats, this.config.legacy
     );
   }
 
-  createCheckpoint(batch: Batch, state: ApplyState): JSONCheckpoint<TaggedStatistics> {
-    // FIXME need shard!
-    return Checkpoints.json(batch.format, batch.day, state.stats);
+  createCheckpoint(batch: Batch, state: ApplyState, shard?: string) {
+    return Checkpoints.json(batch.format, batch.day, state.stats, shard);
   }
 
   async setupCombine(format: ID): Promise<CombineState> {
-    throw new Error('Method not implemented.'); // TODO
+    return {
+      gen: forFormat(canonicalizeFormat(format)),
+      stats: {},
+    };
   }
 
-  aggregateCheckpoint(batch: Batch, state: CombineState): Promise<void> {
-    throw new Error('Method not implemented.'); // TODO
+  async aggregateCheckpoint({format, day}: Batch, state: CombineState, shard?: string) {
+    const checkpoint =
+      await JSONCheckpoint.read<WeightedStatistics>(this.storage.checkpoints, format, day, shard);
+    Stats.combineWeighted(state.stats, checkpoint.data);
   }
 
-  writeResults(format: ID, state: CombineState): Promise<void> {
-    throw new Error('Method not implemented.'); // TODO
+  async writeResults(format: ID, state: CombineState, shard?: string) {
+    const reports = format === 'gen8monotype' && shard
+      ? path.join(this.config.output, 'monotype')
+      : this.config.output;
+    const min = this.config.all ? [0, -Infinity] : [20, 0.5];
+
+    const writes = [];
+    for (const [c, stats] of Object.entries(state.stats)) {
+      const cutoff = Number(c);
+      const file = shard ? `${format}-${shard}-${cutoff}` : `${format}-${cutoff}`;
+      if (this.config.legacy) {
+        writes.push(this.limit(() => fs.writeFile(
+          path.join(reports, `${file}.txt`),
+          Reports.usageReport(state.gen, format, stats)
+        )));
+        writes.push(this.limit(() => fs.writeFile(
+          path.join(reports, 'leads', `${file}.txt`),
+          Reports.leadsReport(state.gen, stats)
+        )));
+        const movesets =
+          Reports.movesetReports(state.gen, format, stats, cutoff, shard as ID, min);
+        writes.push(this.limit(() =>
+          fs.writeFile(path.join(reports, 'moveset', `${file}.txt`), movesets.basic)));
+        writes.push(this.limit(() =>
+          fs.writeFile(path.join(reports, 'chaos', `${file}.json`), movesets.detailed)));
+        writes.push(this.limit(() => fs.writeFile(
+          path.join(reports, 'metagame', `${file}.txt`),
+          Reports.metagameReport(stats)
+        )));
+      } else {
+        writes.push(this.limit(() => fs.writeFile(
+          path.join(reports, `${file}.json`),
+          stringify(stats.Display.fromStatistics(state.gen, format, stats, min[0]))
+        )));
+      }
+    }
+    if (writes.length) await Promise.all(writes);
   }
 };
 
 function mkdirs(dir: string) {
   const mkdir = (d: string) => fs.mkdir(path.resolve(dir, d));
   return [mkdir('chaos'), mkdir('leads'), mkdir('moveset'), mkdir('metagame')];
-}
-
-function cutoffsFor(format: ID, date: string) {
-  // Legacy cutoffs finally got addressed a few months into Gen 8
-  if (!format.startsWith('gen8') && date > '2020-01') return CUTOFFS.default;
-  // gen7doublesu ou and smogondoublessuspecttest have used different weights over the years
-  if (format === 'gen7doublesou' && (date < '2017-02' || date > '2020-01')) {
-    return CUTOFFS.default;
-  }
-  if (format === 'smogondoublessuspecttest' && date === '2015-04') return CUTOFFS.popular;
-  // Otherwise, formats deemed 'popular' are assigned higher weight. Note that legacy format
-  // notation is signficant here: gen6ou was only 'popular' while it was still called 'ou'
-  format = (format.endsWith('suspecttest') ? format.slice(0, -11) : format) as ID;
-  return POPULAR.has(format) ? CUTOFFS.popular : CUTOFFS.default;
 }
 
 void register(StatsWorker);

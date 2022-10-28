@@ -12,7 +12,10 @@ Mathieu "Marty" Dias-Martins) from Python to TypeScript, though has since been [
 optimized, and corrected](CHANGES.md).
 
 This package can be used together with [`@pkmn/logs`](../logs) to efficiently process gigabytes of
-battle logs within minutes to produce the reports hosted at https://www.smogon.com/stats/.
+battle logs within minutes to produce the reports hosted at https://www.smogon.com/stats/. It also
+supports a custom [binary](BINARY.md) format based on
+[`@pkmn/engine`](https://github.com/pkmn/engine) data and used by [pkmn](https://pkmn.cc) projects
+such as [EPOKé](https://github.com/pkmn/EPOke) or [0 ERROR](https://github.com/pkmn/0-ERROR).
 
 ## Installation
 
@@ -23,8 +26,8 @@ $ npm install @pkmn/stats
 ## Usage
 
 The most naive way of using `@pkmn/stats` is to iterate over a collection of logs, run them through
-the [`Parser`](#Parser) and use [`Stats`](#Stats) to compute various statistics that can then be
-displayed by [`Display`](#Display):
+the [`Parser`](#parser) and use [`Stats`](#stats) to compute various statistics that can then be
+displayed by [`Display`](#display):
 
 ```ts
 import {Dex} from '@pkmn/dex';
@@ -79,7 +82,7 @@ The `Display` class can be used to produce `@pkmn/stats`'s [unified output forma
 methods are provided - `fromStatistics` for converting the `Statistics` returned by the `Stats`
 class into the unified report, and a `fromReports` method which can be used to convert legacy
 reports to a unified report which is similar ([but not identical](OUTPUT.md#Legacy)) to
-`@pkmn/stats`'s new format. A [CLI](#CLI) exists for converting legacy reports to the new format,
+`@pkmn/stats`'s new format. A [CLI](#cli) exists for converting legacy reports to the new format,
 see below.
 
 #### `Reports`

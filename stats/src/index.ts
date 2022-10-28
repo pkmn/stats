@@ -1,3 +1,4 @@
+export {Binary} from './binary';
 export {Classifier} from './classifier';
 export {Battle, Parser, Player, Pokemon, Rating, Team} from './parser';
 export {Reports} from './reports';
@@ -12,5 +13,3 @@ export {
   MetagameStatistics, Statistics, Stats, TaggedStatistics,
   Usage, UsageStatistics, WeightedStatistics,
 } from './stats';
-
-export {Binary, Read, Write} from './binary';

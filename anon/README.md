@@ -50,7 +50,17 @@ $ anonymize 2020-09/gen8ou/2020-09-25/gen8ou-2875469343.log
 ```
 
 If there are potential leaks the warnings from the `Verifier` will be output instead. For
-anonymizing logs efficiently *en masse*, see [`@pkmn/logs`](../logs).
+anonymizing logs efficiently *en masse*, see [`@pkmn/logs`](../logs) and the
+[`smogon/anon`](../workflows/smogon/anon.ts) workflow. The [`sample`](anonymize) tool can be
+used to come up with a `--formats` flag for the workflow - the tool queries past usage stats
+reports to determine how many battles were present in a given month to be able to
+determine at what rates to sample at to end up with the desired number of logs for each format:
+
+```sh
+$ sample 100000 --formats=gen8ou,gen7ou --begin=2022-01 --end=2022-04
+```
+
+This produces `--formats=gen8ou:0.019417382834173616,gen7ou:0.00402947392710268`.
 
 ### Browser
 

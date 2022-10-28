@@ -1,6 +1,6 @@
 import {Generation, toID, ID, PokemonSet, TypeName, Dex, StatsTable} from '@pkmn/data';
 
-import {Log} from './parser';
+import * as parser from './parser';
 import {weighting} from './util';
 
 const enum EndType {
@@ -17,60 +17,47 @@ const LE = (() => {
   return !!((u16[0] = 1) & u16[0]);
 })();
 
-export class Read {
-  private constructor() {}
-
-  static u8(buf: Buffer, offset: number) {
+const Read = new class {
+  u8(buf: Buffer, offset: number) {
     return buf.readUInt8(offset);
   }
 
-  static u16(buf: Buffer, offset: number) {
+  u16(buf: Buffer, offset: number) {
     return LE ? buf.readUInt16LE(offset) : buf.readUInt16BE(offset);
   }
 
-  static u32(buf: Buffer, offset: number) {
+  u32(buf: Buffer, offset: number) {
     return LE ? buf.readUInt32LE(offset) : buf.readUInt32BE(offset);
   }
 
-  static u64(buf: Buffer, offset: number) {
+  u64(buf: Buffer, offset: number) {
     return LE ? buf.readBigInt64LE(offset) : buf.readBigInt64BE(offset);
   }
-}
+};
 
-export class Write {
-  private constructor() {}
-
-  static u8(buf: Buffer, value: number, offset: number) {
+const Write = new class {
+  u8(buf: Buffer, value: number, offset: number) {
     return buf.writeUInt8(offset);
   }
 
-  static u16(buf: Buffer, value: number, offset: number) {
+  u16(buf: Buffer, value: number, offset: number) {
     return LE ? buf.writeUInt16LE(value, offset) : buf.writeUInt16BE(value, offset);
   }
 
-  static u32(buf: Buffer, value: number, offset: number) {
+  u32(buf: Buffer, value: number, offset: number) {
     return LE ? buf.writeUInt32LE(value, offset) : buf.writeUInt32BE(value, offset);
   }
 
-  static u64(buf: Buffer, value: number, offset: number) {
+  u64(buf: Buffer, value: number, offset: number) {
     return LE ? buf.writeBigInt64LE(BigInt(value), offset)
       : buf.writeBigInt64BE(BigInt(value), offset);
   }
-}
+};
 
-function round(v: number, p = 1e4) {
-  return Math.round(v * p);
-}
-function bias(stats: StatsTable) {
-  const [first, second] = Object.entries(stats).sort((a, b) => b[1] - a[1]);
-  // TODO: convert this pair (eg. 'atkhp') to a number
-  return first[0] > second[0] ? [first[0], second[0]] : [second[0], first[0]];
-}
+const Sizes = {1: 5, 2: 7, 3: 24, 4: 24, 5: 24, 6: 25, 7: 26, 8: 25} as const;
 
-export const Binary = new class {
-  Sizes = {1: 5, 2: 7, 3: 24, 4: 24, 5: 24, 6: 25, 7: 26, 8: 25} as const;
-
-  encodeTeam(
+const Team = new class {
+  encode(
     gen: Generation,
     lookup: Binary.Lookup,
     team: Partial<PokemonSet>[],
@@ -108,9 +95,9 @@ export const Binary = new class {
     }
   }
 
-  decodeTeam(gen: Generation, lookup: Binary.Lookup, buf: Buffer, offset = 0) {
+  decode(gen: Generation, lookup: Binary.Lookup, buf: Buffer, offset = 0) {
     const team: Partial<PokemonSet>[] = [];
-    const N = this.Sizes[gen.num as keyof typeof this.Sizes];
+    const N = Sizes[gen.num as keyof typeof Sizes];
 
     let byte = 0;
     switch (gen.num) {
@@ -154,12 +141,15 @@ export const Binary = new class {
     default: throw new Error(`Unsupported gen ${gen.num}`);
     }
   }
+};
 
-  serializeLog(
+
+const Log = new class {
+  encode(
     gen: Generation,
     lookup: Binary.Lookup,
     canonicalize: (team: Partial<PokemonSet>[], dex: Dex) => Partial<PokemonSet>[],
-    log: Log,
+    log: parser.Log,
     buf: Buffer,
     offset = 0
   ) {
@@ -190,17 +180,17 @@ export const Binary = new class {
       Write.u8(buf, Math.round(log[`${loser}rating`]!.rprd), offset + 16);
     }
 
-    const N = 6 * this.Sizes[gen.num as keyof typeof this.Sizes];
-    this.encodeTeam(gen, lookup, canonicalize(log[`${winner}team`], gen.dex), buf, offset + 17);
-    this.encodeTeam(gen, lookup, canonicalize(log[`${loser}team`], gen.dex), buf, offset + 17 + N);
+    const N = 6 * Sizes[gen.num as keyof typeof Sizes];
+    Team.encode(gen, lookup, canonicalize(log[`${winner}team`], gen.dex), buf, offset + 17);
+    Team.encode(gen, lookup, canonicalize(log[`${loser}team`], gen.dex), buf, offset + 17 + N);
 
     return buf;
   }
 
-  deserializeLog(gen: Generation, lookup: Binary.Lookup, buf: Buffer, offset = 0) {
+  decode(gen: Generation, lookup: Binary.Lookup, buf: Buffer, offset = 0) {
     if (gen.num >= 3) throw new Error(`Unsupported gen ${gen.num}`); // TODO
 
-    const N = 6 * this.Sizes[gen.num as keyof typeof this.Sizes];
+    const N = 6 * Sizes[gen.num as keyof typeof Sizes];
 
     const data: Binary.Data = {
       timestamp: BigInt(0),
@@ -224,13 +214,15 @@ export const Binary = new class {
     byte = Read.u16(buf, offset + 14);
     if (byte) data.loser.rating = {rpr: byte, rprd: Read.u8(buf, offset + 16)};
 
-    data.winner.team = this.decodeTeam(gen, lookup, buf, offset + 17);
-    data.loser.team = this.decodeTeam(gen, lookup, buf, offset + 17 + N);
+    data.winner.team = Team.decode(gen, lookup, buf, offset + 17);
+    data.loser.team = Team.decode(gen, lookup, buf, offset + 17 + N);
 
     return data;
   }
+};
 
-  computeStats(gen: Generation, lookup: Binary.Lookup, db: Buffer, options: {cutoff: number}) {
+const Stats = new class {
+  compute(gen: Generation, lookup: Binary.Lookup, db: Buffer, options: {cutoff: number}) {
     const sizes = {
       species: lookup.sizes.species,
       moves: lookup.sizes.moves,
@@ -265,14 +257,14 @@ export const Binary = new class {
       }
     }
 
-    const N = 6 * this.Sizes[gen.num as keyof typeof this.Sizes];
+    const N = 6 * Sizes[gen.num as keyof typeof Sizes];
     const row = 17 + 2 * N;
     if (db.length % row !== 0) {
       throw new Error(`Corrupted logs database of size ${db.length} (${row})`);
     }
 
     for (let offset = 0; offset < db.length; offset += row) {
-      const data = this.deserializeLog(gen, lookup, db, offset);
+      const data = Log.decode(gen, lookup, db, offset);
       for (const player of [data.winner, data.loser] as const) {
         if (!player.rating) continue;
         const weight = weighting(player.rating.rpr, player.rating.rprd, options.cutoff);
@@ -314,6 +306,18 @@ export const Binary = new class {
     return {sizes, lookup, stats};
   }
 };
+
+function round(v: number, p = 1e4) {
+  return Math.round(v * p);
+}
+
+function bias(stats: StatsTable) {
+  const [first, second] = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+  // TODO: convert this pair (eg. 'atkhp') to a number
+  return first[0] > second[0] ? [first[0], second[0]] : [second[0], first[0]];
+}
+
+export const Binary = {Read, Write, Sizes, Log, Team, Stats};
 
 export namespace Binary {
   export interface Lookup {
