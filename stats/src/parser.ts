@@ -274,6 +274,7 @@ export const Parser = new class {
     return battle;
   }
 
+  // TODO: use Team.canonicalize from @pkmn/sets
   canonicalizeTeam(
     gen: Generation,
     format: ID,

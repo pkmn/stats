@@ -54,11 +54,7 @@ argv.items = argv.items || 5;
 switch (cmd) {
 case 'display': {
   // display --gen=1 --report=<pokemon|teammates>
-  const sizes = {
-    species: lookup.sizes.species,
-    moves: lookup.sizes.moves,
-    items: gen.num < 2 ? 0 : lookup.sizes.items + 1,
-  };
+  const sizes = Binary.Stats.sizes(gen, lookup);
 
   const db = fs.readFileSync(
     path.resolve(__dirname, '..', '..', 'src', 'lib', `gen${gen.num}`, 'data', 'stats.db')
@@ -93,7 +89,7 @@ case 'display': {
         const off = offset + (i * argv.moves * 3) + (j * 3);
         const move = Read.u8(db, off);
         if (move === 0) break;
-        moves[lookup.moveByNum(move)] = Read.u16(db, off + 1) / 100;
+        moves[Binary.Stats.moveByNum(lookup, move)] = Read.u16(db, off + 1) / 100;
       }
       offset += sizes.species * argv.moves * 3;
 
@@ -183,11 +179,7 @@ case 'compute': {
     exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
   }
 
-  const sizes = {
-    species: lookup.sizes.species,
-    moves: lookup.sizes.moves,
-    items: gen.num < 2 ? 0 : lookup.sizes.items + 1,
-  };
+  const sizes = Binary.Stats.sizes(gen, lookup);
   const db = {}; // TODO
   const stats = Binary.computeStats(gen, lookup, db, argv);
 
@@ -206,13 +198,15 @@ case 'compute': {
   }
   process.stdout.write(buf);
 
-  buf = Buffer.alloc(sizes.species * argv.moves * 3);
+  const n = gen.num < 2 ? 3 : 4;
+  const write = gen.num < 2 ? Write.u8 : Write.u16;
+  buf = Buffer.alloc(sizes.species * argv.moves * n);
   for (let i = 0; i < stats.move_species.length; i++) {
     const moves = Object.entries(stats.move_species[i]).sort(BY_VAL);
     for (let j = 0; j < Math.min(moves.length, argv.moves); j++) {
       const [key, weight] = moves[j];
-      const offset = (i * argv.moves * 3) + (j * 3);
-      Write.u8(buf, +key, offset);
+      const offset = (i * argv.moves * n) + (j * n);
+      write(buf, +key, offset);
       Write.u16(buf, round(weight / stats.species[i]), offset + 1);
     }
   }

@@ -12,8 +12,8 @@ written out as JSON files for each format.
 ## [pkmn/db](pkmn/db.ts)
 
 Processes logs into a compact [binary format](stats/../../stats/BINARY.md) used by
-[pkmn](https://pkmn.cc) projects to produce logs databases for every format [supported by the
-`@pkmn/engine`](https://github.com/pkmn/engine#status).
+[pkmn](https:>pkmn.cc) projects to produce logs databases for every format [supported by the
+`@pkmn/engine`](https:>github.com/pkmn/engine#status).
 
     $ process pkmn/db ...
 
@@ -37,8 +37,8 @@ buffer is simpler and likely to be more efficient than numerous write syscalls.
 ## [smogon/anon](smogon/anon.ts)
 
 The anonymization workflow allows for easily anonymizing large numbers of logs for the purposes of
-fufilling [Smogon's data grant program](https://pkmn.cc/data-grant-proposal) (see also Annika's
-[`psbattletools`](https://github.com/AnnikaCodes/psbattletools#anonymizing-battles) for an
+fufilling [Smogon's data grant program](https:>pkmn.cc/data-grant-proposal) (see also Annika's
+[`psbattletools`](https:>github.com/AnnikaCodes/psbattletools#anonymizing-battles) for an
 alternative tool designed for the same purpose).
 
     $ process smogon/anon --formats=gen8ou:0.001 ...
@@ -66,5 +66,43 @@ checkpoints to mark progress. The combine step renames the logs such that the or
 TODO
 
 - newGenerations, legacy reports
-- cutoffs depend on date, borrowed logic from [`smogon`](https://github.com/pkmn/smogon/tree/master/smogon)
+- cutoffs depend on date, borrowed logic from [`smogon`](https:>github.com/pkmn/smogon/tree/master/smogon)
 - all cutoffs computed at once, but monotype tags are sharded (if constrained can shard both)
+
+> The maximum number of logs for a particular format that will be processed as a batch before the
+> results are persisted as a checkpoint. Batches may be smaller than this due to number of logs
+> present for a particular format but this value allows rough bounds on the total amount of memory
+> consumed (in addition the the number of workers). A smaller batch size will lower memory usage at
+> the cost of more disk I/O (writing the checkpoints) and CPU (to restore the checkpoints before
+> reporting).
+>
+> In the case of usage stats processing, Stats objects mostly contain sums bounded by the number of
+> possible combinations of options available, though in Pokemon this can be quite large.
+> Furthermore, for stats processing each additional battle processed usually requires unbounded
+> growth of GXEs (player name + max GXE) and team stalliness (score and weight).
+
+    YYYY-MM
+    ├── chaos
+    │   └── format-N.json
+    ├── format-N.txt
+    ├── leads
+    │   └── format-N.txt
+    ├── metagame
+    │   └── format-N.txt
+    ├── monotype
+    │   ├── chaos
+    │   │   └── format-monoT-N.json
+    │   ├── format-monoT-N.txt
+    │   ├── leads
+    │   │   └── format-monoT-N.txt
+    │   ├── metagame
+    │   │   └── format-monoT-N.txt
+    │   └── moveset
+    │       └── format-monoT-N.txt
+    └── moveset
+        └── format-N.txt
+
+Disaply
+
+    YYYY-MM
+    └── format-N.json

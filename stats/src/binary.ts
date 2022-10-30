@@ -221,14 +221,23 @@ const Log = new class {
   }
 };
 
+const HP_TYPE_TO_NUM = {
+  fighting: 0, flying: 1, poison: 2, ground: 3, rock: 4, bug: 5, ghost: 6, steel: 7,
+  fire: 8, water: 9, grass: 10, electric: 11, psychic: 12, ice: 13, dragon: 14, dark: 15,
+} as const;
+const NUM_TO_HP_TYPE = Object.values(HP_TYPE_TO_NUM);
+
 const Stats = new class {
-  compute(gen: Generation, lookup: Binary.Lookup, db: Buffer, options: {cutoff: number}) {
-    const sizes = {
+  sizes(gen: Generation, lookup: Binary.Lookup) {
+    return {
       species: lookup.sizes.species,
-      moves: lookup.sizes.moves,
+      moves: lookup.sizes.moves + (gen.num < 2 ? 0 : 16),
       items: gen.num < 2 ? 0 : lookup.sizes.items + 1,
     };
+  }
 
+  compute(gen: Generation, lookup: Binary.Lookup, db: Buffer, options: {cutoff: number}) {
+    const sizes = this.sizes(gen, lookup);
     const stats: Binary.Statistics = {
       total: {lead: 0, usage: 0},
       species: new Array(sizes.species),
@@ -289,9 +298,8 @@ const Stats = new class {
             stats.species_species[s][t] = (stats.species_species[t][s] += weight);
           }
 
-          // FIXME: Hidden Power handling!
           for (const move of set.moves!) {
-            const m = lookup.moveByID(move as ID);
+            const m = this.moveByID(lookup, move as ID);
             stats.move_species[s][m] = (stats.move_species[s][m] || 0) + weight;
           }
 
@@ -302,8 +310,18 @@ const Stats = new class {
         }
       }
     }
+  }
 
-    return {sizes, lookup, stats};
+  moveByID(lookup: Binary.Lookup, move: ID) {
+    return (move.startsWith('hiddenpower')
+      ? lookup.sizes.moves + HP_TYPE_TO_NUM[move.slice(11) as keyof typeof HP_TYPE_TO_NUM]
+      : lookup.moveByID(move));
+  }
+
+  moveByNum(lookup: Binary.Lookup, num: number) {
+    return (num >= lookup.sizes.moves
+      ? `hiddenpower${NUM_TO_HP_TYPE[num]}` as ID
+      : lookup.moveByNum(num));
   }
 };
 
