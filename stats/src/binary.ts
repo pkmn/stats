@@ -18,37 +18,37 @@ const LE = (() => {
 })();
 
 const Read = new class {
-  u8(buf: Buffer, offset: number) {
+  u8(this: void, buf: Buffer, offset: number) {
     return buf.readUInt8(offset);
   }
 
-  u16(buf: Buffer, offset: number) {
+  u16(this: void, buf: Buffer, offset: number) {
     return LE ? buf.readUInt16LE(offset) : buf.readUInt16BE(offset);
   }
 
-  u32(buf: Buffer, offset: number) {
+  u32(this: void, buf: Buffer, offset: number) {
     return LE ? buf.readUInt32LE(offset) : buf.readUInt32BE(offset);
   }
 
-  u64(buf: Buffer, offset: number) {
+  u64(this: void, buf: Buffer, offset: number) {
     return LE ? buf.readBigInt64LE(offset) : buf.readBigInt64BE(offset);
   }
 };
 
 const Write = new class {
-  u8(buf: Buffer, value: number, offset: number) {
+  u8(this: void, buf: Buffer, value: number, offset: number) {
     return buf.writeUInt8(offset);
   }
 
-  u16(buf: Buffer, value: number, offset: number) {
+  u16(this: void, buf: Buffer, value: number, offset: number) {
     return LE ? buf.writeUInt16LE(value, offset) : buf.writeUInt16BE(value, offset);
   }
 
-  u32(buf: Buffer, value: number, offset: number) {
+  u32(this: void, buf: Buffer, value: number, offset: number) {
     return LE ? buf.writeUInt32LE(value, offset) : buf.writeUInt32BE(value, offset);
   }
 
-  u64(buf: Buffer, value: number, offset: number) {
+  u64(this: void, buf: Buffer, value: number, offset: number) {
     return LE ? buf.writeBigInt64LE(BigInt(value), offset)
       : buf.writeBigInt64BE(BigInt(value), offset);
   }
@@ -143,7 +143,6 @@ const Team = new class {
   }
 };
 
-
 const Log = new class {
   encode(
     gen: Generation,
@@ -228,12 +227,17 @@ const HP_TYPE_TO_NUM = {
 const NUM_TO_HP_TYPE = Object.values(HP_TYPE_TO_NUM);
 
 const Stats = new class {
-  sizes(gen: Generation, lookup: Binary.Lookup) {
-    return {
-      species: lookup.sizes.species,
-      moves: lookup.sizes.moves + (gen.num < 2 ? 0 : 16),
-      items: gen.num < 2 ? 0 : lookup.sizes.items + 1,
-    };
+  sizes(gen: Generation, lookup: Binary.Lookup, options?: {moves?: number; items?: number}) {
+    const species = lookup.sizes.species;
+    const moves = lookup.sizes.moves + (gen.num < 2 ? 0 : 16);
+    const items = gen.num < 2 ? 0 : lookup.sizes.items + 1;
+    const stats = options
+      ? (species * 2) + (species * 2) +
+        (species * options.moves! * 3) +
+        (gen.num >= 2 ? species * options.items! * 3 : 0)
+        // (species * species * 2);
+      : -1;
+    return {species, moves, items, stats};
   }
 
   compute(gen: Generation, lookup: Binary.Lookup, db: Buffer, options: {cutoff: number}) {
@@ -312,6 +316,68 @@ const Stats = new class {
     }
   }
 
+  encode(
+    gen: Generation,
+    lookup: Binary.Lookup,
+    stats: Binary.Statistics,
+    options: {moves: number; items: number},
+  ) {
+    const sizes = this.sizes(gen, lookup);
+    const BY_VAL = (a: [string, number], b: [string, number]) => b[1] - a[1];
+
+    let cursor = 0;
+    const buf = Buffer.alloc(sizes.stats);
+    for (let i = cursor; i < stats.species_lead.length; i++) {
+      Write.u16(buf, round(stats.species_lead[i] / stats.total.lead), i * 2);
+    }
+    cursor += sizes.species * 2;
+
+    // FIXME: want to track only NON lead statistics for other pokemon!
+    for (let i = cursor; i < stats.species.length; i++) {
+      Write.u16(buf, round((stats.species[i] / stats.total.usage) * 6), i * 2);
+    }
+    cursor += sizes.species * 2;
+
+    const n = gen.num < 2 ? 3 : 4;
+    const write = gen.num < 2 ? Write.u8 : Write.u16;
+    for (let i = cursor; i < stats.move_species.length; i++) {
+      const moves = Object.entries(stats.move_species[i]).sort(BY_VAL);
+      for (let j = 0; j < Math.min(moves.length, options.moves); j++) {
+        const [key, weight] = moves[j];
+        const offset = (i * options.moves * n) + (j * n);
+        write(buf, +key, offset);
+        Write.u16(buf, round(weight / stats.species[i]), offset + 1);
+      }
+    }
+    cursor += sizes.species * options.moves * n;
+
+    if (gen.num >= 2) {
+      for (let i = cursor; i < stats.item_species.length; i++) {
+        const items = Object.entries(stats.item_species[i]).sort(BY_VAL);
+        for (let j = 0; j < Math.min(items.length, options.items); j++) {
+          const [key, weight] = items[j];
+          const offset = (i * options.items * 3) + (j * 3);
+          Write.u8(buf, +key, offset);
+          Write.u16(buf, round(weight / stats.species[i]), offset + 1);
+        }
+      }
+      cursor += sizes.species * options.items * 3;
+    }
+
+    for (let i = cursor; i < sizes.species; i++) {
+      for (let j = 0; j < sizes.species; j++) {
+        const offset = (i * sizes.species) + (j * 2);
+        const weight = stats.species[i];
+        const w = stats.species_species[i][j];
+        const usage = (stats.species[j] / stats.total.usage) * 6;
+        Write.u16(buf, round((w - weight * usage) / weight), offset);
+      }
+    }
+    cursor += sizes.species * sizes.species * 2;
+
+    return buf;
+  }
+
   moveByID(lookup: Binary.Lookup, move: ID) {
     return (move.startsWith('hiddenpower')
       ? lookup.sizes.moves + HP_TYPE_TO_NUM[move.slice(11) as keyof typeof HP_TYPE_TO_NUM]
@@ -325,6 +391,64 @@ const Stats = new class {
   }
 };
 
+const Display = new class {
+  pokemon(
+    gen: Generation,
+    lookup: Binary.Lookup,
+    db: Buffer,
+    options: {moves: number; items: number},
+  ) {
+    const sizes = Stats.sizes(gen, lookup, options);
+    if (db.length !== sizes.stats) {
+      throw new Error(`Corrupted stats.db of size ${db.length} (${sizes.stats})`);
+    }
+
+    const pokemon: [ID, Binary.DisplayStatistics[keyof Binary.DisplayStatistics]][] = [];
+    for (let i = 0; i < sizes.species; i++) {
+      let offset = 0;
+      const id = lookup.speciesByNum(i + 1);
+
+      const lead = Read.u16(db, offset + (i * 2)) / 100;
+      offset += sizes.species * 2;
+
+      const nonlead = Read.u16(db, offset + (i * 2)) / 100;
+      offset += sizes.species * 2;
+
+      const usage = nonlead; // TODO: compute based on nonlead and lead!
+
+      const moves: {[id: string]: number} = {};
+      for (let j = 0; j < options.moves; j++) {
+        const off = offset + (i * options.moves * 3) + (j * 3);
+        const move = Read.u8(db, off);
+        if (move === 0) break;
+        moves[Stats.moveByNum(lookup, move)] = Read.u16(db, off + 1) / 100;
+      }
+      offset += sizes.species * options.moves * 3;
+
+      let items: {[id: string]: number} | undefined = undefined;
+      if (gen.num >= 2) {
+        items = {};
+        for (let j = 0; j < options.moves; j++) {
+          const off = offset + (i * options.moves * 3) + (j * 3);
+          const item = Read.u8(db, off);
+          const val = Read.u16(db, off + 1);
+          if (item === 0 && val === 0) break;
+          moves[lookup.itemByNum(item)] = val / 100;
+        }
+        offset += sizes.species * options.items * 3;
+      }
+
+      pokemon.push([id, {usage, lead, moves, items}]);
+    }
+
+    const stats: Binary.DisplayStatistics = {};
+    for (const p of pokemon.sort((a, b) => b[1].usage - a[1].usage)) {
+      stats[p[0]] = p[1];
+    }
+    return stats;
+  }
+};
+
 function round(v: number, p = 1e4) {
   return Math.round(v * p);
 }
@@ -335,7 +459,7 @@ function bias(stats: StatsTable) {
   return first[0] > second[0] ? [first[0], second[0]] : [second[0], first[0]];
 }
 
-export const Binary = {Read, Write, Sizes, Log, Team, Stats};
+export const Binary = {Read, Write, Sizes, Log, Team, Stats, Display};
 
 export namespace Binary {
   export interface Lookup {
@@ -377,5 +501,14 @@ export namespace Binary {
     item_species: {[num: number]: number}[];
     species_species: number[][];
     move_move: number[][];
+  }
+
+  export interface DisplayStatistics {
+    [id: string]: {
+      usage: number;
+      lead: number;
+      moves: {[id: string]: number};
+      items?: {[id: string]: number};
+    };
   }
 }

@@ -9,11 +9,13 @@ try {
 
 const fs = require('fs');
 const minimist = require('minimist');
+const stringify = require('json-stringify-pretty-compact');
 
 const {Generations} = require('@pkmn/data');
 const {Dex} = require('@pkmn/dex');
 const {Lookup} = require('@pkmn/engine');
 const {Binary} = require('@pkmn/stats');
+const {Sizes, Team} = Binary;
 
 const usage = msg => {
   if (msg) console.error(msg);
@@ -31,7 +33,7 @@ const gen = gens.get(argv.gen);
 if (gen.num >= 3) usage(`Unsupported gen ${gen.num}`); // TODO
 const lookup = Lookup.get(gen);
 
-const N = 6 * Binary.Sizes[gen.num];
+const N = 6 * Sizes[gen.num];
 
 switch (cmd) {
 case 'display': {
@@ -43,8 +45,9 @@ case 'display': {
   if (db.length % N !== 0) usage(`Corrupted teams.db of size ${db.length} (${N})`);
 
   for (let i = 0; i < db.length; i += N) {
-    console.log(JSON.stringify(Binary.decodeTeam(gen, lookup, db, i)));
+    console.log(stringify(Team.decode(gen, lookup, db, i)));
   }
+
   break;
 }
 case 'compute': {
@@ -52,30 +55,27 @@ case 'compute': {
     usage(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
   }
 
-  const db = fs.readFileSync(argv.logs);
+  const N = 6 * Sizes[gen.num];
   const row = 17 + 2 * N;
-  if (db.length % row !== 0) usage(`Corrupted logs.db of size ${db.length} (${row})`);
+  if (db.length % row !== 0) {
+    throw new Error(`Corrupted logs.db of size ${db.length} (${row})`);
+  }
 
-  const TEAMS = {};
+  const teams = {};
   for (let offset = 0; offset < db.length; offset += row) {
-    const data = Binary.deserializeLog(gen, lookup, db, offset);
+    const data = Log.decode(gen, lookup, db, offset);
     for (const player of [data.winner, data.loser]) {
       const rating = player.rating ? player.rating.rpr - player.rating.rprd : 0;
       // TODO: in gen 3+ we must use computed stats for dedupe key!
       const team = gen.num === 1
         ? player.team.map(s => `${s.species}|${s.moves.join(',')}`).join(']')
         : player.team.map(s => `${s.species}|${s.item || ''}|${s.moves.join(',')}`).join(']');
-      TEAMS[team] = Math.max(TEAMS[team] || 0, rating);
+      teams[team] = Math.max(teams[team] || 0, rating);
     }
   }
 
-  const sorted = Object.entries(TEAMS).sort((a, b) => b[1] - a[1]);
-  if (sorted.length < argv.num) {
-    console.error(`Requested ${argv.num} teams but only ${sorted.length} unique teams`);
-    process.exit(1);
-  }
-
-  for (let i = 0; i < argv.num; i++) {
+  const sorted = Object.entries(teams).sort((a, b) => b[1] - a[1]);
+  for (let i = 0; i < Math.max(sorted.length, argv.num); i++) {
     const team = [];
     for (const s of sorted[i][0].split(']')) {
       const set = {};
@@ -91,10 +91,17 @@ case 'compute': {
       }
       team.push(set);
     }
+
     const buf = Buffer.alloc(N);
-    Binary.encodeTeam(gen, lookup, team, buf);
+    Team.encode(gen, lookup, team, buf);
     process.stdout.write(buf);
   }
+
+  if (argv.num > sorted.length) {
+    console.error(`Requested ${argv.num} teams but only ${sorted.length} unique teams`);
+    process.exit(1);
+  }
+
   break;
 }
 default: usage(`Unknown command: ${cmd}`);
