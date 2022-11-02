@@ -24,6 +24,14 @@
  | Self-Destruct 31.570%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
+ | Clefable 68.430%                       | 
+ | Jolteon 68.430%                        | 
+ | Nidoqueen 68.430%                      | 
+ | Alakazam 31.570%                       | 
+ | Dragonite 31.570%                      | 
+ | Exeggutor 31.570%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Tauros 100.000 (100.00±0.00)           |
@@ -59,6 +67,14 @@
  | Ice Beam 31.570%                       | 
  +----------------------------------------+ 
  | Teammates                              | 
+ | Snorlax 100.000%                       | 
+ | Tauros 100.000%                        | 
+ | Clefable 68.430%                       | 
+ | Jolteon 68.430%                        | 
+ | Nidoqueen 68.430%                      | 
+ | Alakazam 31.570%                       | 
+ | Dragonite 31.570%                      | 
+ | Exeggutor 31.570%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Alakazam 100.000 (100.00±0.00)         |
@@ -95,6 +111,14 @@
  | Hyper Beam 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Clefable 68.430%                       | 
+ | Jolteon 68.430%                        | 
+ | Nidoqueen 68.430%                      | 
+ | Alakazam 31.570%                       | 
+ | Dragonite 31.570%                      | 
+ | Exeggutor 31.570%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Alakazam 100.000 (100.00±0.00)         |
@@ -133,8 +157,11 @@
  | Thunder Wave 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Jolteon +31.570%                       | 
- | Nidoqueen +31.570%                     | 
+ | Jolteon 100.000%                       | 
+ | Nidoqueen 100.000%                     | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Snorlax 100.000 (100.00±0.00)          |
@@ -165,8 +192,11 @@
  | Thunderbolt 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Clefable +31.570%                      | 
- | Nidoqueen +31.570%                     | 
+ | Clefable 100.000%                      | 
+ | Nidoqueen 100.000%                     | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Snorlax  0.000 (0.00±0.00)             |
@@ -195,8 +225,11 @@
  | Thunderbolt 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Clefable +31.570%                      | 
- | Jolteon +31.570%                       | 
+ | Clefable 100.000%                      | 
+ | Jolteon 100.000%                       | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Starmie 100.000 (100.00±0.00)          |
@@ -225,8 +258,11 @@
  | Thunder Wave 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Dragonite +68.430%                     | 
- | Exeggutor +68.430%                     | 
+ | Dragonite 100.000%                     | 
+ | Exeggutor 100.000%                     | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Clefable 100.000 (100.00±0.00)         |
@@ -259,8 +295,11 @@
  | Wrap 100.000%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Alakazam +68.430%                      | 
- | Exeggutor +68.430%                     | 
+ | Alakazam 100.000%                      | 
+ | Exeggutor 100.000%                     | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Tauros 100.000 (100.00±0.00)           |
@@ -289,8 +328,11 @@
  | Stun Spore 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Alakazam +68.430%                      | 
- | Dragonite +68.430%                     | 
+ | Alakazam 100.000%                      | 
+ | Dragonite 100.000%                     | 
+ | Snorlax 100.000%                       | 
+ | Starmie 100.000%                       | 
+ | Tauros 100.000%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Tauros  0.000 (0.00±0.00)              |

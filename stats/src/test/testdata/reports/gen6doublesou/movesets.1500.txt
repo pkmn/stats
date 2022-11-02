@@ -21,11 +21,10 @@
  | Shadow Sneak 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Charizard-Mega-Y +62.812%              | 
- | Keldeo +62.812%                        | 
- | Kyurem-Black +62.812%                  | 
- | Rhyperior +62.812%                     | 
- | Shaymin +62.812%                       | 
+ | Charizard-Mega-Y 125.625%              | 
+ | Keldeo 125.625%                        | 
+ | Kyurem-Black 125.625%                  | 
+ | Rhyperior 125.625%                     | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Amoonguss  0.000 (0.00±0.00)           |
@@ -56,11 +55,10 @@
  | Solar Beam 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +62.812%                     | 
- | Keldeo +62.812%                        | 
- | Kyurem-Black +62.812%                  | 
- | Rhyperior +62.812%                     | 
- | Shaymin +62.812%                       | 
+ | Aegislash 125.625%                     | 
+ | Keldeo 125.625%                        | 
+ | Kyurem-Black 125.625%                  | 
+ | Rhyperior 125.625%                     | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Camerupt-Mega  0.000 (0.00±0.00)       |
@@ -91,11 +89,10 @@
  | Secret Sword 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +62.812%                     | 
- | Charizard-Mega-Y +62.812%              | 
- | Kyurem-Black +62.812%                  | 
- | Rhyperior +62.812%                     | 
- | Shaymin +62.812%                       | 
+ | Aegislash 125.625%                     | 
+ | Charizard-Mega-Y 125.625%              | 
+ | Kyurem-Black 125.625%                  | 
+ | Rhyperior 125.625%                     | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -122,11 +119,10 @@
  | Ice Beam 100.000%                      | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +62.812%                     | 
- | Charizard-Mega-Y +62.812%              | 
- | Keldeo +62.812%                        | 
- | Rhyperior +62.812%                     | 
- | Shaymin +62.812%                       | 
+ | Aegislash 125.625%                     | 
+ | Charizard-Mega-Y 125.625%              | 
+ | Keldeo 125.625%                        | 
+ | Rhyperior 125.625%                     | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Scrafty  0.000 (0.00±0.00)             |
@@ -155,11 +151,10 @@
  | Rock Slide 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +62.812%                     | 
- | Charizard-Mega-Y +62.812%              | 
- | Keldeo +62.812%                        | 
- | Kyurem-Black +62.812%                  | 
- | Shaymin +62.812%                       | 
+ | Aegislash 125.625%                     | 
+ | Charizard-Mega-Y 125.625%              | 
+ | Keldeo 125.625%                        | 
+ | Kyurem-Black 125.625%                  | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Scrafty 100.000 (100.00±0.00)          |
@@ -190,11 +185,10 @@
  | Giga Drain 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +62.812%                     | 
- | Charizard-Mega-Y +62.812%              | 
- | Keldeo +62.812%                        | 
- | Kyurem-Black +62.812%                  | 
- | Rhyperior +62.812%                     | 
+ | Aegislash 125.625%                     | 
+ | Charizard-Mega-Y 125.625%              | 
+ | Keldeo 125.625%                        | 
+ | Kyurem-Black 125.625%                  | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -221,11 +215,11 @@
  | Spore 100.000%                         | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Camerupt-Mega +37.188%                 | 
- | Cresselia +37.188%                     | 
- | Diancie +37.188%                       | 
- | Rotom-Wash +37.188%                    | 
- | Scrafty +37.188%                       | 
+ | Camerupt-Mega 74.375%                  | 
+ | Cresselia 74.375%                      | 
+ | Diancie 74.375%                        | 
+ | Rotom-Wash 74.375%                     | 
+ | Scrafty 74.375%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Aegislash 100.000 (100.00±0.00)        |
@@ -254,11 +248,11 @@
  | Protect 100.000%                       | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +37.188%                     | 
- | Cresselia +37.188%                     | 
- | Diancie +37.188%                       | 
- | Rotom-Wash +37.188%                    | 
- | Scrafty +37.188%                       | 
+ | Amoonguss 74.375%                      | 
+ | Cresselia 74.375%                      | 
+ | Diancie 74.375%                        | 
+ | Rotom-Wash 74.375%                     | 
+ | Scrafty 74.375%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Charizard-Mega-Y 100.000 (100.00±0.00) |
@@ -287,11 +281,11 @@
  | Trick Room 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +37.188%                     | 
- | Camerupt-Mega +37.188%                 | 
- | Diancie +37.188%                       | 
- | Rotom-Wash +37.188%                    | 
- | Scrafty +37.188%                       | 
+ | Amoonguss 74.375%                      | 
+ | Camerupt-Mega 74.375%                  | 
+ | Diancie 74.375%                        | 
+ | Rotom-Wash 74.375%                     | 
+ | Scrafty 74.375%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Aegislash  0.000 (0.00±0.00)           |
@@ -320,11 +314,11 @@
  | Trick Room 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +37.188%                     | 
- | Camerupt-Mega +37.188%                 | 
- | Cresselia +37.188%                     | 
- | Rotom-Wash +37.188%                    | 
- | Scrafty +37.188%                       | 
+ | Amoonguss 74.375%                      | 
+ | Camerupt-Mega 74.375%                  | 
+ | Cresselia 74.375%                      | 
+ | Rotom-Wash 74.375%                     | 
+ | Scrafty 74.375%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Rhyperior 100.000 (100.00±0.00)        |
@@ -353,11 +347,11 @@
  | Volt Switch 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +37.188%                     | 
- | Camerupt-Mega +37.188%                 | 
- | Cresselia +37.188%                     | 
- | Diancie +37.188%                       | 
- | Scrafty +37.188%                       | 
+ | Amoonguss 74.375%                      | 
+ | Camerupt-Mega 74.375%                  | 
+ | Cresselia 74.375%                      | 
+ | Diancie 74.375%                        | 
+ | Scrafty 74.375%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Charizard-Mega-Y  0.000 (0.00±0.00)    |
@@ -386,11 +380,11 @@
  | Poison Jab 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +37.188%                     | 
- | Camerupt-Mega +37.188%                 | 
- | Cresselia +37.188%                     | 
- | Diancie +37.188%                       | 
- | Rotom-Wash +37.188%                    | 
+ | Amoonguss 74.375%                      | 
+ | Camerupt-Mega 74.375%                  | 
+ | Cresselia 74.375%                      | 
+ | Diancie 74.375%                        | 
+ | Rotom-Wash 74.375%                     | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Kyurem-Black  0.000 (0.00±0.00)        |

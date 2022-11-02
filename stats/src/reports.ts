@@ -241,13 +241,12 @@ export const Reports = new class {
       total = 0;
       s += heading('Teammates');
       for (const [i, teammate] of Object.keys(moveset['Teammates']).entries()) {
-        if (total > 0.95 || i > 11) break;
+        if (total > 0.95 || i > 10) break;
         const w = moveset['Teammates'][teammate];
         if (w < 0.005 * p.raw.weight) break;
         const weight = w / p.raw.weight;
         const val = 100 * weight;
-        const sign = Math.sign(val) ? '+' : '-';
-        s += ` | ${teammate} ${sign}${val.toFixed(3).padStart(5)}%`.padEnd(WIDTH + 2) + '| \n';
+        s += ` | ${teammate} ${val.toFixed(3).padStart(5)}%`.padEnd(WIDTH + 2) + '| \n';
         total += weight / 5;
       }
       s += sep;
@@ -685,7 +684,8 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
         const o = gen.moves.get(move);
         return (o?.name) ?? move;
       }),
-      Teammates: getTeammates(gen, format, pokemon.teammates, pokemon.raw.weight, total, stats),
+      // Teammates: getTeammates(gen, format, pokemon.teammates, pokemon.raw.weight, total, stats),
+      Teammates: getTeammates(gen, pokemon.teammates, stats),
       'Checks and Counters': util.getChecksAndCounters(
         pokemon.encounters,
         [s => util.displaySpecies(gen, s, legacy), es => es],
@@ -697,15 +697,13 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
   return movesets;
 }
 
+// NOTE: https://www.smogon.com/forums/threads/gen-8-smogon-university-usage-statistics-discussion-thread.3657197/post-8841061
 function getTeammates(
   gen: Generation,
-  format: ID,
   teammates: { [id: string /* ID */]: number },
-  weight: number,
-  total: number,
   stats: Statistics
 ): { [key: string]: number } {
-  const real = ['challengecup1v1', '1v1'].includes(format);
+  // const real = ['challengecup1v1', '1v1'].includes(format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
     const species = util.displaySpecies(gen, id, legacy);
@@ -714,8 +712,9 @@ function getTeammates(
       m[species] = 0;
       continue;
     }
-    const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
-    m[species] = w - round(weight) * round(usage, 1e7);
+    // const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
+    // m[species] = w - round(weight) * round(usage, 1e7);
+    m[species] = w;
   }
   return util.toDisplayObject(m);
 }

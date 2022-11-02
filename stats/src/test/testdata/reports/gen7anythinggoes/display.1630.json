@@ -14,11 +14,11 @@
       "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
-        "Greninja-Ash": 0.999,
-        "Meloetta": 0.999,
-        "Rayquaza-Mega": 0.999,
-        "Shedinja": 0.999,
-        "Zoroark": 0.999
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -40,11 +40,11 @@
         "Water Shuriken": 1
       },
       "teammates": {
-        "Ditto": 0.999,
-        "Meloetta": 0.999,
-        "Rayquaza-Mega": 0.999,
-        "Shedinja": 0.999,
-        "Zoroark": 0.999
+        "Ditto": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -66,11 +66,11 @@
         "Signal Beam": 1
       },
       "teammates": {
-        "Ditto": 0.999,
-        "Greninja-Ash": 0.999,
-        "Rayquaza-Mega": 0.999,
-        "Shedinja": 0.999,
-        "Zoroark": 0.999
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -92,11 +92,11 @@
         "Roar": 1
       },
       "teammates": {
-        "Ditto": 0.999,
-        "Greninja-Ash": 0.999,
-        "Meloetta": 0.999,
-        "Shedinja": 0.999,
-        "Zoroark": 0.999
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -118,11 +118,11 @@
         "Swords Dance": 1
       },
       "teammates": {
-        "Ditto": 0.999,
-        "Greninja-Ash": 0.999,
-        "Meloetta": 0.999,
-        "Rayquaza-Mega": 0.999,
-        "Zoroark": 0.999
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -139,11 +139,11 @@
       "stats": {"261/309/156/248/157/339": 1},
       "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
       "teammates": {
-        "Ditto": 0.999,
-        "Greninja-Ash": 0.999,
-        "Meloetta": 0.999,
-        "Rayquaza-Mega": 0.999,
-        "Shedinja": 0.999
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1
       },
       "counters": {}
     }

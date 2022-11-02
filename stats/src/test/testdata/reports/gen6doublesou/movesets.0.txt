@@ -21,11 +21,11 @@
  | Shadow Sneak 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Charizard-Mega-Y +50.000%              | 
- | Keldeo +50.000%                        | 
- | Kyurem-Black +50.000%                  | 
- | Rhyperior +50.000%                     | 
- | Shaymin +50.000%                       | 
+ | Charizard-Mega-Y 100.000%              | 
+ | Keldeo 100.000%                        | 
+ | Kyurem-Black 100.000%                  | 
+ | Rhyperior 100.000%                     | 
+ | Shaymin 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Amoonguss  0.000 (0.00±0.00)           |
@@ -56,11 +56,11 @@
  | Spore 100.000%                         | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Camerupt-Mega +50.000%                 | 
- | Cresselia +50.000%                     | 
- | Diancie +50.000%                       | 
- | Rotom-Wash +50.000%                    | 
- | Scrafty +50.000%                       | 
+ | Camerupt-Mega 100.000%                 | 
+ | Cresselia 100.000%                     | 
+ | Diancie 100.000%                       | 
+ | Rotom-Wash 100.000%                    | 
+ | Scrafty 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Aegislash 100.000 (100.00±0.00)        |
@@ -89,11 +89,11 @@
  | Protect 100.000%                       | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +50.000%                     | 
- | Cresselia +50.000%                     | 
- | Diancie +50.000%                       | 
- | Rotom-Wash +50.000%                    | 
- | Scrafty +50.000%                       | 
+ | Amoonguss 100.000%                     | 
+ | Cresselia 100.000%                     | 
+ | Diancie 100.000%                       | 
+ | Rotom-Wash 100.000%                    | 
+ | Scrafty 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Charizard-Mega-Y 100.000 (100.00±0.00) |
@@ -122,11 +122,11 @@
  | Solar Beam 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +50.000%                     | 
- | Keldeo +50.000%                        | 
- | Kyurem-Black +50.000%                  | 
- | Rhyperior +50.000%                     | 
- | Shaymin +50.000%                       | 
+ | Aegislash 100.000%                     | 
+ | Keldeo 100.000%                        | 
+ | Kyurem-Black 100.000%                  | 
+ | Rhyperior 100.000%                     | 
+ | Shaymin 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Camerupt-Mega  0.000 (0.00±0.00)       |
@@ -157,11 +157,11 @@
  | Trick Room 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +50.000%                     | 
- | Camerupt-Mega +50.000%                 | 
- | Diancie +50.000%                       | 
- | Rotom-Wash +50.000%                    | 
- | Scrafty +50.000%                       | 
+ | Amoonguss 100.000%                     | 
+ | Camerupt-Mega 100.000%                 | 
+ | Diancie 100.000%                       | 
+ | Rotom-Wash 100.000%                    | 
+ | Scrafty 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Aegislash  0.000 (0.00±0.00)           |
@@ -190,11 +190,11 @@
  | Trick Room 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +50.000%                     | 
- | Camerupt-Mega +50.000%                 | 
- | Cresselia +50.000%                     | 
- | Rotom-Wash +50.000%                    | 
- | Scrafty +50.000%                       | 
+ | Amoonguss 100.000%                     | 
+ | Camerupt-Mega 100.000%                 | 
+ | Cresselia 100.000%                     | 
+ | Rotom-Wash 100.000%                    | 
+ | Scrafty 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Rhyperior 100.000 (100.00±0.00)        |
@@ -223,11 +223,11 @@
  | Secret Sword 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +50.000%                     | 
- | Charizard-Mega-Y +50.000%              | 
- | Kyurem-Black +50.000%                  | 
- | Rhyperior +50.000%                     | 
- | Shaymin +50.000%                       | 
+ | Aegislash 100.000%                     | 
+ | Charizard-Mega-Y 100.000%              | 
+ | Kyurem-Black 100.000%                  | 
+ | Rhyperior 100.000%                     | 
+ | Shaymin 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -254,11 +254,11 @@
  | Ice Beam 100.000%                      | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +50.000%                     | 
- | Charizard-Mega-Y +50.000%              | 
- | Keldeo +50.000%                        | 
- | Rhyperior +50.000%                     | 
- | Shaymin +50.000%                       | 
+ | Aegislash 100.000%                     | 
+ | Charizard-Mega-Y 100.000%              | 
+ | Keldeo 100.000%                        | 
+ | Rhyperior 100.000%                     | 
+ | Shaymin 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Scrafty  0.000 (0.00±0.00)             |
@@ -287,11 +287,11 @@
  | Rock Slide 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +50.000%                     | 
- | Charizard-Mega-Y +50.000%              | 
- | Keldeo +50.000%                        | 
- | Kyurem-Black +50.000%                  | 
- | Shaymin +50.000%                       | 
+ | Aegislash 100.000%                     | 
+ | Charizard-Mega-Y 100.000%              | 
+ | Keldeo 100.000%                        | 
+ | Kyurem-Black 100.000%                  | 
+ | Shaymin 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Scrafty 100.000 (100.00±0.00)          |
@@ -322,11 +322,11 @@
  | Volt Switch 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +50.000%                     | 
- | Camerupt-Mega +50.000%                 | 
- | Cresselia +50.000%                     | 
- | Diancie +50.000%                       | 
- | Scrafty +50.000%                       | 
+ | Amoonguss 100.000%                     | 
+ | Camerupt-Mega 100.000%                 | 
+ | Cresselia 100.000%                     | 
+ | Diancie 100.000%                       | 
+ | Scrafty 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Charizard-Mega-Y  0.000 (0.00±0.00)    |
@@ -355,11 +355,11 @@
  | Poison Jab 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Amoonguss +50.000%                     | 
- | Camerupt-Mega +50.000%                 | 
- | Cresselia +50.000%                     | 
- | Diancie +50.000%                       | 
- | Rotom-Wash +50.000%                    | 
+ | Amoonguss 100.000%                     | 
+ | Camerupt-Mega 100.000%                 | 
+ | Cresselia 100.000%                     | 
+ | Diancie 100.000%                       | 
+ | Rotom-Wash 100.000%                    | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Kyurem-Black  0.000 (0.00±0.00)        |
@@ -390,11 +390,11 @@
  | Giga Drain 100.000%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +50.000%                     | 
- | Charizard-Mega-Y +50.000%              | 
- | Keldeo +50.000%                        | 
- | Kyurem-Black +50.000%                  | 
- | Rhyperior +50.000%                     | 
+ | Aegislash 100.000%                     | 
+ | Charizard-Mega-Y 100.000%              | 
+ | Keldeo 100.000%                        | 
+ | Kyurem-Black 100.000%                  | 
+ | Rhyperior 100.000%                     | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 

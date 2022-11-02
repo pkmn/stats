@@ -21,11 +21,11 @@
  | U-turn 100.000%                        | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Dugtrio +13.738%                       | 
- | Gastrodon +13.738%                     | 
- | Mimikyu +13.738%                       | 
- | Shaymin-Sky +13.738%                   | 
- | Zygarde +13.738%                       | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Rayquaza-Mega 100.000 (100.00±0.00)    |
@@ -54,11 +54,11 @@
  | Sucker Punch 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +13.738%                    | 
- | Gastrodon +13.738%                     | 
- | Mimikyu +13.738%                       | 
- | Shaymin-Sky +13.738%                   | 
- | Zygarde +13.738%                       | 
+ | Darmanitan 100.000%                    | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Greninja-Ash 100.000 (100.00±0.00)     |
@@ -87,11 +87,11 @@
  | Surf 100.000%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +13.738%                    | 
- | Dugtrio +13.738%                       | 
- | Mimikyu +13.738%                       | 
- | Shaymin-Sky +13.738%                   | 
- | Zygarde +13.738%                       | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Ditto 100.000 (100.00±0.00)            |
@@ -122,11 +122,11 @@
  | Swords Dance 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +13.738%                    | 
- | Dugtrio +13.738%                       | 
- | Gastrodon +13.738%                     | 
- | Shaymin-Sky +13.738%                   | 
- | Zygarde +13.738%                       | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Ditto 100.000 (100.00±0.00)            |
@@ -157,11 +157,11 @@
  | Hidden Power Electric 100.000%         | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +13.738%                    | 
- | Dugtrio +13.738%                       | 
- | Gastrodon +13.738%                     | 
- | Mimikyu +13.738%                       | 
- | Zygarde +13.738%                       | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Ditto 100.000 (100.00±0.00)            |
@@ -192,11 +192,11 @@
  | Thousand Arrows 100.000%               | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +13.738%                    | 
- | Dugtrio +13.738%                       | 
- | Gastrodon +13.738%                     | 
- | Mimikyu +13.738%                       | 
- | Shaymin-Sky +13.738%                   | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Ditto 100.000 (100.00±0.00)            |
@@ -225,11 +225,11 @@
  | Transform 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja-Ash +86.262%                  | 
- | Meloetta +86.262%                      | 
- | Rayquaza-Mega +86.262%                 | 
- | Shedinja +86.262%                      | 
- | Zoroark +86.262%                       | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Gastrodon  0.000 (0.00±0.00)           |
@@ -264,11 +264,11 @@
  | Water Shuriken 100.000%                | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +86.262%                         | 
- | Meloetta +86.262%                      | 
- | Rayquaza-Mega +86.262%                 | 
- | Shedinja +86.262%                      | 
- | Zoroark +86.262%                       | 
+ | Ditto 100.000%                         | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Mimikyu 100.000 (100.00±0.00)          |
@@ -305,11 +305,11 @@
  | Signal Beam 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +86.262%                         | 
- | Greninja-Ash +86.262%                  | 
- | Rayquaza-Mega +86.262%                 | 
- | Shedinja +86.262%                      | 
- | Zoroark +86.262%                       | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -336,11 +336,11 @@
  | Roar 100.000%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +86.262%                         | 
- | Greninja-Ash +86.262%                  | 
- | Meloetta +86.262%                      | 
- | Shedinja +86.262%                      | 
- | Zoroark +86.262%                       | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan  0.000 (0.00±0.00)          |
@@ -369,11 +369,11 @@
  | Swords Dance 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +86.262%                         | 
- | Greninja-Ash +86.262%                  | 
- | Meloetta +86.262%                      | 
- | Rayquaza-Mega +86.262%                 | 
- | Zoroark +86.262%                       | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -400,11 +400,11 @@
  | U-turn 100.000%                        | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +86.262%                         | 
- | Greninja-Ash +86.262%                  | 
- | Meloetta +86.262%                      | 
- | Rayquaza-Mega +86.262%                 | 
- | Shedinja +86.262%                      | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 

@@ -21,7 +21,16 @@
         "Rest": 0.5,
         "Self-Destruct": 0.5
       },
-      "teammates": {},
+      "teammates": {
+        "Starmie": 1,
+        "Tauros": 1,
+        "Alakazam": 0.5,
+        "Clefable": 0.5,
+        "Dragonite": 0.5,
+        "Exeggutor": 0.5,
+        "Jolteon": 0.5,
+        "Nidoqueen": 0.5
+      },
       "counters": {
         "Tauros": [1, 1, 0],
         "Clefable": [1, 0, 0],
@@ -47,7 +56,16 @@
         "Blizzard": 0.5,
         "Ice Beam": 0.5
       },
-      "teammates": {},
+      "teammates": {
+        "Snorlax": 1,
+        "Tauros": 1,
+        "Alakazam": 0.5,
+        "Clefable": 0.5,
+        "Dragonite": 0.5,
+        "Exeggutor": 0.5,
+        "Jolteon": 0.5,
+        "Nidoqueen": 0.5
+      },
       "counters": {
         "Alakazam": [2, 0, 1],
         "Snorlax": [1, 0, 1],
@@ -73,7 +91,16 @@
         "Earthquake": 1,
         "Hyper Beam": 1
       },
-      "teammates": {},
+      "teammates": {
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Alakazam": 0.5,
+        "Clefable": 0.5,
+        "Dragonite": 0.5,
+        "Exeggutor": 0.5,
+        "Jolteon": 0.5,
+        "Nidoqueen": 0.5
+      },
       "counters": {
         "Alakazam": [1, 0, 1],
         "Dragonite": [1, 0, 0],
@@ -100,7 +127,13 @@
         "Seismic Toss": 1,
         "Thunder Wave": 1
       },
-      "teammates": {"Dragonite": 0.5, "Exeggutor": 0.5},
+      "teammates": {
+        "Dragonite": 1,
+        "Exeggutor": 1,
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Tauros": 1
+      },
       "counters": {
         "Clefable": [1, 0, 1],
         "Starmie": [2, 0, 0],
@@ -124,7 +157,13 @@
         "Hyper Beam": 1,
         "Thunder Wave": 1
       },
-      "teammates": {"Jolteon": 0.5, "Nidoqueen": 0.5},
+      "teammates": {
+        "Jolteon": 1,
+        "Nidoqueen": 1,
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Tauros": 1
+      },
       "counters": {"Snorlax": [1, 1, 0], "Alakazam": [1, 0, 0]}
     },
     "Dragonite": {
@@ -139,7 +178,13 @@
       "items": {"Nothing": 1},
       "stats": {"385/366/288/298/298/258": 1},
       "moves": {"Agility": 1, "Hyper Beam": 1, "Surf": 1, "Wrap": 1},
-      "teammates": {"Alakazam": 0.5, "Exeggutor": 0.5},
+      "teammates": {
+        "Alakazam": 1,
+        "Exeggutor": 1,
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Tauros": 1
+      },
       "counters": {"Tauros": [1, 1, 0]}
     },
     "Exeggutor": {
@@ -159,7 +204,13 @@
         "Sleep Powder": 1,
         "Stun Spore": 1
       },
-      "teammates": {"Alakazam": 0.5, "Dragonite": 0.5},
+      "teammates": {
+        "Alakazam": 1,
+        "Dragonite": 1,
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Tauros": 1
+      },
       "counters": {"Tauros": [1, 0, 0]}
     },
     "Jolteon": {
@@ -179,7 +230,13 @@
         "Thunder Wave": 1,
         "Thunderbolt": 1
       },
-      "teammates": {"Clefable": 0.5, "Nidoqueen": 0.5},
+      "teammates": {
+        "Clefable": 1,
+        "Nidoqueen": 1,
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Tauros": 1
+      },
       "counters": {"Snorlax": [1, 0, 0]}
     },
     "Nidoqueen": {
@@ -199,7 +256,13 @@
         "Earthquake": 1,
         "Thunderbolt": 1
       },
-      "teammates": {"Clefable": 0.5, "Jolteon": 0.5},
+      "teammates": {
+        "Clefable": 1,
+        "Jolteon": 1,
+        "Snorlax": 1,
+        "Starmie": 1,
+        "Tauros": 1
+      },
       "counters": {"Starmie": [1, 1, 0]}
     }
   },

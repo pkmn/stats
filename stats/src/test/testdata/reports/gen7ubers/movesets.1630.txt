@@ -24,14 +24,14 @@
  | Energy Ball 34.659%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Rayquaza +58.092%                      | 
- | Zoroark +58.092%                       | 
- | Ditto +37.957%                         | 
- | Greninja-Ash +37.957%                  | 
- | Shedinja +37.957%                      | 
- | Greninja +20.135%                      | 
- | Lycanroc-Dusk +20.135%                 | 
- | NidoranM +20.135%                      | 
+ | Rayquaza 99.994%                       | 
+ | Zoroark 99.994%                        | 
+ | Ditto 65.335%                          | 
+ | Greninja-Ash 65.335%                   | 
+ | Shedinja 65.335%                       | 
+ | Greninja 34.659%                       | 
+ | Lycanroc-Dusk 34.659%                  | 
+ | NidoranM 34.659%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan 100.000 (100.00±0.00)       |
@@ -69,14 +69,14 @@
  | Draco Meteor 34.659%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Meloetta +58.092%                      | 
- | Zoroark +58.092%                       | 
- | Ditto +37.957%                         | 
- | Greninja-Ash +37.957%                  | 
- | Shedinja +37.957%                      | 
- | Greninja +20.135%                      | 
- | Lycanroc-Dusk +20.135%                 | 
- | NidoranM +20.135%                      | 
+ | Meloetta 99.994%                       | 
+ | Zoroark 99.994%                        | 
+ | Ditto 65.335%                          | 
+ | Greninja-Ash 65.335%                   | 
+ | Shedinja 65.335%                       | 
+ | Greninja 34.659%                       | 
+ | Lycanroc-Dusk 34.659%                  | 
+ | NidoranM 34.659%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Gastrodon  0.000 (0.00±0.00)           |
@@ -114,14 +114,14 @@
  | Sludge Bomb 34.659%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Meloetta +58.092%                      | 
- | Rayquaza +58.092%                      | 
- | Ditto +37.957%                         | 
- | Greninja-Ash +37.957%                  | 
- | Shedinja +37.957%                      | 
- | Greninja +20.135%                      | 
- | Lycanroc-Dusk +20.135%                 | 
- | NidoranM +20.135%                      | 
+ | Meloetta 99.994%                       | 
+ | Rayquaza 99.994%                       | 
+ | Ditto 65.335%                          | 
+ | Greninja-Ash 65.335%                   | 
+ | Shedinja 65.335%                       | 
+ | Greninja 34.659%                       | 
+ | Lycanroc-Dusk 34.659%                  | 
+ | NidoranM 34.659%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan  0.000 (0.00±0.00)          |
@@ -158,11 +158,11 @@
  | Flare Blitz 49.996%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Dugtrio +70.950%                       | 
- | Gastrodon +70.950%                     | 
- | Mimikyu +70.950%                       | 
- | Shaymin-Sky +70.950%                   | 
- | Zygarde +70.950%                       | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Ditto 100.000 (100.00±0.00)            |
@@ -211,11 +211,11 @@
  | Night Slash 49.996%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +70.950%                    | 
- | Gastrodon +70.950%                     | 
- | Mimikyu +70.950%                       | 
- | Shaymin-Sky +70.950%                   | 
- | Zygarde +70.950%                       | 
+ | Darmanitan 100.000%                    | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Greninja 100.000 (100.00±0.00)         |
@@ -251,11 +251,11 @@
  | Earth Power 49.996%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +70.950%                    | 
- | Dugtrio +70.950%                       | 
- | Mimikyu +70.950%                       | 
- | Shaymin-Sky +70.950%                   | 
- | Zygarde +70.950%                       | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Greninja 100.000 (100.00±0.00)         |
@@ -296,11 +296,11 @@
  | Shadow Claw 49.996%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +70.950%                    | 
- | Dugtrio +70.950%                       | 
- | Gastrodon +70.950%                     | 
- | Shaymin-Sky +70.950%                   | 
- | Zygarde +70.950%                       | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Shaymin-Sky 100.000%                   | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Greninja 100.000 (100.00±0.00)         |
@@ -340,11 +340,11 @@
  | Energy Ball 49.996%                    | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +70.950%                    | 
- | Dugtrio +70.950%                       | 
- | Gastrodon +70.950%                     | 
- | Mimikyu +70.950%                       | 
- | Zygarde +70.950%                       | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Ditto 100.000 (100.00±0.00)            |
@@ -380,11 +380,11 @@
  | Stone Edge 49.996%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Darmanitan +70.950%                    | 
- | Dugtrio +70.950%                       | 
- | Gastrodon +70.950%                     | 
- | Mimikyu +70.950%                       | 
- | Shaymin-Sky +70.950%                   | 
+ | Darmanitan 100.000%                    | 
+ | Dugtrio 100.000%                       | 
+ | Gastrodon 100.000%                     | 
+ | Mimikyu 100.000%                       | 
+ | Shaymin-Sky 100.000%                   | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Meloetta 100.000 (100.00±0.00)         |
@@ -423,10 +423,10 @@
  | Shadow Sneak 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Genesect +70.952%                      | 
- | Magnezone +70.952%                     | 
- | Metagross-Mega +70.952%                | 
- | Necrozma-Dusk-Mane +70.952%            | 
+ | Genesect 100.000%                      | 
+ | Magnezone 100.000%                     | 
+ | Metagross-Mega 100.000%                | 
+ | Necrozma-Dusk-Mane 100.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -453,10 +453,10 @@
  | Ice Beam 100.000%                      | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +70.952%                     | 
- | Magnezone +70.952%                     | 
- | Metagross-Mega +70.952%                | 
- | Necrozma-Dusk-Mane +70.952%            | 
+ | Aegislash 100.000%                     | 
+ | Magnezone 100.000%                     | 
+ | Metagross-Mega 100.000%                | 
+ | Necrozma-Dusk-Mane 100.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -483,10 +483,10 @@
  | Volt Switch 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +70.952%                     | 
- | Genesect +70.952%                      | 
- | Metagross-Mega +70.952%                | 
- | Necrozma-Dusk-Mane +70.952%            | 
+ | Aegislash 100.000%                     | 
+ | Genesect 100.000%                      | 
+ | Metagross-Mega 100.000%                | 
+ | Necrozma-Dusk-Mane 100.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -512,10 +512,10 @@
  | Explosion 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +70.952%                     | 
- | Genesect +70.952%                      | 
- | Magnezone +70.952%                     | 
- | Necrozma-Dusk-Mane +70.952%            | 
+ | Aegislash 100.000%                     | 
+ | Genesect 100.000%                      | 
+ | Magnezone 100.000%                     | 
+ | Necrozma-Dusk-Mane 100.000%            | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -542,10 +542,10 @@
  | Photon Geyser 100.000%                 | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Aegislash +70.952%                     | 
- | Genesect +70.952%                      | 
- | Magnezone +70.952%                     | 
- | Metagross-Mega +70.952%                | 
+ | Aegislash 100.000%                     | 
+ | Genesect 100.000%                      | 
+ | Magnezone 100.000%                     | 
+ | Metagross-Mega 100.000%                | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -570,11 +570,11 @@
  | Transform 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja-Ash +72.613%                  | 
- | Shedinja +72.613%                      | 
- | Meloetta +58.089%                      | 
- | Rayquaza +58.089%                      | 
- | Zoroark +58.089%                       | 
+ | Greninja-Ash 99.992%                   | 
+ | Meloetta 99.992%                       | 
+ | Rayquaza 99.992%                       | 
+ | Shedinja 99.992%                       | 
+ | Zoroark 99.992%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Mimikyu 100.000 (100.00±0.00)          |
@@ -607,11 +607,11 @@
  | Water Shuriken 100.000%                | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +72.613%                         | 
- | Shedinja +72.613%                      | 
- | Meloetta +58.089%                      | 
- | Rayquaza +58.089%                      | 
- | Zoroark +58.089%                       | 
+ | Ditto 99.992%                          | 
+ | Meloetta 99.992%                       | 
+ | Rayquaza 99.992%                       | 
+ | Shedinja 99.992%                       | 
+ | Zoroark 99.992%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Gastrodon 100.000 (100.00±0.00)        |
@@ -646,11 +646,11 @@
  | Swords Dance 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +72.613%                         | 
- | Greninja-Ash +72.613%                  | 
- | Meloetta +58.089%                      | 
- | Rayquaza +58.089%                      | 
- | Zoroark +58.089%                       | 
+ | Ditto 99.992%                          | 
+ | Greninja-Ash 99.992%                   | 
+ | Meloetta 99.992%                       | 
+ | Rayquaza 99.992%                       | 
+ | Zoroark 99.992%                        | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan 100.000 (100.00±0.00)       |
@@ -681,11 +681,11 @@
  | Water Shuriken 100.000%                | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Lycanroc-Dusk +85.476%                 | 
- | NidoranM +85.476%                      | 
- | Meloetta +58.098%                      | 
- | Rayquaza +58.098%                      | 
- | Zoroark +58.098%                       | 
+ | Lycanroc-Dusk 100.000%                 | 
+ | Meloetta 100.000%                      | 
+ | NidoranM 100.000%                      | 
+ | Rayquaza 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan 100.000 (100.00±0.00)       |
@@ -722,11 +722,11 @@
  | Drill Run 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja +85.476%                      | 
- | NidoranM +85.476%                      | 
- | Meloetta +58.098%                      | 
- | Rayquaza +58.098%                      | 
- | Zoroark +58.098%                       | 
+ | Greninja 100.000%                      | 
+ | Meloetta 100.000%                      | 
+ | NidoranM 100.000%                      | 
+ | Rayquaza 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan  0.000 (0.00±0.00)          |
@@ -761,11 +761,11 @@
  | Toxic Spikes 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja +85.476%                      | 
- | Lycanroc-Dusk +85.476%                 | 
- | Meloetta +58.098%                      | 
- | Rayquaza +58.098%                      | 
- | Zoroark +58.098%                       | 
+ | Greninja 100.000%                      | 
+ | Lycanroc-Dusk 100.000%                 | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  | Darmanitan 100.000 (100.00±0.00)       |

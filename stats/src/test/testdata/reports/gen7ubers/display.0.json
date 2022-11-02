@@ -23,14 +23,14 @@
         "Energy Ball": 0.1429
       },
       "teammates": {
-        "Rayquaza": 0.2976,
-        "Zoroark": 0.2976,
-        "Ditto": 0.2381,
-        "Greninja-Ash": 0.2381,
-        "Shedinja": 0.2381,
-        "Greninja": 0.0595,
-        "Lycanroc-Dusk": 0.0595,
-        "Nidoran-M": 0.0595
+        "Rayquaza": 0.7143,
+        "Zoroark": 0.7143,
+        "Ditto": 0.5714,
+        "Greninja-Ash": 0.5714,
+        "Shedinja": 0.5714,
+        "Greninja": 0.1429,
+        "Lycanroc-Dusk": 0.1429,
+        "Nidoran-M": 0.1429
       },
       "counters": {
         "Darmanitan": [1, 1, 0],
@@ -63,14 +63,14 @@
         "Draco Meteor": 0.1429
       },
       "teammates": {
-        "Meloetta": 0.2976,
-        "Zoroark": 0.2976,
-        "Ditto": 0.2381,
-        "Greninja-Ash": 0.2381,
-        "Shedinja": 0.2381,
-        "Greninja": 0.0595,
-        "Lycanroc-Dusk": 0.0595,
-        "Nidoran-M": 0.0595
+        "Meloetta": 0.7143,
+        "Zoroark": 0.7143,
+        "Ditto": 0.5714,
+        "Greninja-Ash": 0.5714,
+        "Shedinja": 0.5714,
+        "Greninja": 0.1429,
+        "Lycanroc-Dusk": 0.1429,
+        "Nidoran-M": 0.1429
       },
       "counters": {
         "Kyogre-Primal": [1, 1, 0],
@@ -106,14 +106,14 @@
         "Sludge Bomb": 0.1429
       },
       "teammates": {
-        "Meloetta": 0.2976,
-        "Rayquaza": 0.2976,
-        "Ditto": 0.2381,
-        "Greninja-Ash": 0.2381,
-        "Shedinja": 0.2381,
-        "Greninja": 0.0595,
-        "Lycanroc-Dusk": 0.0595,
-        "Nidoran-M": 0.0595
+        "Meloetta": 0.7143,
+        "Rayquaza": 0.7143,
+        "Ditto": 0.5714,
+        "Greninja-Ash": 0.5714,
+        "Shedinja": 0.5714,
+        "Greninja": 0.1429,
+        "Lycanroc-Dusk": 0.1429,
+        "Nidoran-M": 0.1429
       },
       "counters": {
         "Swampert-Mega": [1, 1, 0],
@@ -134,11 +134,11 @@
       "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
-        "Greninja-Ash": 0.3333,
-        "Shedinja": 0.3333,
-        "Meloetta": 0.25,
-        "Rayquaza": 0.25,
-        "Zoroark": 0.25
+        "Greninja-Ash": 0.6667,
+        "Meloetta": 0.6667,
+        "Rayquaza": 0.6667,
+        "Shedinja": 0.6667,
+        "Zoroark": 0.6667
       },
       "counters": {
         "Kyogre-Primal": [1, 1, 0],
@@ -167,11 +167,11 @@
         "Water Shuriken": 1
       },
       "teammates": {
-        "Ditto": 0.3333,
-        "Shedinja": 0.3333,
-        "Meloetta": 0.25,
-        "Rayquaza": 0.25,
-        "Zoroark": 0.25
+        "Ditto": 0.6667,
+        "Meloetta": 0.6667,
+        "Rayquaza": 0.6667,
+        "Shedinja": 0.6667,
+        "Zoroark": 0.6667
       },
       "counters": {
         "Gastrodon": [1, 0, 1],
@@ -200,11 +200,11 @@
         "Swords Dance": 1
       },
       "teammates": {
-        "Ditto": 0.3333,
-        "Greninja-Ash": 0.3333,
-        "Meloetta": 0.25,
-        "Rayquaza": 0.25,
-        "Zoroark": 0.25
+        "Ditto": 0.6667,
+        "Greninja-Ash": 0.6667,
+        "Meloetta": 0.6667,
+        "Rayquaza": 0.6667,
+        "Zoroark": 0.6667
       },
       "counters": {
         "Darmanitan": [1, 1, 0],
@@ -239,11 +239,11 @@
         "Flare Blitz": 0.3333
       },
       "teammates": {
-        "Dugtrio": 0.75,
-        "Gastrodon": 0.75,
-        "Mimikyu": 0.75,
-        "Shaymin-Sky": 0.75,
-        "Zygarde": 0.75
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {
         "Ditto": [1, 0, 1],
@@ -280,11 +280,11 @@
         "Night Slash": 0.3333
       },
       "teammates": {
-        "Darmanitan": 0.75,
-        "Gastrodon": 0.75,
-        "Mimikyu": 0.75,
-        "Shaymin-Sky": 0.75,
-        "Zygarde": 0.75
+        "Darmanitan": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {"Greninja": [1, 1, 0], "Greninja-Ash": [1, 1, 0]}
     },
@@ -311,11 +311,11 @@
         "Earth Power": 0.3333
       },
       "teammates": {
-        "Darmanitan": 0.75,
-        "Dugtrio": 0.75,
-        "Mimikyu": 0.75,
-        "Shaymin-Sky": 0.75,
-        "Zygarde": 0.75
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {
         "Greninja": [1, 0, 1],
@@ -346,11 +346,11 @@
         "Shadow Claw": 0.3333
       },
       "teammates": {
-        "Darmanitan": 0.75,
-        "Dugtrio": 0.75,
-        "Gastrodon": 0.75,
-        "Shaymin-Sky": 0.75,
-        "Zygarde": 0.75
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {
         "Greninja": [1, 0, 1],
@@ -382,11 +382,11 @@
         "Energy Ball": 0.3333
       },
       "teammates": {
-        "Darmanitan": 0.75,
-        "Dugtrio": 0.75,
-        "Gastrodon": 0.75,
-        "Mimikyu": 0.75,
-        "Zygarde": 0.75
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Zygarde": 1
       },
       "counters": {"Ditto": [1, 1, 0], "Lycanroc-Dusk": [2, 0.5, 0]}
     },
@@ -413,11 +413,11 @@
         "Stone Edge": 0.3333
       },
       "teammates": {
-        "Darmanitan": 0.75,
-        "Dugtrio": 0.75,
-        "Gastrodon": 0.75,
-        "Mimikyu": 0.75,
-        "Shaymin-Sky": 0.75
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1
       },
       "counters": {
         "Meloetta": [1, 1, 0],
@@ -446,10 +446,10 @@
         "Shadow Sneak": 1
       },
       "teammates": {
-        "Genesect": 0.5,
-        "Magnezone": 0.5,
-        "Metagross-Mega": 0.5,
-        "Necrozma-Dusk-Mane": 0.5
+        "Genesect": 0.6667,
+        "Magnezone": 0.6667,
+        "Metagross-Mega": 0.6667,
+        "Necrozma-Dusk-Mane": 0.6667
       },
       "counters": {"Kyogre-Primal": [1, 1, 0]}
     },
@@ -471,10 +471,10 @@
         "Ice Beam": 1
       },
       "teammates": {
-        "Aegislash": 0.5,
-        "Magnezone": 0.5,
-        "Metagross-Mega": 0.5,
-        "Necrozma-Dusk-Mane": 0.5
+        "Aegislash": 0.6667,
+        "Magnezone": 0.6667,
+        "Metagross-Mega": 0.6667,
+        "Necrozma-Dusk-Mane": 0.6667
       },
       "counters": {"Kyogre-Primal": [1, 0, 0]}
     },
@@ -491,10 +491,10 @@
       "stats": {"404/274/216/504/357/216": 1},
       "moves": {"Calm Mind": 1, "Ice Beam": 1, "Origin Pulse": 1, "Thunder": 1},
       "teammates": {
-        "Ludicolo": 0.5,
-        "Pelipper": 0.5,
-        "Swampert-Mega": 0.5,
-        "Tentacruel": 0.5
+        "Ludicolo": 0.6667,
+        "Pelipper": 0.6667,
+        "Swampert-Mega": 0.6667,
+        "Tentacruel": 0.6667
       },
       "counters": {
         "Aegislash": [1, 0, 0],
@@ -518,10 +518,10 @@
       "stats": {"301/177/176/279/236/239": 1},
       "moves": {"Fake Out": 1, "Grass Knot": 1, "Ice Beam": 1, "Surf": 1},
       "teammates": {
-        "Kyogre-Primal": 0.5,
-        "Pelipper": 0.5,
-        "Swampert-Mega": 0.5,
-        "Tentacruel": 0.5
+        "Kyogre-Primal": 0.6667,
+        "Pelipper": 0.6667,
+        "Swampert-Mega": 0.6667,
+        "Tentacruel": 0.6667
       },
       "counters": {"Necrozma-Dusk-Mane": [1, 1, 0]}
     },
@@ -543,10 +543,10 @@
         "Volt Switch": 1
       },
       "teammates": {
-        "Aegislash": 0.5,
-        "Genesect": 0.5,
-        "Metagross-Mega": 0.5,
-        "Necrozma-Dusk-Mane": 0.5
+        "Aegislash": 0.6667,
+        "Genesect": 0.6667,
+        "Metagross-Mega": 0.6667,
+        "Necrozma-Dusk-Mane": 0.6667
       },
       "counters": {"Ditto": [1, 1, 0], "Kyogre-Primal": [1, 1, 0]}
     },
@@ -563,10 +563,10 @@
       "stats": {"301/388/336/246/256/318": 1},
       "moves": {"Nothing": 2, "Earthquake": 1, "Explosion": 1},
       "teammates": {
-        "Aegislash": 0.5,
-        "Genesect": 0.5,
-        "Magnezone": 0.5,
-        "Necrozma-Dusk-Mane": 0.5
+        "Aegislash": 0.6667,
+        "Genesect": 0.6667,
+        "Magnezone": 0.6667,
+        "Necrozma-Dusk-Mane": 0.6667
       },
       "counters": {"Swampert-Mega": [1, 1, 0]}
     },
@@ -588,10 +588,10 @@
         "Photon Geyser": 1
       },
       "teammates": {
-        "Aegislash": 0.5,
-        "Genesect": 0.5,
-        "Magnezone": 0.5,
-        "Metagross-Mega": 0.5
+        "Aegislash": 0.6667,
+        "Genesect": 0.6667,
+        "Magnezone": 0.6667,
+        "Metagross-Mega": 0.6667
       },
       "counters": {
         "Ditto": [1, 1, 0],
@@ -614,10 +614,10 @@
       "stats": {"323/122/328/226/178/166": 1},
       "moves": {"Roost": 1, "Scald": 1, "Tailwind": 1, "U-turn": 1},
       "teammates": {
-        "Kyogre-Primal": 0.5,
-        "Ludicolo": 0.5,
-        "Swampert-Mega": 0.5,
-        "Tentacruel": 0.5
+        "Kyogre-Primal": 0.6667,
+        "Ludicolo": 0.6667,
+        "Swampert-Mega": 0.6667,
+        "Tentacruel": 0.6667
       },
       "counters": {
         "Shedinja": [2, 0, 1],
@@ -644,10 +644,10 @@
         "Waterfall": 1
       },
       "teammates": {
-        "Kyogre-Primal": 0.5,
-        "Ludicolo": 0.5,
-        "Pelipper": 0.5,
-        "Tentacruel": 0.5
+        "Kyogre-Primal": 0.6667,
+        "Ludicolo": 0.6667,
+        "Pelipper": 0.6667,
+        "Tentacruel": 0.6667
       },
       "counters": {
         "Greninja-Ash": [1, 0, 1],
@@ -671,10 +671,10 @@
       "stats": {"301/130/166/259/277/328": 1},
       "moves": {"Hex": 1, "Hydro Pump": 1, "Rapid Spin": 1, "Toxic Spikes": 1},
       "teammates": {
-        "Kyogre-Primal": 0.5,
-        "Ludicolo": 0.5,
-        "Pelipper": 0.5,
-        "Swampert-Mega": 0.5
+        "Kyogre-Primal": 0.6667,
+        "Ludicolo": 0.6667,
+        "Pelipper": 0.6667,
+        "Swampert-Mega": 0.6667
       },
       "counters": {"Necrozma-Dusk-Mane": [1, 1, 0], "Shedinja": [1, 1, 0]}
     },
@@ -696,11 +696,11 @@
         "Water Shuriken": 1
       },
       "teammates": {
-        "Lycanroc-Dusk": 0.9167,
-        "Nidoran-M": 0.9167,
-        "Meloetta": 0.5833,
-        "Rayquaza": 0.5833,
-        "Zoroark": 0.5833
+        "Lycanroc-Dusk": 1,
+        "Meloetta": 1,
+        "Nidoran-M": 1,
+        "Rayquaza": 1,
+        "Zoroark": 1
       },
       "counters": {
         "Darmanitan": [1, 1, 0],
@@ -723,11 +723,11 @@
       "stats": {"291/333/166/131/167/350": 1},
       "moves": {"Accelerock": 1, "Brick Break": 1, "Crunch": 1, "Drill Run": 1},
       "teammates": {
-        "Greninja": 0.9167,
-        "Nidoran-M": 0.9167,
-        "Meloetta": 0.5833,
-        "Rayquaza": 0.5833,
-        "Zoroark": 0.5833
+        "Greninja": 1,
+        "Meloetta": 1,
+        "Nidoran-M": 1,
+        "Rayquaza": 1,
+        "Zoroark": 1
       },
       "counters": {
         "Darmanitan": [1, 0, 0],
@@ -754,11 +754,11 @@
         "Toxic Spikes": 1
       },
       "teammates": {
-        "Greninja": 0.9167,
-        "Lycanroc-Dusk": 0.9167,
-        "Meloetta": 0.5833,
-        "Rayquaza": 0.5833,
-        "Zoroark": 0.5833
+        "Greninja": 1,
+        "Lycanroc-Dusk": 1,
+        "Meloetta": 1,
+        "Rayquaza": 1,
+        "Zoroark": 1
       },
       "counters": {"Darmanitan": [1, 0, 1], "Zygarde": [1, 1, 0]}
     }

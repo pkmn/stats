@@ -22,16 +22,16 @@
         "Teleport": 0.5
       },
       "teammates": {
-        "Aegislash": 0.4,
-        "Bayleef": 0.4,
-        "Combusken": 0.4,
-        "Furret": 0.4,
-        "Honchkrow": 0.4,
-        "Koffing": 0.4,
-        "Magcargo": 0.4,
-        "Misdreavus": 0.4,
-        "Ribombee": 0.4,
-        "Togepi": 0.4
+        "Aegislash": 0.5,
+        "Bayleef": 0.5,
+        "Combusken": 0.5,
+        "Furret": 0.5,
+        "Honchkrow": 0.5,
+        "Koffing": 0.5,
+        "Magcargo": 0.5,
+        "Misdreavus": 0.5,
+        "Ribombee": 0.5,
+        "Togepi": 0.5
       },
       "counters": {}
     },
@@ -57,16 +57,16 @@
         "Submission": 0.5
       },
       "teammates": {
-        "Bagon": 0.4,
-        "Beedrill": 0.4,
-        "Eevee": 0.4,
-        "Lanturn": 0.4,
-        "Lilligant": 0.4,
-        "Linoone": 0.4,
-        "Pangoro": 0.4,
-        "Scolipede": 0.4,
-        "Unown": 0.4,
-        "Wishiwashi": 0.4
+        "Bagon": 0.5,
+        "Beedrill": 0.5,
+        "Eevee": 0.5,
+        "Lanturn": 0.5,
+        "Lilligant": 0.5,
+        "Linoone": 0.5,
+        "Pangoro": 0.5,
+        "Scolipede": 0.5,
+        "Unown": 0.5,
+        "Wishiwashi": 0.5
       },
       "counters": {"Naganadel": [1, 0, 0]}
     },
@@ -83,11 +83,11 @@
       "stats": {"193/76/219/108/271/92": 1},
       "moves": {"False Swipe": 1, "Iron Defense": 1, "Rest": 1, "Sunny Day": 1},
       "teammates": {
-        "Bayleef": 0.9,
-        "Combusken": 0.9,
-        "Honchkrow": 0.9,
-        "Misdreavus": 0.9,
-        "Cloyster": 0.8
+        "Bayleef": 1,
+        "Cloyster": 1,
+        "Combusken": 1,
+        "Honchkrow": 1,
+        "Misdreavus": 1
       },
       "counters": {}
     },
@@ -104,11 +104,11 @@
       "stats": {"238/168/189/176/175/211": 1},
       "moves": {"Flash": 1, "Hyper Voice": 1, "Quash": 1, "Shadow Ball": 1},
       "teammates": {
-        "Castform": 0.9,
-        "Kartana": 0.9,
-        "Kricketot": 0.9,
-        "Machop": 0.9,
-        "Pyukumuku": 0.9
+        "Castform": 1,
+        "Kartana": 1,
+        "Kricketot": 1,
+        "Machop": 1,
+        "Pyukumuku": 1
       },
       "counters": {}
     },
@@ -125,11 +125,11 @@
       "stats": {"223/159/151/75/111/118": 1},
       "moves": {"Headbutt": 1, "Rock Smash": 1, "Scary Face": 1, "Swagger": 1},
       "teammates": {
-        "Lanturn": 0.9,
-        "Scolipede": 0.9,
-        "Unown": 0.9,
-        "Wishiwashi": 0.9,
-        "Nidoqueen": 0.8
+        "Lanturn": 1,
+        "Nidoqueen": 1,
+        "Scolipede": 1,
+        "Unown": 1,
+        "Wishiwashi": 1
       },
       "counters": {}
     },
@@ -146,11 +146,11 @@
       "stats": {"214/142/161/115/191/121": 1},
       "moves": {"Flash": 1, "Mud-Slap": 1, "Reflect": 1, "Round": 1},
       "teammates": {
-        "Aegislash": 0.9,
-        "Combusken": 0.9,
-        "Honchkrow": 0.9,
-        "Misdreavus": 0.9,
-        "Cloyster": 0.8
+        "Aegislash": 1,
+        "Cloyster": 1,
+        "Combusken": 1,
+        "Honchkrow": 1,
+        "Misdreavus": 1
       },
       "counters": {}
     },
@@ -167,11 +167,11 @@
       "stats": {"201/164/124/127/156/145": 1},
       "moves": {"Acrobatics": 1, "Brutal Swing": 1, "Cut": 1, "Throat Chop": 1},
       "teammates": {
-        "Eevee": 0.9,
-        "Lilligant": 0.9,
-        "Linoone": 0.9,
-        "Pangoro": 0.9,
-        "Nidoqueen": 0.8
+        "Eevee": 1,
+        "Lilligant": 1,
+        "Linoone": 1,
+        "Nidoqueen": 1,
+        "Pangoro": 1
       },
       "counters": {}
     },
@@ -188,11 +188,11 @@
       "stats": {"254/163/129/180/124/94": 1},
       "moves": {"Acid Spray": 1, "Defog": 1, "Magical Leaf": 1, "Toxic": 1},
       "teammates": {
-        "Cosmog": 0.9,
-        "Hitmonlee": 0.9,
-        "Kingler": 0.9,
-        "Seadra": 0.9,
-        "Whismur": 0.9
+        "Cosmog": 1,
+        "Hitmonlee": 1,
+        "Kingler": 1,
+        "Seadra": 1,
+        "Whismur": 1
       },
       "counters": {}
     },
@@ -209,11 +209,11 @@
       "stats": {"223/192/204/134/134/113": 1},
       "moves": {"Aqua Jet": 1, "Bite": 1, "Facade": 1, "Liquidation": 1},
       "teammates": {
-        "Deino": 0.9,
-        "Electabuzz": 0.9,
-        "Gastly": 0.9,
-        "Raichu-Alola": 0.9,
-        "Swanna": 0.9
+        "Deino": 1,
+        "Electabuzz": 1,
+        "Gastly": 1,
+        "Raichu-Alola": 1,
+        "Swanna": 1
       },
       "counters": {}
     },
@@ -230,11 +230,11 @@
       "stats": {"210/140/181/125/138/189": 1},
       "moves": {"Defense Curl": 1, "Psych Up": 1, "Snore": 1, "Thunder": 1},
       "teammates": {
-        "Arceus": 0.9,
-        "Kartana": 0.9,
-        "Kricketot": 0.9,
-        "Machop": 0.9,
-        "Pyukumuku": 0.9
+        "Arceus": 1,
+        "Kartana": 1,
+        "Kricketot": 1,
+        "Machop": 1,
+        "Pyukumuku": 1
       },
       "counters": {}
     },
@@ -251,11 +251,11 @@
       "stats": {"177/100/172/124/139/145": 1},
       "moves": {"Double-Edge": 1, "Giga Drain": 1, "Seed Bomb": 1, "Toxic": 1},
       "teammates": {
-        "Ditto": 0.9,
-        "Naganadel": 0.9,
-        "Salamence": 0.9,
-        "Shelgon": 0.9,
-        "Taillow": 0.9
+        "Ditto": 1,
+        "Naganadel": 1,
+        "Salamence": 1,
+        "Shelgon": 1,
+        "Taillow": 1
       },
       "counters": {}
     },
@@ -272,11 +272,11 @@
       "stats": {"213/201/117/166/149/98": 1},
       "moves": {"Confide": 1, "Flame Charge": 1, "Fling": 1, "Rock Smash": 1},
       "teammates": {
-        "Aegislash": 0.9,
-        "Bayleef": 0.9,
-        "Honchkrow": 0.9,
-        "Misdreavus": 0.9,
-        "Cloyster": 0.8
+        "Aegislash": 1,
+        "Bayleef": 1,
+        "Cloyster": 1,
+        "Honchkrow": 1,
+        "Misdreavus": 1
       },
       "counters": {}
     },
@@ -293,11 +293,11 @@
       "stats": {"205/137/79/124/78/79": 1},
       "moves": {"Nothing": 2, "Splash": 1, "Teleport": 1},
       "teammates": {
-        "Carnivine": 0.9,
-        "Hitmonlee": 0.9,
-        "Kingler": 0.9,
-        "Seadra": 0.9,
-        "Whismur": 0.9
+        "Carnivine": 1,
+        "Hitmonlee": 1,
+        "Kingler": 1,
+        "Seadra": 1,
+        "Whismur": 1
       },
       "counters": {}
     },
@@ -314,11 +314,11 @@
       "stats": {"197/141/150/90/152/79": 1},
       "moves": {"Hyper Voice": 1, "Substitute": 1, "Superpower": 1, "Toxic": 1},
       "teammates": {
-        "Carracosta": 0.9,
-        "Electabuzz": 0.9,
-        "Gastly": 0.9,
-        "Raichu-Alola": 0.9,
-        "Swanna": 0.9
+        "Carracosta": 1,
+        "Electabuzz": 1,
+        "Gastly": 1,
+        "Raichu-Alola": 1,
+        "Swanna": 1
       },
       "counters": {}
     },
@@ -335,11 +335,11 @@
       "stats": {"190/161/130/119/115/92": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
-        "Chikorita": 0.9,
-        "Naganadel": 0.9,
-        "Salamence": 0.9,
-        "Shelgon": 0.9,
-        "Taillow": 0.9
+        "Chikorita": 1,
+        "Naganadel": 1,
+        "Salamence": 1,
+        "Shelgon": 1,
+        "Taillow": 1
       },
       "counters": {}
     },
@@ -356,11 +356,11 @@
       "stats": {"213/124/113/157/129/140": 1},
       "moves": {"Captivate": 1, "Return": 1, "Swift": 1, "Tail Whip": 1},
       "teammates": {
-        "Beedrill": 0.9,
-        "Lilligant": 0.9,
-        "Linoone": 0.9,
-        "Pangoro": 0.9,
-        "Nidoqueen": 0.8
+        "Beedrill": 1,
+        "Lilligant": 1,
+        "Linoone": 1,
+        "Nidoqueen": 1,
+        "Pangoro": 1
       },
       "counters": {}
     },
@@ -382,11 +382,11 @@
         "Quick Attack": 1
       },
       "teammates": {
-        "Carracosta": 0.9,
-        "Deino": 0.9,
-        "Gastly": 0.9,
-        "Raichu-Alola": 0.9,
-        "Swanna": 0.9
+        "Carracosta": 1,
+        "Deino": 1,
+        "Gastly": 1,
+        "Raichu-Alola": 1,
+        "Swanna": 1
       },
       "counters": {}
     },
@@ -408,11 +408,11 @@
         "Swagger": 1
       },
       "teammates": {
-        "Loudred": 0.9,
-        "Magikarp": 0.9,
-        "Tentacruel": 0.9,
-        "Wimpod": 0.9,
-        "Wooper": 0.9
+        "Loudred": 1,
+        "Magikarp": 1,
+        "Tentacruel": 1,
+        "Wimpod": 1,
+        "Wooper": 1
       },
       "counters": {}
     },
@@ -434,11 +434,11 @@
         "Substitute": 1
       },
       "teammates": {
-        "Koffing": 0.9,
-        "Magcargo": 0.9,
-        "Ribombee": 0.9,
-        "Togepi": 0.9,
-        "Cloyster": 0.8
+        "Cloyster": 1,
+        "Koffing": 1,
+        "Magcargo": 1,
+        "Ribombee": 1,
+        "Togepi": 1
       },
       "counters": {}
     },
@@ -460,11 +460,11 @@
         "Zap Cannon": 1
       },
       "teammates": {
-        "Carracosta": 0.9,
-        "Deino": 0.9,
-        "Electabuzz": 0.9,
-        "Raichu-Alola": 0.9,
-        "Swanna": 0.9
+        "Carracosta": 1,
+        "Deino": 1,
+        "Electabuzz": 1,
+        "Raichu-Alola": 1,
+        "Swanna": 1
       },
       "counters": {}
     },
@@ -481,11 +481,11 @@
       "stats": {"189/99/95/217/150/244": 1},
       "moves": {"Attract": 1, "Electroweb": 1, "Secret Power": 1, "Surf": 1},
       "teammates": {
-        "Honedge": 0.9,
-        "Latios": 0.9,
-        "Nidorino": 0.9,
-        "Suicune": 0.9,
-        "Swoobat": 0.9
+        "Honedge": 1,
+        "Latios": 1,
+        "Nidorino": 1,
+        "Suicune": 1,
+        "Swoobat": 1
       },
       "counters": {}
     },
@@ -502,11 +502,11 @@
       "stats": {"181/198/144/92/192/143": 1},
       "moves": {"Body Slam": 1, "Detect": 1, "Foresight": 1, "Swagger": 1},
       "teammates": {
-        "Carnivine": 0.9,
-        "Cosmog": 0.9,
-        "Kingler": 0.9,
-        "Seadra": 0.9,
-        "Whismur": 0.9
+        "Carnivine": 1,
+        "Cosmog": 1,
+        "Kingler": 1,
+        "Seadra": 1,
+        "Whismur": 1
       },
       "counters": {}
     },
@@ -523,11 +523,11 @@
       "stats": {"300/195/119/171/150/106": 1},
       "moves": {"Attract": 1, "Confide": 1, "Quash": 1, "Torment": 1},
       "teammates": {
-        "Aegislash": 0.9,
-        "Bayleef": 0.9,
-        "Combusken": 0.9,
-        "Misdreavus": 0.9,
-        "Cloyster": 0.8
+        "Aegislash": 1,
+        "Bayleef": 1,
+        "Cloyster": 1,
+        "Combusken": 1,
+        "Misdreavus": 1
       },
       "counters": {}
     },
@@ -549,11 +549,11 @@
         "Shock Wave": 1
       },
       "teammates": {
-        "Heliolisk": 0.9,
-        "Latios": 0.9,
-        "Nidorino": 0.9,
-        "Suicune": 0.9,
-        "Swoobat": 0.9
+        "Heliolisk": 1,
+        "Latios": 1,
+        "Nidorino": 1,
+        "Suicune": 1,
+        "Swoobat": 1
       },
       "counters": {}
     },
@@ -575,11 +575,11 @@
         "Synthesis": 1
       },
       "teammates": {
-        "Arceus": 0.9,
-        "Castform": 0.9,
-        "Kricketot": 0.9,
-        "Machop": 0.9,
-        "Pyukumuku": 0.9
+        "Arceus": 1,
+        "Castform": 1,
+        "Kricketot": 1,
+        "Machop": 1,
+        "Pyukumuku": 1
       },
       "counters": {"Ribombee": [1, 0, 0]}
     },
@@ -601,11 +601,11 @@
         "Rock Slide": 1
       },
       "teammates": {
-        "Carnivine": 0.9,
-        "Cosmog": 0.9,
-        "Hitmonlee": 0.9,
-        "Seadra": 0.9,
-        "Whismur": 0.9
+        "Carnivine": 1,
+        "Cosmog": 1,
+        "Hitmonlee": 1,
+        "Seadra": 1,
+        "Whismur": 1
       },
       "counters": {}
     },
@@ -627,11 +627,11 @@
         "Snore": 1
       },
       "teammates": {
-        "Furret": 0.9,
-        "Magcargo": 0.9,
-        "Ribombee": 0.9,
-        "Togepi": 0.9,
-        "Cloyster": 0.8
+        "Cloyster": 1,
+        "Furret": 1,
+        "Magcargo": 1,
+        "Ribombee": 1,
+        "Togepi": 1
       },
       "counters": {}
     },
@@ -648,11 +648,11 @@
       "stats": {"214/68/169/126/94/74": 1},
       "moves": {"Growl": 1, "String Shot": 1, "Struggle Bug": 1, "Uproar": 1},
       "teammates": {
-        "Arceus": 0.9,
-        "Castform": 0.9,
-        "Kartana": 0.9,
-        "Machop": 0.9,
-        "Pyukumuku": 0.9
+        "Arceus": 1,
+        "Castform": 1,
+        "Kartana": 1,
+        "Machop": 1,
+        "Pyukumuku": 1
       },
       "counters": {}
     },
@@ -674,11 +674,11 @@
         "Giga Impact": 1
       },
       "teammates": {
-        "Bagon": 0.9,
-        "Scolipede": 0.9,
-        "Unown": 0.9,
-        "Wishiwashi": 0.9,
-        "Nidoqueen": 0.8
+        "Bagon": 1,
+        "Nidoqueen": 1,
+        "Scolipede": 1,
+        "Unown": 1,
+        "Wishiwashi": 1
       },
       "counters": {}
     },
@@ -700,11 +700,11 @@
         "Thunder Wave": 1
       },
       "teammates": {
-        "Heliolisk": 0.9,
-        "Honedge": 0.9,
-        "Nidorino": 0.9,
-        "Suicune": 0.9,
-        "Swoobat": 0.9
+        "Heliolisk": 1,
+        "Honedge": 1,
+        "Nidorino": 1,
+        "Suicune": 1,
+        "Swoobat": 1
       },
       "counters": {}
     },
@@ -721,11 +721,11 @@
       "stats": {"205/99/161/209/161/155": 1},
       "moves": {"Flash": 1, "Frustration": 1, "Protect": 1, "Teeter Dance": 1},
       "teammates": {
-        "Beedrill": 0.9,
-        "Eevee": 0.9,
-        "Linoone": 0.9,
-        "Pangoro": 0.9,
-        "Nidoqueen": 0.8
+        "Beedrill": 1,
+        "Eevee": 1,
+        "Linoone": 1,
+        "Nidoqueen": 1,
+        "Pangoro": 1
       },
       "counters": {}
     },
@@ -742,11 +742,11 @@
       "stats": {"237/163/136/95/155/168": 1},
       "moves": {"Mud Sport": 1, "Mud-Slap": 1, "Odor Sleuth": 1, "Toxic": 1},
       "teammates": {
-        "Beedrill": 0.9,
-        "Eevee": 0.9,
-        "Lilligant": 0.9,
-        "Pangoro": 0.9,
-        "Nidoqueen": 0.8
+        "Beedrill": 1,
+        "Eevee": 1,
+        "Lilligant": 1,
+        "Nidoqueen": 1,
+        "Pangoro": 1
       },
       "counters": {}
     },
@@ -763,11 +763,11 @@
       "stats": {"244/171/114/188/86/100": 1},
       "moves": {"Body Slam": 1, "Howl": 1, "Torment": 1, "Uproar": 1},
       "teammates": {
-        "Florges": 0.9,
-        "Magikarp": 0.9,
-        "Tentacruel": 0.9,
-        "Wimpod": 0.9,
-        "Wooper": 0.9
+        "Florges": 1,
+        "Magikarp": 1,
+        "Tentacruel": 1,
+        "Wimpod": 1,
+        "Wooper": 1
       },
       "counters": {}
     },
@@ -784,11 +784,11 @@
       "stats": {"245/204/137/97/94/80": 1},
       "moves": {"Captivate": 1, "Leer": 1, "Meditate": 1, "Power-Up Punch": 1},
       "teammates": {
-        "Arceus": 0.9,
-        "Castform": 0.9,
-        "Kartana": 0.9,
-        "Kricketot": 0.9,
-        "Pyukumuku": 0.9
+        "Arceus": 1,
+        "Castform": 1,
+        "Kartana": 1,
+        "Kricketot": 1,
+        "Pyukumuku": 1
       },
       "counters": {}
     },
@@ -810,11 +810,11 @@
         "Rock Throw": 1
       },
       "teammates": {
-        "Furret": 0.9,
-        "Koffing": 0.9,
-        "Ribombee": 0.9,
-        "Togepi": 0.9,
-        "Cloyster": 0.8
+        "Cloyster": 1,
+        "Furret": 1,
+        "Koffing": 1,
+        "Ribombee": 1,
+        "Togepi": 1
       },
       "counters": {}
     },
@@ -831,11 +831,11 @@
       "stats": {"168/97/113/95/68/190": 1},
       "moves": {"Bounce": 1, "Celebrate": 1, "Hydro Pump": 1, "Tackle": 1},
       "teammates": {
-        "Florges": 0.9,
-        "Loudred": 0.9,
-        "Tentacruel": 0.9,
-        "Wimpod": 0.9,
-        "Wooper": 0.9
+        "Florges": 1,
+        "Loudred": 1,
+        "Tentacruel": 1,
+        "Wimpod": 1,
+        "Wooper": 1
       },
       "counters": {}
     },
@@ -857,11 +857,11 @@
         "Shock Wave": 1
       },
       "teammates": {
-        "Aegislash": 0.9,
-        "Bayleef": 0.9,
-        "Combusken": 0.9,
-        "Honchkrow": 0.9,
-        "Cloyster": 0.8
+        "Aegislash": 1,
+        "Bayleef": 1,
+        "Cloyster": 1,
+        "Combusken": 1,
+        "Honchkrow": 1
       },
       "counters": {}
     },
@@ -883,11 +883,11 @@
         "Toxic": 1
       },
       "teammates": {
-        "Chikorita": 0.9,
-        "Ditto": 0.9,
-        "Salamence": 0.9,
-        "Shelgon": 0.9,
-        "Taillow": 0.9
+        "Chikorita": 1,
+        "Ditto": 1,
+        "Salamence": 1,
+        "Shelgon": 1,
+        "Taillow": 1
       },
       "counters": {"Nidoqueen": [1, 1, 0]}
     },
@@ -904,11 +904,11 @@
       "stats": {"216/117/154/127/99/168": 1},
       "moves": {"Rage": 1, "Rain Dance": 1, "Shadow Claw": 1, "Sleep Talk": 1},
       "teammates": {
-        "Heliolisk": 0.9,
-        "Honedge": 0.9,
-        "Latios": 0.9,
-        "Suicune": 0.9,
-        "Swoobat": 0.9
+        "Heliolisk": 1,
+        "Honedge": 1,
+        "Latios": 1,
+        "Suicune": 1,
+        "Swoobat": 1
       },
       "counters": {}
     },
@@ -930,11 +930,11 @@
         "Swagger": 1
       },
       "teammates": {
-        "Beedrill": 0.9,
-        "Eevee": 0.9,
-        "Lilligant": 0.9,
-        "Linoone": 0.9,
-        "Nidoqueen": 0.8
+        "Beedrill": 1,
+        "Eevee": 1,
+        "Lilligant": 1,
+        "Linoone": 1,
+        "Nidoqueen": 1
       },
       "counters": {}
     },
@@ -951,11 +951,11 @@
       "stats": {"178/130/289/86/234/20": 1},
       "moves": {"Confide": 1, "Gastro Acid": 1, "Safeguard": 1, "Tickle": 1},
       "teammates": {
-        "Arceus": 0.9,
-        "Castform": 0.9,
-        "Kartana": 0.9,
-        "Kricketot": 0.9,
-        "Machop": 0.9
+        "Arceus": 1,
+        "Castform": 1,
+        "Kartana": 1,
+        "Kricketot": 1,
+        "Machop": 1
       },
       "counters": {}
     },
@@ -972,11 +972,11 @@
       "stats": {"231/133/106/185/170/199": 1},
       "moves": {"Grass Knot": 1, "Laser Focus": 1, "Magic Coat": 1, "Thief": 1},
       "teammates": {
-        "Carracosta": 0.9,
-        "Deino": 0.9,
-        "Electabuzz": 0.9,
-        "Gastly": 0.9,
-        "Swanna": 0.9
+        "Carracosta": 1,
+        "Deino": 1,
+        "Electabuzz": 1,
+        "Gastly": 1,
+        "Swanna": 1
       },
       "counters": {}
     },
@@ -998,11 +998,11 @@
         "Tailwind": 1
       },
       "teammates": {
-        "Furret": 0.9,
-        "Koffing": 0.9,
-        "Magcargo": 0.9,
-        "Togepi": 0.9,
-        "Cloyster": 0.8
+        "Cloyster": 1,
+        "Furret": 1,
+        "Koffing": 1,
+        "Magcargo": 1,
+        "Togepi": 1
       },
       "counters": {"Kartana": [1, 1, 0]}
     },
@@ -1024,11 +1024,11 @@
         "Rock Slide": 1
       },
       "teammates": {
-        "Chikorita": 0.9,
-        "Ditto": 0.9,
-        "Naganadel": 0.9,
-        "Shelgon": 0.9,
-        "Taillow": 0.9
+        "Chikorita": 1,
+        "Ditto": 1,
+        "Naganadel": 1,
+        "Shelgon": 1,
+        "Taillow": 1
       },
       "counters": {}
     },
@@ -1050,11 +1050,11 @@
         "Toxic Spikes": 1
       },
       "teammates": {
-        "Bagon": 0.9,
-        "Lanturn": 0.9,
-        "Unown": 0.9,
-        "Wishiwashi": 0.9,
-        "Nidoqueen": 0.8
+        "Bagon": 1,
+        "Lanturn": 1,
+        "Nidoqueen": 1,
+        "Unown": 1,
+        "Wishiwashi": 1
       },
       "counters": {}
     },
@@ -1071,11 +1071,11 @@
       "stats": {"180/153/173/198/95/167": 1},
       "moves": {"Blizzard": 1, "Bubble": 1, "Curse": 1, "Surf": 1},
       "teammates": {
-        "Carnivine": 0.9,
-        "Cosmog": 0.9,
-        "Hitmonlee": 0.9,
-        "Kingler": 0.9,
-        "Whismur": 0.9
+        "Carnivine": 1,
+        "Cosmog": 1,
+        "Hitmonlee": 1,
+        "Kingler": 1,
+        "Whismur": 1
       },
       "counters": {}
     },
@@ -1092,11 +1092,11 @@
       "stats": {"235/172/183/144/117/100": 1},
       "moves": {"Mimic": 1, "Rock Slide": 1, "Rock Smash": 1, "Swagger": 1},
       "teammates": {
-        "Chikorita": 0.9,
-        "Ditto": 0.9,
-        "Naganadel": 0.9,
-        "Salamence": 0.9,
-        "Taillow": 0.9
+        "Chikorita": 1,
+        "Ditto": 1,
+        "Naganadel": 1,
+        "Salamence": 1,
+        "Taillow": 1
       },
       "counters": {}
     },
@@ -1113,11 +1113,11 @@
       "stats": {"226/145/171/154/220/124": 1},
       "moves": {"Brine": 1, "Detect": 1, "Snore": 1, "Toxic": 1},
       "teammates": {
-        "Heliolisk": 0.9,
-        "Honedge": 0.9,
-        "Latios": 0.9,
-        "Nidorino": 0.9,
-        "Swoobat": 0.9
+        "Heliolisk": 1,
+        "Honedge": 1,
+        "Latios": 1,
+        "Nidorino": 1,
+        "Swoobat": 1
       },
       "counters": {}
     },
@@ -1139,11 +1139,11 @@
         "Water Pulse": 1
       },
       "teammates": {
-        "Carracosta": 0.9,
-        "Deino": 0.9,
-        "Electabuzz": 0.9,
-        "Gastly": 0.9,
-        "Raichu-Alola": 0.9
+        "Carracosta": 1,
+        "Deino": 1,
+        "Electabuzz": 1,
+        "Gastly": 1,
+        "Raichu-Alola": 1
       },
       "counters": {}
     },
@@ -1160,11 +1160,11 @@
       "stats": {"207/163/104/136/160/191": 1},
       "moves": {"Embargo": 1, "Giga Impact": 1, "Shock Wave": 1, "Swagger": 1},
       "teammates": {
-        "Heliolisk": 0.9,
-        "Honedge": 0.9,
-        "Latios": 0.9,
-        "Nidorino": 0.9,
-        "Suicune": 0.9
+        "Heliolisk": 1,
+        "Honedge": 1,
+        "Latios": 1,
+        "Nidorino": 1,
+        "Suicune": 1
       },
       "counters": {}
     },
@@ -1181,11 +1181,11 @@
       "stats": {"230/118/88/65/90/218": 1},
       "moves": {"Agility": 1, "Hurricane": 1, "Protect": 1, "Rage": 1},
       "teammates": {
-        "Chikorita": 0.9,
-        "Ditto": 0.9,
-        "Naganadel": 0.9,
-        "Salamence": 0.9,
-        "Shelgon": 0.9
+        "Chikorita": 1,
+        "Ditto": 1,
+        "Naganadel": 1,
+        "Salamence": 1,
+        "Shelgon": 1
       },
       "counters": {}
     },
@@ -1202,11 +1202,11 @@
       "stats": {"216/161/154/145/191/156": 1},
       "moves": {"Brine": 1, "Knock Off": 1, "Magic Coat": 1, "Swords Dance": 1},
       "teammates": {
-        "Florges": 0.9,
-        "Loudred": 0.9,
-        "Magikarp": 0.9,
-        "Wimpod": 0.9,
-        "Wooper": 0.9
+        "Florges": 1,
+        "Loudred": 1,
+        "Magikarp": 1,
+        "Wimpod": 1,
+        "Wooper": 1
       },
       "counters": {}
     },
@@ -1228,11 +1228,11 @@
         "Psyshock": 1
       },
       "teammates": {
-        "Furret": 0.9,
-        "Koffing": 0.9,
-        "Magcargo": 0.9,
-        "Ribombee": 0.9,
-        "Cloyster": 0.8
+        "Cloyster": 1,
+        "Furret": 1,
+        "Koffing": 1,
+        "Magcargo": 1,
+        "Ribombee": 1
       },
       "counters": {}
     },
@@ -1249,11 +1249,11 @@
       "stats": {"181/176/107/146/144/104": 1},
       "moves": {"Nothing": 3, "Hidden Power Ghost": 1},
       "teammates": {
-        "Bagon": 0.9,
-        "Lanturn": 0.9,
-        "Scolipede": 0.9,
-        "Wishiwashi": 0.9,
-        "Nidoqueen": 0.8
+        "Bagon": 1,
+        "Lanturn": 1,
+        "Nidoqueen": 1,
+        "Scolipede": 1,
+        "Wishiwashi": 1
       },
       "counters": {}
     },
@@ -1270,11 +1270,11 @@
       "stats": {"252/128/93/107/91/129": 1},
       "moves": {"Astonish": 1, "Mega Kick": 1, "Rain Dance": 1, "Return": 1},
       "teammates": {
-        "Carnivine": 0.9,
-        "Cosmog": 0.9,
-        "Hitmonlee": 0.9,
-        "Kingler": 0.9,
-        "Seadra": 0.9
+        "Carnivine": 1,
+        "Cosmog": 1,
+        "Hitmonlee": 1,
+        "Kingler": 1,
+        "Seadra": 1
       },
       "counters": {}
     },
@@ -1291,11 +1291,11 @@
       "stats": {"179/74/136/125/83/163": 1},
       "moves": {"Frustration": 1, "Hail": 1, "Protect": 1, "Surf": 1},
       "teammates": {
-        "Florges": 0.9,
-        "Loudred": 0.9,
-        "Magikarp": 0.9,
-        "Tentacruel": 0.9,
-        "Wooper": 0.9
+        "Florges": 1,
+        "Loudred": 1,
+        "Magikarp": 1,
+        "Tentacruel": 1,
+        "Wooper": 1
       },
       "counters": {}
     },
@@ -1317,11 +1317,11 @@
         "Snore": 1
       },
       "teammates": {
-        "Bagon": 0.9,
-        "Lanturn": 0.9,
-        "Scolipede": 0.9,
-        "Unown": 0.9,
-        "Nidoqueen": 0.8
+        "Bagon": 1,
+        "Lanturn": 1,
+        "Nidoqueen": 1,
+        "Scolipede": 1,
+        "Unown": 1
       },
       "counters": {}
     },
@@ -1338,11 +1338,11 @@
       "stats": {"254/136/125/111/76/56": 1},
       "moves": {"Slam": 1, "Snore": 1, "Tail Whip": 1, "Toxic": 1},
       "teammates": {
-        "Florges": 0.9,
-        "Loudred": 0.9,
-        "Magikarp": 0.9,
-        "Tentacruel": 0.9,
-        "Wimpod": 0.9
+        "Florges": 1,
+        "Loudred": 1,
+        "Magikarp": 1,
+        "Tentacruel": 1,
+        "Wimpod": 1
       },
       "counters": {}
     }

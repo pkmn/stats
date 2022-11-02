@@ -14,11 +14,11 @@
       "stats": {"397/284/146/174/147/226": 1},
       "moves": {"Fire Blast": 1, "Flamethrower": 1, "Psychic": 1, "U-turn": 1},
       "teammates": {
-        "Dugtrio": 0.5,
-        "Gastrodon": 0.5,
-        "Mimikyu": 0.5,
-        "Shaymin-Sky": 0.5,
-        "Zygarde": 0.5
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {"Rayquaza-Mega": [1, 1, 0]}
     },
@@ -35,11 +35,11 @@
       "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
-        "Greninja-Ash": 0.5,
-        "Meloetta": 0.5,
-        "Rayquaza-Mega": 0.5,
-        "Shedinja": 0.5,
-        "Zoroark": 0.5
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {
         "Gastrodon": [1, 0, 0],
@@ -66,11 +66,11 @@
         "Sucker Punch": 1
       },
       "teammates": {
-        "Darmanitan": 0.5,
-        "Gastrodon": 0.5,
-        "Mimikyu": 0.5,
-        "Shaymin-Sky": 0.5,
-        "Zygarde": 0.5
+        "Darmanitan": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {"Greninja-Ash": [1, 1, 0]}
     },
@@ -87,11 +87,11 @@
       "stats": {"426/203/172/220/289/102": 1},
       "moves": {"Earthquake": 1, "Ice Beam": 1, "Recover": 1, "Surf": 1},
       "teammates": {
-        "Darmanitan": 0.5,
-        "Dugtrio": 0.5,
-        "Mimikyu": 0.5,
-        "Shaymin-Sky": 0.5,
-        "Zygarde": 0.5
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {"Ditto": [1, 1, 0], "Greninja-Ash": [1, 0, 1]}
     },
@@ -113,11 +113,11 @@
         "Water Shuriken": 1
       },
       "teammates": {
-        "Ditto": 0.5,
-        "Meloetta": 0.5,
-        "Rayquaza-Mega": 0.5,
-        "Shedinja": 0.5,
-        "Zoroark": 0.5
+        "Ditto": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {
         "Mimikyu": [1, 1, 0],
@@ -145,11 +145,11 @@
         "Signal Beam": 1
       },
       "teammates": {
-        "Ditto": 0.5,
-        "Greninja-Ash": 0.5,
-        "Rayquaza-Mega": 0.5,
-        "Shedinja": 0.5,
-        "Zoroark": 0.5
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -171,11 +171,11 @@
         "Swords Dance": 1
       },
       "teammates": {
-        "Darmanitan": 0.5,
-        "Dugtrio": 0.5,
-        "Gastrodon": 0.5,
-        "Shaymin-Sky": 0.5,
-        "Zygarde": 0.5
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Shaymin-Sky": 1,
+        "Zygarde": 1
       },
       "counters": {"Ditto": [1, 1, 0], "Greninja-Ash": [1, 0, 0]}
     },
@@ -197,11 +197,11 @@
         "Roar": 1
       },
       "teammates": {
-        "Ditto": 0.5,
-        "Greninja-Ash": 0.5,
-        "Meloetta": 0.5,
-        "Shedinja": 0.5,
-        "Zoroark": 0.5
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Shedinja": 1,
+        "Zoroark": 1
       },
       "counters": {"Darmanitan": [1, 0, 0]}
     },
@@ -223,11 +223,11 @@
         "Hidden Power Electric": 1
       },
       "teammates": {
-        "Darmanitan": 0.5,
-        "Dugtrio": 0.5,
-        "Gastrodon": 0.5,
-        "Mimikyu": 0.5,
-        "Zygarde": 0.5
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Zygarde": 1
       },
       "counters": {"Ditto": [1, 1, 0], "Greninja-Ash": [2, 0, 1]}
     },
@@ -249,11 +249,11 @@
         "Swords Dance": 1
       },
       "teammates": {
-        "Ditto": 0.5,
-        "Greninja-Ash": 0.5,
-        "Meloetta": 0.5,
-        "Rayquaza-Mega": 0.5,
-        "Zoroark": 0.5
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Zoroark": 1
       },
       "counters": {}
     },
@@ -270,11 +270,11 @@
       "stats": {"261/309/156/248/157/339": 1},
       "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
       "teammates": {
-        "Ditto": 0.5,
-        "Greninja-Ash": 0.5,
-        "Meloetta": 0.5,
-        "Rayquaza-Mega": 0.5,
-        "Shedinja": 0.5
+        "Ditto": 1,
+        "Greninja-Ash": 1,
+        "Meloetta": 1,
+        "Rayquaza-Mega": 1,
+        "Shedinja": 1
       },
       "counters": {}
     },
@@ -296,11 +296,11 @@
         "Thousand Arrows": 1
       },
       "teammates": {
-        "Darmanitan": 0.5,
-        "Dugtrio": 0.5,
-        "Gastrodon": 0.5,
-        "Mimikyu": 0.5,
-        "Shaymin-Sky": 0.5
+        "Darmanitan": 1,
+        "Dugtrio": 1,
+        "Gastrodon": 1,
+        "Mimikyu": 1,
+        "Shaymin-Sky": 1
       },
       "counters": {"Ditto": [1, 1, 0], "Greninja-Ash": [1, 0, 1]}
     }

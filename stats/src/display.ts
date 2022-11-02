@@ -68,6 +68,7 @@ export interface DetailedMovesetStatistics {
   Spreads: { [spread: string]: number };
   Happiness?: { [happiness: string]: number };
   Moves: { [move: string]: number };
+  // FIXME: this changed 2021-04 from deltas to raw usage
   Teammates: { [pokemon: string]: number };
   // n = sum(POKE1_KOED...DOUBLE_SWITCH)
   // p = POKE1_KOED + POKE1_SWITCHED_OUT / n
@@ -132,7 +133,8 @@ export const Display = new class {
           const o = gen.moves.get(move);
           return (o?.name) ?? move;
         }),
-        teammates: getTeammates(gen, format, p.teammates, p.raw.weight, total, stats),
+        // teammates: getTeammates(gen, format, p.teammates, p.raw.weight, total, stats),
+        teammates: getTeammates(gen, p.teammates, p.raw.weight, stats),
         counters: util.getChecksAndCounters(p.encounters, [N, formatEncounterStatistics], min),
       };
     }
@@ -307,13 +309,13 @@ function toDisplayObject(
 
 function getTeammates(
   gen: Generation,
-  format: ID,
+  // format: ID,
   teammates: { [id: string /* ID */]: number },
   weight: number,
-  total: number,
+  // total: number,
   stats: Statistics
 ): { [key: string]: number } {
-  const real = ['challengecup1v1', '1v1'].includes(format);
+  // const real = ['challengecup1v1', '1v1'].includes(format);
   const m: { [species: string]: number } = {};
   for (const [id, w] of Object.entries(teammates)) {
     const species = gen.species.get(id)?.name;
@@ -323,8 +325,9 @@ function getTeammates(
       m[species] = 0;
       continue;
     }
-    const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
-    m[species] = w - weight * usage;
+    // const usage = ((real ? s.usage.real : s.usage.weighted) / total) * 6;
+    // m[species] = w - weight * usage;
+    m[species] = w;
   }
   return toDisplayObject(m, weight);
 }

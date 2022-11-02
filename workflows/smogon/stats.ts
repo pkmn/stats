@@ -35,8 +35,8 @@ const forFormat = (format: ID) =>
 const MONOTYPES = new Set(Array.from(GENS.get(8).types).map(type => `mono${type.id}` as ID));
 
 const SKIP = [
-  'seasonal', 'random', 'petmod', 'factory', 'challengecup',
-  'hackmonscup', 'digimon', 'metronome', 'superstaff',
+  'random', 'custom', 'petmod', 'factory', 'challengecup',
+  'hackmonscup', 'digimon', 'crazyhouse', 'superstaff',
 ];
 
 const POPULAR = {
@@ -48,7 +48,7 @@ const POPULAR = {
     'gen7ou', 'gen7oususpecttest', 'gen7doublesou', 'gen7doublesoususpecttest',
     'gen7pokebankou', 'gen7pokebankoususpecttest', 'gen7pokebankdoublesou',
   ],
-  8: ['gen8doublesou', 'gen8ou', 'gen8oususpecttest'],
+  8: ['gen8doublesou', 'gen8doublesoususpect', 'gen8ou', 'gen8oususpecttest'],
 };
 
 const CUTOFFS = {

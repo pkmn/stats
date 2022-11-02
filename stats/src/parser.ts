@@ -320,6 +320,10 @@ export const Parser = new class {
         pokemon.ability = 'deltastream';
       } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
         pokemon.species = 'greninjaash';
+      } else if (pokemon.species === 'zacian' && pokemon.ability === 'rustedsword') {
+        pokemon.species = 'zaciancrowned';
+      } else if (pokemon.species === 'zamazenta' && pokemon.ability === 'rustedshield') {
+        pokemon.species = 'zamazentacrowned';
       } else {
         const mega = util.getMegaEvolution(gen, pokemon, legacy);
         if (mega) {
@@ -335,8 +339,8 @@ export const Parser = new class {
 
 // prettier-ignore
 const FORMES = new Set([
-  'greninjaash', 'zygardecomplete', 'mimikyubusted',
-  'mimikyubustedtotem', 'shayminsky', 'necrozmaultra',
+  'greninjaash', 'zygardecomplete', 'mimikyubusted', 'mimikyubustedtotem',
+  'shayminsky', 'necrozmaultra', 'zaciancrowned', 'zamazentacrowned',
 ]);
 
 function identify(

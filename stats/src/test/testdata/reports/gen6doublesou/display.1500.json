@@ -19,11 +19,11 @@
         "Shadow Sneak": 1
       },
       "teammates": {
-        "Charizard-Mega-Y": 0.6281,
-        "Keldeo": 0.6281,
-        "Kyurem-Black": 0.6281,
-        "Rhyperior": 0.6281,
-        "Shaymin": 0.6281
+        "Charizard-Mega-Y": 1.2562,
+        "Keldeo": 1.2562,
+        "Kyurem-Black": 1.2562,
+        "Rhyperior": 1.2562,
+        "Shaymin": 1.2562
       },
       "counters": {"Amoonguss": [0.3719, 0, 0], "Cresselia": [0.3719, 0, 0]}
     },
@@ -40,11 +40,11 @@
       "stats": {"297/191/193/458/266/299": 1},
       "moves": {"Heat Wave": 1, "Overheat": 1, "Protect": 1, "Solar Beam": 1},
       "teammates": {
-        "Aegislash": 0.6281,
-        "Keldeo": 0.6281,
-        "Kyurem-Black": 0.6281,
-        "Rhyperior": 0.6281,
-        "Shaymin": 0.6281
+        "Aegislash": 1.2562,
+        "Keldeo": 1.2562,
+        "Kyurem-Black": 1.2562,
+        "Rhyperior": 1.2562,
+        "Shaymin": 1.2562
       },
       "counters": {
         "Camerupt-Mega": [0.3719, 0, 0],
@@ -64,11 +64,11 @@
       "stats": {"323/134/216/357/217/346": 1},
       "moves": {"Icy Wind": 1, "Protect": 1, "Scald": 1, "Secret Sword": 1},
       "teammates": {
-        "Aegislash": 0.6281,
-        "Charizard-Mega-Y": 0.6281,
-        "Kyurem-Black": 0.6281,
-        "Rhyperior": 0.6281,
-        "Shaymin": 0.6281
+        "Aegislash": 1.2562,
+        "Charizard-Mega-Y": 1.2562,
+        "Kyurem-Black": 1.2562,
+        "Rhyperior": 1.2562,
+        "Shaymin": 1.2562
       },
       "counters": {}
     },
@@ -90,11 +90,11 @@
         "Ice Beam": 1
       },
       "teammates": {
-        "Aegislash": 0.6281,
-        "Charizard-Mega-Y": 0.6281,
-        "Keldeo": 0.6281,
-        "Rhyperior": 0.6281,
-        "Shaymin": 0.6281
+        "Aegislash": 1.2562,
+        "Charizard-Mega-Y": 1.2562,
+        "Keldeo": 1.2562,
+        "Rhyperior": 1.2562,
+        "Shaymin": 1.2562
       },
       "counters": {"Scrafty": [0.3719, 0, 0]}
     },
@@ -116,11 +116,11 @@
         "Rock Slide": 1
       },
       "teammates": {
-        "Aegislash": 0.6281,
-        "Charizard-Mega-Y": 0.6281,
-        "Keldeo": 0.6281,
-        "Kyurem-Black": 0.6281,
-        "Shaymin": 0.6281
+        "Aegislash": 1.2562,
+        "Charizard-Mega-Y": 1.2562,
+        "Keldeo": 1.2562,
+        "Kyurem-Black": 1.2562,
+        "Shaymin": 1.2562
       },
       "counters": {"Scrafty": [0.3719, 0, 1], "Diancie": [0.3719, 0, 0]}
     },
@@ -142,11 +142,11 @@
         "Giga Drain": 1
       },
       "teammates": {
-        "Aegislash": 0.6281,
-        "Charizard-Mega-Y": 0.6281,
-        "Keldeo": 0.6281,
-        "Kyurem-Black": 0.6281,
-        "Rhyperior": 0.6281
+        "Aegislash": 1.2562,
+        "Charizard-Mega-Y": 1.2562,
+        "Keldeo": 1.2562,
+        "Kyurem-Black": 1.2562,
+        "Rhyperior": 1.2562
       },
       "counters": {}
     },
@@ -163,11 +163,11 @@
       "stats": {"432/175/197/206/262/58": 1},
       "moves": {"Giga Drain": 1, "Protect": 1, "Rage Powder": 1, "Spore": 1},
       "teammates": {
-        "Camerupt-Mega": 0.3719,
-        "Cresselia": 0.3719,
-        "Diancie": 0.3719,
-        "Rotom-Wash": 0.3719,
-        "Scrafty": 0.3719
+        "Camerupt-Mega": 0.7438,
+        "Cresselia": 0.7438,
+        "Diancie": 0.7438,
+        "Rotom-Wash": 0.7438,
+        "Scrafty": 0.7438
       },
       "counters": {"Aegislash": [0.3719, 0, 1]}
     },
@@ -189,11 +189,11 @@
         "Protect": 1
       },
       "teammates": {
-        "Amoonguss": 0.3719,
-        "Cresselia": 0.3719,
-        "Diancie": 0.3719,
-        "Rotom-Wash": 0.3719,
-        "Scrafty": 0.3719
+        "Amoonguss": 0.7438,
+        "Cresselia": 0.7438,
+        "Diancie": 0.7438,
+        "Rotom-Wash": 0.7438,
+        "Scrafty": 0.7438
       },
       "counters": {"Charizard-Mega-Y": [0.3719, 1, 0]}
     },
@@ -210,11 +210,11 @@
       "stats": {"444/145/360/186/308/157": 1},
       "moves": {"Calm Mind": 1, "Moonlight": 1, "Psychic": 1, "Trick Room": 1},
       "teammates": {
-        "Amoonguss": 0.3719,
-        "Camerupt-Mega": 0.3719,
-        "Diancie": 0.3719,
-        "Rotom-Wash": 0.3719,
-        "Scrafty": 0.3719
+        "Amoonguss": 0.7438,
+        "Camerupt-Mega": 0.7438,
+        "Diancie": 0.7438,
+        "Rotom-Wash": 0.7438,
+        "Scrafty": 0.7438
       },
       "counters": {"Aegislash": [0.3719, 0, 0]}
     },
@@ -236,11 +236,11 @@
         "Trick Room": 1
       },
       "teammates": {
-        "Amoonguss": 0.3719,
-        "Camerupt-Mega": 0.3719,
-        "Cresselia": 0.3719,
-        "Rotom-Wash": 0.3719,
-        "Scrafty": 0.3719
+        "Amoonguss": 0.7438,
+        "Camerupt-Mega": 0.7438,
+        "Cresselia": 0.7438,
+        "Rotom-Wash": 0.7438,
+        "Scrafty": 0.7438
       },
       "counters": {"Rhyperior": [0.3719, 1, 0]}
     },
@@ -262,11 +262,11 @@
         "Volt Switch": 1
       },
       "teammates": {
-        "Amoonguss": 0.3719,
-        "Camerupt-Mega": 0.3719,
-        "Cresselia": 0.3719,
-        "Diancie": 0.3719,
-        "Scrafty": 0.3719
+        "Amoonguss": 0.7438,
+        "Camerupt-Mega": 0.7438,
+        "Cresselia": 0.7438,
+        "Diancie": 0.7438,
+        "Scrafty": 0.7438
       },
       "counters": {"Charizard-Mega-Y": [0.3719, 0, 0]}
     },
@@ -288,11 +288,11 @@
         "Poison Jab": 1
       },
       "teammates": {
-        "Amoonguss": 0.3719,
-        "Camerupt-Mega": 0.3719,
-        "Cresselia": 0.3719,
-        "Diancie": 0.3719,
-        "Rotom-Wash": 0.3719
+        "Amoonguss": 0.7438,
+        "Camerupt-Mega": 0.7438,
+        "Cresselia": 0.7438,
+        "Diancie": 0.7438,
+        "Rotom-Wash": 0.7438
       },
       "counters": {"Kyurem-Black": [0.3719, 0, 0], "Rhyperior": [0.3719, 0, 0]}
     }

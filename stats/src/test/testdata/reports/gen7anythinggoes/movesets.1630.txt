@@ -19,11 +19,11 @@
  | Transform 100.000%                     | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Greninja-Ash +99.905%                  | 
- | Meloetta +99.905%                      | 
- | Rayquaza-Mega +99.905%                 | 
- | Shedinja +99.905%                      | 
- | Zoroark +99.905%                       | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -50,11 +50,11 @@
  | Water Shuriken 100.000%                | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +99.905%                         | 
- | Meloetta +99.905%                      | 
- | Rayquaza-Mega +99.905%                 | 
- | Shedinja +99.905%                      | 
- | Zoroark +99.905%                       | 
+ | Ditto 100.000%                         | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -81,11 +81,11 @@
  | Signal Beam 100.000%                   | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +99.905%                         | 
- | Greninja-Ash +99.905%                  | 
- | Rayquaza-Mega +99.905%                 | 
- | Shedinja +99.905%                      | 
- | Zoroark +99.905%                       | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -112,11 +112,11 @@
  | Roar 100.000%                          | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +99.905%                         | 
- | Greninja-Ash +99.905%                  | 
- | Meloetta +99.905%                      | 
- | Shedinja +99.905%                      | 
- | Zoroark +99.905%                       | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Shedinja 100.000%                      | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -143,11 +143,11 @@
  | Swords Dance 100.000%                  | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +99.905%                         | 
- | Greninja-Ash +99.905%                  | 
- | Meloetta +99.905%                      | 
- | Rayquaza-Mega +99.905%                 | 
- | Zoroark +99.905%                       | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
@@ -174,11 +174,11 @@
  | U-turn 100.000%                        | 
  +----------------------------------------+ 
  | Teammates                              | 
- | Ditto +99.905%                         | 
- | Greninja-Ash +99.905%                  | 
- | Meloetta +99.905%                      | 
- | Rayquaza-Mega +99.905%                 | 
- | Shedinja +99.905%                      | 
+ | Ditto 100.000%                         | 
+ | Greninja-Ash 100.000%                  | 
+ | Meloetta 100.000%                      | 
+ | Rayquaza-Mega 100.000%                 | 
+ | Shedinja 100.000%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
