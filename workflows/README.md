@@ -63,6 +63,12 @@ checkpoints to mark progress. The combine step renames the logs such that the or
 
 ## [smogon/stats](smogon/stats.ts)
 
+A production-ready workflow for processing the official Pokémon Showdown usage stats into [reports
+hosted on Smogon](https://smogon.com/stats/), capable of efficiently producing equivalent[^2] output
+to the original [Smogon-Usage-Stats](https://github.com/Antar1011/Smogon-Usage-Stats). **This
+workflow is likely to be overkill for anything other than processing hundreds of gigabytes/terabytes
+of logs on a modern multithreaded server.**
+
 TODO
 
 - newGenerations, legacy reports
@@ -106,3 +112,8 @@ Disaply
 
     YYYY-MM
     └── format-N.json
+
+[^2]: "Capable" is doing a lot of work in this sentence - to actually produce identical reports, the
+code in the canonical Smogon-Usage-Stats repository needs to both be updated with the unpublished
+modifications Pokémon Showdown maintainers have added to their local branch and several
+modifications have to be made to stabilize the Python scripts' output (sort orders, rounding, etc).
