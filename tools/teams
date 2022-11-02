@@ -15,7 +15,7 @@ const {Generations} = require('@pkmn/data');
 const {Dex} = require('@pkmn/dex');
 const {Lookup} = require('@pkmn/engine');
 const {Binary} = require('@pkmn/stats');
-const {Sizes, Team} = Binary;
+const {Log, Sizes, Team} = Binary;
 
 const usage = msg => {
   if (msg) console.error(msg);
@@ -55,8 +55,8 @@ case 'compute': {
     usage(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
   }
 
-  const N = 6 * Sizes[gen.num];
   const row = 17 + 2 * N;
+  const db = fs.readFileSync(argv.logs);
   if (db.length % row !== 0) {
     throw new Error(`Corrupted logs.db of size ${db.length} (${row})`);
   }

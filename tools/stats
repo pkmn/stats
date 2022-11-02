@@ -14,7 +14,7 @@ const stringify = require('json-stringify-pretty-compact');
 const {Generations} = require('@pkmn/data');
 const {Dex} = require('@pkmn/dex');
 const {Lookup} = require('@pkmn/engine');
-const {Binary, Read, Write} = require('@pkmn/stats');
+const {Binary} = require('@pkmn/stats');
 const {Log, Sizes, Stats, Display} = Binary;
 
 const ptile = (arr, p) => {
