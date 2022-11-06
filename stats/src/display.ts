@@ -111,8 +111,8 @@ export const Display = new class {
       pokemon[N(species)] = {
         lead: calcUsage(p.lead, stats.lead), // BUG: remove for non singles?
         usage,
-        unique: calcUsage(u.usage, unique.total),
-        win: calcUsage(p.win, stats.win),
+        unique: calcUsage(u.usage, unique.total, 6),
+        win: calcUsage(p.win, p.usage),
 
         count: p.raw.count,
         weight: p.saved.count ? R(p.saved.weight / p.saved.count) : null,

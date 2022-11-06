@@ -4,7 +4,7 @@
     "Darmanitan": {
       "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "unique": {"raw": 3, "real": 3, "weighted": 5.1757},
       "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 0.9962,
@@ -25,7 +25,7 @@
     "Dugtrio": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "unique": {"raw": 3, "real": 3, "weighted": 5.1757},
       "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 0.9962,
@@ -51,7 +51,7 @@
     "Gastrodon": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "unique": {"raw": 3, "real": 3, "weighted": 5.1757},
       "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 0.9962,
@@ -72,7 +72,7 @@
     "Mimikyu": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "unique": {"raw": 3, "real": 3, "weighted": 5.1757},
       "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 0.9962,
@@ -98,7 +98,7 @@
     "Shaymin-Sky": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "unique": {"raw": 3, "real": 3, "weighted": 5.1757},
       "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 0.9962,
@@ -124,7 +124,7 @@
     "Zygarde": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.8626},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.8626},
+      "unique": {"raw": 3, "real": 3, "weighted": 5.1757},
       "win": {"raw": 0, "real": 0, "weighted": 0},
       "count": 1,
       "weight": 0.9962,
@@ -150,8 +150,8 @@
     "Ditto": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
-      "win": {"raw": 0.1667, "real": 0.3333, "weighted": 0.1667},
+      "unique": {"raw": 3, "real": 3, "weighted": 0.8243},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
@@ -176,8 +176,8 @@
     "Greninja-Ash": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
-      "win": {"raw": 0.1667, "real": 0.3333, "weighted": 0.1667},
+      "unique": {"raw": 3, "real": 3, "weighted": 0.8243},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
@@ -208,8 +208,8 @@
     "Meloetta": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.1374},
-      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1374},
-      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "unique": {"raw": 3, "real": 0, "weighted": 0.8243},
+      "win": {"raw": 1, "real": null, "weighted": 1},
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
@@ -234,8 +234,8 @@
     "Rayquaza-Mega": {
       "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
-      "unique": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
-      "win": {"raw": 0.1667, "real": 0.3333, "weighted": 0.1667},
+      "unique": {"raw": 3, "real": 3, "weighted": 0.8243},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
@@ -260,8 +260,8 @@
     "Shedinja": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.1374},
-      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1374},
-      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "unique": {"raw": 3, "real": 0, "weighted": 0.8243},
+      "win": {"raw": 1, "real": null, "weighted": 1},
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
@@ -286,8 +286,8 @@
     "Zoroark": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
       "usage": {"raw": 0.5, "real": 0, "weighted": 0.1374},
-      "unique": {"raw": 0.5, "real": 0, "weighted": 0.1374},
-      "win": {"raw": 0.1667, "real": 0, "weighted": 0.1667},
+      "unique": {"raw": 3, "real": 0, "weighted": 0.8243},
+      "win": {"raw": 1, "real": null, "weighted": 1},
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
