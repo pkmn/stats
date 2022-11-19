@@ -43,20 +43,20 @@ intermediate results are stored in a directory configured via the `--checkpoints
 options - if the top level directory is not passed in via the `--checkpoints` flag a temporary directory will be created and will be cleaned up upon termination. Checkpoints are structured such
 that the filesystem can be used as a database:
 
-/tmp/workspace-2pA7Hjx/
-└── stats-acbd18db4cc2f85cedef654fccc4a4d8
-    ├── checkpoints
-    │   ├── format
-    │   │   └── YYYY-MM-DD
-    │   └── format-shard
-    │       └── YYYY-MM-DD
-    ├── decompressed
-    │   └── YYYY-MM
-    │       └── format
-    │           └── YYYY-MM-DD
-    │               └── battle-format-N.log.json
-    └── scratch
-        └── ...
+    /tmp/workspace-2pA7Hjx/
+    └── stats-acbd18db4cc2f85cedef654fccc4a4d8
+        ├── checkpoints
+        │   ├── format
+        │   │   └── YYYY-MM-DD
+        │   └── format-shard
+        │       └── YYYY-MM-DD
+        ├── decompressed
+        │   └── YYYY-MM
+        │       └── format
+        │           └── YYYY-MM-DD
+        │               └── battle-format-N.log.json
+        └── scratch
+            └── ...
 
 This top level directory actuall contains several files and directories:
 
