@@ -105,7 +105,7 @@
       "viability": [1, 63, 63, 63],
       "abilities": {"Levitate": 1},
       "items": {"Safety Goggles": 1},
-      "stats": {"444/145/360/186/308/157": 1},
+      "stats": {"444/145/338/186/288/157": 1},
       "moves": {"Calm Mind": 1, "Moonlight": 1, "Psychic": 1, "Trick Room": 1},
       "teammates": {
         "Amoonguss": 1,
@@ -318,7 +318,7 @@
         [0.5, 0],
         [0.55, 0]
       ],
-      "mean": 0.2691,
+      "mean": 0.2618,
       "total": 12
     }
   }

@@ -67,7 +67,7 @@ const UTURN = new Set(['U-Turn', 'U-turn', 'Volt Switch', 'Baton Pass']);
 
 export const Parser = new class {
   parse(gen: Generation, format: ID, raw: Log, legacy = false) {
-    // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e0abe9d3a9febb0e6417a7710cabdc303
+    // https://github.com/Zarel/Pokemon-Showdown/commit/92a4f85e
     if ((raw as unknown) === '"log"') throw new Error('Log = "log"');
 
     if (raw.turns === undefined) throw new Error('No turn count');

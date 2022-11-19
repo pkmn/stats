@@ -26,7 +26,7 @@
     "lint": "eslint --cache src --ext ts",
     "fix": "eslint --fix src --ext ts",
     "compile": "tsc -p .",
-    "build": "npm run compile && tsup src/index.ts",
+    "build": "npm run compile && tsup src/index.ts src/test/integration.ts",
     "test": "jest",
     "pretest": "npm run build",
     "posttest": "npm run lint"

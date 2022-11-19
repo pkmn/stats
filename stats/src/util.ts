@@ -25,7 +25,7 @@ const ALIASES: Readonly<{ [id: string]: string }> = aliases;
 let DEFAULT!: Generation;
 export function newGenerations(dex: Dex) {
   const gens = new Generations(dex, e => !!e.exists);
-  DEFAULT = gens.get(8);
+  DEFAULT = gens.get(9);
   return gens;
 }
 
@@ -118,6 +118,7 @@ const NON_SINGLES_FORMATS = new Set([
   'gen6vgc2016', 'gen7vgc2017', 'gen7vgc2018', 'gen7vgc2019', 'gen7vgc2019sunseries',
   'gen7vgc2019moonseries', 'gen7vgc2019ultraseries', 'gen8vgc2020', 'gen8vgc2021',
   'gen8vgc2021series9', 'gen8vgc2021series9limitonerestrictedrestrictedlegendary', 'gen8vgc2022',
+  // TODO: add gen9 formats
 ]);
 
 export function isNonSinglesFormat(format: ID) {
@@ -133,6 +134,7 @@ const NON_6V6_FORMATS = new Set([
   'gen7vgc2019sunseries', 'gen7vgc2019moonseries', 'fen7vgc2019ultraseries', 'gen8vgc2020',
   'gen8vgc2021', 'gen8vgc2021series9', 'gen8vgc2021series9limitonerestrictedrestrictedlegendary',
   'gen8vgc2022', 'gen8firstblood', 'gen8tagteamsingles',
+  // TODO: add gen9 formats
 ]);
 
 export function isNon6v6Format(format: ID) {

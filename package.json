@@ -14,7 +14,7 @@
   },
   "optionalDependencies": {
     "@pkmn/engine": "file:../engine",
-    "@pkmn/sets": "4.0.0"
+    "@pkmn/sets": "^5.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",

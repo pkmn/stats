@@ -107,22 +107,24 @@ in Generation VIII, the encoding doesn't need an extra byte for `dynamaxLevel` a
 
 </details>
 
-<details><summary><b>Generation VII</b></summary>
+<details><summary><b>Generation VII & IX</b></summary>
 
-| Start | End | Data                            |
-| ----- | --- | ------------------------------- |
-| 0     | 2   | The Pokémon's species & forme   |
-| 2     | 3   | The Pokémon's item              |
-| 3     | 5   | The Pokémon's ability           |
-| 5     | 7   | The Pokémon's first move        |
-| 7     | 9   | The Pokémon's second move       |
-| 9     | 11  | The Pokémon's third move        |
-| 11    | 13  | The Pokémon's fourth move       |
-| 13    | 14  | The Pokémon's nature            |
-| 14    | 20  | The Pokémon's EVs               |
-| 20    | 24  | The Pokémon's IVs               |
-| 24    | 25  | The Pokémon's level             |
-| 25    | 26  | The Pokémon's Hidden Power type |
+| Start | End | Data                                      |
+| ----- | --- | ----------------------------------------- |
+| 0     | 2   | The Pokémon's species & forme             |
+| 2     | 3   | The Pokémon's item                        |
+| 3     | 5   | The Pokémon's ability                     |
+| 5     | 7   | The Pokémon's first move                  |
+| 7     | 9   | The Pokémon's second move                 |
+| 9     | 11  | The Pokémon's third move                  |
+| 11    | 13  | The Pokémon's fourth move                 |
+| 13    | 14  | The Pokémon's nature                      |
+| 14    | 20  | The Pokémon's EVs                         |
+| 20    | 24  | The Pokémon's IVs                         |
+| 24    | 25  | The Pokémon's level                       |
+| 25    | 26  | The Pokémon's Hidden Power/Tera Type type |
+
+In Generation VII the final byte is the Hidden Power type and in Generation IX it is the Tera Type.
 
 </details>
 

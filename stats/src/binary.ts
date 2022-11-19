@@ -54,7 +54,7 @@ const Write = new class {
   }
 };
 
-const Sizes = {1: 5, 2: 7, 3: 24, 4: 24, 5: 24, 6: 25, 7: 26, 8: 25} as const;
+const Sizes = {1: 5, 2: 7, 3: 24, 4: 24, 5: 24, 6: 25, 7: 26, 8: 25, 9: 26} as const;
 
 const Team = new class {
   encode(

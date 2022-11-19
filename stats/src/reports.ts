@@ -377,7 +377,7 @@ export const Reports = new class {
         const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
           reports.push(maybeParseUsageReport(
-            read(month, `gen8${usageTierName(tier)}${suffix}`)
+            read(month, `gen9${usageTierName(tier)}${suffix}`)
           ).then(r => [suffix, r]));
         }
 

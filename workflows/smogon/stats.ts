@@ -32,8 +32,8 @@ interface CombineState {
 const GENS = newGenerations(Dex);
 const forFormat = (format: ID) =>
   format.startsWith('gen') ? GENS.get(format.charAt(3)) : GENS.get(6);
-const MONOTYPES = new Set(Array.from(GENS.get(8).types).map(type => `mono${type.id}` as ID));
-
+const MONOTYPES = new Set(Array.from(GENS.get(9).types).map(type => `mono${type.id}` as ID));
+const MONOTYPE = 'gen9monotype' as ID;
 const SKIP = [
   'random', 'custom', 'petmod', 'factory', 'challengecup',
   'hackmonscup', 'digimon', 'crazyhouse', 'superstaff',
@@ -49,6 +49,7 @@ const POPULAR = {
     'gen7pokebankou', 'gen7pokebankoususpecttest', 'gen7pokebankdoublesou',
   ],
   8: ['gen8doublesou', 'gen8doublesoususpect', 'gen8ou', 'gen8oususpecttest'],
+  9: ['gen9doublesou', 'gen9doublesoususpect', 'gen9ou', 'gen9oususpecttest'],
 };
 
 const CUTOFFS = {
@@ -66,7 +67,8 @@ function cutoffsFor(format: ID, date: string) {
   if (POPULAR[7].includes(format)) return date > '2020-01' ? CUTOFFS.default : CUTOFFS.popular;
   // smogondoublessuspecttest only has two months of date, but 2015-04 had a higher weighting.
   if (format === 'smogondoublessuspecttest' && date === '2015-04') return CUTOFFS.popular;
-  return POPULAR[8].includes(format) ? CUTOFFS.popular : CUTOFFS.default;
+  const popular = POPULAR[8].includes(format) || POPULAR[9].includes(format);
+  return popular ? CUTOFFS.popular : CUTOFFS.default;
 }
 
 const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, CombineState> {
@@ -96,7 +98,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
 
     await fs.mkdir(config.output, {recursive: true});
     if (config.legacy) {
-      if (!(config.formats && !config.formats.has('gen8monotype' as ID))) {
+      if (!(config.formats && !config.formats.has(MONOTYPE))) {
         const monotype = path.resolve(config.output, 'monotype');
         await fs.mkdir(monotype);
         // we're just assuming here that maxFiles is > 10 for each worker ¯\_(ツ)_/¯
@@ -110,7 +112,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
       if ((config.formats && !config.formats.has(format)) ||
         format.startsWith('seasonal') || SKIP.some(f => format.includes(f))) {
         return false;
-      } else if (format === 'gen8monotype') {
+      } else if (format === MONOTYPE) {
         return [...MONOTYPES, ''];
       } else {
         return true;
@@ -154,7 +156,7 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
   }
 
   async writeResults(format: ID, state: CombineState, shard?: string) {
-    const reports = format === 'gen8monotype' && shard
+    const reports = format === MONOTYPE && shard
       ? path.join(this.config.output, 'monotype')
       : this.config.output;
     const min = this.config.all ? [0, -Infinity] : [20, 0.5];
