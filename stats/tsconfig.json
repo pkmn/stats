@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "build",
+    "noEmit": true,
     "resolveJsonModule": true,
     "tsBuildInfoFile": ".tsbuildinfo"
   },

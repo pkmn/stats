@@ -6,6 +6,8 @@ import {Batch, Checkpoint} from './checkpoints';
 import {CheckpointStorage, LogStorage, Storage} from './storage';
 import {limit, Limit} from './limit';
 
+export type {Limit} from './limit';
+
 export type WorkerConfiguration = Omit<Configuration, 'worker'>;
 
 export type WorkerOptions<C extends WorkerConfiguration> = {

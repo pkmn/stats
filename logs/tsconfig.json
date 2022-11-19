@@ -2,7 +2,7 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "outDir": "build",
+    "noEmit": true,
     "tsBuildInfoFile": ".tsbuildinfo",
   },
   "include": ["src/**/*"]
