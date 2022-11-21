@@ -4,8 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "@pkmn/anon": "file:anon",
-    "@pkmn/data": "^0.7.0",
-    "@pkmn/dex": "^0.7.0",
+    "@pkmn/data": "^0.7.1",
+    "@pkmn/dex": "^0.7.1",
     "@pkmn/logs": "file:logs",
     "@pkmn/stats": "file:stats",
     "json-stringify-pretty-compact": "3.0.0",
