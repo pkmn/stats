@@ -30,7 +30,7 @@ compress() {
     day=$4
 
     cd "${INPUT}/${format}/${day}"
-    7z a "${TMP}/${format}/${day}.7z" *
+    7z a "${TMP}/${format}/${day}.7z" .
 }
 export -f compress
 
