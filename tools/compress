@@ -43,5 +43,7 @@ for format in `ls $INPUT`; do
     parallel -j $cores compress $TMP $INPUT $format ::: `ls ${INPUT}/${format}`
 done
 
-cd $TMP
+pushd $TMP
 tar cvf $OUTPUT *
+popd
+cp $TMP/$OUTPUT .
