@@ -15,7 +15,7 @@ fi
 # └── format
 #     └── YYYY-MM-DD.7z
 #         └── battle-format-N.log.json
-OUTPUT=${2:-$INPUT}
+OUTPUT=${2:-$(basename $INPUT)}
 if [[ $OUTPUT != *.tar ]]; then
     OUTPUT="${OUTPUT}.tar"
 fi
