@@ -1,5 +1,6 @@
-import * as os from 'os';
 import * as path from 'path';
+
+import * as util from './util';
 
 // The maximum number of files we'll potentially have open at once. `ulimit -n` on most systems
 // should be at least 1024 by default, but we'll set a more more conservative limit to avoid running
@@ -8,9 +9,8 @@ import * as path from 'path';
 // likely not worth the complexity or coordination overhead.
 const MAX_FILES = 256;
 
-// The default number of workers to use - one per core after setting aside a core for garbage
-// collection and other system tasks.
-const NUM_WORKERS = os.cpus().length - 1;
+// Default to one worker per *physical* core.
+const NUM_WORKERS = util.cpus();
 
 export type ID = (string & { __brand: 'ID' }) | (string & { __isID: true }) | '';
 
