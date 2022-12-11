@@ -31,6 +31,8 @@ Where [teams](#teams) are encoded in the manner described below. These binary lo
 decoded with `Binary.Log#decode`. The [pkmn/db](../workflows/pkmn/db) workflow exists to
 convert a logs corpus to this binary format.
 
+**TODO:** Add 2 bytes for real usage bitsets?
+
 ## Teams
 
 Teams can be encoded and decoded with `Binary.Team#encode`/`Binary.Team#decode` respectively. These
@@ -48,6 +50,9 @@ approximate this.
 | 3     | 4   | The Pokémon's third move  |
 | 4     | 5   | The Pokémon's fourth move |
 
+This representation is lossy as stat information is not preserved, though in practice this only
+affects the 341 Spc "SafeTwo" (13 Spc DV & 8 Spc IV) Mewtwo spread.
+
 </details>
 
 <details><summary><b>Generation II</b></summary>
@@ -61,6 +66,10 @@ approximate this.
 | 4     | 5   | The Pokémon's third move        |
 | 5     | 6   | The Pokémon's fourth move       |
 | 6     | 7   | The Pokémon's Hidden Power type |
+
+This representation is lossy as stat information is not preserved, though in practice this only
+affects 216 Spe EV Roar Raikou as Thick Club + Swords Dance Marowak always wants specific corrected
+DVs.
 
 </details>
 
