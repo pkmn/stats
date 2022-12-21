@@ -39,7 +39,7 @@ CORES=$(getconf _NPROCESSORS_ONLN)
 for format in `ls $INPUT`; do
     mkdir "${TMP}/${format}"
     # gen{8,9}randombattle can have 200k+ files per day, which could equate to 6M open files
-    if [[ "${format}" =~ gen[89]randombattle ]]; then cores=4; else cores=$CORES; fi
+    if [[ "${format}" =~ gen[89]randombattle$ ]]; then cores=4; else cores=$CORES; fi
     parallel -j $cores compress $TMP $INPUT $format ::: `ls ${INPUT}/${format}`
 done
 
