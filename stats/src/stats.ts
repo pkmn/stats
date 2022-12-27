@@ -468,7 +468,6 @@ function updateTeammates(
 }
 
 // Lookup table for the outcomes if poke1 and poke2 were exchanged
-// prettier-ignore
 const INVERSE_OUTCOMES: Outcome[] = [
   Outcome.POKE2_KOED, Outcome.POKE1_KOED,
   Outcome.DOUBLE_DOWN,

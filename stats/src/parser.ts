@@ -337,10 +337,9 @@ export const Parser = new class {
   }
 };
 
-// prettier-ignore
 const FORMES = new Set([
   'greninjaash', 'zygardecomplete', 'mimikyubusted', 'mimikyubustedtotem',
-  'shayminsky', 'necrozmaultra', 'zaciancrowned', 'zamazentacrowned',
+  'shayminsky', 'necrozmaultra', 'zaciancrowned', 'zamazentacrowned', 'palafinhero',
 ]);
 
 function identify(
