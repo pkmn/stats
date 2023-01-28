@@ -663,7 +663,7 @@
       "weight": null,
       "viability": [0, 0, 0, 0],
       "abilities": {"Beast Boost": 1},
-      "items": {"Energy Powder": 1},
+      "items": {"Nothing": 1},
       "stats": {"208/132/175/250/119/172": 1},
       "moves": {
         "Acrobatics": 1,
