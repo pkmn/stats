@@ -320,9 +320,9 @@ export const Parser = new class {
         pokemon.ability = 'deltastream';
       } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
         pokemon.species = 'greninjaash';
-      } else if (pokemon.species === 'zacian' && pokemon.ability === 'rustedsword') {
+      } else if (pokemon.species === 'zacian' && pokemon.item === 'rustedsword') {
         pokemon.species = 'zaciancrowned';
-      } else if (pokemon.species === 'zamazenta' && pokemon.ability === 'rustedshield') {
+      } else if (pokemon.species === 'zamazenta' && pokemon.item === 'rustedshield') {
         pokemon.species = 'zamazentacrowned';
       } else {
         const mega = util.getMegaEvolution(gen, pokemon, legacy);
