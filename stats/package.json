@@ -1,6 +1,6 @@
 {
   "name": "@pkmn/stats",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Logic for processing usage stats from Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",
@@ -8,9 +8,7 @@
   "main": "build/index.js",
   "module": "build/index.mjs",
   "types": "build/index.d.ts",
-  "files": [
-    "build"
-  ],
+  "files": ["build"],
   "bin": {
     "convert": "./convert"
   },
@@ -18,10 +16,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.7.18"
+    "@pkmn/data": "^0.7.21"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.7.18",
+    "@pkmn/dex": "^0.7.21",
     "json-stringify-pretty-compact": "3.0.0"
   },
   "scripts": {
@@ -35,35 +33,20 @@
   },
   "tsup": {
     "outDir": "build",
-    "format": [
-      "cjs",
-      "esm"
-    ],
+    "format": ["cjs", "esm"],
     "sourcemap": true,
     "dts": true,
     "clean": true
   },
   "jest": {
     "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "node_modules/",
-      "dist/"
-    ],
-    "modulePathIgnorePatterns": [
-      "fixtures/"
-    ]
+    "testPathIgnorePatterns": ["node_modules/", "dist/"],
+    "modulePathIgnorePatterns": ["fixtures/"]
   },
   "babel": {
     "presets": [
-      "@babel/preset-typescript",
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "current"
-          }
-        }
-      ]
+        "@babel/preset-typescript",
+        ["@babel/preset-env", {"targets": {"node": "current"}}]
     ]
   },
   "eslintConfig": {
