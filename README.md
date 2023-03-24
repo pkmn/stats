@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="pkmn/stats" width="192" height="192" src="https://pkmn.cc/stats.svg" />
+  <img alt="pkmn/stats" width="215" height="292" src="https://pkmn.cc/red-computer.png" />
   <br />
   <br />
   <a href="https://github.com/pkmn/stats/actions/workflows/test.yml">
