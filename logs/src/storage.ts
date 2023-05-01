@@ -1,7 +1,8 @@
+import * as path from 'path';
+
+import {Batch, Checkpoint} from './checkpoints';
 import {ID} from './config';
 import * as fs from './fs';
-import * as path from 'path';
-import {Checkpoint, Batch} from './checkpoints';
 
 const collator = Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
 export const CMP = (a: string, b: string) => collator.compare(a, b);

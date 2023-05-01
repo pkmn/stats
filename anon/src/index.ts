@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 
-import {Generation, ID, toID, PokemonSet, SpeciesName} from '@pkmn/data';
-import {Protocol, Username, Nickname, PokemonIdent, PokemonDetails} from '@pkmn/protocol';
+import {Generation, ID, PokemonSet, SpeciesName, toID} from '@pkmn/data';
+import {Nickname, PokemonDetails, PokemonIdent, Protocol, Username} from '@pkmn/protocol';
 
 export interface Log {
   roomid: string;

@@ -1,4 +1,4 @@
-import {Generation, ID, toID, PokemonSet, StatID} from '@pkmn/data';
+import {Generation, ID, PokemonSet, StatID, toID} from '@pkmn/data';
 
 import {Classifier} from './classifier';
 import {Outcome} from './util';

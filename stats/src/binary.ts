@@ -1,4 +1,4 @@
-import {Generation, toID, ID, PokemonSet, TypeName, Dex, StatsTable} from '@pkmn/data';
+import {Dex, Generation, ID, PokemonSet, StatsTable, TypeName, toID} from '@pkmn/data';
 
 import * as parser from './parser';
 import {weighting} from './util';

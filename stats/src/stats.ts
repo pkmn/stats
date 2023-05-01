@@ -1,4 +1,4 @@
-import {Generation, ID, PokemonSet, Nature, StatID, StatsTable} from '@pkmn/data';
+import {Generation, ID, Nature, PokemonSet, StatID, StatsTable} from '@pkmn/data';
 
 import {Battle, Player, Pokemon} from './parser';
 import {Outcome} from './util';
@@ -351,7 +351,6 @@ function updateStats(
 
     const h = p.happinesses[set.happiness!];
     p.happinesses[set.happiness!] = (h || 0) + weights.m;
-
 
     if (!short) {
       p.usage.raw++;

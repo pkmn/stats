@@ -1,11 +1,11 @@
 import * as path from 'path';
 
 import {Anonymizer, Log, Verifier} from '@pkmn/anon';
+import {Generation, Generations} from '@pkmn/data';
 import {Dex} from '@pkmn/dex';
-import {Generations, Generation} from '@pkmn/data';
 import {
-  Batch, Checkpoints, CombineWorker, fs, ID, toID,
-  Options, Random, register, WorkerConfiguration,
+  Batch, Checkpoints, CombineWorker, ID, Options, Random,
+  WorkerConfiguration, fs, register, toID,
 } from '@pkmn/logs';
 
 interface Configuration extends WorkerConfiguration {

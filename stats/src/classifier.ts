@@ -1,4 +1,5 @@
-import {Generation, ID, toID, PokemonSet, StatID, TypeName} from '@pkmn/data';
+import {Generation, ID, PokemonSet, StatID, TypeName, toID} from '@pkmn/data';
+
 import * as util from './util';
 
 // TODO: Where does this constant come from? (ie. rename!)

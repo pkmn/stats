@@ -1,8 +1,8 @@
 import {Generation, ID, toID} from '@pkmn/data';
-import {
-  Usage, Statistics, UsageStatistics, UniqueStatistics, newUsage, combineUnique,
-} from './stats';
 
+import {
+  Statistics, UniqueStatistics, Usage, UsageStatistics, combineUnique, newUsage,
+} from './stats';
 import * as util from './util';
 
 const R = (v: number) => util.round(v, 1e4);

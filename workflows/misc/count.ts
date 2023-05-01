@@ -1,8 +1,8 @@
 import * as path from 'path';
 
 import {
-  Batch, Checkpoints, CombineWorker, fs, ID, toID,
-  JSONCheckpoint, register, WorkerConfiguration,
+  Batch, Checkpoints, CombineWorker, ID, JSONCheckpoint, WorkerConfiguration,
+  fs, register, toID,
 } from '@pkmn/logs';
 
 interface Configuration extends WorkerConfiguration {

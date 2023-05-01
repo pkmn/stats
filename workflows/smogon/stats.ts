@@ -1,15 +1,15 @@
 import * as path from 'path';
-import stringify from 'json-stringify-pretty-compact';
 
-import {Dex} from '@pkmn/dex';
 import {Generation} from '@pkmn/data';
+import {Dex} from '@pkmn/dex';
 import {
-  canonicalizeFormat, Parser, newGenerations, Stats, WeightedStatistics, Reports,
-} from '@pkmn/stats';
-import {
-  Batch, Checkpoints, CombineWorker, fs, ID, toID,
-  JSONCheckpoint, Options, register, WorkerConfiguration,
+  Batch, Checkpoints, CombineWorker, ID, JSONCheckpoint, Options,
+  WorkerConfiguration, fs, register, toID,
 } from '@pkmn/logs';
+import {
+  Parser, Reports, Stats, WeightedStatistics, canonicalizeFormat, newGenerations,
+} from '@pkmn/stats';
+import stringify from 'json-stringify-pretty-compact';
 
 interface Configuration extends WorkerConfiguration {
   formats?: Set<ID>;

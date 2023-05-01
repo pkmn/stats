@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {Dex} from '@pkmn/dex';
 import {Generation, Generations, PokemonSet} from '@pkmn/data';
+import {Dex} from '@pkmn/dex';
 import {Lookup} from '@pkmn/engine';
+import {Batch, Checkpoints, CombineWorker, ID, WorkerConfiguration, register} from '@pkmn/logs';
 import {Team} from '@pkmn/sets';
-import {Batch, Checkpoints, CombineWorker, ID, register, WorkerConfiguration} from '@pkmn/logs';
 import {Binary} from '@pkmn/stats';
 
 interface ApplyState {

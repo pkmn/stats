@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
+
+import {Generation, ID, toID} from '@pkmn/data';
+import {Dex} from '@pkmn/dex';
 import stringify from 'json-stringify-pretty-compact';
 
-import {Dex} from '@pkmn/dex';
-import {Generation, ID, toID} from '@pkmn/data';
-
 import * as stats from '../index';
-import {newGenerations, genForFormat} from '../util';
+import {genForFormat, newGenerations} from '../util';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 // const MONTHS: [string, string, string] = [

@@ -1,5 +1,5 @@
-import * as os from 'os';
 import {execSync} from 'child_process';
+import * as os from 'os';
 
 const exec = (cmd: string) => execSync(cmd, {encoding: 'utf8'});
 const parse = (out: string) => parseInt(out.trim());

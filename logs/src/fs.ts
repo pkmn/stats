@@ -1,8 +1,9 @@
-import * as os from 'os';
 import {promises as fs} from 'fs';
+import * as os from 'os';
 import {join} from 'path';
 import {promisify} from 'util';
 import * as zlib from 'zlib';
+
 import * as zip from '7zip-min';
 
 const gzip = promisify<zlib.InputType, Buffer>(zlib.gzip);

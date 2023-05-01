@@ -1,7 +1,8 @@
 import {performance} from 'perf_hooks';
-import {format} from 'util';
-import {workerData} from 'bthreads';
 import * as tty from 'tty';
+import {format} from 'util';
+
+import {workerData} from 'bthreads';
 
 const TTY = tty.isatty(process.stdout.fd);
 const DEBUG = process.env.DEBUG;
