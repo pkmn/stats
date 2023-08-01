@@ -90,7 +90,7 @@ export const Display = new class {
 
     const q = Object.entries(stats.pokemon);
     const real = ['challengecup1v1', '1v1'].includes(format);
-    const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
+    // const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
     if (['randombattle', 'challengecup', 'challengcup1v1', 'seasonal'].includes(format)) {
       q.sort((a, b) => N(a[0]).localeCompare(N(b[0])));
     } else if (real) {

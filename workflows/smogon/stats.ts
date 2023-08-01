@@ -130,7 +130,8 @@ const StatsWorker = new class extends CombineWorker<Configuration, ApplyState, C
     };
   }
 
-  async processLog(log: string, state: ApplyState, shard?: string) {
+  // async processLog(log: string, state: ApplyState, shard?: string) {
+  async processLog(log: string, state: ApplyState) {
     const raw = JSON.parse(await this.storage.logs.read(log));
     const battle = Parser.parse(state.gen, state.format, raw);
     Stats.updateWeighted(

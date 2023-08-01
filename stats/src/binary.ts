@@ -1,4 +1,4 @@
-import {Dex, Generation, ID, PokemonSet, StatsTable, TypeName, toID} from '@pkmn/data';
+import {Dex, Generation, ID, PokemonSet, TypeName, toID} from '@pkmn/data';
 
 import * as parser from './parser';
 import {weighting} from './util';
@@ -453,11 +453,13 @@ function round(v: number, p = 1e4) {
   return Math.round(v * p);
 }
 
+/*
 function bias(stats: StatsTable) {
   const [first, second] = Object.entries(stats).sort((a, b) => b[1] - a[1]);
   // TODO: convert this pair (eg. 'atkhp') to a number
   return first[0] > second[0] ? [first[0], second[0]] : [second[0], first[0]];
 }
+*/
 
 export const Binary = {Read, Write, Sizes, Log, Team, Stats, Display};
 

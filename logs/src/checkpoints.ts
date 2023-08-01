@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {Configuration, ID} from './config';
 import {CheckpointStorage} from './storage';
 
