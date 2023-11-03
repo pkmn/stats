@@ -36,73 +36,73 @@ const lookup = Lookup.get(gen);
 const N = 6 * Sizes[gen.num];
 
 switch (cmd) {
-case 'display': {
-  if (!argv.teams || !fs.existsSync(argv.teams)) {
-    usage(argv.teams ? `Invalid teams.db ${argv.teams}` : '--teams not provided');
-  }
-
-  const db = fs.readFileSync(argv.teams);
-  if (db.length % N !== 0) usage(`Corrupted teams.db of size ${db.length} (${N})`);
-
-  for (let i = 0; i < db.length; i += N) {
-    console.log(stringify(Team.decode(gen, lookup, db, i)));
-  }
-
-  break;
-}
-case 'compute': {
-  if (!argv.logs || !fs.existsSync(argv.logs)) {
-    usage(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
-  }
-
-  const row = 17 + 2 * N;
-  const db = fs.readFileSync(argv.logs);
-  if (db.length % row !== 0) {
-    throw new Error(`Corrupted logs.db of size ${db.length} (${row})`);
-  }
-
-  const teams = {};
-  for (let offset = 0; offset < db.length; offset += row) {
-    const data = Log.decode(gen, lookup, db, offset);
-    for (const player of [data.winner, data.loser]) {
-      const rating = player.rating ? player.rating.rpr - player.rating.rprd : 0;
-      // TODO: in gen 3+ we must use computed stats for dedupe key!
-      const team = gen.num === 1
-        ? player.team.map(s => `${s.species}|${s.moves.join(',')}`).join(']')
-        : player.team.map(s => `${s.species}|${s.item || ''}|${s.moves.join(',')}`).join(']');
-      teams[team] = Math.max(teams[team] || 0, rating);
+  case 'display': {
+    if (!argv.teams || !fs.existsSync(argv.teams)) {
+      usage(argv.teams ? `Invalid teams.db ${argv.teams}` : '--teams not provided');
     }
-  }
 
-  const sorted = Object.entries(teams).sort((a, b) => b[1] - a[1]);
-  for (let i = 0; i < Math.max(sorted.length, argv.num); i++) {
-    const team = [];
-    for (const s of sorted[i][0].split(']')) {
-      const set = {};
-      if (gen.num === 1) {
-        const [species, moves] = s.split('|');
-        set.species = species;
-        set.moves = moves.split(',');
-      } else {
-        const [species, item, moves] = s.split('|');
-        set.species = species;
-        set.item = item;
-        set.moves = moves.split(',');
+    const db = fs.readFileSync(argv.teams);
+    if (db.length % N !== 0) usage(`Corrupted teams.db of size ${db.length} (${N})`);
+
+    for (let i = 0; i < db.length; i += N) {
+      console.log(stringify(Team.decode(gen, lookup, db, i)));
+    }
+
+    break;
+  }
+  case 'compute': {
+    if (!argv.logs || !fs.existsSync(argv.logs)) {
+      usage(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
+    }
+
+    const row = 17 + 2 * N;
+    const db = fs.readFileSync(argv.logs);
+    if (db.length % row !== 0) {
+      throw new Error(`Corrupted logs.db of size ${db.length} (${row})`);
+    }
+
+    const teams = {};
+    for (let offset = 0; offset < db.length; offset += row) {
+      const data = Log.decode(gen, lookup, db, offset);
+      for (const player of [data.winner, data.loser]) {
+        const rating = player.rating ? player.rating.rpr - player.rating.rprd : 0;
+        // TODO: in gen 3+ we must use computed stats for dedupe key!
+        const team = gen.num === 1
+          ? player.team.map(s => `${s.species}|${s.moves.join(',')}`).join(']')
+          : player.team.map(s => `${s.species}|${s.item || ''}|${s.moves.join(',')}`).join(']');
+        teams[team] = Math.max(teams[team] || 0, rating);
       }
-      team.push(set);
     }
 
-    const buf = Buffer.alloc(N);
-    Team.encode(gen, lookup, team, buf);
-    process.stdout.write(buf);
-  }
+    const sorted = Object.entries(teams).sort((a, b) => b[1] - a[1]);
+    for (let i = 0; i < Math.max(sorted.length, argv.num); i++) {
+      const team = [];
+      for (const s of sorted[i][0].split(']')) {
+        const set = {};
+        if (gen.num === 1) {
+          const [species, moves] = s.split('|');
+          set.species = species;
+          set.moves = moves.split(',');
+        } else {
+          const [species, item, moves] = s.split('|');
+          set.species = species;
+          set.item = item;
+          set.moves = moves.split(',');
+        }
+        team.push(set);
+      }
 
-  if (argv.num > sorted.length) {
-    console.error(`Requested ${argv.num} teams but only ${sorted.length} unique teams`);
-    process.exit(1);
-  }
+      const buf = Buffer.alloc(N);
+      Team.encode(gen, lookup, team, buf);
+      process.stdout.write(buf);
+    }
 
-  break;
-}
-default: usage(`Unknown command: ${cmd}`);
+    if (argv.num > sorted.length) {
+      console.error(`Requested ${argv.num} teams but only ${sorted.length} unique teams`);
+      process.exit(1);
+    }
+
+    break;
+  }
+  default: usage(`Unknown command: ${cmd}`);
 }

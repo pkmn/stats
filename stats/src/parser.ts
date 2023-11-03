@@ -138,136 +138,136 @@ export const Parser = new class {
       const line = rawLine.split('|').map(s => s.trim());
 
       switch (line[1]) {
-      case 'turn':
-        battle.matchups.push(...turnMatchups);
-        flags = emptyFlags();
-        turnMatchups = [];
-        battle.p1.team.pokemon[active.p1!].turnsOut++;
-        battle.p2.team.pokemon[active.p2!].turnsOut++;
-        break;
-      case 'win':
-      case 'tie': {
-        if (flags.ko.p1 || flags.ko.p2) {
-          // Close out the last matchup
-          const poke1 = battle.p1.team.pokemon[active.p1!];
-          const poke2 = battle.p2.team.pokemon[active.p2!];
-          const matchup: [ID, ID, Outcome] = [poke1.species, poke2.species, Outcome.UNKNOWN];
-          if (flags.ko.p1 && flags.ko.p2) {
-            poke1.kos++;
-            poke2.kos++;
-            matchup[2] = Outcome.DOUBLE_DOWN;
-          } else {
-            (flags.ko.p1 ? poke1 : poke2).kos++;
-            if (flags.uturnko) {
-              turnMatchups.pop();
-              matchup[2] = flags.ko.p1 ? Outcome.POKE1_UTURN_KOED : Outcome.POKE2_UTURN_KOED;
-            } else {
-              matchup[2] = flags.ko.p1 ? Outcome.POKE1_KOED : Outcome.POKE2_KOED;
-            }
-          }
-          turnMatchups.push(matchup);
-        }
-        battle.matchups.push(...turnMatchups);
-        break;
-      }
-      case 'move':
-        if (line.length < 4) {
-          throw new Error(`Could not parse line: '${rawLine}'`);
-        }
-        flags.hazard = false;
-        const move = line[3];
-        if (ROAR.has(move)) {
-          flags.roar = true;
-        } else if (UTURN.has(move)) {
-          flags.uturn = true;
-        }
-        break;
-      case '-enditem':
-        if (rawLine.lastIndexOf('Red Card') > -1) {
-          flags.roar = true;
-        } else if (rawLine.lastIndexOf('Eject Button') > -1) {
-          flags.uturn = true;
-        }
-        break;
-      case 'faint': {
-        const side = line[2].startsWith('p1') ? 'p1' : 'p2';
-        flags.ko[side] = true;
-        if (flags.switch[side] === true) flags.fodder = true;
-        if (flags.uturn) {
-          flags.uturn = false;
-          flags.uturnko = true;
-        }
-        break;
-      }
-      case 'replace':
-      case 'switch':
-      case 'drag': {
-        if (line.length < 4) {
-          throw new Error(`Could not parse line: '${rawLine}'`);
-        }
-        const name = line[3].split(',')[0];
-        const side = line[2].startsWith('p1') ? 'p1' : 'p2';
-        if (line[1] === 'replace') {
-          // NOTE: Ideally we'd be able to go back and fix the previously affected matchups
-          active[side] = identify(gen, name, side, battle, idents, legacy);
+        case 'turn':
+          battle.matchups.push(...turnMatchups);
+          flags = emptyFlags();
+          turnMatchups = [];
+          battle.p1.team.pokemon[active.p1!].turnsOut++;
+          battle.p2.team.pokemon[active.p2!].turnsOut++;
           break;
-        }
-
-        if (active.p1 !== undefined && active.p2 !== undefined) {
-          flags.switch[side] = true;
-          if (flags.switch.p1 && flags.switch.p2 && !flags.fodder) {
-            // need to review previous matchup
-            const matchup = turnMatchups[turnMatchups.length - 1];
-            const p = flags.ko.p1 ? 'p1' : 'p2';
-            if (!flags.ko.p1 && !flags.ko.p2) {
-              matchup[2] = Outcome.DOUBLE_SWITCH;
-            } else if (flags.ko.p1 && flags.ko.p2) {
-              if (legacy) {
-                battle[p].team.pokemon[active[p]!].kos++;
-              } else {
-                battle.p1.team.pokemon[active.p1].kos++;
-                battle.p2.team.pokemon[active.p2].kos++;
-              }
+        case 'win':
+        case 'tie': {
+          if (flags.ko.p1 || flags.ko.p2) {
+          // Close out the last matchup
+            const poke1 = battle.p1.team.pokemon[active.p1!];
+            const poke2 = battle.p2.team.pokemon[active.p2!];
+            const matchup: [ID, ID, Outcome] = [poke1.species, poke2.species, Outcome.UNKNOWN];
+            if (flags.ko.p1 && flags.ko.p2) {
+              poke1.kos++;
+              poke2.kos++;
               matchup[2] = Outcome.DOUBLE_DOWN;
             } else {
-              // NOTE: includes hit-by-red-card-and-dies and roar-then-die-by-residual-damage
-              battle[p].team.pokemon[active[p]!].kos++;
-              matchup[2] = flags.ko.p1 ? Outcome.POKE1_UTURN_KOED : Outcome.POKE2_UTURN_KOED;
-            }
-          } else {
-            // close out old matchup
-            const poke1 = battle.p1.team.pokemon[active.p1];
-            const poke2 = battle.p2.team.pokemon[active.p2];
-            const matchup: [ID, ID, Outcome] = [poke1.species, poke2.species, Outcome.UNKNOWN];
-            if (flags.ko.p1 || flags.ko.p2) {
-              if (flags.fodder && flags.hazard) {
-                matchup[2] = flags.ko.p1 ? Outcome.POKE1_FODDERED : Outcome.POKE2_FODDERED;
+              (flags.ko.p1 ? poke1 : poke2).kos++;
+              if (flags.uturnko) {
+                turnMatchups.pop();
+                matchup[2] = flags.ko.p1 ? Outcome.POKE1_UTURN_KOED : Outcome.POKE2_UTURN_KOED;
               } else {
-                // if dies on switch-in due to an attack it's still considered 'KOed'
-                (flags.ko.p1 ? poke1 : poke2).kos++;
                 matchup[2] = flags.ko.p1 ? Outcome.POKE1_KOED : Outcome.POKE2_KOED;
-              }
-            } else {
-              if (flags.roar) {
-                matchup[2] = flags.switch.p1
-                  ? Outcome.POKE1_FORCED_OUT
-                  : Outcome.POKE2_FORCED_OUT;
-              } else {
-                matchup[2] = flags.switch.p1
-                  ? Outcome.POKE1_SWITCHED_OUT
-                  : Outcome.POKE2_SWITCHED_OUT;
               }
             }
             turnMatchups.push(matchup);
           }
-          // new matchup!
-          flags.uturn = flags.roar = flags.fodder = false;
-          flags.hazard = true;
+          battle.matchups.push(...turnMatchups);
+          break;
         }
+        case 'move':
+          if (line.length < 4) {
+            throw new Error(`Could not parse line: '${rawLine}'`);
+          }
+          flags.hazard = false;
+          const move = line[3];
+          if (ROAR.has(move)) {
+            flags.roar = true;
+          } else if (UTURN.has(move)) {
+            flags.uturn = true;
+          }
+          break;
+        case '-enditem':
+          if (rawLine.lastIndexOf('Red Card') > -1) {
+            flags.roar = true;
+          } else if (rawLine.lastIndexOf('Eject Button') > -1) {
+            flags.uturn = true;
+          }
+          break;
+        case 'faint': {
+          const side = line[2].startsWith('p1') ? 'p1' : 'p2';
+          flags.ko[side] = true;
+          if (flags.switch[side] === true) flags.fodder = true;
+          if (flags.uturn) {
+            flags.uturn = false;
+            flags.uturnko = true;
+          }
+          break;
+        }
+        case 'replace':
+        case 'switch':
+        case 'drag': {
+          if (line.length < 4) {
+            throw new Error(`Could not parse line: '${rawLine}'`);
+          }
+          const name = line[3].split(',')[0];
+          const side = line[2].startsWith('p1') ? 'p1' : 'p2';
+          if (line[1] === 'replace') {
+          // NOTE: Ideally we'd be able to go back and fix the previously affected matchups
+            active[side] = identify(gen, name, side, battle, idents, legacy);
+            break;
+          }
 
-        active[side] = identify(gen, name, side, battle, idents, legacy);
-        break;
-      }
+          if (active.p1 !== undefined && active.p2 !== undefined) {
+            flags.switch[side] = true;
+            if (flags.switch.p1 && flags.switch.p2 && !flags.fodder) {
+            // need to review previous matchup
+              const matchup = turnMatchups[turnMatchups.length - 1];
+              const p = flags.ko.p1 ? 'p1' : 'p2';
+              if (!flags.ko.p1 && !flags.ko.p2) {
+                matchup[2] = Outcome.DOUBLE_SWITCH;
+              } else if (flags.ko.p1 && flags.ko.p2) {
+                if (legacy) {
+                  battle[p].team.pokemon[active[p]!].kos++;
+                } else {
+                  battle.p1.team.pokemon[active.p1].kos++;
+                  battle.p2.team.pokemon[active.p2].kos++;
+                }
+                matchup[2] = Outcome.DOUBLE_DOWN;
+              } else {
+              // NOTE: includes hit-by-red-card-and-dies and roar-then-die-by-residual-damage
+                battle[p].team.pokemon[active[p]!].kos++;
+                matchup[2] = flags.ko.p1 ? Outcome.POKE1_UTURN_KOED : Outcome.POKE2_UTURN_KOED;
+              }
+            } else {
+            // close out old matchup
+              const poke1 = battle.p1.team.pokemon[active.p1];
+              const poke2 = battle.p2.team.pokemon[active.p2];
+              const matchup: [ID, ID, Outcome] = [poke1.species, poke2.species, Outcome.UNKNOWN];
+              if (flags.ko.p1 || flags.ko.p2) {
+                if (flags.fodder && flags.hazard) {
+                  matchup[2] = flags.ko.p1 ? Outcome.POKE1_FODDERED : Outcome.POKE2_FODDERED;
+                } else {
+                // if dies on switch-in due to an attack it's still considered 'KOed'
+                  (flags.ko.p1 ? poke1 : poke2).kos++;
+                  matchup[2] = flags.ko.p1 ? Outcome.POKE1_KOED : Outcome.POKE2_KOED;
+                }
+              } else {
+                if (flags.roar) {
+                  matchup[2] = flags.switch.p1
+                    ? Outcome.POKE1_FORCED_OUT
+                    : Outcome.POKE2_FORCED_OUT;
+                } else {
+                  matchup[2] = flags.switch.p1
+                    ? Outcome.POKE1_SWITCHED_OUT
+                    : Outcome.POKE2_SWITCHED_OUT;
+                }
+              }
+              turnMatchups.push(matchup);
+            }
+            // new matchup!
+            flags.uturn = flags.roar = flags.fodder = false;
+            flags.hazard = true;
+          }
+
+          active[side] = identify(gen, name, side, battle, idents, legacy);
+          break;
+        }
       }
     }
 

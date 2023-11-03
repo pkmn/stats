@@ -53,96 +53,96 @@ argv.moves = argv.moves || (gen.num === 1 ? 15 : 20);
 argv.items = argv.items || 5;
 
 switch (cmd) {
-case 'display': {
+  case 'display': {
   // display --gen=1 --stats=stats.db --report=<pokemon|teammates>
-  if (!argv.stats || !fs.existsSync(argv.stats)) {
-    exit(argv.stats ? `Invalid stats.db ${argv.stats}` : '--stats not provided');
-  }
-
-  switch (argv.report) {
-  case 'pokemon': {
-    console.log(stringify(Display.pokemon(gen, lookup, fs.readFileSync(argv.stats), argv)));
-    break;
-  }
-  case 'teammates': {
-    // TODO
-    break;
-  }
-  default: exit(`Unknown report type ${argv.report || ''}`);
-  }
-  break;
-}
-case 'cutoff': {
-  // cutoff --gen=1 -logs=logs.db --percentile=0.5
-  if (!argv.percentile || argv.percentile < 0 || argv.percentile > 100) {
-    exit(argv.percentile ? `Invalid percentile ${argv.percentile}` : 'No --percentile provided');
-  } else if (!argv.logs || !fs.existsSync(argv.logs)) {
-    exit(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
-  }
-
-  const N = 6 * Sizes[gen.num];
-  const row = 17 + 2 * N;
-  const db = fs.readFileSync(argv.logs);
-  if (db.length % row !== 0) exit(`Corrupted logs.db of size ${db.length} (${row})`);
-
-  const ratings = [];
-  for (let offset = 0; offset < db.length; offset += row) {
-    const data = Log.decode(gen, lookup, db, offset);
-    for (const player of [data.winner, data.loser]) {
-      if (player.rating) ratings.push(player.rating.rpr);
+    if (!argv.stats || !fs.existsSync(argv.stats)) {
+      exit(argv.stats ? `Invalid stats.db ${argv.stats}` : '--stats not provided');
     }
-  }
 
-  console.log(ptile(ratings.sort(), argv.percentile));
-  break;
-}
-case 'sizes': {
-  // sizes --gen=1 --logs=logs.db --cutoff=1500
-  if (!argv.cutoff || argv.cutoff < 1000) {
-    exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
-  } else if (!argv.logs || !fs.existsSync(argv.logs)) {
-    exit(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
-  }
-
-  const stats = Stats.compute(gen, lookup, fs.readFileSync(argv.logs), argv);
-
-  const sizes = {moves: [], items: []};
-  for (let i = 0; i < stats.species.length; i++) {
-    let move = 0;
-    for (const weight of Object.values(stats.move_species[i])) {
-      if (round(weight / stats.species[i]) > 100) move++;
-    }
-    sizes.moves.push(move);
-
-    if (gen.num >= 2) {
-      let item = 0;
-      for (const weight of Object.values(stats.item_species[i])) {
-        if (round(weight / stats.species[i]) > 100) item++;
+    switch (argv.report) {
+      case 'pokemon': {
+        console.log(stringify(Display.pokemon(gen, lookup, fs.readFileSync(argv.stats), argv)));
+        break;
       }
-      sizes.items.push(item);
+      case 'teammates': {
+        // TODO
+        break;
+      }
+      default: exit(`Unknown report type ${argv.report || ''}`);
     }
+    break;
   }
+  case 'cutoff': {
+  // cutoff --gen=1 -logs=logs.db --percentile=0.5
+    if (!argv.percentile || argv.percentile < 0 || argv.percentile > 100) {
+      exit(argv.percentile ? `Invalid percentile ${argv.percentile}` : 'No --percentile provided');
+    } else if (!argv.logs || !fs.existsSync(argv.logs)) {
+      exit(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
+    }
 
-  sizes.moves.sort((a, b) => a - b);
-  sizes.items.sort((a, b) => a - b);
-  for (let i = 0; i < 101; i++) {
-    let msg = `${i}%: ${ptile(sizes.moves, i / 100)}`;
-    if (gen.num >= 2) msg = `${msg} ${ptile(sizes.items, i / 100)}`;
-    console.log(msg);
+    const N = 6 * Sizes[gen.num];
+    const row = 17 + 2 * N;
+    const db = fs.readFileSync(argv.logs);
+    if (db.length % row !== 0) exit(`Corrupted logs.db of size ${db.length} (${row})`);
+
+    const ratings = [];
+    for (let offset = 0; offset < db.length; offset += row) {
+      const data = Log.decode(gen, lookup, db, offset);
+      for (const player of [data.winner, data.loser]) {
+        if (player.rating) ratings.push(player.rating.rpr);
+      }
+    }
+
+    console.log(ptile(ratings.sort(), argv.percentile));
+    break;
   }
-  break;
-}
-case 'compute': {
+  case 'sizes': {
+  // sizes --gen=1 --logs=logs.db --cutoff=1500
+    if (!argv.cutoff || argv.cutoff < 1000) {
+      exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
+    } else if (!argv.logs || !fs.existsSync(argv.logs)) {
+      exit(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
+    }
+
+    const stats = Stats.compute(gen, lookup, fs.readFileSync(argv.logs), argv);
+
+    const sizes = {moves: [], items: []};
+    for (let i = 0; i < stats.species.length; i++) {
+      let move = 0;
+      for (const weight of Object.values(stats.move_species[i])) {
+        if (round(weight / stats.species[i]) > 100) move++;
+      }
+      sizes.moves.push(move);
+
+      if (gen.num >= 2) {
+        let item = 0;
+        for (const weight of Object.values(stats.item_species[i])) {
+          if (round(weight / stats.species[i]) > 100) item++;
+        }
+        sizes.items.push(item);
+      }
+    }
+
+    sizes.moves.sort((a, b) => a - b);
+    sizes.items.sort((a, b) => a - b);
+    for (let i = 0; i < 101; i++) {
+      let msg = `${i}%: ${ptile(sizes.moves, i / 100)}`;
+      if (gen.num >= 2) msg = `${msg} ${ptile(sizes.items, i / 100)}`;
+      console.log(msg);
+    }
+    break;
+  }
+  case 'compute': {
   // compute --gen=1 --logs=logs.db --cutoff=1500 --moves=10 --items=5
-  if (!argv.cutoff || argv.cutoff < 1000) {
-    exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
-  } else if (!argv.logs || !fs.existsSync(argv.logs)) {
-    exit(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
-  }
+    if (!argv.cutoff || argv.cutoff < 1000) {
+      exit(argv.cutoff ? `Invalid cutoff ${argv.cutoff}` : 'No --cutoff provided');
+    } else if (!argv.logs || !fs.existsSync(argv.logs)) {
+      exit(argv.logs ? `Invalid logs.db ${argv.logs}` : '--logs not provided');
+    }
 
-  const stats = Stats.compute(gen, lookup, fs.readFileSync(argv.logs), argv);
-  process.stdout.write(Stats.encode(gen, lookup, stats, argv));
-  break;
-}
-default: exit(`Unknown command: ${cmd}`);
+    const stats = Stats.compute(gen, lookup, fs.readFileSync(argv.logs), argv);
+    process.stdout.write(Stats.encode(gen, lookup, stats, argv));
+    break;
+  }
+  default: exit(`Unknown command: ${cmd}`);
 }

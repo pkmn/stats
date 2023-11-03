@@ -506,10 +506,10 @@ function usageTiers<T>(
   type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: T
 ): UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T> {
   switch (type) {
-  case 'singles': return {OU: t, UU: t, RU: t, NU: t, PU: t};
-  case 'doubles': return {DOU: t, DUU: t};
-  case 'nationaldex': return {ND: t};
-  default: return {LC: t};
+    case 'singles': return {OU: t, UU: t, RU: t, NU: t, PU: t};
+    case 'doubles': return {DOU: t, DUU: t};
+    case 'nationaldex': return {ND: t};
+    default: return {LC: t};
   }
 }
 
@@ -517,10 +517,10 @@ function usageTierName(
   tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
 ) {
   switch (tier) {
-  case 'DOU': return 'doublesou';
-  case 'DUU': return 'doublesuu';
-  case 'ND': return 'nationaldex';
-  default: return toID(tier);
+    case 'DOU': return 'doublesou';
+    case 'DUU': return 'doublesuu';
+    case 'ND': return 'nationaldex';
+    default: return toID(tier);
   }
 }
 

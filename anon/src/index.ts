@@ -194,214 +194,214 @@ function anonymize(
   if (args[0] as string === '-nothing') return combine(args as string[]);
 
   switch (args[0]) {
-  case 'name': {
-    const existing = playerMap.get(args[2]);
-    if (existing) playerMap.set(toID(args[1]), existing);
-    return undefined;
-  }
-
-  case 't:':
-  case ':':
-  case 'c:':
-  case 'chat':
-  case 'join':
-  case 'leave':
-  case 'unlink':
-  case 'raw':
-  case 'html':
-  case 'uhtml':
-  case 'uhtmlchange':
-  case 'warning':
-  case 'error':
-  case 'bigerror':
-  case 'chatmsg':
-  case 'chatmsg-raw':
-  case 'controlshtml':
-  case 'fieldhtml':
-  case 'inactive':
-  case 'inactiveoff':
-  case 'debug':
-  case 'seed':
-  case 'message':
-  case '-message':
-  case '-hint': {
-    return undefined;
-  }
-
-  case 'done':
-  case 'gametype':
-  case 'gen':
-  case 'tier':
-  case 'rule':
-  case 'teamsize':
-  case 'clearpoke':
-  case 'teampreview':
-  case 'start':
-  case 'rated':
-  case 'turn':
-  case 'upkeep':
-  case 'tie': {
-    return line;
-  }
-
-  case 'poke': {
-    args[2] = anonymizePokemonDetails(args[2]);
-    return combine(args);
-  }
-
-  case '-clearallboost':
-  case '-weather':
-  case '-fieldstart':
-  case '-fieldend':
-  case '-ohko':
-  case '-center':
-  case '-combine':
-  case '-fieldactivate': {
-    return combine(args);
-  }
-
-  case '-activate': {
-    if (args[1] && IDENT.test(args[1])) args[1] = anonymizePokemon(args[1], pokemonMap);
-    return combine(args);
-  }
-
-  case 'player': {
-    if (!args[2]) return line;
-    args[2] = anonymizePlayer(args[2], playerMap);
-    args[3] = '1' as Protocol.AvatarIdent;
-    args[4] = '' as Protocol.Num;
-    return combine(args);
-  }
-
-  case '-sidestart':
-  case '-sideend': {
-    args[1] = anonymizeSide(args[1], playerMap);
-    return combine(args);
-  }
-
-  case 'win': {
-    args[1] = anonymizePlayer(args[1], playerMap);
-    return combine(args);
-  }
-
-  case '-anim':
-  case '-prepare': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (args[3]) args[3] = anonymizePokemon(args[3], pokemonMap);
-    return combine(args);
-  }
-
-  case 'move': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (args[3] && args[3] !== 'null' && IDENT.test(args[3])) {
-      args[3] = anonymizePokemon(args[3], pokemonMap);
+    case 'name': {
+      const existing = playerMap.get(args[2]);
+      if (existing) playerMap.set(toID(args[1]), existing);
+      return undefined;
     }
-    return combine(args);
-  }
 
-  case '-notarget': {
-    if (args[1]) args[1] = anonymizePokemon(args[1], pokemonMap);
-    return combine(args);
-  }
+    case 't:':
+    case ':':
+    case 'c:':
+    case 'chat':
+    case 'join':
+    case 'leave':
+    case 'unlink':
+    case 'raw':
+    case 'html':
+    case 'uhtml':
+    case 'uhtmlchange':
+    case 'warning':
+    case 'error':
+    case 'bigerror':
+    case 'chatmsg':
+    case 'chatmsg-raw':
+    case 'controlshtml':
+    case 'fieldhtml':
+    case 'inactive':
+    case 'inactiveoff':
+    case 'debug':
+    case 'seed':
+    case 'message':
+    case '-message':
+    case '-hint': {
+      return undefined;
+    }
 
-  case '-crit':
-  case '-supereffective':
-  case '-resisted':
-  case '-immune':
-  case '-invertboost':
-  case '-clearboost':
-  case '-clearnegativeboost':
-  case '-endability':
-  case '-cureteam':
-  case '-mustrecharge':
-  case '-primal':
-  case '-zpower':
-  case '-zbroken':
-  case 'faint':
-  case '-damage':
-  case '-status':
-  case '-curestatus':
-  case '-hitcount':
-  case '-singlemove':
-  case '-singleturn':
-  case '-mega':
-  case '-start':
-  case '-end':
-  case '-item':
-  case '-enditem':
-  case '-fail':
-  case 'cant':
-  case 'swap':
-  case '-boost':
-  case '-unboost':
-  case '-setboost':
-  case '-burst': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    return combine(args as string[]);
-  }
+    case 'done':
+    case 'gametype':
+    case 'gen':
+    case 'tier':
+    case 'rule':
+    case 'teamsize':
+    case 'clearpoke':
+    case 'teampreview':
+    case 'start':
+    case 'rated':
+    case 'turn':
+    case 'upkeep':
+    case 'tie': {
+      return line;
+    }
 
-  case 'detailschange':
-  case '-formechange':
-  case 'switch':
-  case 'drag':
-  case 'replace': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    args[2] = anonymizePokemonDetails(args[2]);
-    return combine(args);
-  }
+    case 'poke': {
+      args[2] = anonymizePokemonDetails(args[2]);
+      return combine(args);
+    }
 
-  case '-block': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (args[4]) anonymizePokemon(args[4], pokemonMap);
-    args[4] = args[4] || '';
-    return combine(args);
-  }
+    case '-clearallboost':
+    case '-weather':
+    case '-fieldstart':
+    case '-fieldend':
+    case '-ohko':
+    case '-center':
+    case '-combine':
+    case '-fieldactivate': {
+      return combine(args);
+    }
 
-  case '-sethp': {
+    case '-activate': {
+      if (args[1] && IDENT.test(args[1])) args[1] = anonymizePokemon(args[1], pokemonMap);
+      return combine(args);
+    }
+
+    case 'player': {
+      if (!args[2]) return line;
+      args[2] = anonymizePlayer(args[2], playerMap);
+      args[3] = '1' as Protocol.AvatarIdent;
+      args[4] = '' as Protocol.Num;
+      return combine(args);
+    }
+
+    case '-sidestart':
+    case '-sideend': {
+      args[1] = anonymizeSide(args[1], playerMap);
+      return combine(args);
+    }
+
+    case 'win': {
+      args[1] = anonymizePlayer(args[1], playerMap);
+      return combine(args);
+    }
+
+    case '-anim':
+    case '-prepare': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[3]) args[3] = anonymizePokemon(args[3], pokemonMap);
+      return combine(args);
+    }
+
+    case 'move': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[3] && args[3] !== 'null' && IDENT.test(args[3])) {
+        args[3] = anonymizePokemon(args[3], pokemonMap);
+      }
+      return combine(args);
+    }
+
+    case '-notarget': {
+      if (args[1]) args[1] = anonymizePokemon(args[1], pokemonMap);
+      return combine(args);
+    }
+
+    case '-crit':
+    case '-supereffective':
+    case '-resisted':
+    case '-immune':
+    case '-invertboost':
+    case '-clearboost':
+    case '-clearnegativeboost':
+    case '-endability':
+    case '-cureteam':
+    case '-mustrecharge':
+    case '-primal':
+    case '-zpower':
+    case '-zbroken':
+    case 'faint':
+    case '-damage':
+    case '-status':
+    case '-curestatus':
+    case '-hitcount':
+    case '-singlemove':
+    case '-singleturn':
+    case '-mega':
+    case '-start':
+    case '-end':
+    case '-item':
+    case '-enditem':
+    case '-fail':
+    case 'cant':
+    case 'swap':
+    case '-boost':
+    case '-unboost':
+    case '-setboost':
+    case '-burst': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      return combine(args as string[]);
+    }
+
+    case 'detailschange':
+    case '-formechange':
+    case 'switch':
+    case 'drag':
+    case 'replace': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      args[2] = anonymizePokemonDetails(args[2]);
+      return combine(args);
+    }
+
+    case '-block': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[4]) anonymizePokemon(args[4], pokemonMap);
+      args[4] = args[4] || '';
+      return combine(args);
+    }
+
+    case '-sethp': {
     // '|-sethp|TARGET|TARGET HP|SOURCE|SOURCE HP' before 7e4929a39f
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (args[3]) args[3] = anonymizePokemon(args[3], pokemonMap);
-    return combine(args);
-  }
-
-  case '-ability': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (args[3] && IDENT.test(args[3])) {
-      args[3] = anonymizePokemon(args[3] as PokemonIdent, pokemonMap);
-    } else if (args[3]?.includes(':')) {
-      args[3] = anonymizeSide(args[3] as Protocol.Side, playerMap);
-    } else if (args[4]) {
-      args[4] = anonymizePokemon(args[4], pokemonMap);
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[3]) args[3] = anonymizePokemon(args[3], pokemonMap);
+      return combine(args);
     }
-    return combine(args);
-  }
 
-  case '-heal': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if ('wisher' in kwArgs) {
+    case '-ability': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[3] && IDENT.test(args[3])) {
+        args[3] = anonymizePokemon(args[3] as PokemonIdent, pokemonMap);
+      } else if (args[3]?.includes(':')) {
+        args[3] = anonymizeSide(args[3] as Protocol.Side, playerMap);
+      } else if (args[4]) {
+        args[4] = anonymizePokemon(args[4], pokemonMap);
+      }
+      return combine(args);
+    }
+
+    case '-heal': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if ('wisher' in kwArgs) {
       // Not the actual position, but we don't really care, we just need the side
-      const position = args[1].split(': ')[0];
-      const full = anonymizePokemon(
-        `${position}: ${kwArgs.wisher as string}` as PokemonIdent, pokemonMap
-      );
-      kwArgs.wisher = full.split(': ')[1] as Nickname;
+        const position = args[1].split(': ')[0];
+        const full = anonymizePokemon(
+          `${position}: ${kwArgs.wisher as string}` as PokemonIdent, pokemonMap
+        );
+        kwArgs.wisher = full.split(': ')[1] as Nickname;
+      }
+      return combine(args);
     }
-    return combine(args);
-  }
 
-  case '-transform':
-  case '-miss':
-  case '-waiting':
-  case '-copyboost':
-  case '-clearpositiveboost':
-  case '-swapboost': {
-    args[1] = anonymizePokemon(args[1], pokemonMap);
-    if (args[2]) args[2] = anonymizePokemon(args[2], pokemonMap);
-    return combine(args);
-  }
+    case '-transform':
+    case '-miss':
+    case '-waiting':
+    case '-copyboost':
+    case '-clearpositiveboost':
+    case '-swapboost': {
+      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[2]) args[2] = anonymizePokemon(args[2], pokemonMap);
+      return combine(args);
+    }
 
-  default:
-    throw new Error(`Unknown protocol message ${args[0]}: '${line}'`);
+    default:
+      throw new Error(`Unknown protocol message ${args[0]}: '${line}'`);
   }
 }
 
