@@ -177,7 +177,8 @@ function anonymize(
     const buf = `|${a.join('|')}`;
     const kws: string[] = [];
     for (const k in kwArgs) {
-      let v = kwArgs[k as keyof typeof kwArgs] as string;
+      let v = kwArgs[k as keyof typeof kwArgs] as any;
+
       if (k === 'of') {
         v = anonymizePokemon(v as PokemonIdent, pokemonMap);
       } else if (k === 'spread') {
@@ -185,7 +186,7 @@ function anonymize(
         v = v.split(',').map((s: string | PokemonIdent) =>
           IDENT.test(s) ? anonymizePokemon(s as PokemonIdent, pokemonMap) : s).join(',');
       }
-      kws.push(`[${k}] ${v}`);
+      kws.push(v === true ? `[${k}]` : `[${k}] ${v}`);
     }
     return kws.length ? `${buf}|${kws.join('|')}` : buf;
   };
