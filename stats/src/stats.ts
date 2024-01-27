@@ -183,7 +183,7 @@ export const Stats = new class {
           const pw = {p1: playerWeights[0][i], p2: playerWeights[1][i]};
           const cutoff = cutoffs[i];
           if (!tagsOnly) {
-            const s = stats.total[cutoff]!;
+            const s = stats.total[cutoff];
             if (updateLeads(s, battle, pw, playerTags)) {
               updateEncounters(s, battle.matchups, weight);
               s.battles++;
@@ -191,7 +191,7 @@ export const Stats = new class {
           }
 
           for (const tag of tags) {
-            const s = stats.tags[tag]![cutoff]!;
+            const s = stats.tags[tag][cutoff];
             if (updateLeads(s, battle, pw, playerTags, tag)) {
               updateEncounters(s, battle.matchups, weight);
               s.battles++;
@@ -538,7 +538,7 @@ function updateLeads(
 
   for (const side of sides) {
     if (tag && !tags[side].has(tag)) continue;
-    const usage = stats.pokemon[leads[side]]!.lead;
+    const usage = stats.pokemon[leads[side]].lead;
     usage.raw++;
     stats.lead.raw++;
 

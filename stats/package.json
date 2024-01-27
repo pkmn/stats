@@ -16,10 +16,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.8.4"
+    "@pkmn/data": "^0.8.6"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.8.4",
+    "@pkmn/dex": "^0.8.6",
     "json-stringify-pretty-compact": "3.0.0"
   },
   "scripts": {

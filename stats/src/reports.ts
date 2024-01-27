@@ -175,7 +175,7 @@ export const Reports = new class {
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
 
-      const p = stats.pokemon[species]!;
+      const p = stats.pokemon[species];
 
       s += sep;
       s += ` | ${util.displaySpecies(gen, species, legacy)}`.padEnd(WIDTH + 2) + '| \n';
