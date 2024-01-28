@@ -418,7 +418,7 @@
     "|",
     "|detailschange|p2a: 64bd07b346|Rayquaza-Mega",
     "|-mega|p2a: 64bd07b346|Rayquaza|",
-    "|-weather|DeltaStream|[of] p2a: 64bd07b346|[from] ability: Delta Stream",
+    "|-weather|DeltaStream|[from] ability: Delta Stream|[of] p2a: 64bd07b346",
     "|move|p2a: 64bd07b346|Dragon Ascent|p1a: 544459d148",
     "|-damage|p1a: 544459d148|0 fnt",
     "|-unboost|p2a: 64bd07b346|def|1",

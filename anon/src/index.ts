@@ -176,7 +176,7 @@ function anonymize(
   const combine = (a: string[]) => {
     const buf = `|${a.join('|')}`;
     const kws: string[] = [];
-    for (const k in kwArgs) {
+    for (const k of Object.keys(kwArgs).reverse()) {
       let v = kwArgs[k as keyof typeof kwArgs] as any;
 
       if (k === 'of') {

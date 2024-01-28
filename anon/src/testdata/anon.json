@@ -418,7 +418,7 @@
     "|",
     "|detailschange|p2a: Rayquaza|Rayquaza-Mega",
     "|-mega|p2a: Rayquaza|Rayquaza|",
-    "|-weather|DeltaStream|[of] p2a: Rayquaza|[from] ability: Delta Stream",
+    "|-weather|DeltaStream|[from] ability: Delta Stream|[of] p2a: Rayquaza",
     "|move|p2a: Rayquaza|Dragon Ascent|p1a: Darmanitan",
     "|-damage|p1a: Darmanitan|0 fnt",
     "|-unboost|p2a: Rayquaza|def|1",
