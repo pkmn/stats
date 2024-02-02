@@ -1,6 +1,6 @@
 {
   "name": "@pkmn/anon",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Logic for anonymizing Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",
@@ -16,11 +16,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.8.6",
+    "@pkmn/data": "^0.8.7",
     "@pkmn/protocol": "^0.6.19"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.8.6"
+    "@pkmn/dex": "^0.8.7"
   },
   "scripts": {
     "lint": "eslint --cache src --ext ts",

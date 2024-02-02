@@ -4,8 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "@pkmn/anon": "file:anon",
-    "@pkmn/data": "^0.8.6",
-    "@pkmn/dex": "^0.8.6",
+    "@pkmn/data": "^0.8.7",
+    "@pkmn/dex": "^0.8.7",
     "@pkmn/logs": "file:logs",
     "@pkmn/stats": "file:stats",
     "json-stringify-pretty-compact": "3.0.0",
@@ -14,16 +14,16 @@
   },
   "optionalDependencies": {
     "@pkmn/engine": "file:../engine",
-    "@pkmn/sets": "^5.1.1"
+    "@pkmn/sets": "^5.1.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-typescript": "^7.23.3",
-    "@pkmn/eslint-config": "^6.5.0",
-    "@types/jest": "^29.5.11",
-    "@types/node": "^20.11.7",
-    "@typescript-eslint/eslint-plugin": "^6.19.1",
-    "@typescript-eslint/parser": "^6.19.1",
+    "@pkmn/eslint-config": "^6.6.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.16",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
     "eslint": "^8.56.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^27.6.3",
