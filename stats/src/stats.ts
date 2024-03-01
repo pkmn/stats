@@ -7,7 +7,7 @@ import * as util from './util';
 
 export interface TaggedStatistics {
   total: WeightedStatistics;
-  tags: { [id: string /* ID */]: WeightedStatistics };
+  tags: {[id: string /* ID */]: WeightedStatistics};
 }
 
 export interface WeightedStatistics {
@@ -16,7 +16,7 @@ export interface WeightedStatistics {
 
 export interface Statistics {
   battles: number;
-  pokemon: { [id: string /* ID */]: UsageStatistics };
+  pokemon: {[id: string /* ID */]: UsageStatistics};
   lead: Usage;
   usage: Usage;
   win: Usage;
@@ -28,25 +28,25 @@ export interface UsageStatistics {
   usage: Usage;
   win: Usage;
 
-  abilities: { [id: string /* ID */]: number };
-  items: { [id: string /* ID */]: number };
-  happinesses: { [num: number]: number };
-  spreads: { [spread: string]: number };
-  stats: { [stats: string]: number };
-  moves: { [id: string /* ID */]: number };
+  abilities: {[id: string /* ID */]: number};
+  items: {[id: string /* ID */]: number};
+  happinesses: {[num: number]: number};
+  spreads: {[spread: string]: number};
+  stats: {[stats: string]: number};
+  moves: {[id: string /* ID */]: number};
 
-  raw: { weight: number; count: number };
-  saved: { weight: number; count: number };
+  raw: {weight: number; count: number};
+  saved: {weight: number; count: number};
 
-  encounters: { [id: string /* ID */]: number /* Outcome */[] };
-  teammates: { [id: string /* ID */]: number };
-  unique: { [id: string /* ID */]: UniqueStatistics };
+  encounters: {[id: string /* ID */]: number /* Outcome */[]};
+  teammates: {[id: string /* ID */]: number};
+  unique: {[id: string /* ID */]: UniqueStatistics};
 }
 
 export type UniqueStatistics =
-  | { r: 0 | 1; w: number; g: number }
-  | { r: 0 | 1; w: number }
-  | { g: number };
+  | {r: 0 | 1; w: number; g: number}
+  | {r: 0 | 1; w: number}
+  | {g: number};
 
 export interface Usage {
   raw: number;
@@ -55,7 +55,7 @@ export interface Usage {
 }
 
 export interface MetagameStatistics {
-  tags: { [id: string /* ID */]: number };
+  tags: {[id: string /* ID */]: number};
   stalliness: Array<[number, number]>;
 }
 
@@ -266,13 +266,13 @@ function getWeights(player: Player, cutoffs: number[], legacy: boolean) {
     }
   }
 
-  return [weights, save] as [Array<{ s: number; m: number }>, boolean];
+  return [weights, save] as [Array<{s: number; m: number}>, boolean];
 }
 
 function updateStats(
   gen: Generation,
   player: Player,
-  weights: { s: number; m: number },
+  weights: {s: number; m: number},
   gxe: number | undefined,
   save: boolean,
   short: boolean,
@@ -320,7 +320,7 @@ function updateStats(
       if (!u) {
         p.unique[player.name] = {g: gxe};
       } else if (!('g' in u)) {
-        (u as { r: 0 | 1; w: number; g: number }).g = gxe;
+        (u as {r: 0 | 1; w: number; g: number}).g = gxe;
       } else if (u.g < gxe) {
         u.g = gxe;
       }
@@ -368,7 +368,7 @@ function updateStats(
       if (win) p.win.weighted += weights.s;
 
       const u = p.unique[player.name];
-      const c = u as { r: 0 | 1; w: number; g: number };
+      const c = u as {r: 0 | 1; w: number; g: number};
       if (!u) {
         p.unique[player.name] = {r: real, w: weights.s};
       } else if (!('r' in u)) {
@@ -446,7 +446,7 @@ function updateTeammates(
   pokemon: Pokemon[],
   i: number,
   a: ID,
-  ta: { [id: string /* ID */]: number },
+  ta: {[id: string /* ID */]: number},
   stats: Statistics,
   weight: number
 ) {
@@ -512,8 +512,8 @@ function updateEncounters(stats: Statistics, matchups: Array<[ID, ID, Outcome]>,
 function updateLeads(
   stats: Statistics,
   battle: Battle,
-  weights: { p1: number; p2: number },
-  tags: { p1: Set<ID>; p2: Set<ID> },
+  weights: {p1: number; p2: number},
+  tags: {p1: Set<ID>; p2: Set<ID>},
   tag?: ID
 ) {
   const sides: Array<'p1' | 'p2'> = ['p1', 'p2'];
@@ -614,7 +614,7 @@ function combineUsage(a: UsageStatistics, b: UsageStatistics | undefined) {
 
 export function combineUnique(a: UniqueStatistics, b: UniqueStatistics) {
   if (!b) return a;
-  const c = a as { r?: 0 | 1; w?: number; g?: number };
+  const c = a as {r?: 0 | 1; w?: number; g?: number};
   if ('r' in b) c.r = ((c.r ?? 0) | b.r) as 0 | 1;
   if ('w' in b) c.w = 'w' in c ? Math.max(c.w!, b.w) : b.w;
   if ('g' in b) c.g = 'g' in c ? Math.max(c.g!, b.g) : b.g;
@@ -631,7 +631,7 @@ function combineMetagame(a: MetagameStatistics, b: MetagameStatistics | undefine
   return a;
 }
 
-function combineMap(a: { [key: string]: number }, b: { [key: string]: number } | undefined) {
+function combineMap(a: {[key: string]: number}, b: {[key: string]: number} | undefined) {
   if (!b) return a;
   for (const k in b) {
     a[k] = (a[k] || 0) + b[k];

@@ -9,7 +9,7 @@ const R = (v: number) => util.round(v, 1e4);
 
 export interface DisplayStatistics<T = DisplayUsageStatistics> {
   battles: number;
-  pokemon: { [name: string]: T };
+  pokemon: {[name: string]: T};
   metagame?: DisplayMetagameStatistics;
 }
 
@@ -23,22 +23,22 @@ export interface DisplayUsageStatistics {
   weight: number | null;
   viability: [number, number, number, number];
 
-  abilities: { [name: string]: number };
-  items: { [name: string]: number };
-  stats: { [stats: string]: number };
-  moves: { [name: string]: number };
-  teammates: { [name: string]: number };
-  counters: { [name: string]: [number, number, number] };
+  abilities: {[name: string]: number};
+  items: {[name: string]: number};
+  stats: {[stats: string]: number};
+  moves: {[name: string]: number};
+  teammates: {[name: string]: number};
+  counters: {[name: string]: [number, number, number]};
 }
 
 export interface LegacyDisplayUsageStatistics
   extends Omit<DisplayUsageStatistics, 'unique' | 'win' | 'stats'> {
-  happinesses?: { [happiness: string]: number };
-  spreads: { [spreads: string]: number };
+  happinesses?: {[happiness: string]: number};
+  spreads: {[spreads: string]: number};
 }
 
 export interface DisplayMetagameStatistics {
-  tags: { [tag: string]: number };
+  tags: {[tag: string]: number};
   stalliness: {
     histogram: Array<[number, number]>;
     mean: number;
@@ -55,7 +55,7 @@ export interface DetailedUsageStatistics {
     'team type': ID | null;
     'number of battles': number;
   };
-  data: { [name: string]: DetailedMovesetStatistics };
+  data: {[name: string]: DetailedMovesetStatistics};
 }
 
 export interface DetailedMovesetStatistics {
@@ -63,21 +63,21 @@ export interface DetailedMovesetStatistics {
   usage: number;
   // num GXE, max GXE, 1% GXE, 20% GXE
   'Viability Ceiling': [number, number, number, number];
-  Abilities: { [ability: string]: number };
-  Items: { [item: string]: number };
-  Spreads: { [spread: string]: number };
-  Happiness?: { [happiness: string]: number };
-  Moves: { [move: string]: number };
+  Abilities: {[ability: string]: number};
+  Items: {[item: string]: number};
+  Spreads: {[spread: string]: number};
+  Happiness?: {[happiness: string]: number};
+  Moves: {[move: string]: number};
   // FIXME: this changed 2021-04 from deltas to raw usage
-  Teammates: { [pokemon: string]: number };
+  Teammates: {[pokemon: string]: number};
   // n = sum(POKE1_KOED...DOUBLE_SWITCH)
   // p = POKE1_KOED + POKE1_SWITCHED_OUT / n
   // d = sqrt((p * (1 - p)) / n)
-  'Checks and Counters': { [pokemon: string]: [number, number, number] };
+  'Checks and Counters': {[pokemon: string]: [number, number, number]};
 }
 
 // Corrections for Pokémon who have had their names changed over time by developers.
-const FIX: {[id: string]: string } = {
+const FIX: {[id: string]: string} = {
   mimikyutotembusted: 'mimikyubustedtotem',
 };
 
@@ -101,7 +101,7 @@ export const Display = new class {
 
     const unique = computeUnique(stats.pokemon);
 
-    const pokemon: { [name: string]: DisplayUsageStatistics } = {};
+    const pokemon: {[name: string]: DisplayUsageStatistics} = {};
     for (const [species, p] of q) {
       if (species === 'empty') continue;
       const usage = calcUsage(p.usage, stats.usage, 6);
@@ -143,7 +143,7 @@ export const Display = new class {
       (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
     );
     const W = Math.max(1.0, stats.usage.weighted);
-    const tags: { [id: string]: number } = {};
+    const tags: {[id: string]: number} = {};
     for (const [tag, weight] of ts) {
       const r = R(weight / W);
       if (!r) break;
@@ -179,7 +179,7 @@ export const Display = new class {
     const mr = metagameReport ? parseMetagameReport(metagameReport) : undefined;
     const lr = leadsReport ? parseLeadsReport(leadsReport) : undefined;
 
-    const pokemon: { [name: string]: LegacyDisplayUsageStatistics } = {};
+    const pokemon: {[name: string]: LegacyDisplayUsageStatistics} = {};
     for (const [species, {weight: w, outcomes}] of Object.entries(pmr)) {
       if (species === 'empty') continue;
       const p = dr.data[species];
@@ -205,7 +205,7 @@ export const Display = new class {
         lead.real = lead.raw;
       }
 
-      const scored: { [name: string]: {score: number; val: [number, number, number]} } = {};
+      const scored: {[name: string]: {score: number; val: [number, number, number]}} = {};
       for (const [k, [n]] of Object.entries(p['Checks and Counters'])) {
         if (!outcomes[k]) continue;
         const {koedn, switchedn} = outcomes[k];
@@ -253,7 +253,7 @@ export const Display = new class {
 
     let metagame: DisplayMetagameStatistics | undefined = undefined;
     if (mr) {
-      const tags: { [tag: string]: number } = {};
+      const tags: {[tag: string]: number} = {};
       for (const tag in mr.tags) {
         const r = R(mr.tags[tag]);
         if (!r) break;
@@ -292,11 +292,11 @@ function formatEncounterStatistics(v: util.EncounterStatistics) {
 }
 
 function toDisplayObject(
-  map: { [k: string /* number|ID */]: number },
+  map: {[k: string /* number|ID */]: number},
   weight: number,
   display?: (id: string) => string
 ) {
-  const obj: { [key: string]: number } = {};
+  const obj: {[key: string]: number} = {};
   const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
   const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
@@ -310,13 +310,13 @@ function toDisplayObject(
 function getTeammates(
   gen: Generation,
   // format: ID,
-  teammates: { [id: string /* ID */]: number },
+  teammates: {[id: string /* ID */]: number},
   weight: number,
   // total: number,
   stats: Statistics
-): { [key: string]: number } {
+): {[key: string]: number} {
   // const real = ['challengecup1v1', '1v1'].includes(format);
-  const m: { [species: string]: number } = {};
+  const m: {[species: string]: number} = {};
   for (const [id, w] of Object.entries(teammates)) {
     const species = gen.species.get(id)?.name;
     if (!species) continue;
@@ -332,9 +332,9 @@ function getTeammates(
   return toDisplayObject(m, weight);
 }
 
-function computeUnique(stats: { [id: string /* ID */]: UsageStatistics }) {
-  const pokemon: { [id: string /* ID */]: { usage: Usage; gxes: number[] } } = {};
-  const all: { [id: string /* ID */]: UniqueStatistics } = {};
+function computeUnique(stats: {[id: string /* ID */]: UsageStatistics}) {
+  const pokemon: {[id: string /* ID */]: {usage: Usage; gxes: number[]}} = {};
+  const all: {[id: string /* ID */]: UniqueStatistics} = {};
 
   for (const p in stats) {
     const usage = newUsage();
@@ -374,7 +374,7 @@ interface UsageReportRowData {
 }
 
 function parseUsageReport(report: string) {
-  const usage: { [id: string]: UsageReportRowData } = {};
+  const usage: {[id: string]: UsageReportRowData} = {};
   const lines = report.split('\n');
   const battles = Number(lines[0].slice(16));
   const avg = Number(lines[1].slice(19));
@@ -401,7 +401,7 @@ interface LeadsReportRowData {
 }
 
 function parseLeadsReport(report: string) {
-  const usage: { [id: string]: LeadsReportRowData } = {};
+  const usage: {[id: string]: LeadsReportRowData} = {};
   const lines = report.split('\n');
   const total = Number(lines[0].slice(13));
 
@@ -459,7 +459,7 @@ function partialParseMovesetReport(report: string) {
 }
 
 function parseMetagameReport(report: string) {
-  const tags: { [tag: string]: number } = {};
+  const tags: {[tag: string]: number} = {};
   const lines = report.split('\n');
 
   let i = 0;

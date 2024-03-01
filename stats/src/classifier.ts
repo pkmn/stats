@@ -29,7 +29,7 @@ export const Classifier = new class {
     const originalAbility = pokemon.ability;
 
     const species = util.getSpecies(gen, pokemon.species, legacy);
-    let mega: { species: ID; ability: ID } | undefined;
+    let mega: {species: ID; ability: ID} | undefined;
     if (util.isMega(species, legacy)) {
       mega = {
         species: toID(species.name),

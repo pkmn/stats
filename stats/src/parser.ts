@@ -45,7 +45,7 @@ export interface Player {
 
 export interface Team {
   pokemon: Pokemon[];
-  classification: { bias: number; stalliness: number; tags: Set<ID> };
+  classification: {bias: number; stalliness: number; tags: Set<ID>};
 }
 
 export interface Pokemon {
@@ -83,7 +83,7 @@ export const Parser = new class {
     }
     if (raw.p1 === raw.p2) throw new Error('Player battling themself');
 
-    const idents: { p1: string[]; p2: string[] } = {p1: [], p2: []};
+    const idents: {p1: string[]; p2: string[]} = {p1: [], p2: []};
     const battle = ({
       matchups: [],
       turns: raw.turns,
@@ -129,7 +129,7 @@ export const Parser = new class {
       switch: {p1: false, p2: false},
     });
 
-    const active: { p1?: Slot; p2?: Slot } = {};
+    const active: {p1?: Slot; p2?: Slot} = {};
     let flags = emptyFlags();
     let turnMatchups: Array<[ID, ID, Outcome]> = [];
 
@@ -347,7 +347,7 @@ function identify(
   name: string,
   side: 'p1' | 'p2',
   battle: Battle,
-  idents: { p1: string[]; p2: string[] },
+  idents: {p1: string[]; p2: string[]},
   legacy: boolean,
 ) {
   const team = battle[side].team.pokemon;

@@ -18,10 +18,10 @@ export const enum Outcome {
   POKE2_UTURN_KOED = 9,
   POKE1_FODDERED = 10,
   POKE2_FODDERED = 11,
-  UNKNOWN = 12,
+  UNKNOWN = 12
 }
 
-const ALIASES: Readonly<{ [id: string]: string }> = aliases;
+const ALIASES: Readonly<{[id: string]: string}> = aliases;
 
 let DEFAULT!: Generation;
 export function newGenerations(dex: Dex) {
@@ -178,11 +178,11 @@ export function displaySpecies(gen: Generation, name: string, legacy: boolean) {
 }
 
 export function toDisplayObject(
-  map: { [k: string /* number|ID */]: number },
+  map: {[k: string /* number|ID */]: number},
   display?: (id: string) => string,
   p = PRECISION
 ) {
-  const obj: { [key: string]: number } = {};
+  const obj: {[key: string]: number} = {};
   const d = (k: number | string) => (typeof k === 'string' && display ? display(k) : k.toString());
   const sorted = Object.entries(map).sort((a, b) => b[1] - a[1] || d(a[0]).localeCompare(d(b[0])));
   for (const [k, v] of sorted) {
@@ -214,7 +214,7 @@ export interface EncounterStatistics {
 }
 
 export function getChecksAndCounters<T>(
-  encounters: { [id: string /* ID */]: number /* Outcome */[] },
+  encounters: {[id: string /* ID */]: number /* Outcome */[]},
   display: [(id: string) => string, (es: EncounterStatistics) => T],
   min = 20
 ) {
@@ -233,7 +233,7 @@ export function getChecksAndCounters<T>(
   }
 
   const sorted = cc.sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]));
-  const obj: { [key: string]: T } = {};
+  const obj: {[key: string]: T} = {};
   for (const [k, v] of sorted) {
     obj[display[0](k)] = display[1](v);
   }

@@ -9,13 +9,13 @@ interface MovesetStatistics {
   'Raw count': number;
   usage: number;
   'Viability Ceiling': [number, number, number, number];
-  Abilities: { [key: string]: number };
-  Items: { [key: string]: number };
-  Spreads: { [key: string]: number };
-  Happiness: { [key: string]: number };
-  Moves: { [key: string]: number };
-  Teammates: { [key: string]: number };
-  'Checks and Counters': { [key: string]: util.EncounterStatistics };
+  Abilities: {[key: string]: number};
+  Items: {[key: string]: number};
+  Spreads: {[key: string]: number};
+  Happiness: {[key: string]: number};
+  Moves: {[key: string]: number};
+  Teammates: {[key: string]: number};
+  'Checks and Counters': {[key: string]: util.EncounterStatistics};
 }
 
 type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
@@ -381,8 +381,8 @@ export const Reports = new class {
           ).then(r => [suffix, r]));
         }
 
-        const n: { [suffix: string]: number } = {};
-        const u: { [suffix: string]: Map<ID, number> } = {};
+        const n: {[suffix: string]: number} = {};
+        const u: {[suffix: string]: Map<ID, number>} = {};
         let ntot = 0;
         for (const [suffix, report] of await Promise.all(reports)) {
           if (report) {
@@ -700,11 +700,11 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
 // NOTE: https://www.smogon.com/forums/threads/gen-8-smogon-university-usage-statistics-discussion-thread.3657197/post-8841061
 function getTeammates(
   gen: Generation,
-  teammates: { [id: string /* ID */]: number },
+  teammates: {[id: string /* ID */]: number},
   stats: Statistics
-): { [key: string]: number } {
+): {[key: string]: number} {
   // const real = ['challengecup1v1', '1v1'].includes(format);
-  const m: { [species: string]: number } = {};
+  const m: {[species: string]: number} = {};
   for (const [id, w] of Object.entries(teammates)) {
     const species = util.displaySpecies(gen, id, legacy);
     const s = stats.pokemon[id];
@@ -719,8 +719,8 @@ function getTeammates(
   return util.toDisplayObject(m);
 }
 
-function forDetailed(cc: { [key: string]: util.EncounterStatistics }) {
-  const obj: { [key: string]: [number, number, number] } = {};
+function forDetailed(cc: {[key: string]: util.EncounterStatistics}) {
+  const obj: {[key: string]: [number, number, number]} = {};
   for (const [k, v] of Object.entries(cc)) {
     obj[k] = [round(v.n), round(v.p), round(v.d)];
   }

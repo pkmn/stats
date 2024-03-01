@@ -2,8 +2,8 @@ import * as integration from './integration';
 
 describe('Integration', () => {
   test('process', () => {
-    const actual: { [file: string]: string } = {};
-    const expected: { [file: string]: string } = {};
+    const actual: {[file: string]: string} = {};
+    const expected: {[file: string]: string} = {};
     integration.compare(integration.process(), (file: string, a: string, e: string) => {
       actual[file] = a;
       expected[file] = e;

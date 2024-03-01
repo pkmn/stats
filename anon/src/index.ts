@@ -55,7 +55,7 @@ export interface Rating {
   rprd: number;
 }
 
-type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+type Writeable<T> = {-readonly [P in keyof T]: T[P]};
 
 export const Anonymizer = new class {
   anonymize(
@@ -476,7 +476,7 @@ function copyPokemonSet(pokemon: PokemonSet) {
 // than negatives here.
 export class Verifier {
   readonly names: Set<string> = new Set();
-  readonly leaks: Array<{ input: string; output: string }> = [];
+  readonly leaks: Array<{input: string; output: string}> = [];
 
   private regex: RegExp | undefined = undefined;
 

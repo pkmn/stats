@@ -26,7 +26,7 @@ type WeightedReports = Map<number, Reports>;
 interface Reports {
   usage: string;
   leads: string;
-  movesets: { basic: string; detailed: string };
+  movesets: {basic: string; detailed: string};
   metagame: string;
   display: string;
 }
@@ -90,7 +90,7 @@ export function process() {
   return {formats, tiers: ''};
 }
 
-export function update(reports: { formats: Map<ID, TaggedReports>; tiers: string }) {
+export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}) {
   const dir = path.resolve(TESTDATA, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
@@ -117,7 +117,7 @@ export function update(reports: { formats: Map<ID, TaggedReports>; tiers: string
 }
 
 export function compare(
-  reports: { formats: Map<ID, TaggedReports>; tiers: string },
+  reports: {formats: Map<ID, TaggedReports>; tiers: string},
   cmp: CompareFn
 ) {
   const dir = path.resolve(TESTDATA, 'reports');

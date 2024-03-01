@@ -8,7 +8,7 @@ const enum EndType {
   TIE = 1,
   FORFEIT = 2,
   FORCED_WIN = 3,
-  FORCED_TIE = 4,
+  FORCED_TIE = 4
 }
 
 const LE = (() => {
