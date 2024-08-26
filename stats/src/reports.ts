@@ -11,6 +11,7 @@ interface MovesetStatistics {
   'Viability Ceiling': [number, number, number, number];
   Abilities: {[key: string]: number};
   Items: {[key: string]: number};
+  'Tera Types': {[key: string]: number};
   Spreads: {[key: string]: number};
   Happiness: {[key: string]: number};
   Moves: {[key: string]: number};
@@ -677,6 +678,7 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
         const o = gen.items.get(item);
         return (o?.name) ?? item;
       }),
+      'Tera Types': util.toDisplayObject(pokemon.teraTypes, teraType => teraType[0].toUpperCase() + teraType.slice(1)),
       Spreads: util.toDisplayObject(pokemon.spreads),
       Happiness: util.toDisplayObject(pokemon.happinesses),
       Moves: util.toDisplayObject(pokemon.moves, move => {

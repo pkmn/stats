@@ -34,6 +34,7 @@ export interface UsageStatistics {
   spreads: {[spread: string]: number};
   stats: {[stats: string]: number};
   moves: {[id: string /* ID */]: number};
+  teraTypes: {[id: string]: number};
 
   raw: {weight: number; count: number};
   saved: {weight: number; count: number};
@@ -334,6 +335,10 @@ function updateStats(
     const i = p.items[set.item];
     p.items[set.item] = (i || 0) + weights.m;
 
+    set.teraType = set.teraType || 'nothing';
+    const t = p.teraTypes[set.teraType];
+    p.teraTypes[set.teraType] = (t || 0) + weights.m;
+
     const nature =
       gen.natures.get(!legacy && NEUTRAL.has(set.nature) ? 'hardy' as ID : set.nature)!;
     const baseStats = util.getSpecies(gen, pokemon.species, legacy).baseStats;
@@ -559,6 +564,7 @@ function newUsageStatistics() {
     win: newUsage(),
     abilities: {},
     items: {},
+    teraTypes: {},
     happinesses: {},
     spreads: {},
     stats: {},

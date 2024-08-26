@@ -315,6 +315,7 @@ export const Parser = new class {
       pokemon.ability = ability ? ability.id : 'unknown';
       pokemon.species =
         util.getSpecies(gen, util.fromAlias(pokemon.species || pokemon.name), legacy).id;
+      pokemon.teraType = pokemon.teraType || 'nothing';
       if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
         pokemon.species = 'rayquazamega';
         pokemon.ability = 'deltastream';

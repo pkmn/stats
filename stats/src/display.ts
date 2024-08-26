@@ -25,6 +25,7 @@ export interface DisplayUsageStatistics {
 
   abilities: {[name: string]: number};
   items: {[name: string]: number};
+  teraTypes: {[name: string]: number};
   stats: {[stats: string]: number};
   moves: {[name: string]: number};
   teammates: {[name: string]: number};
@@ -65,6 +66,7 @@ export interface DetailedMovesetStatistics {
   'Viability Ceiling': [number, number, number, number];
   Abilities: {[ability: string]: number};
   Items: {[item: string]: number};
+  'Tera Types': {[teraType: string]: number};
   Spreads: {[spread: string]: number};
   Happiness?: {[happiness: string]: number};
   Moves: {[move: string]: number};
@@ -127,6 +129,7 @@ export const Display = new class {
           const o = gen.items.get(item);
           return (o?.name) ?? item;
         }),
+        teraTypes: toDisplayObject(p.teraTypes, p.raw.weight, teraType => teraType[0].toUpperCase() + teraType.slice(1)),
         stats: toDisplayObject(p.stats, p.raw.weight),
         moves: toDisplayObject(p.moves, p.raw.weight, move => {
           if (move === '') return 'Nothing';
@@ -239,6 +242,7 @@ export const Display = new class {
           const o = gen.items.get(item);
           return (o?.name) ?? item;
         }),
+        teraTypes: toDisplayObject(p['Tera Types'], rawWeight, teraType => teraType[0].toUpperCase() + teraType.slice(1)),
         happinesses: p.Happiness ? toDisplayObject(p.Happiness, rawWeight) : undefined,
         spreads: toDisplayObject(p.Spreads, rawWeight),
         moves: toDisplayObject(p.Moves, rawWeight, move => {
