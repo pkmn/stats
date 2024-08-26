@@ -215,6 +215,18 @@ export const Reports = new class {
       }
       s += sep;
       total = 0;
+      s += heading('Tera Types');
+      for (const teraType of Object.keys(moveset['Tera Types'])) {
+        if (total > 0.95) {
+          s += other(total);
+          break;
+        }
+        const weight = moveset['Tera Types'][teraType] / p.raw.weight;
+        s += display(teraType[0].toUpperCase() + teraType.slice(1), weight);
+        total += weight;
+      }
+      s += sep;
+      total = 0;
       s += heading('Spreads');
       for (const [i, spread] of Object.keys(moveset['Spreads']).entries()) {
         if (total > 0.95 || i > 5) {
