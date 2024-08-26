@@ -255,7 +255,8 @@ function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number, l
       pokemon.moves.some((m: ID) => ['block', 'meanlook', 'spiderweb'].includes(m))) {
       style.trappers++;
     }
-    if (style.dragons < 2 && DRAGONS.has(pokemon.species)) {
+    if (style.dragons < 2 && ((legacy && DRAGONS.has(pokemon.species)) ||
+      (!legacy && gen.species.get(pokemon.species)?.types.includes('Dragon')))) {
       style.dragons++;
     }
     if ((style.clearance < 2 && pokemon.ability === 'magicbounce') || moves.has('rapidspin')) {
