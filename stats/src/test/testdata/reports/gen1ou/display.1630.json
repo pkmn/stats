@@ -11,6 +11,7 @@
       "viability": [2, 89, 89, 89],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"523/318/228/228/318/158": 1},
       "moves": {
         "Body Slam": 1,
@@ -48,6 +49,7 @@
       "viability": [2, 89, 89, 89],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"323/248/268/298/268/328": 1},
       "moves": {
         "Psychic": 1,
@@ -84,6 +86,7 @@
       "viability": [2, 89, 89, 89],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"353/298/288/178/238/318": 1},
       "moves": {
         "Blizzard": 1,
@@ -120,6 +123,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"393/238/244/288/278/218": 1},
       "moves": {
         "Blizzard": 1,
@@ -146,6 +150,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"333/228/218/318/288/358": 1},
       "moves": {
         "Double Kick": 1,
@@ -172,6 +177,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"383/282/272/248/268/250": 1},
       "moves": {
         "Blizzard": 1,
@@ -198,6 +204,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"313/198/188/368/288/338": 1},
       "moves": {
         "Psychic": 1,
@@ -228,6 +235,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"385/366/288/298/298/258": 1},
       "moves": {"Agility": 1, "Hyper Beam": 1, "Surf": 1, "Wrap": 1},
       "teammates": {
@@ -249,6 +257,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Illuminate": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"393/288/268/348/248/208": 1},
       "moves": {
         "Explosion": 1,

@@ -11,6 +11,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Multitype": 1},
       "items": {"Normalium Z": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"238/168/189/176/175/211": 1},
       "moves": {"Flash": 1, "Hyper Voice": 1, "Quash": 1, "Shadow Ball": 1},
       "teammates": {
@@ -32,6 +33,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Forecast": 1},
       "items": {"Metal Powder": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"210/140/181/125/138/189": 1},
       "moves": {"Defense Curl": 1, "Psych Up": 1, "Snore": 1, "Thunder": 1},
       "teammates": {
@@ -53,6 +55,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Beast Boost": 1},
       "items": {"Rocky Helmet": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"183/306/171/154/92/176": 1},
       "moves": {
         "Confide": 1,
@@ -79,6 +82,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Run Away": 1},
       "items": {"Apicot Berry": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"214/68/169/126/94/74": 1},
       "moves": {"Growl": 1, "String Shot": 1, "Struggle Bug": 1, "Uproar": 1},
       "teammates": {
@@ -100,6 +104,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"No Guard": 1},
       "items": {"Charizardite X": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"245/204/137/97/94/80": 1},
       "moves": {"Captivate": 1, "Leer": 1, "Meditate": 1, "Power-Up Punch": 1},
       "teammates": {
@@ -121,6 +126,7 @@
       "viability": [1, 89, 89, 89],
       "abilities": {"Unaware": 1},
       "items": {"Pikanium Z": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"178/130/289/86/234/20": 1},
       "moves": {"Confide": 1, "Gastro Acid": 1, "Safeguard": 1, "Tickle": 1},
       "teammates": {
@@ -142,6 +148,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Swarm": 1},
       "items": {"Moon Ball": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"201/164/124/127/156/145": 1},
       "moves": {"Acrobatics": 1, "Brutal Swing": 1, "Cut": 1, "Throat Chop": 1},
       "teammates": {
@@ -163,6 +170,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Run Away": 1},
       "items": {"Big Root": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"213/124/113/157/129/140": 1},
       "moves": {"Captivate": 1, "Return": 1, "Swift": 1, "Tail Whip": 1},
       "teammates": {
@@ -184,6 +192,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Own Tempo": 1},
       "items": {"Mind Plate": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"205/99/161/209/161/155": 1},
       "moves": {"Flash": 1, "Frustration": 1, "Protect": 1, "Teeter Dance": 1},
       "teammates": {
@@ -205,6 +214,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Gluttony": 1},
       "items": {"Mewtwonite Y": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"237/163/136/95/155/168": 1},
       "moves": {"Mud Sport": 1, "Mud-Slap": 1, "Odor Sleuth": 1, "Toxic": 1},
       "teammates": {
@@ -226,6 +236,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Rivalry": 1},
       "items": {"Pikanium Z": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"265/172/140/148/133/134": 1},
       "moves": {
         "Captivate": 1,
@@ -252,6 +263,7 @@
       "viability": [1, 78, 78, 78],
       "abilities": {"Iron Fist": 1},
       "items": {"Fairium Z": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"235/224/142/181/136/94": 1},
       "moves": {
         "Hidden Power Bug": 1,
@@ -278,6 +290,7 @@
       "viability": [1, 79, 79, 79],
       "abilities": {"Sturdy": 1},
       "items": {"Starf Berry": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"223/192/204/134/134/113": 1},
       "moves": {"Aqua Jet": 1, "Bite": 1, "Facade": 1, "Liquidation": 1},
       "teammates": {
@@ -299,6 +312,7 @@
       "viability": [1, 79, 79, 79],
       "abilities": {"Hustle": 1},
       "items": {"Blastoisinite": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"197/141/150/90/152/79": 1},
       "moves": {"Hyper Voice": 1, "Substitute": 1, "Superpower": 1, "Toxic": 1},
       "teammates": {
@@ -320,6 +334,7 @@
       "viability": [1, 79, 79, 79],
       "abilities": {"Vital Spirit": 1},
       "items": {"Yache Berry": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"197/191/107/179/155/162": 1},
       "moves": {
         "Electro Ball": 1,
@@ -346,6 +361,7 @@
       "viability": [1, 79, 79, 79],
       "abilities": {"Levitate": 1},
       "items": {"Bottle Cap": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"192/77/74/209/118/166": 1},
       "moves": {
         "Dazzling Gleam": 1,
@@ -372,6 +388,7 @@
       "viability": [1, 79, 79, 79],
       "abilities": {"Surge Surfer": 1},
       "items": {"Absorb Bulb": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"231/133/106/185/170/199": 1},
       "moves": {"Grass Knot": 1, "Laser Focus": 1, "Magic Coat": 1, "Thief": 1},
       "teammates": {
@@ -393,6 +410,7 @@
       "viability": [1, 79, 79, 79],
       "abilities": {"Big Pecks": 1},
       "items": {"Fire Stone": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"260/145/119/169/128/159": 1},
       "moves": {
         "Double Team": 1,

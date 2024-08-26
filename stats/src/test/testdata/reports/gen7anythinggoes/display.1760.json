@@ -11,6 +11,7 @@
       "viability": [1, 43, 43, 43],
       "abilities": {"Imposter": 1},
       "items": {"Nothing": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"299/103/214/118/132/132": 1},
       "moves": {"Nothing": 3, "Transform": 1},
       "teammates": {
@@ -32,6 +33,7 @@
       "viability": [1, 43, 43, 43],
       "abilities": {"Battle Bond": 1},
       "items": {"Life Orb": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"285/293/159/405/168/399": 1},
       "moves": {
         "Hidden Power Ghost": 1,
@@ -58,6 +60,7 @@
       "viability": [1, 43, 43, 43],
       "abilities": {"Serene Grace": 1},
       "items": {"Red Card": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"341/143/190/355/293/306": 1},
       "moves": {
         "Focus Blast": 1,
@@ -84,6 +87,7 @@
       "viability": [1, 43, 43, 43],
       "abilities": {"Delta Stream": 1},
       "items": {"Eject Button": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"351/504/236/356/237/329": 1},
       "moves": {
         "Dragon Ascent": 1,
@@ -110,6 +114,7 @@
       "viability": [1, 43, 43, 43],
       "abilities": {"Wonder Guard": 1},
       "items": {"Focus Sash": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"1/265/126/97/86/191": 1},
       "moves": {
         "Facade": 1,
@@ -136,6 +141,7 @@
       "viability": [1, 43, 43, 43],
       "abilities": {"Illusion": 1},
       "items": {"Life Orb": 1},
+      "teraTypes": {"Nothing": 1},
       "stats": {"261/309/156/248/157/339": 1},
       "moves": {"Frustration": 1, "Knock Off": 1, "Pursuit": 1, "U-turn": 1},
       "teammates": {
