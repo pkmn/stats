@@ -690,7 +690,8 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
         const o = gen.items.get(item);
         return (o?.name) ?? item;
       }),
-      'Tera Types': util.toDisplayObject(pokemon.teraTypes, teraType => teraType[0].toUpperCase() + teraType.slice(1)),
+      'Tera Types': util.toDisplayObject(pokemon.teraTypes,
+        teraType => teraType[0].toUpperCase() + teraType.slice(1)),
       Spreads: util.toDisplayObject(pokemon.spreads),
       Happiness: util.toDisplayObject(pokemon.happinesses),
       Moves: util.toDisplayObject(pokemon.moves, move => {
