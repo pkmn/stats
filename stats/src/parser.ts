@@ -341,6 +341,8 @@ export const Parser = new class {
 const FORMES = new Set([
   'greninjaash', 'zygardecomplete', 'mimikyubusted', 'mimikyubustedtotem',
   'shayminsky', 'necrozmaultra', 'zaciancrowned', 'zamazentacrowned', 'palafinhero',
+  'ogerpontealtera', 'ogerponhearthflametera', 'ogerponwellspringtera',
+  'ogerponcornerstonetera', 'terapagosterastal', 'terapagosstellar',
 ]);
 
 function identify(
