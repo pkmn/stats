@@ -1,8 +1,73 @@
 {
   "battles": 3,
-  "pokemon": {},
+  "pokemon": {
+    "Kingambit": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 1, "real": 0.8571, "weighted": 1},
+      "unique": {"raw": 6, "real": 3, "weighted": 6},
+      "win": {"raw": 0.5, "real": 0, "weighted": 0.3157},
+      "count": 6,
+      "weight": 0.2915,
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Supreme Overlord": 1},
+      "items": {"Heavy-Duty Boots": 1},
+      "teraTypes": {"Fighting": 0.6843, "Fairy": 0.3157},
+      "stats": {"404/405/276/140/207/136": 1},
+      "moves": {
+        "Kowtow Cleave": 1,
+        "Sucker Punch": 1,
+        "Swords Dance": 1,
+        "Low Kick": 0.6843,
+        "Iron Head": 0.3157
+      },
+      "teammates": {"Ogerpon-Cornerstone": 0.6843, "Ogerpon": 0.3157},
+      "counters": {}
+    },
+    "Ogerpon-Cornerstone": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.6843},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.6843},
+      "unique": {"raw": 3, "real": 3, "weighted": 4.1058},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.9974,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Sturdy": 1},
+      "items": {"Cornerstone Mask": 1},
+      "teraTypes": {"Rock": 1},
+      "stats": {"364/277/293/140/228/256": 1},
+      "moves": {
+        "Encore": 1,
+        "Ivy Cudgel": 1,
+        "Spiky Shield": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    },
+    "Ogerpon": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.3157},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.3157},
+      "unique": {"raw": 3, "real": 3, "weighted": 1.8942},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
+      "count": 1,
+      "weight": 0.4602,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Defiant": 1},
+      "items": {"Heavy-Duty Boots": 1},
+      "teraTypes": {"Grass": 1},
+      "stats": {"364/249/293/156/228/256": 1},
+      "moves": {
+        "Encore": 1,
+        "Ivy Cudgel": 1,
+        "Spiky Shield": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    }
+  },
   "metagame": {
-    "tags": {},
+    "tags": {"weatherless": 1, "offense": 1},
     "stalliness": {
       "histogram": [
         [-1, 0],
@@ -12,8 +77,8 @@
         [-0.6, 0],
         [-0.5, 0],
         [-0.4, 0],
-        [-0.3, 0],
-        [-0.2, 0],
+        [-0.3, 5.9847],
+        [-0.2, 2.761],
         [-0.1, 0],
         [0, 0],
         [0.1, 0],
@@ -22,8 +87,8 @@
         [0.4, 0],
         [0.5, 0]
       ],
-      "mean": null,
-      "total": 0
+      "mean": -0.2819,
+      "total": 8.7457
     }
   }
 }

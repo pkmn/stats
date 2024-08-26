@@ -2,8 +2,8 @@
  | Kingambit                              | 
  +----------------------------------------+ 
  | Raw count: 6                           | 
- | Avg. weight: ---                       | 
- | Viability Ceiling: 0                   | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
  | Supreme Overlord 100.000%              | 
@@ -43,8 +43,8 @@
  | Ogerpon                                | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
- | Avg. weight: ---                       | 
- | Viability Ceiling: 0                   | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 78                  | 
  +----------------------------------------+ 
  | Abilities                              | 
  | Defiant 100.000%                       | 
@@ -74,8 +74,8 @@
  | Ogerpon-Cornerstone                    | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
- | Avg. weight: ---                       | 
- | Viability Ceiling: 0                   | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 89                  | 
  +----------------------------------------+ 
  | Abilities                              | 
  | Sturdy 100.000%                        | 
@@ -105,8 +105,8 @@
  | Ogerpon-Hearthflame                    | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
- | Avg. weight: ---                       | 
- | Viability Ceiling: 0                   | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 43                  | 
  +----------------------------------------+ 
  | Abilities                              | 
  | Mold Breaker 100.000%                  | 
@@ -136,8 +136,8 @@
  | Ogerpon-Wellspring                     | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
- | Avg. weight: ---                       | 
- | Viability Ceiling: 0                   | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 43                  | 
  +----------------------------------------+ 
  | Abilities                              | 
  | Water Absorb 100.000%                  | 
@@ -200,8 +200,8 @@
  | Terapagos                              | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
- | Avg. weight: ---                       | 
- | Viability Ceiling: 0                   | 
+ | Avg. weight: 1.0                       | 
+ | Viability Ceiling: 43                  | 
  +----------------------------------------+ 
  | Abilities                              | 
  | Tera Shift 100.000%                    | 

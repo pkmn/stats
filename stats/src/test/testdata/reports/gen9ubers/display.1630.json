@@ -1,8 +1,137 @@
 {
   "battles": 3,
-  "pokemon": {},
+  "pokemon": {
+    "Kingambit": {
+      "lead": {"raw": 0, "real": 0, "weighted": 0},
+      "usage": {"raw": 1, "real": 0.8571, "weighted": 1},
+      "unique": {"raw": 6, "real": 3, "weighted": 6},
+      "win": {"raw": 0.5, "real": 0, "weighted": 0.4695},
+      "count": 6,
+      "weight": 0.3771,
+      "viability": [2, 89, 89, 89],
+      "abilities": {"Supreme Overlord": 1},
+      "items": {"Heavy-Duty Boots": 1},
+      "teraTypes": {"Fighting": 0.5304, "Fairy": 0.4694, "Dark": 0.0003},
+      "stats": {"404/405/276/140/207/136": 1},
+      "moves": {
+        "Kowtow Cleave": 1,
+        "Sucker Punch": 1,
+        "Swords Dance": 1,
+        "Low Kick": 0.5306,
+        "Iron Head": 0.4694
+      },
+      "teammates": {
+        "Ogerpon-Cornerstone": 0.5304,
+        "Ogerpon": 0.4694,
+        "Ogerpon-Hearthflame": 0.0001,
+        "Ogerpon-Wellspring": 0.0001,
+        "Terapagos": 0.0001
+      },
+      "counters": {}
+    },
+    "Ogerpon-Cornerstone": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.5304},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.5304},
+      "unique": {"raw": 3, "real": 3, "weighted": 3.1831},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 1,
+      "viability": [1, 89, 89, 89],
+      "abilities": {"Sturdy": 1},
+      "items": {"Cornerstone Mask": 1},
+      "teraTypes": {"Rock": 1},
+      "stats": {"364/277/293/140/228/256": 1},
+      "moves": {
+        "Encore": 1,
+        "Ivy Cudgel": 1,
+        "Spiky Shield": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    },
+    "Ogerpon": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.4694},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.4694},
+      "unique": {"raw": 3, "real": 3, "weighted": 2.8169},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
+      "count": 1,
+      "weight": 0.8849,
+      "viability": [1, 78, 78, 78],
+      "abilities": {"Defiant": 1},
+      "items": {"Heavy-Duty Boots": 1},
+      "teraTypes": {"Grass": 1},
+      "stats": {"364/249/293/156/228/256": 1},
+      "moves": {
+        "Encore": 1,
+        "Ivy Cudgel": 1,
+        "Spiky Shield": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    },
+    "Ogerpon-Hearthflame": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.0001},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.0001},
+      "unique": {"raw": 3, "real": 3, "weighted": 0.0005},
+      "win": {"raw": 0, "real": 0, "weighted": 0},
+      "count": 1,
+      "weight": 0.0002,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Mold Breaker": 1},
+      "items": {"Hearthflame Mask": 1},
+      "teraTypes": {"Fire": 1},
+      "stats": {"364/277/293/140/228/256": 1},
+      "moves": {
+        "Encore": 1,
+        "Ivy Cudgel": 1,
+        "Spiky Shield": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    },
+    "Ogerpon-Wellspring": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.0001},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.0001},
+      "unique": {"raw": 3, "real": 3, "weighted": 0.0005},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
+      "count": 1,
+      "weight": 0.0002,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Water Absorb": 1},
+      "items": {"Wellspring Mask": 1},
+      "teraTypes": {"Water": 1},
+      "stats": {"364/277/293/140/228/256": 1},
+      "moves": {
+        "Encore": 1,
+        "Ivy Cudgel": 1,
+        "Spiky Shield": 1,
+        "Swords Dance": 1
+      },
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    },
+    "Terapagos": {
+      "lead": {"raw": 0.1667, "real": 0.1667, "weighted": 0.0001},
+      "usage": {"raw": 0.1667, "real": 0.8571, "weighted": 0.0001},
+      "unique": {"raw": 3, "real": 3, "weighted": 0.0005},
+      "win": {"raw": 1, "real": 1, "weighted": 1},
+      "count": 1,
+      "weight": 0.0002,
+      "viability": [1, 43, 43, 43],
+      "abilities": {"Tera Shift": 1},
+      "items": {"Chesto Berry": 1},
+      "teraTypes": {"Stellar": 1},
+      "stats": {"383/135/295/168/206/156": 1},
+      "moves": {"Calm Mind": 1, "Protect": 1, "Rest": 1, "Tera Starstorm": 1},
+      "teammates": {"Kingambit": 1},
+      "counters": {}
+    }
+  },
   "metagame": {
-    "tags": {},
+    "tags": {"weatherless": 1, "offense": 0.9999, "balance": 0.0001},
     "stalliness": {
       "histogram": [
         [-1, 0],
@@ -12,8 +141,8 @@
         [-0.6, 0],
         [-0.5, 0],
         [-0.4, 0],
-        [-0.3, 0],
-        [-0.2, 0],
+        [-0.3, 6.0019],
+        [-0.2, 5.3096],
         [-0.1, 0],
         [0, 0],
         [0.1, 0],
@@ -22,8 +151,8 @@
         [0.4, 0],
         [0.5, 0]
       ],
-      "mean": null,
-      "total": 0
+      "mean": -0.2703,
+      "total": 11.3124
     }
   }
 }

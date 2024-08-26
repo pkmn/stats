@@ -259,7 +259,7 @@
         "|win|test-player-a",
         ""
     ],
-    "p1rating": null,
+    "p1rating": {"rpr": 1450, "rprd": 50},
     "p2rating": null,
     "endType": "forfeit",
     "ladderError": true,
