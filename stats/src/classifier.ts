@@ -1,101 +1,107 @@
-import {Generation, ID, PokemonSet, StatID, TypeName, toID} from '@pkmn/data';
+import {Generation, ID, Move, PokemonSet, StatID, TypeName, toID} from '@pkmn/data';
 
 import * as util from './util';
-import { produceBatonPassableMoves, produceDragons, produceGravityBenefittingMoves, produceGreatSetupMoves, produceLesserSetupMoves, produceProtectionMoves } from './precomputeLists';
 
 // TODO: Where does this constant come from? (ie. rename!)
 const LOG3_LOG2 = Math.log(3) / Math.log(2);
 
 export const Classifier = new class {
-  caches: {[gen: number]: {[name: string]: Set<string>}} = {}
+  caches: {[gen: number]: {[name: string]: Set<ID>}} = {};
 
   classifyTeam(gen: Generation, team: Array<PokemonSet<ID>>, legacy = false) {
+    const tables = legacy ? {
+      greaterSetup: GREATER_SETUP_MOVES,
+      lesserSetup: LESSER_SETUP_MOVES,
+      batonPass: SETUP_MOVES,
+      gravity: GRAVITY_MOVES,
+    } : this.caches[gen.num] || (this.caches[gen.num] = {
+      greaterSetup: computeGreaterSetupMoves(gen),
+      lesserSetup: computeLesserSetupMoves(gen),
+      batonPass: computeBatonPassMoves(gen),
+      gravity: computeGravityMoves(gen),
+    });
+
     let teamBias = 0;
     const teamStalliness = [];
     for (const pokemon of team) {
-      const {bias, stalliness} = this.classifyPokemon(gen, pokemon, legacy);
+      const {bias, stalliness} = classifyPokemon(gen, pokemon, tables, legacy);
       teamBias += bias;
       teamStalliness.push(stalliness);
     }
 
     const stalliness = teamStalliness.reduce((a, b) => a + b) / teamStalliness.length;
-    const tags = tag(gen, team, stalliness, legacy);
+    const tags = tag(gen, team, stalliness, tables, legacy);
 
     return {bias: teamBias, stalliness, tags};
   }
-
-  // For stats and moveset purposes we're now counting Mega Pokemon seperately,
-  // but for team analysis we still want to consider the base (which presumably
-  // breaks for Hackmons, but we're OK with that).
-  classifyPokemon(gen: Generation, pokemon: PokemonSet<ID>, legacy = false) {
-    const originalSpecies = pokemon.species;
-    const originalAbility = pokemon.ability;
-
-    const species = util.getSpecies(gen, pokemon.species, legacy);
-    let mega: {species: ID; ability: ID} | undefined;
-    if (util.isMega(species, legacy)) {
-      mega = {
-        species: toID(species.name),
-        ability: toID(species.abilities['0']),
-      };
-      pokemon.species = toID(species.baseSpecies);
-    }
-
-    let {bias, stalliness} = classifyForme(gen, pokemon, legacy);
-    if (!legacy) {
-      if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong' as ID)) {
-        pokemon.species = 'meloettapirouette' as ID;
-        stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
-      } else if (
-        pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
-        pokemon.species = 'darmanitanzen' as ID;
-        stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
-      } else if (
-        pokemon.species === 'rayquaza' &&
-          pokemon.moves.includes('dragonascent' as ID)) {
-        pokemon.species = 'rayquazamega' as ID;
-        pokemon.ability = 'deltastream' as ID;
-        stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
-      }
-    }
-    if (mega) {
-      if (!legacy) pokemon.species = mega.species;
-      pokemon.ability = mega.ability;
-      stalliness = (stalliness + classifyForme(gen, pokemon, legacy).stalliness) / 2;
-    }
-
-    // Make sure to revert back to the original values
-    pokemon.species = originalSpecies;
-    pokemon.ability = originalAbility;
-
-    return {bias, stalliness};
-  }
-
-  getOrCreateCache(gen: Generation) {
-    if (!(gen.num in this.caches)) {
-      this.caches[gen.num] = {
-        dragons: produceDragons(gen.num),
-        greatSetupMoves: produceGreatSetupMoves(gen.num),
-        lesserSetupMoves: produceLesserSetupMoves(gen.num),
-        batonPassableMoves: produceBatonPassableMoves(gen.num),
-        gravityBenefittingMoves: produceGravityBenefittingMoves(gen.num),
-        protectionMoves: produceProtectionMoves(gen.num),
-      }
-    }
-
-    return this.caches[gen.num];
-  }
 };
+
+// For stats and moveset purposes we're now counting Mega Pokemon separately,
+// but for team analysis we still want to consider the base (which presumably
+// breaks for Hackmons, but we're OK with that).
+function classifyPokemon(
+  gen: Generation,
+  pokemon: PokemonSet<ID>,
+  tables: {[name: string]: Set<ID>},
+  legacy: boolean,
+) {
+  const originalSpecies = pokemon.species;
+  const originalAbility = pokemon.ability;
+
+  const species = util.getSpecies(gen, pokemon.species, legacy);
+  let mega: {species: ID; ability: ID} | undefined;
+  if (util.isMega(species, legacy)) {
+    mega = {
+      species: toID(species.name),
+      ability: toID(species.abilities['0']),
+    };
+    pokemon.species = toID(species.baseSpecies);
+  }
+
+  let {bias, stalliness} = classifyForme(gen, pokemon, tables, legacy);
+  if (!legacy) {
+    if (pokemon.species === 'meloetta' && pokemon.moves.includes('relicsong' as ID)) {
+      pokemon.species = 'meloettapirouette' as ID;
+      stalliness = (stalliness + classifyForme(gen, pokemon, tables, legacy).stalliness) / 2;
+    } else if (
+      pokemon.species === 'darmanitan' && pokemon.ability === 'zenmode') {
+      pokemon.species = 'darmanitanzen' as ID;
+      stalliness = (stalliness + classifyForme(gen, pokemon, tables, legacy).stalliness) / 2;
+    } else if (
+      pokemon.species === 'rayquaza' &&
+        pokemon.moves.includes('dragonascent' as ID)) {
+      pokemon.species = 'rayquazamega' as ID;
+      pokemon.ability = 'deltastream' as ID;
+      stalliness = (stalliness + classifyForme(gen, pokemon, tables, legacy).stalliness) / 2;
+    }
+  }
+  if (mega) {
+    if (!legacy) pokemon.species = mega.species;
+    pokemon.ability = mega.ability;
+    stalliness = (stalliness + classifyForme(gen, pokemon, tables, legacy).stalliness) / 2;
+  }
+
+  // Make sure to revert back to the original values
+  pokemon.species = originalSpecies;
+  pokemon.ability = originalAbility;
+
+  return {bias, stalliness};
+}
 
 const TRAPPING_ABILITIES = new Set(['arenatrap', 'magnetpull', 'shadowtag']);
 
 const TRAPPING_MOVES = new Set(['block', 'meanlook', 'spiderweb', 'pursuit']);
 
-function classifyForme(gen: Generation, pokemon: PokemonSet<ID>, legacy: boolean) {
+function classifyForme(
+  gen: Generation,
+  pokemon: PokemonSet<ID>,
+  tables: {[name: string]: Set<ID>},
+  legacy: boolean,
+) {
   let stalliness = baseStalliness(gen, pokemon, legacy);
   stalliness += abilityStallinessModifier(pokemon);
   stalliness += itemStallinessModifier(pokemon);
-  stalliness += movesStallinessModifier(pokemon);
+  stalliness += movesStallinessModifier(pokemon, tables);
 
   // These depend on a combination of moves/abilities and thus don't belong in either
   // abilityStallinessModifier or moveStallinessModifier, so we calculate them here.
@@ -167,20 +173,8 @@ function calcFormeStats(gen: Generation, pokemon: PokemonSet<ID>, legacy: boolea
   return stats;
 }
 
-// FIXME: Update all of these sets to be more comprehensive.
-const SETUP_MOVES = new Set([
-  'acupressure', 'bellydrum', 'bulkup', 'coil', 'curse', 'dragondance', 'growth', 'honeclaws',
-  'howl', 'meditate', 'sharpen', 'shellsmash', 'shiftgear', 'swordsdance', 'workup', 'calmmind',
-  'chargebeam', 'fierydance', 'nastyplot', 'tailglow', 'quiverdance', 'agility', 'autotomize',
-  'flamecharge', 'rockpolish', 'doubleteam', 'minimize', 'substitute', 'acidarmor', 'barrier',
-  'cosmicpower', 'cottonguard', 'defendorder', 'defensecurl', 'harden', 'irondefense', 'stockpile',
-  'withdraw', 'amnesia', 'charge', 'ingrain',
-]);
-
 const SETUP_ABILITIES = new Set(['angerpoint', 'contrary', 'moody', 'moxie', 'speedboost']);
 
-// FIXME: This is missing the latest a number of dragons (Kommo-o?) and should instead be
-// generated by iterating over all Species in Dex and looking for Dragon-typed Pokemon.
 const DRAGONS = new Set([
   'dratini', 'dragonair', 'bagon', 'shelgon', 'axew', 'fraxure', 'haxorus', 'druddigon',
   'dragonite', 'altaria', 'salamence', 'latias', 'latios', 'rayquaza', 'gible', 'gabite',
@@ -188,17 +182,13 @@ const DRAGONS = new Set([
   'flygon', 'dialga', 'palkia', 'giratina', 'giratinaorigin', 'deino', 'zweilous', 'hydreigon',
 ]);
 
-const GRAVITY_MOVES = new Set([
-  'guillotine', 'fissure', 'sheercold', 'dynamicpunch', 'inferno', 'zapcannon', 'grasswhistle',
-  'sing', 'supersonic', 'hypnosis', 'blizzard', 'focusblast', 'gunkshot', 'hurricane', 'smog',
-  'thunder', 'clamp', 'dragonrush', 'eggbomb', 'irontail', 'lovelykiss', 'magmastorm', 'megakick',
-  'poisonpowder', 'slam', 'sleeppowder', 'stunspore', 'sweetkiss', 'willowisp', 'crosschop',
-  'darkvoid', 'furyswipes', 'headsmash', 'hydropump', 'kinesis', 'psywave', 'rocktomb', 'stoneedge',
-  'submission', 'boneclub', 'bonerush', 'bonemerang', 'bulldoze', 'dig', 'drillrun', 'earthpower',
-  'earthquake', 'magnitude', 'mudbomb', 'mudshot', 'mudslap', 'sandattack', 'spikes', 'toxicspikes',
-]);
-
-function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number, legacy: boolean) {
+function tag(
+  gen: Generation,
+  team: Array<PokemonSet<ID>>,
+  stalliness: number,
+  tables: {[name: string]: Set<ID>},
+  legacy: boolean,
+) {
   const weather = {rain: 0, sun: 0, sand: 0, hail: 0};
   const style = {
     batonpass: 0, tailwind: 0, trickroom: 0, slow: 0, gravityMoves: 0, gravity: 0, voltturn: 0,
@@ -243,7 +233,8 @@ function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number, l
     }
 
     if (style.batonpass < 2 && moves.has('batonpass') &&
-      (SETUP_ABILITIES.has(pokemon.ability) || pokemon.moves.some((m: ID) => SETUP_MOVES.has(m)))) {
+      (SETUP_ABILITIES.has(pokemon.ability) ||
+        pokemon.moves.some((m: ID) => tables.batonPass.has(m)))) {
       style.batonpass++;
     }
     if (style.tailwind < 2 && moves.has('tailwind')) {
@@ -261,7 +252,7 @@ function tag(gen: Generation, team: Array<PokemonSet<ID>>, stalliness: number, l
     if (style.gravity < 2 && moves.has('gravity')) {
       style.gravity++;
     }
-    if (pokemon.moves.some((m: ID) => GRAVITY_MOVES.has(m))) {
+    if (pokemon.moves.some((m: ID) => tables.gravity.has(m))) {
       style.gravityMoves++;
     }
     if ((style.voltturn < 3 && pokemon.item === 'ejectbutton') ||
@@ -498,18 +489,7 @@ const GREATER_OFFENSIVE_MOVES = new Set([
 
 const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold']);
 
-const GREATER_SETUP_MOVES = new Set([
-  'curse', 'dragondance', 'growth', 'shiftgear', 'swordsdance',
-  'fierydance', 'nastyplot', 'tailglow', 'quiverdance', 'geomancy',
-]);
-
-const LESSER_SETUP_MOVES = new Set([
-  'acupressure', 'bulkup', 'coil', 'howl', 'workup', 'meditate', 'sharpen', 'calmmind',
-  'chargebeam', 'agility', 'autotomize', 'flamecharge', 'rockpolish', 'doubleteam',
-  'minimize', 'tailwind', 'poweruppunch', 'rototiller',
-]);
-
-function movesStallinessModifier(pokemon: PokemonSet<ID>) {
+function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string]: Set<ID>}) {
   const moves = new Set(pokemon.moves as string[]);
 
   let mod = 0;
@@ -539,11 +519,125 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>) {
     mod -= 2.0;
   } else if (moves.has('shellsmash')) {
     mod -= 1.5;
-  } else if (pokemon.moves.some((m: ID) => GREATER_SETUP_MOVES.has(m))) {
+  } else if (pokemon.moves.some((m: ID) => tables.greaterSetup.has(m))) {
     mod -= 1.0;
-  } else if (pokemon.moves.some((m: ID) => LESSER_SETUP_MOVES.has(m))) {
+  } else if (pokemon.moves.some((m: ID) => tables.lesserSetup.has(m))) {
     mod -= 0.5;
   }
 
   return mod;
+}
+
+export const GREATER_SETUP_MOVES = new Set([
+  'curse', 'dragondance', 'growth', 'shiftgear', 'swordsdance',
+  'fierydance', 'nastyplot', 'tailglow', 'quiverdance', 'geomancy',
+] as ID[]);
+
+// https://pokemetrics.wordpress.com/2012/09/13/revisions-revisions/
+export function computeGreaterSetupMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+  // Moves that either boost an attacking stat by multiple stages
+  // or boosts Speed and an attacking stat
+  const multiple = moves.filter(m => m.boosts && !targetsFoes(m) && (
+    (m.boosts.atk &&
+      ((m.boosts.atk >= 1 && m.boosts.spe && m.boosts.spe >= 1) || m.boosts.atk >= 2)) ||
+    (m.boosts.spa &&
+      ((m.boosts.spa >= 1 && m.boosts.spe && m.boosts.spe >= 1) || m.boosts.spa >= 2))
+  )).map(m => m.id);
+  // Attacking moves that have a high Base Power (80 or above) and have a high
+  // likelihood of boosting (at least 50%)
+  const attacking = moves .filter(m => m.basePower >= 80 && m.secondary?.self?.boosts &&
+      m.secondary?.chance && m.secondary?.chance >= 50).map(m => m.id);
+  return new Set([...multiple, ...attacking,
+    // Due to implementation details, Tidy Up gets excluded from 'multiple'
+    ...(gen.num >= 9 ? ['tidyup'] : []) as ID[],
+    // These two moves in particular
+    ...(gen.num >= 2 ? ['curse', 'growth'] : []) as ID[],
+  ]);
+}
+
+export const LESSER_SETUP_MOVES = new Set([
+  'acupressure', 'bulkup', 'coil', 'howl', 'workup', 'meditate', 'sharpen', 'calmmind',
+  'chargebeam', 'agility', 'autotomize', 'flamecharge', 'rockpolish', 'doubleteam',
+  'minimize', 'tailwind', 'poweruppunch', 'rototiller',
+] as ID[]);
+
+export function computeLesserSetupMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  // Moves that only boost attacking stats by one stage
+  const single = moves.filter(m => !targetsFoes(m) && m.boosts && (
+    (m.boosts.atk && m.boosts.atk === 1) ||
+        (m.boosts.spa && m.boosts.spa === 1)
+  ) && !m.boosts.spe && m.id !== 'growth').map(m => m.id);
+  // Weaker attacking moves that boost stats
+  const attacking = moves.filter(m => m.basePower > 0 && m.basePower < 80 &&
+    m.secondary?.self?.boosts && m.secondary?.chance && m.secondary?.chance >= 50).map(m => m.id);
+  // Moves that only boost speed
+  const speed = moves.filter(m => !targetsFoes(m) &&
+    m.boosts?.spe && !m.boosts.atk && !m.boosts.spa).map(m => m.id);
+  // Moves that boost evasion
+  const evasion = moves.filter(m => !targetsFoes(m) && m.boosts?.evasion).map(m => m.id);
+
+  return new Set([...single, ...attacking, ...speed, ...evasion,
+    // These moves in particular
+    ...(gen.num >= 6 ? ['rototiller'] : []) as ID[],
+    ...(gen.num >= 4 ? ['acupressure', 'tailwind'] : []) as ID[],
+  ]);
+}
+
+export const SETUP_MOVES = new Set([
+  'acupressure', 'bellydrum', 'bulkup', 'coil', 'curse', 'dragondance', 'growth', 'honeclaws',
+  'howl', 'meditate', 'sharpen', 'shellsmash', 'shiftgear', 'swordsdance', 'workup', 'calmmind',
+  'chargebeam', 'fierydance', 'nastyplot', 'tailglow', 'quiverdance', 'agility', 'autotomize',
+  'flamecharge', 'rockpolish', 'doubleteam', 'minimize', 'substitute', 'acidarmor', 'barrier',
+  'cosmicpower', 'cottonguard', 'defendorder', 'defensecurl', 'harden', 'irondefense', 'stockpile',
+  'withdraw', 'amnesia', 'charge', 'ingrain',
+] as ID[]);
+
+export function computeBatonPassMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+  // Any move that boosts your own stats
+  const self = moves.filter(m => m.boosts &&
+    (['self', 'adjacentAllyOrSelf', 'allies'].includes(m.target))).map(m => m.id);
+  // Any attacking move that can increase your own stats
+  const attacking = moves.filter(m => m.basePower > 0 && m.secondary?.self?.boosts &&
+      m.secondary?.chance && m.secondary?.chance >= 50).map(m => m.id);
+  return new Set([...self, ...attacking,
+    // Other moves that have effects that can be Baton Passed
+    ...(gen.num >= 4 ? ['acupressure'] as ID[] : []),
+    ...(gen.num >= 3 ? ['charge', 'ingrain', 'stockpile'] as ID[] : []),
+    ...(gen.num >= 2 ? ['curse'] as ID[] : []),
+    'substitute' as ID,
+  ]);
+}
+
+export const GRAVITY_MOVES = new Set([
+  'guillotine', 'fissure', 'sheercold', 'dynamicpunch', 'inferno', 'zapcannon', 'grasswhistle',
+  'sing', 'supersonic', 'hypnosis', 'blizzard', 'focusblast', 'gunkshot', 'hurricane', 'smog',
+  'thunder', 'clamp', 'dragonrush', 'eggbomb', 'irontail', 'lovelykiss', 'magmastorm', 'megakick',
+  'poisonpowder', 'slam', 'sleeppowder', 'stunspore', 'sweetkiss', 'willowisp', 'crosschop',
+  'darkvoid', 'furyswipes', 'headsmash', 'hydropump', 'kinesis', 'psywave', 'rocktomb', 'stoneedge',
+  'submission', 'boneclub', 'bonerush', 'bonemerang', 'bulldoze', 'dig', 'drillrun', 'earthpower',
+  'earthquake', 'magnitude', 'mudbomb', 'mudshot', 'mudslap', 'sandattack', 'spikes', 'toxicspikes',
+] as ID[]);
+
+export function computeGravityMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+  // Moves that have 80% accuracy or worse
+  const accuracy = moves.filter(m => ['normal', 'allAdjacentFoes', 'any'].includes(m.target) &&
+    m.accuracy !== true && m.accuracy > 0 && m.accuracy <= 80).map(m => m.id);
+  // Ground-type moves
+  const ground = moves.filter(m => m.type === 'Ground' &&
+      m.id !== 'hiddenpower' && m.target !== 'all').map(m => m.id);
+  return new Set([...accuracy, ...ground,
+    // Grounded hazards
+    ...(gen.num >= 6 ? ['stickyweb'] as ID[] : []),
+    ...(gen.num >= 4 ? ['toxicspikes'] as ID[] : []),
+    ...(gen.num >= 2 ? ['spikes'] as ID[] : []),
+  ]);
+}
+
+function targetsFoes(move: Move) {
+  return ['normal', 'adjacentFoe', 'allAdjacentFoes', 'foeSide'].includes(move.target);
 }
