@@ -18,6 +18,7 @@ export const Classifier = new class {
       protection: PROTECT_MOVES,
       phazing: PHAZING_MOVES,
       paralysis: PARALYSIS_MOVES,
+      confusion: CONFUSION_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
@@ -27,6 +28,7 @@ export const Classifier = new class {
       protection: computeProtectionMoves(gen),
       phazing: computePhazingMoves(gen),
       paralysis: computeParalysisMoves(gen),
+      confusion: computeConfusionMoves(gen),
     });
 
     let teamBias = 0;
@@ -465,10 +467,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const CONFUSION_MOVES = new Set([
-  'supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn',
-]);
-
 const SLEEP_MOVES = new Set([
   'darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore',
 ]);
@@ -506,7 +504,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (pokemon.moves.some((m: ID) => tables.protection.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => tables.phazing.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => tables.paralysis.has(m))) mod += 0.5;
-  if (pokemon.moves.some((m: ID) => CONFUSION_MOVES.has(m))) mod += 0.5;
+  if (pokemon.moves.some((m: ID) => tables.confusion.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => SLEEP_MOVES.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => LESSER_OFFENSIVE_MOVES.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => GREATER_OFFENSIVE_MOVES.has(m))) mod -= 1.0;
@@ -694,6 +692,29 @@ export function computeParalysisMoves(gen: Generation) {
   return new Set([
     ...paralysisMoves,
     ...paralysisAttacks,
+  ]);
+}
+
+export const CONFUSION_MOVES = new Set([
+  'supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn',
+] as ID[]);
+
+export function computeConfusionMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  // Non-damaging moves that induce confusion
+  const confusionMoves = moves.filter(m => m.volatileStatus === 'confusion').map(m => m.id);
+
+  // Attacking moves that are guaranteed to induce confusion
+  const confusionAttacks = moves.filter(m => m.secondary &&
+    m.secondary.volatileStatus === 'confusion' && m.secondary.chance === 100 &&
+    m.accuracy === 100).map(m => m.id);
+
+  return new Set([
+    ...confusionMoves,
+    ...confusionAttacks,
+    // Yawn is treated as a confusion move
+    ...(gen.num >= 3 ? ['yawn'] as ID[] : []),
   ]);
 }
 

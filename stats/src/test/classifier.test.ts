@@ -77,4 +77,15 @@ describe('Classifier', () => {
 
     expect(COMPUTED_PARALYSIS_MOVES).toEqual(classifier.PARALYSIS_MOVES);
   });
+  test('CONFUSION_MOVES', () => {
+    const COMPUTED_CONFUSION_MOVES = classifier.computeConfusionMoves(GEN);
+
+    // Moves that Antar incorrectly included (nothing)
+    expect(getDifference(classifier.CONFUSION_MOVES, COMPUTED_CONFUSION_MOVES))
+      .toEqual(new Set([]));
+
+    // Confusion moves that Antar forgot to include
+    expect(getDifference(COMPUTED_CONFUSION_MOVES, classifier.CONFUSION_MOVES))
+      .toEqual(new Set(['chatter', 'sweetkiss']));
+  });
 });
