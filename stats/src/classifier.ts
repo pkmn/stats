@@ -533,6 +533,7 @@ export function computeGreaterSetupMoves(gen: Generation) {
       ((m.boosts.atk >= 1 && m.boosts.spe && m.boosts.spe >= 1) || m.boosts.atk >= 2)) ||
     (m.boosts.spa &&
       ((m.boosts.spa >= 1 && m.boosts.spe && m.boosts.spe >= 1) || m.boosts.spa >= 2))
+    // Shell Smash is intentionally left off this list
   ) && m.id !== 'shellsmash').map(m => m.id);
   // Attacking moves that have a high Base Power (80 or above) and have a high
   // likelihood of boosting (at least 50%)

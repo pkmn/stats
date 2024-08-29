@@ -5,6 +5,9 @@ import * as classifier from '../classifier';
 
 const GEN = new Generations(Dex).get(6);
 
+/**
+  * Returns set of items in set `a` that are not in set `b`.
+  */
 function getDifference(a: Set<ID>, b: Set<ID>) {
   return new Set(
     [...a].filter((value) => !b.has(value))
