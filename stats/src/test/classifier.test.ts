@@ -21,7 +21,7 @@ describe('Classifier', () => {
 
     // Moves that Antar forgot to include
     expect(getDifference(COMPUTED_GREATER_MOVES, classifier.GREATER_SETUP_MOVES))
-      .toEqual(new Set(['shellsmash', 'diamondstorm']));
+      .toEqual(new Set(['diamondstorm']));
   });
   test('LESSER_SETUP_MOVES', () => {
     const COMPUTED_LESSER_SETUP_MOVES = classifier.computeLesserSetupMoves(GEN);
