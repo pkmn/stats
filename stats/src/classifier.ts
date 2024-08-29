@@ -16,6 +16,7 @@ export const Classifier = new class {
       gravity: GRAVITY_MOVES,
       recovery: RECOVERY_MOVES,
       protection: PROTECT_MOVES,
+      phazing: PHAZING_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
@@ -23,6 +24,7 @@ export const Classifier = new class {
       gravity: computeGravityMoves(gen),
       recovery: computeRecoveryMoves(gen),
       protection: computeProtectionMoves(gen),
+      phazing: computePhazingMoves(gen),
     });
 
     let teamBias = 0;
@@ -461,8 +463,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']);
-
 const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
 
 const CONFUSION_MOVES = new Set([
@@ -504,7 +504,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
 
   if (pokemon.moves.some((m: ID) => tables.recovery.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => tables.protection.has(m))) mod += 1.0;
-  if (pokemon.moves.some((m: ID) => PHAZING_MOVES.has(m))) mod += 0.5;
+  if (pokemon.moves.some((m: ID) => tables.phazing.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => PARALYSIS_MOVES.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => CONFUSION_MOVES.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => SLEEP_MOVES.has(m))) mod -= 0.5;
@@ -666,6 +666,16 @@ export function computeProtectionMoves(gen: Generation) {
     moves
       .filter(m => m.stallingMove && !['endure', 'quickguard', 'wideguard'].includes(m.id))
       .map(m => m.id)
+  );
+}
+
+export const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail'] as ID[]);
+
+export function computePhazingMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  return new Set(
+    moves.filter(m => m.forceSwitch).map(m => m.id)
   );
 }
 

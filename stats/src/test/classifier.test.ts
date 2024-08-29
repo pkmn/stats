@@ -66,4 +66,9 @@ describe('Classifier', () => {
 
     expect(COMPUTED_PROTECT_MOVES).toEqual(classifier.PROTECT_MOVES);
   });
+  test('PHAZING_MOVES', () => {
+    const COMPUTED_PHAZING_MOVES = classifier.computePhazingMoves(GEN);
+
+    expect(COMPUTED_PHAZING_MOVES).toEqual(classifier.PHAZING_MOVES);
+  });
 });
