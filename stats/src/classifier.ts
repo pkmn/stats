@@ -17,6 +17,7 @@ export const Classifier = new class {
       recovery: RECOVERY_MOVES,
       protection: PROTECT_MOVES,
       phazing: PHAZING_MOVES,
+      paralysis: PARALYSIS_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
@@ -25,6 +26,7 @@ export const Classifier = new class {
       recovery: computeRecoveryMoves(gen),
       protection: computeProtectionMoves(gen),
       phazing: computePhazingMoves(gen),
+      paralysis: computeParalysisMoves(gen),
     });
 
     let teamBias = 0;
@@ -463,8 +465,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
-
 const CONFUSION_MOVES = new Set([
   'supersonic', 'confuseray', 'swagger', 'flatter', 'teeterdance', 'yawn',
 ]);
@@ -505,7 +505,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (pokemon.moves.some((m: ID) => tables.recovery.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => tables.protection.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => tables.phazing.has(m))) mod += 0.5;
-  if (pokemon.moves.some((m: ID) => PARALYSIS_MOVES.has(m))) mod += 0.5;
+  if (pokemon.moves.some((m: ID) => tables.paralysis.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => CONFUSION_MOVES.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => SLEEP_MOVES.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => LESSER_OFFENSIVE_MOVES.has(m))) mod -= 0.5;
@@ -677,6 +677,24 @@ export function computePhazingMoves(gen: Generation) {
   return new Set(
     moves.filter(m => m.forceSwitch).map(m => m.id)
   );
+}
+
+export const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle'] as ID[]);
+
+export function computeParalysisMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  // Non-damaging moves that induce paralysis
+  const paralysisMoves = moves.filter(m => m.status && m.status === 'par').map(m => m.id);
+
+  // Attacking moves that are guaranteed to induce paralysis
+  const paralysisAttacks = moves.filter(m => m.secondary && m.secondary.status === 'par' &&
+    m.secondary.chance === 100 && m.accuracy === 100).map(m => m.id);
+
+  return new Set([
+    ...paralysisMoves,
+    ...paralysisAttacks,
+  ]);
 }
 
 function targetsFoes(move: Move) {

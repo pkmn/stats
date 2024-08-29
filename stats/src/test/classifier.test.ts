@@ -71,4 +71,10 @@ describe('Classifier', () => {
 
     expect(COMPUTED_PHAZING_MOVES).toEqual(classifier.PHAZING_MOVES);
   });
+
+  test('PARALYSIS_MOVES', () => {
+    const COMPUTED_PARALYSIS_MOVES = classifier.computeParalysisMoves(GEN);
+
+    expect(COMPUTED_PARALYSIS_MOVES).toEqual(classifier.PARALYSIS_MOVES);
+  });
 });
