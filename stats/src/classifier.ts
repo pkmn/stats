@@ -459,8 +459,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const PROTECT_MOVES = new Set(['protect', 'detect', 'kingsshield', 'matblock', 'spikyshield']);
-
 const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']);
 
 const PARALYSIS_MOVES = new Set(['thunderwave', 'stunspore', 'glare', 'nuzzle']);
@@ -653,6 +651,20 @@ export function computeRecoveryMoves(gen: Generation) {
     ...(gen.num >= 4 ? ['aquaring'] as ID[] : []),
     'leechseed' as ID,
   ]);
+}
+
+export const PROTECT_MOVES = new Set([
+  'protect', 'detect', 'kingsshield', 'matblock', 'spikyshield',
+] as ID[]);
+
+export function computeProtectionMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  return new Set(
+    moves
+      .filter(m => m.stallingMove && !['endure', 'quickguard', 'wideguard'].includes(m.id))
+      .map(m => m.id)
+  );
 }
 
 function targetsFoes(move: Move) {

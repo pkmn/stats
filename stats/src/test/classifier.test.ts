@@ -61,4 +61,9 @@ describe('Classifier', () => {
 
     expect(COMPUTED_RECOVERY_MOVES).toEqual(classifier.RECOVERY_MOVES);
   });
+  test('PROTECT_MOVES', () => {
+    const COMPUTED_PROTECT_MOVES = classifier.computeProtectionMoves(GEN);
+
+    expect(COMPUTED_PROTECT_MOVES).toEqual(classifier.PROTECT_MOVES);
+  });
 });
