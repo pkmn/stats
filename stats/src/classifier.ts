@@ -14,11 +14,13 @@ export const Classifier = new class {
       lesserSetup: LESSER_SETUP_MOVES,
       batonPass: SETUP_MOVES,
       gravity: GRAVITY_MOVES,
+      recovery: RECOVERY_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
       batonPass: computeBatonPassMoves(gen),
       gravity: computeGravityMoves(gen),
+      recovery: computeRecoveryMoves(gen),
     });
 
     let teamBias = 0;
@@ -457,11 +459,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const RECOVERY_MOVES = new Set([
-  'recover', 'slackoff', 'healorder', 'milkdrink', 'roost', 'moonlight', 'morningsun',
-  'synthesis', 'wish', 'aquaring', 'rest', 'softboiled', 'swallow', 'leechseed',
-]);
-
 const PROTECT_MOVES = new Set(['protect', 'detect', 'kingsshield', 'matblock', 'spikyshield']);
 
 const PHAZING_MOVES = new Set(['whirlwind', 'roar', 'circlethrow', 'dragontail']);
@@ -505,7 +502,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (moves.has('trick')) mod -= 0.5;
   if (moves.has('endeavor')) mod -= 1.0;
 
-  if (pokemon.moves.some((m: ID) => RECOVERY_MOVES.has(m))) mod += 1.0;
+  if (pokemon.moves.some((m: ID) => tables.recovery.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => PROTECT_MOVES.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => PHAZING_MOVES.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => PARALYSIS_MOVES.has(m))) mod += 0.5;
@@ -635,6 +632,26 @@ export function computeGravityMoves(gen: Generation) {
     ...(gen.num >= 6 ? ['stickyweb'] as ID[] : []),
     ...(gen.num >= 4 ? ['toxicspikes'] as ID[] : []),
     ...(gen.num >= 2 ? ['spikes'] as ID[] : []),
+  ]);
+}
+
+export const RECOVERY_MOVES = new Set([
+  'recover', 'slackoff', 'healorder', 'milkdrink', 'roost', 'moonlight', 'morningsun',
+  'synthesis', 'wish', 'aquaring', 'rest', 'softboiled', 'swallow', 'leechseed',
+] as ID[]);
+
+export function computeRecoveryMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  // Moves that heal yourself
+  const healing = moves
+    .filter(m => m.flags.heal && !m.selfdestruct && (m.target === 'self' || m.target === 'allies'))
+    .map(m => m.id);
+
+  return new Set([
+    ...healing,
+    ...(gen.num >= 4 ? ['aquaring'] as ID[] : []),
+    'leechseed' as ID,
   ]);
 }
 

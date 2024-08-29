@@ -56,4 +56,9 @@ describe('Classifier', () => {
     expect(getDifference(COMPUTED_GRAVITY_MOVES, classifier.GRAVITY_MOVES))
       .toEqual(new Set(['horndrill', 'precipiceblades', 'sandtomb', 'stickyweb', 'landswrath']));
   });
+  test('RECOVERY_MOVES', () => {
+    const COMPUTED_RECOVERY_MOVES = classifier.computeRecoveryMoves(GEN);
+
+    expect(COMPUTED_RECOVERY_MOVES).toEqual(classifier.RECOVERY_MOVES);
+  });
 });
