@@ -15,12 +15,14 @@ export const Classifier = new class {
       batonPass: SETUP_MOVES,
       gravity: GRAVITY_MOVES,
       recovery: RECOVERY_MOVES,
+      protection: PROTECT_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
       batonPass: computeBatonPassMoves(gen),
       gravity: computeGravityMoves(gen),
       recovery: computeRecoveryMoves(gen),
+      protection: computeProtectionMoves(gen),
     });
 
     let teamBias = 0;
@@ -501,7 +503,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (moves.has('endeavor')) mod -= 1.0;
 
   if (pokemon.moves.some((m: ID) => tables.recovery.has(m))) mod += 1.0;
-  if (pokemon.moves.some((m: ID) => PROTECT_MOVES.has(m))) mod += 1.0;
+  if (pokemon.moves.some((m: ID) => tables.protection.has(m))) mod += 1.0;
   if (pokemon.moves.some((m: ID) => PHAZING_MOVES.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => PARALYSIS_MOVES.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => CONFUSION_MOVES.has(m))) mod += 0.5;
