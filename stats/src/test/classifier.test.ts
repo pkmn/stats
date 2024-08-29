@@ -100,4 +100,9 @@ describe('Classifier', () => {
     expect(getDifference(COMPUTED_OHKO_MOVES, classifier.OHKO_MOVES))
       .toEqual(new Set(['horndrill']));
   });
+  test('GREATER_OFFENSIVE_MOVES', () => {
+    const COMPUTED_GREATER_OFFENSIVE_MOVES = classifier.computeGreaterOffensiveMoves(GEN);
+
+    expect(COMPUTED_GREATER_OFFENSIVE_MOVES).toEqual(classifier.GREATER_OFFENSIVE_MOVES);
+  });
 });

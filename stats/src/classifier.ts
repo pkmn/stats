@@ -20,6 +20,7 @@ export const Classifier = new class {
       paralysis: PARALYSIS_MOVES,
       confusion: CONFUSION_MOVES,
       sleep: SLEEP_MOVES,
+      greaterOffensive: GREATER_OFFENSIVE_MOVES,
       ohko: OHKO_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
@@ -32,6 +33,7 @@ export const Classifier = new class {
       paralysis: computeParalysisMoves(gen),
       confusion: computeConfusionMoves(gen),
       sleep: computeSleepMoves(gen),
+      greaterOffensive: computeGreaterOffensiveMoves(gen),
       ohko: computeOHKOMoves(gen),
     });
 
@@ -477,11 +479,6 @@ const LESSER_OFFENSIVE_MOVES = new Set([
   'headcharge', 'wildcharge', 'takedown', 'dragonascent',
 ]);
 
-const GREATER_OFFENSIVE_MOVES = new Set([
-  'selfdestruct', 'explosion', 'destinybond', 'perishsong',
-  'memento', 'healingwish', 'lunardance', 'finalgambit',
-]);
-
 function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string]: Set<ID>}) {
   const moves = new Set(pokemon.moves as string[]);
 
@@ -505,7 +502,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (pokemon.moves.some((m: ID) => tables.confusion.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => tables.sleep.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => LESSER_OFFENSIVE_MOVES.has(m))) mod -= 0.5;
-  if (pokemon.moves.some((m: ID) => GREATER_OFFENSIVE_MOVES.has(m))) mod -= 1.0;
+  if (pokemon.moves.some((m: ID) => tables.greaterOffensive.has(m))) mod -= 1.0;
   if (pokemon.moves.some((m: ID) => tables.ohko.has(m))) mod -= 1.0;
 
   if (moves.has('bellydrum')) {
@@ -744,6 +741,23 @@ export function computeOHKOMoves(gen: Generation) {
   return new Set(
     moves.filter(m => m.ohko).map(m => m.id)
   );
+}
+
+export const GREATER_OFFENSIVE_MOVES = new Set([
+  'selfdestruct', 'explosion', 'destinybond', 'perishsong',
+  'memento', 'healingwish', 'lunardance', 'finalgambit',
+] as ID[]);
+
+export function computeGreaterOffensiveMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  const selfKOMoves = moves.filter(m => m.selfdestruct).map(m => m.id);
+
+  return new Set([
+    ...selfKOMoves,
+    // These are moves that also deal with the user getting KOed
+    ...(gen.num >= 2 ? ['destinybond', 'perishsong'] as ID[] : []),
+  ]);
 }
 
 function targetsFoes(move: Move) {
