@@ -685,7 +685,7 @@ export function computeParalysisMoves(gen: Generation) {
   const moves = Array.from(gen.moves);
 
   // Non-damaging moves that induce paralysis
-  const paralysisMoves = moves.filter(m => m.status && m.status === 'par').map(m => m.id);
+  const paralysisMoves = moves.filter(m => m.status === 'par').map(m => m.id);
 
   // Attacking moves that are guaranteed to induce paralysis
   const paralysisAttacks = moves.filter(m => m.secondary && m.secondary.status === 'par' &&
