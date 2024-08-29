@@ -8,6 +8,8 @@ import stringify from 'json-stringify-pretty-compact';
 import * as stats from '../index';
 import {genForFormat, newGenerations} from '../util';
 
+import * as TIERS from './testdata/stats/tiers.json';
+
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 const MONTHS: [string, string, string] = [
   path.resolve(TESTDATA, 'stats', '2018-06'),
@@ -73,20 +75,29 @@ export async function process() {
     formats.set(format, trs);
   }
 
-  const tiers = await stats.Reports.tierUpdateReport(gens.get(8), MONTHS, (month, format) => {
-    const baseline = format.startsWith('gen8ou') ? 1695 : 1630;
+  override(Dex);
+  const tiers = await stats.Reports.tierUpdateReport(gens.get(7), MONTHS, (month, format) => {
+    const baseline = format.startsWith('gen7ou') ? 1695 : 1630;
     const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
     return new Promise((resolve, reject) => {
       fs.readFile(file, 'utf8', (err, data) => {
-        if (err) {
-          return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
-        }
+        if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
         resolve(data);
       });
     });
-  });
+  }, 'singles', false);
 
   return {formats, tiers};
+}
+
+function override(d: typeof Dex) {
+  const dex = d.forGen(7);
+  for (const tier in TIERS) {
+    if (tier === 'default') continue;
+    for (const species of TIERS[tier as keyof typeof TIERS]) {
+      (dex.species.get(species) as any).tier = tier;
+    }
+  }
 }
 
 export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}) {

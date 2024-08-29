@@ -57,10 +57,8 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 
 const MIN = [20, 0.5];
 
-const legacy = true;
-
 export const Reports = new class {
-  usageReport(gen: Generation, format: ID, stats: Statistics) {
+  usageReport(gen: Generation, format: ID, stats: Statistics, legacy = true) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
     if (['challengecup1v1', '1v1'].includes(format)) {
       sorted.sort((a, b) => b[1].usage.real - a[1].usage.real || a[0].localeCompare(b[0]));
@@ -101,7 +99,7 @@ export const Reports = new class {
     return s;
   }
 
-  leadsReport(gen: Generation, stats: Statistics) {
+  leadsReport(gen: Generation, stats: Statistics, legacy = true) {
     let s = ` Total leads: ${stats.battles * 2}\n`;
     s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
     s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
@@ -142,12 +140,13 @@ export const Reports = new class {
     stats: Statistics,
     cutoff = 1500,
     tag: ID | null = null,
-    min = MIN
+    min = MIN,
+    legacy = true,
   ) {
-    const movesetStats = toMovesetStatistics(gen, format, stats, min[0]);
-    const basic = this.movesetReport(gen, format, stats, movesetStats, min);
+    const movesetStats = toMovesetStatistics(gen, format, stats, min[0], legacy);
+    const basic = this.movesetReport(gen, format, stats, movesetStats, min, legacy);
     const detailed =
-      this.detailedMovesetReport(gen, format, stats, cutoff, tag, movesetStats, min[0]);
+      this.detailedMovesetReport(gen, format, stats, cutoff, tag, movesetStats, min[0], legacy);
     return {basic, detailed};
   }
 
@@ -156,7 +155,8 @@ export const Reports = new class {
     format: ID,
     stats: Statistics,
     movesetStats?: Map<ID, MovesetStatistics>,
-    min = MIN
+    min = MIN,
+    legacy = true,
   ) {
     movesetStats = movesetStats || toMovesetStatistics(gen, format, stats, min[0]);
 
@@ -298,7 +298,8 @@ export const Reports = new class {
     cutoff = 1500,
     tag: ID | null = null,
     movesetStats?: Map<ID, MovesetStatistics>,
-    min = 20
+    min = 20,
+    legacy = true,
   ) {
     movesetStats = movesetStats || toMovesetStatistics(gen, format, stats, min);
 
@@ -375,6 +376,7 @@ export const Reports = new class {
     months: [string] | [string, string] | [string, string, string],
     read: (month: string, format: string) => Promise<string | undefined>,
     type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles',
+    legacy = true,
   ) {
     gen = util.ignoreGen(gen, legacy);
 
@@ -390,7 +392,7 @@ export const Reports = new class {
         const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
           reports.push(maybeParseUsageReport(
-            read(month, `gen9${usageTierName(tier)}${suffix}`)
+            read(month, `gen${gen.num}${usageTierName(tier)}${suffix}`)
           ).then(r => [suffix, r]));
         }
 
@@ -405,8 +407,11 @@ export const Reports = new class {
         }
         for (const suffix in u) {
           for (const [p, usage] of u[suffix].entries()) {
-            const v = pokemon.get(p);
-            if (!v) pokemon.set(p, usageTiers(type, 0));
+            let v = pokemon.get(p);
+            if (!v) {
+              v = usageTiers(type, 0);
+              pokemon.set(p, v);
+            }
             if (p !== 'empty') {
               (v as any)[tier] += (((weight * n[suffix]) / ntot) * usage) / 24;
             }
@@ -431,7 +436,7 @@ export const Reports = new class {
     for (const tier of USAGE_TIERS[type]) {
       const sorted = (tiers as any)[tier].sort((a: [string, number], b: [string, number]) =>
         b[1] - a[1] || a[0].localeCompare(b[0]));
-      s += makeTable(gen, sorted, tier);
+      s += makeTable(gen, sorted, tier, legacy);
     }
     s += '\n';
 
@@ -482,26 +487,32 @@ export const Reports = new class {
 
 const BL: {[tier in Tier]?: Set<string>} = {
   UU: new Set([
-    'hawlucha', 'dracozolt', 'diggersby', 'durant', 'weavile', 'ninetalesalola', 'gyarados',
-    'primarina', 'venusaur', 'haxorus', 'aegislash', 'conkeldurr', 'gengar', 'scolipede',
-    'lycanrocdusk',
+    'alakazam', 'azumarill', 'breloom', 'buzzwole', 'charizardmegay', 'conkeldurr', 'dianciemega',
+    'diggersby', 'dragonite', 'gallademega', 'gardevoirmega', 'gyarados', 'heracrossmega',
+    'hoopaunbound', 'jirachi', 'kyuremblack', 'latiasmega', 'latios', 'latiosmega', 'manaphy',
+    'ninetalesalola', 'porygonz', 'salamence', 'scolipede', 'staraptor', 'thundurus',
+    'thundurustherian', 'tornadustherian', 'venusaurmega', 'victini', 'volcarona', 'weavile',
+    'xurkitree',
   ]),
   RU: new Set([
-    'barbaracle', 'pangoro', 'shiftry', 'slurpuff', 'chansey', 'indeedee', 'raichualola', 'linoone',
-    'sharpedo', 'zoroark', 'lucario', 'reuniclus', 'sirfetchd', 'heracross', 'sigilyph',
+    'slowbromega', 'suicune', 'hawlucha', 'crawdaunt', 'lucario', 'heracross', 'venomoth',
+    'houndoommega', 'entei', 'sceptilemega', 'sharpedo', 'absolmega', 'zoroark', 'reuniclus',
+    'mienshao', 'durant', 'tornadus', 'kyurem', 'talonflame', 'darmanitan', 'meloetta',
   ]),
   NU: new Set([
-    'slurpuff', 'scrafty', 'haunter', 'linoone', 'chansey', 'indeedeef', 'porygon2', 'tauros',
-    'exeggutoralola', 'sneasel', 'snorlax', 'zygarde10', 'tyrantrum', 'kingdra',
+    'yanmega', 'slurpuff', 'emboar', 'porygon2', 'noivern', 'moltres', 'ribombee', 'kingdra',
+    'exploud', 'necrozma', 'tyrantrum', 'cofagrigus', 'meloetta', 'barbaracle', 'bruxish',
+    'cameruptmega', 'venusaur', 'gigalith', 'hoopa',
   ]),
   PU: new Set([
-    'arctozolt', 'arctovish', 'silvally', 'noctowl', 'silvallyground', 'silvallyfire',
-    'silvallyflying', 'silvallyfighting', 'scyther', 'magneton', 'porygon2', 'basculin',
-    'hitmontop', 'silvallypsychic', 'silvallyelectric', 'silvallygrass', 'rotomfrost', 'orbeetle',
-    'butterfree', 'golurk', 'flapple', 'thievul', 'sawk', 'galvantula', 'silvallydark', 'exeggutor',
-    'mesprit', 'guzzlord', 'magmortar', 'zygarde10', 'kingler', 'absol',
+    'vivillon', 'klinklang', 'hariyama', 'barbaracle', 'vanilluxe', 'medicham', 'passimian',
+    'magmortar', 'kingler', 'charizard', 'tauros', 'typhlosion', 'gallade', 'samurott', 'sawk',
+    'archeops', 'pyroar', 'aromatisse', 'minior', 'exeggutoralola',
   ]),
-  ZU: new Set(['silvallyelectric', 'thwackey', 'ludicolo', 'musharna', 'grapploct', 'swoobat']),
+  ZU: new Set([
+    'carracosta', 'crabominable', 'exeggutor', 'gorebyss', 'jynx', 'musharna', 'raticatealola',
+    'raticatealolatotem', 'throh', 'turtonator', 'typenull', 'ursaring', 'victreebel', 'zangoose',
+  ]),
 };
 
 function usageTiers<T>(
@@ -660,7 +671,13 @@ function fmod(a: number, b: number, f = 1e3) {
   return (Math.abs(a * f) % (b * f)) / f;
 }
 
-function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min = 20) {
+function toMovesetStatistics(
+  gen: Generation,
+  format: ID,
+  stats: Statistics,
+  min = 20,
+  legacy = true,
+) {
   const sorted = Object.entries(stats.pokemon);
   const real = ['challengecup1v1', '1v1'].includes(format);
   const total = Math.max(1.0, real ? stats.usage.real : stats.usage.weighted);
@@ -728,7 +745,8 @@ function toMovesetStatistics(gen: Generation, format: ID, stats: Statistics, min
 function getTeammates(
   gen: Generation,
   teammates: {[id: string /* ID */]: number},
-  stats: Statistics
+  stats: Statistics,
+  legacy = true,
 ): {[key: string]: number} {
   // const real = ['challengecup1v1', '1v1'].includes(format);
   const m: {[species: string]: number} = {};
@@ -757,7 +775,8 @@ function forDetailed(cc: {[key: string]: util.EncounterStatistics}) {
 function makeTable(
   gen: Generation,
   pokemon: Array<[ID, number]>,
-  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
+  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier,
+  legacy: boolean,
 ) {
   let s = `[HIDE=${tier}][CODE]\n`;
   s += `Combined usage for ${tier}\n`;
