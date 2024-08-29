@@ -93,4 +93,11 @@ describe('Classifier', () => {
 
     expect(COMPUTED_SLEEP_MOVES).toEqual(classifier.SLEEP_MOVES);
   });
+  test('OHKO_MOVES', () => {
+    const COMPUTED_OHKO_MOVES = classifier.computeOHKOMoves(GEN);
+
+    // OHKO moves that Antar forgot to include
+    expect(getDifference(COMPUTED_OHKO_MOVES, classifier.OHKO_MOVES))
+      .toEqual(new Set(['horndrill']));
+  });
 });

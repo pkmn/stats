@@ -20,6 +20,7 @@ export const Classifier = new class {
       paralysis: PARALYSIS_MOVES,
       confusion: CONFUSION_MOVES,
       sleep: SLEEP_MOVES,
+      ohko: OHKO_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
@@ -31,6 +32,7 @@ export const Classifier = new class {
       paralysis: computeParalysisMoves(gen),
       confusion: computeConfusionMoves(gen),
       sleep: computeSleepMoves(gen),
+      ohko: computeOHKOMoves(gen),
     });
 
     let teamBias = 0;
@@ -480,8 +482,6 @@ const GREATER_OFFENSIVE_MOVES = new Set([
   'memento', 'healingwish', 'lunardance', 'finalgambit',
 ]);
 
-const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold']);
-
 function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string]: Set<ID>}) {
   const moves = new Set(pokemon.moves as string[]);
 
@@ -506,7 +506,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (pokemon.moves.some((m: ID) => tables.sleep.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => LESSER_OFFENSIVE_MOVES.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => GREATER_OFFENSIVE_MOVES.has(m))) mod -= 1.0;
-  if (pokemon.moves.some((m: ID) => OHKO_MOVES.has(m))) mod -= 1.0;
+  if (pokemon.moves.some((m: ID) => tables.ohko.has(m))) mod -= 1.0;
 
   if (moves.has('bellydrum')) {
     mod -= 2.0;
@@ -734,6 +734,16 @@ export function computeSleepMoves(gen: Generation) {
     ...sleepMoves,
     ...sleepAttacks,
   ]);
+}
+
+export const OHKO_MOVES = new Set(['guillotine', 'fissure', 'sheercold'] as ID[]);
+
+export function computeOHKOMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  return new Set(
+    moves.filter(m => m.ohko).map(m => m.id)
+  );
 }
 
 function targetsFoes(move: Move) {
