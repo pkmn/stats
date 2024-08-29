@@ -88,4 +88,9 @@ describe('Classifier', () => {
     expect(getDifference(COMPUTED_CONFUSION_MOVES, classifier.CONFUSION_MOVES))
       .toEqual(new Set(['chatter', 'sweetkiss']));
   });
+  test('SLEEP_MOVES', () => {
+    const COMPUTED_SLEEP_MOVES = classifier.computeSleepMoves(GEN);
+
+    expect(COMPUTED_SLEEP_MOVES).toEqual(classifier.SLEEP_MOVES);
+  });
 });

@@ -19,6 +19,7 @@ export const Classifier = new class {
       phazing: PHAZING_MOVES,
       paralysis: PARALYSIS_MOVES,
       confusion: CONFUSION_MOVES,
+      sleep: SLEEP_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
@@ -29,6 +30,7 @@ export const Classifier = new class {
       phazing: computePhazingMoves(gen),
       paralysis: computeParalysisMoves(gen),
       confusion: computeConfusionMoves(gen),
+      sleep: computeSleepMoves(gen),
     });
 
     let teamBias = 0;
@@ -467,10 +469,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const SLEEP_MOVES = new Set([
-  'darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore',
-]);
-
 const LESSER_OFFENSIVE_MOVES = new Set([
   'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage',
   'volttackle', 'closecombat', 'flareblitz', 'bravebird', 'woodhammer', 'headsmash',
@@ -505,7 +503,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (pokemon.moves.some((m: ID) => tables.phazing.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => tables.paralysis.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => tables.confusion.has(m))) mod += 0.5;
-  if (pokemon.moves.some((m: ID) => SLEEP_MOVES.has(m))) mod -= 0.5;
+  if (pokemon.moves.some((m: ID) => tables.sleep.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => LESSER_OFFENSIVE_MOVES.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => GREATER_OFFENSIVE_MOVES.has(m))) mod -= 1.0;
   if (pokemon.moves.some((m: ID) => OHKO_MOVES.has(m))) mod -= 1.0;
@@ -715,6 +713,26 @@ export function computeConfusionMoves(gen: Generation) {
     ...confusionAttacks,
     // Yawn is treated as a confusion move
     ...(gen.num >= 3 ? ['yawn'] as ID[] : []),
+  ]);
+}
+
+export const SLEEP_MOVES = new Set([
+  'darkvoid', 'grasswhistle', 'hypnosis', 'lovelykiss', 'sing', 'sleeppowder', 'spore',
+] as ID[]);
+
+export function computeSleepMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  // Non-damaging moves that induce sleep
+  const sleepMoves = moves.filter(m => m.status === 'slp').map(m => m.id);
+
+  // Attacking moves that are guaranteed to induce sleep
+  const sleepAttacks = moves.filter(m => m.secondary && m.secondary.status === 'slp' &&
+    m.secondary.chance === 100 && m.accuracy === 100).map(m => m.id);
+
+  return new Set([
+    ...sleepMoves,
+    ...sleepAttacks,
   ]);
 }
 
