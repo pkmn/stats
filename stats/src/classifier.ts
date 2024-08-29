@@ -607,7 +607,7 @@ export function computeBatonPassMoves(gen: Generation) {
     // Other moves that have effects that can be Baton Passed
     ...(gen.num >= 4 ? ['acupressure'] as ID[] : []),
     ...(gen.num >= 3 ? ['charge', 'ingrain', 'stockpile'] as ID[] : []),
-    ...(gen.num >= 2 ? ['curse'] as ID[] : []),
+    ...(gen.num >= 2 ? ['bellydrum', 'curse'] as ID[] : []),
     'substitute' as ID,
   ]);
 }
