@@ -99,6 +99,9 @@ describe('Classifier', () => {
   test('OHKO_MOVES', () => {
     const COMPUTED_OHKO_MOVES = classifier.computeOHKOMoves(GEN);
 
+    // OHKO moves that Antar incorrectly included (nothing)
+    expect(getDifference(classifier.OHKO_MOVES, COMPUTED_OHKO_MOVES)).toEqual(new Set([]));
+
     // OHKO moves that Antar forgot to include
     expect(getDifference(COMPUTED_OHKO_MOVES, classifier.OHKO_MOVES))
       .toEqual(new Set(['horndrill']));
