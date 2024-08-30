@@ -111,4 +111,16 @@ describe('Classifier', () => {
 
     expect(COMPUTED_GREATER_OFFENSIVE_MOVES).toEqual(classifier.GREATER_OFFENSIVE_MOVES);
   });
+  test('LESSER_OFFENSIVE_MOVES', () => {
+    const COMPUTED_LESSER_OFFENSIVE_MOVES = classifier.computeLesserOffensiveMoves(GEN);
+
+    // Lesser offensive that Antar incorrectly included (nothing)
+    // "High" Jump Kick used to be spelled as "Hi" and that spelling was used
+    expect(getDifference(classifier.LESSER_OFFENSIVE_MOVES, COMPUTED_LESSER_OFFENSIVE_MOVES))
+      .toEqual(new Set(['hijumpkick']));
+
+    // OHKO moves that Antar forgot to include
+    expect(getDifference(COMPUTED_LESSER_OFFENSIVE_MOVES, classifier.LESSER_OFFENSIVE_MOVES))
+      .toEqual(new Set(['hyperspacefury', 'highjumpkick', 'thrash']));
+  });
 });

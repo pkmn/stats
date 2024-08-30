@@ -20,8 +20,9 @@ export const Classifier = new class {
       paralysis: PARALYSIS_MOVES,
       confusion: CONFUSION_MOVES,
       sleep: SLEEP_MOVES,
-      greaterOffensive: GREATER_OFFENSIVE_MOVES,
       ohko: OHKO_MOVES,
+      greaterOffensive: GREATER_OFFENSIVE_MOVES,
+      lesserOffensive: LESSER_OFFENSIVE_MOVES,
     } : this.caches[gen.num] || (this.caches[gen.num] = {
       greaterSetup: computeGreaterSetupMoves(gen),
       lesserSetup: computeLesserSetupMoves(gen),
@@ -33,8 +34,9 @@ export const Classifier = new class {
       paralysis: computeParalysisMoves(gen),
       confusion: computeConfusionMoves(gen),
       sleep: computeSleepMoves(gen),
-      greaterOffensive: computeGreaterOffensiveMoves(gen),
       ohko: computeOHKOMoves(gen),
+      greaterOffensive: computeGreaterOffensiveMoves(gen),
+      lesserOffensive: computeLesserOffensiveMoves(gen),
     });
 
     let teamBias = 0;
@@ -473,12 +475,6 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
   return 0;
 }
 
-const LESSER_OFFENSIVE_MOVES = new Set([
-  'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage',
-  'volttackle', 'closecombat', 'flareblitz', 'bravebird', 'woodhammer', 'headsmash',
-  'headcharge', 'wildcharge', 'takedown', 'dragonascent',
-]);
-
 function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string]: Set<ID>}) {
   const moves = new Set(pokemon.moves as string[]);
 
@@ -501,7 +497,7 @@ function movesStallinessModifier(pokemon: PokemonSet<ID>, tables: {[name: string
   if (pokemon.moves.some((m: ID) => tables.paralysis.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => tables.confusion.has(m))) mod += 0.5;
   if (pokemon.moves.some((m: ID) => tables.sleep.has(m))) mod -= 0.5;
-  if (pokemon.moves.some((m: ID) => LESSER_OFFENSIVE_MOVES.has(m))) mod -= 0.5;
+  if (pokemon.moves.some((m: ID) => tables.lesserOffensive.has(m))) mod -= 0.5;
   if (pokemon.moves.some((m: ID) => tables.greaterOffensive.has(m))) mod -= 1.0;
   if (pokemon.moves.some((m: ID) => tables.ohko.has(m))) mod -= 1.0;
 
@@ -758,6 +754,38 @@ export function computeGreaterOffensiveMoves(gen: Generation) {
     ...selfKOMoves,
     // These are moves that also deal with the user getting KOed
     ...(gen.num >= 2 ? ['destinybond', 'perishsong'] as ID[] : []),
+  ]);
+}
+
+export const LESSER_OFFENSIVE_MOVES = new Set([
+  'jumpkick', 'doubleedge', 'submission', 'petaldance', 'hijumpkick', 'outrage',
+  'volttackle', 'closecombat', 'flareblitz', 'bravebird', 'woodhammer', 'headsmash',
+  'headcharge', 'wildcharge', 'takedown', 'dragonascent',
+] as ID[]);
+
+export function computeLesserOffensiveMoves(gen: Generation) {
+  const moves = Array.from(gen.moves);
+
+  // Moves that inflict recoil
+  const recoil = moves.filter(m => m.recoil).map(m => m.id);
+  // Moves that inflict damage to the user if they miss
+  const crashDamage = moves.filter(m => m.hasCrashDamage).map(m => m.id);
+  // Moves that lock the user into using the move for multiple turns
+  const lockedMove = moves.filter(m => m.self && m.self.volatileStatus === 'lockedmove')
+    .map(m => m.id);
+  // Moves that drop the user's defenses (but not their attack or speed)
+  const dropDefenses = moves.filter(m => m.self?.boosts &&
+    ((m.self.boosts.def && m.self.boosts.def < 0) ||
+      (m.self.boosts.spd && m.self.boosts.spd < 0)) &&
+    !((m.self.boosts.atk && m.self.boosts.atk < 0) ||
+      (m.self.boosts.spa && m.self.boosts.spa < 0) ||
+      (m.self.boosts.spe && m.self.boosts.spe < 0))).map(m => m.id);
+
+  return new Set([
+    ...recoil,
+    ...crashDamage,
+    ...lockedMove,
+    ...dropDefenses,
   ]);
 }
 
