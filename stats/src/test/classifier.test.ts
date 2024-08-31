@@ -119,7 +119,7 @@ describe('Classifier', () => {
     expect(getDifference(classifier.LESSER_OFFENSIVE_MOVES, COMPUTED_LESSER_OFFENSIVE_MOVES))
       .toEqual(new Set(['hijumpkick']));
 
-    // OHKO moves that Antar forgot to include
+    // Lesser offensive moves that Antar forgot to include
     expect(getDifference(COMPUTED_LESSER_OFFENSIVE_MOVES, classifier.LESSER_OFFENSIVE_MOVES))
       .toEqual(new Set(['hyperspacefury', 'highjumpkick', 'thrash']));
   });
