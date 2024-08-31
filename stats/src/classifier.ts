@@ -438,7 +438,7 @@ function itemStallinessModifier(pokemon: PokemonSet<ID>) {
     if (item === 'deepseatooth') return -1.0;
     if (item === 'deepseascale') return 1.0;
   }
-  if (item === 'adamantorb' && pokemon.species === 'diagla') return -0.25;
+  if (item === 'adamantorb' && pokemon.species === 'dialga') return -0.25;
   if (item === 'lustrousorb' && pokemon.species === 'palkia') return -0.25;
   if (item === 'griseousorb' && pokemon.species === 'giratinaorigin') {
     return -0.25;
