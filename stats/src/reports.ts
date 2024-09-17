@@ -1,4 +1,4 @@
-import {Generation, ID, toID} from '@pkmn/data';
+import {Generation, ID, Specie, StatID, toID} from '@pkmn/data';
 
 import {Statistics} from './stats';
 import * as util from './util';
@@ -480,17 +480,6 @@ export const Reports = new class {
   }
 };
 
-const SKIP = new Set([
-  'pichuspikyeared', 'unownb', 'unownc', 'unownd', 'unowne', 'unownf', 'unowng', 'unownh',
-  'unowni', 'unownj', 'unownk', 'unownl', 'unownm', 'unownn', 'unowno', 'unownp', 'unownq',
-  'unownr', 'unowns', 'unownt', 'unownu', 'unownv', 'unownw', 'unownx', 'unowny', 'unownz',
-  'unownem', 'unownqm', 'burmysandy', 'burmytrash', 'cherrimsunshine', 'shelloseast',
-  'gastrodoneast', 'deerlingsummer', 'deerlingautumn', 'deerlingwinter', 'sawsbucksummer',
-  'sawsbuckautumn', 'sawsbuckwinter', 'keldeoresolution', 'genesectdouse', 'genesectburn',
-  'genesectshock', 'genesectchill', 'basculinbluestriped', 'darmanitanzen', 'keldeoresolute',
-  'pikachucosplay',
-]);
-
 const BL: {[tier in Tier]?: Set<string>} = {
   UU: new Set([
     'hawlucha', 'dracozolt', 'diggersby', 'durant', 'weavile', 'ninetalesalola', 'gyarados',
@@ -547,6 +536,28 @@ function updateTiers(
   const current: Map<ID, Tier | DoublesTier> = new Map();
   const updated: Map<ID, Tier | DoublesTier> = new Map();
   const NFE = new Set<ID>();
+
+  const compareArrays = (x: string[], y: string[]) => x.length === y.length &&
+    x.every((type, index) => type === y[index]);
+
+  const compareBaseStats = (a: Specie, b: Specie) => (['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as StatID[])
+    .every(stat => a.baseStats[stat] === b.baseStats[stat]);
+
+  const SKIP = new Set(Array.from(gen.species).map(specie => {
+    let cosmeticFormes: ID[] = [];
+    if (specie.formes) {
+      for (let forme of specie.formes) {
+        const FORME_DATA = gen.species.get(forme);
+        if (FORME_DATA && forme !== specie.baseSpecies &&
+            compareBaseStats(FORME_DATA, specie) &&
+            compareArrays(FORME_DATA.types, specie.types)) {
+          cosmeticFormes = [...cosmeticFormes, FORME_DATA.id];
+        }
+      }
+    }
+    return cosmeticFormes;
+  }).flat());
+
   for (const species of gen.species) {
     if (SKIP.has(species.id) ||
       species.isNonstandard ||
