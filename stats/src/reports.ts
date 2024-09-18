@@ -480,30 +480,6 @@ export const Reports = new class {
   }
 };
 
-const BL: {[tier in Tier]?: Set<string>} = {
-  UU: new Set([
-    'hawlucha', 'dracozolt', 'diggersby', 'durant', 'weavile', 'ninetalesalola', 'gyarados',
-    'primarina', 'venusaur', 'haxorus', 'aegislash', 'conkeldurr', 'gengar', 'scolipede',
-    'lycanrocdusk',
-  ]),
-  RU: new Set([
-    'barbaracle', 'pangoro', 'shiftry', 'slurpuff', 'chansey', 'indeedee', 'raichualola', 'linoone',
-    'sharpedo', 'zoroark', 'lucario', 'reuniclus', 'sirfetchd', 'heracross', 'sigilyph',
-  ]),
-  NU: new Set([
-    'slurpuff', 'scrafty', 'haunter', 'linoone', 'chansey', 'indeedeef', 'porygon2', 'tauros',
-    'exeggutoralola', 'sneasel', 'snorlax', 'zygarde10', 'tyrantrum', 'kingdra',
-  ]),
-  PU: new Set([
-    'arctozolt', 'arctovish', 'silvally', 'noctowl', 'silvallyground', 'silvallyfire',
-    'silvallyflying', 'silvallyfighting', 'scyther', 'magneton', 'porygon2', 'basculin',
-    'hitmontop', 'silvallypsychic', 'silvallyelectric', 'silvallygrass', 'rotomfrost', 'orbeetle',
-    'butterfree', 'golurk', 'flapple', 'thievul', 'sawk', 'galvantula', 'silvallydark', 'exeggutor',
-    'mesprit', 'guzzlord', 'magmortar', 'zygarde10', 'kingler', 'absol',
-  ]),
-  ZU: new Set(['silvallyelectric', 'thwackey', 'ludicolo', 'musharna', 'grapploct', 'swoobat']),
-};
-
 function usageTiers<T>(
   type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: T
 ): UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T> {
@@ -558,6 +534,32 @@ function updateTiers(
     }
     return cosmeticFormes;
   }).flat());
+
+  const getBL = (tier: Tier): Tier => {
+    switch (tier) {
+      case 'OU':
+        return 'Uber';
+      case 'UU':
+        return 'UUBL';
+      case 'RU':
+        return 'RUBL';
+      case 'NU':
+        return 'NUBL';
+      case 'PU':
+        return 'PUBL';
+      case 'ZU':
+        return 'ZUBL';
+      default:
+        // Tier is already a banlist (is a BL or Uber)
+        return tier;
+    }
+  };
+
+  const BL: {[tier in Tier]?: Set<ID>} = {};
+  (['UU', 'RU', 'NU', 'PU', 'ZU'] as Tier[]).forEach(tier => {
+    BL[tier] = new Set(Array.from(gen.species).filter(specie => specie.tier === getBL(tier))
+      .map(specie => specie.id));
+  });
 
   for (const species of gen.species) {
     if (SKIP.has(species.id) ||
