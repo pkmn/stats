@@ -540,13 +540,14 @@ function updateTiers(
   const compareArrays = (x: string[], y: string[]) => x.length === y.length &&
     x.every((type, index) => type === y[index]);
 
-  const compareBaseStats = (a: Specie, b: Specie) => (['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as StatID[])
-    .every(stat => a.baseStats[stat] === b.baseStats[stat]);
+  const compareBaseStats = (a: Specie, b: Specie) =>
+    (['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as StatID[])
+      .every(stat => a.baseStats[stat] === b.baseStats[stat]);
 
   const SKIP = new Set(Array.from(gen.species).map(specie => {
     let cosmeticFormes: ID[] = [];
     if (specie.formes) {
-      for (let forme of specie.formes) {
+      for (const forme of specie.formes) {
         const FORME_DATA = gen.species.get(forme);
         if (FORME_DATA && forme !== specie.baseSpecies &&
             compareBaseStats(FORME_DATA, specie) &&
