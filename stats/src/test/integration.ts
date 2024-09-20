@@ -8,15 +8,28 @@ import stringify from 'json-stringify-pretty-compact';
 import * as stats from '../index';
 import {genForFormat, newGenerations} from '../util';
 
-import * as TIERS from './testdata/stats/tiers.json';
+import * as OLD from './testdata/stats/2018-06.json';
+import * as NEW from './testdata/stats/2024-07.json';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
-const MONTHS: [string, string, string] = [
-  path.resolve(TESTDATA, 'stats', '2018-06'),
-  path.resolve(TESTDATA, 'stats', '2018-05'),
-  path.resolve(TESTDATA, 'stats', '2018-04'),
-];
-const UPDATE = path.resolve(TESTDATA, 'stats', 'update.txt');
+
+const TIERS: {[date: string]: {[tier: string]: string[]}} = {'2018-06': OLD, '2024-07': NEW };
+const MONTHS: {[date: string]: [string, string, string]} = {
+  '2018-06': [
+    path.resolve(TESTDATA, 'stats', '2018-06'),
+    path.resolve(TESTDATA, 'stats', '2018-05'),
+    path.resolve(TESTDATA, 'stats', '2018-04'),
+  ],
+  '2024-07': [
+    path.resolve(TESTDATA, 'stats', '2024-07'),
+    path.resolve(TESTDATA, 'stats', '2024-06'),
+    path.resolve(TESTDATA, 'stats', '2024-05'),
+  ],
+};
+const UPDATE: {[date: string]: string} = {
+  '2018-06': path.resolve(TESTDATA, 'stats', '2018-06.txt'),
+  '2024-07': path.resolve(TESTDATA, 'stats', '2024-07.txt'),
+};
 const CUTOFFS = [0, 1500, 1630, 1760];
 // TODO const TAGS = new Set(['monowater', 'monosteel'] as ID[]);
 
@@ -75,32 +88,35 @@ export async function process() {
     formats.set(format, trs);
   }
 
-  override(Dex);
-  const tiers = await stats.Reports.tierUpdateReport(gens.get(7), MONTHS, (month, format) => {
-    const baseline = format.startsWith('gen7ou') ? 1695 : 1630;
-    const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
-    return new Promise((resolve, reject) => {
-      fs.readFile(file, 'utf8', (err, data) => {
-        if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
-        resolve(data);
+  const tiers: {[date: string]: string} = {};
+  for (const [date, num] of [['2018-06', 7], ['2024-07', 9]] as const) {
+    override(Dex, num, date);
+    tiers[date] =
+      await stats.Reports.tierUpdateReport(gens.get(7), MONTHS[date], (month, format) => {
+      const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
+      const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
+      return new Promise((resolve, reject) => {
+        fs.readFile(file, 'utf8', (err, data) => {
+          if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
+          resolve(data);
+        });
       });
-    });
-  }, 'singles', false);
-
+    }, 'singles', false);
+  }
   return {formats, tiers};
 }
 
-function override(d: typeof Dex) {
-  const dex = d.forGen(7);
+function override(d: typeof Dex, gen: Generation['num'], date: keyof typeof TIERS) {
+  const dex = d.forGen(gen);
   for (const tier in TIERS) {
     if (tier === 'default') continue;
-    for (const species of TIERS[tier as keyof typeof TIERS]) {
+    for (const species of TIERS[date][tier] as string[]) {
       (dex.species.get(species) as any).tier = tier;
     }
   }
 }
 
-export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}) {
+export function update(reports: {formats: Map<ID, TaggedReports>; tiers: {[date: string]: string}}) {
   const dir = path.resolve(TESTDATA, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
@@ -123,11 +139,13 @@ export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}
     }
   }
 
-  fs.writeFileSync(UPDATE, reports.tiers);
+  for (const date in reports.tiers) {
+    fs.writeFileSync(UPDATE[date], reports.tiers[date]);
+  }
 }
 
 export function compare(
-  reports: {formats: Map<ID, TaggedReports>; tiers: string},
+  reports: {formats: Map<ID, TaggedReports>; tiers: {[date: string]: string}},
   cmp: CompareFn
 ) {
   const dir = path.resolve(TESTDATA, 'reports');
@@ -147,7 +165,9 @@ export function compare(
     }
   }
 
-  cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8'));
+  for (const date in reports.tiers) {
+    cmp(UPDATE[date], reports.tiers[date], fs.readFileSync(UPDATE[date], 'utf8'));
+  }
 }
 
 function createReports(
