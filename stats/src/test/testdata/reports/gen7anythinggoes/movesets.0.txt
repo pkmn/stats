@@ -31,7 +31,7 @@
  | Zygarde 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
- | Rayquaza-Mega 100.000 (100.00±0.00)    |
+ | Rayquaza 100.000 (100.00±0.00)         |
  |	 (100.0% KOed / 0.0% switched out) | 
  +----------------------------------------+ 
  +----------------------------------------+ 
@@ -60,7 +60,7 @@
  | Teammates                              | 
  | Greninja-Ash 100.000%                  | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
@@ -176,7 +176,7 @@
  | Teammates                              | 
  | Ditto 100.000%                         | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
@@ -220,7 +220,7 @@
  | Teammates                              | 
  | Ditto 100.000%                         | 
  | Greninja-Ash 100.000%                  | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
@@ -265,14 +265,14 @@
  |	 (0.0% KOed / 0.0% switched out)  | 
  +----------------------------------------+ 
  +----------------------------------------+ 
- | Rayquaza-Mega                          | 
+ | Rayquaza                               | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
  | Avg. weight: 1.0                       | 
  | Viability Ceiling: 43                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Delta Stream 100.000%                  | 
+ | Air Lock 100.000%                      | 
  +----------------------------------------+ 
  | Items                                  | 
  | Eject Button 100.000%                  | 
@@ -367,7 +367,7 @@
  | Ditto 100.000%                         | 
  | Greninja-Ash 100.000%                  | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
@@ -401,7 +401,7 @@
  | Ditto 100.000%                         | 
  | Greninja-Ash 100.000%                  | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 

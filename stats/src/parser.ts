@@ -281,7 +281,6 @@ export const Parser = new class {
     team: Array<PokemonSet & {forcedLevel?: number}>,
     legacy = false,
   ) {
-    const mray = util.isMegaRayquazaAllowed(format);
     gen = util.ignoreGen(gen, legacy);
     for (const pokemon of team) {
       const item = pokemon.item && gen.items.get(pokemon.item);
@@ -316,10 +315,7 @@ export const Parser = new class {
       pokemon.species =
         util.getSpecies(gen, util.fromAlias(pokemon.species || pokemon.name), legacy).id;
       pokemon.teraType = pokemon.teraType || 'nothing';
-      if (mray && pokemon.species === 'rayquaza' && pokemon.moves.includes('dragonascent')) {
-        pokemon.species = 'rayquazamega';
-        pokemon.ability = 'deltastream';
-      } else if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
+      if (pokemon.species === 'greninja' && pokemon.ability === 'battlebond') {
         pokemon.species = 'greninjaash';
       } else if (pokemon.species === 'zacian' && pokemon.item === 'rustedsword') {
         pokemon.species = 'zaciancrowned';

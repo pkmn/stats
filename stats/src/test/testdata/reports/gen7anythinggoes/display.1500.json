@@ -21,7 +21,7 @@
         "Shaymin-Sky": 1,
         "Zygarde": 1
       },
-      "counters": {"Rayquaza-Mega": [0.1587, 1, 0]}
+      "counters": {"Rayquaza": [0.1587, 1, 0]}
     },
     "Dugtrio": {
       "lead": {"raw": 0, "real": 0, "weighted": 0},
@@ -169,7 +169,7 @@
       "teammates": {
         "Greninja-Ash": 1,
         "Meloetta": 1,
-        "Rayquaza-Mega": 1,
+        "Rayquaza": 1,
         "Shedinja": 1,
         "Zoroark": 1
       },
@@ -201,7 +201,7 @@
       "teammates": {
         "Ditto": 1,
         "Meloetta": 1,
-        "Rayquaza-Mega": 1,
+        "Rayquaza": 1,
         "Shedinja": 1,
         "Zoroark": 1
       },
@@ -234,13 +234,13 @@
       "teammates": {
         "Ditto": 1,
         "Greninja-Ash": 1,
-        "Rayquaza-Mega": 1,
+        "Rayquaza": 1,
         "Shedinja": 1,
         "Zoroark": 1
       },
       "counters": {}
     },
-    "Rayquaza-Mega": {
+    "Rayquaza": {
       "lead": {"raw": 0.5, "real": 0.5, "weighted": 0.1374},
       "usage": {"raw": 0.5, "real": 0.6667, "weighted": 0.1374},
       "unique": {"raw": 3, "real": 3, "weighted": 0.8243},
@@ -248,10 +248,10 @@
       "count": 1,
       "weight": 0.1587,
       "viability": [1, 43, 43, 43],
-      "abilities": {"Delta Stream": 1},
+      "abilities": {"Air Lock": 1},
       "items": {"Eject Button": 1},
       "teraTypes": {"Nothing": 1},
-      "stats": {"351/504/236/356/237/329": 1},
+      "stats": {"351/438/216/302/217/289": 1},
       "moves": {
         "Dragon Ascent": 1,
         "Dragon Dance": 1,
@@ -289,7 +289,7 @@
         "Ditto": 1,
         "Greninja-Ash": 1,
         "Meloetta": 1,
-        "Rayquaza-Mega": 1,
+        "Rayquaza": 1,
         "Zoroark": 1
       },
       "counters": {}
@@ -311,7 +311,7 @@
         "Ditto": 1,
         "Greninja-Ash": 1,
         "Meloetta": 1,
-        "Rayquaza-Mega": 1,
+        "Rayquaza": 1,
         "Shedinja": 1
       },
       "counters": {}

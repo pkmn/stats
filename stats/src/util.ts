@@ -59,14 +59,6 @@ export function genForFormat(gens: Generations, format: ID) {
   return gens.get(m ? m[1] : 6);
 }
 
-const MEGA_RAYQUAZA_BANNED = new Set([
-  'ubers', 'battlefactory', 'megamons', 'gen6ubers', 'gen7ubers', 'gen7pokebankubers',
-]);
-
-export function isMegaRayquazaAllowed(format: ID) {
-  return !MEGA_RAYQUAZA_BANNED.has(format);
-}
-
 export function isMega(species: Specie, legacy: boolean) {
   return species.forme && (species.forme.startsWith('Mega') || species.forme.startsWith('Primal') ||
     (!legacy && species.forme.startsWith('Ultra')));

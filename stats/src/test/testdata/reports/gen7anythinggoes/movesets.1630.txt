@@ -24,7 +24,7 @@
  | Teammates                              | 
  | Greninja-Ash 100.000%                  | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
@@ -58,7 +58,7 @@
  | Teammates                              | 
  | Ditto 100.000%                         | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
@@ -92,21 +92,21 @@
  | Teammates                              | 
  | Ditto 100.000%                         | 
  | Greninja-Ash 100.000%                  | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
  +----------------------------------------+ 
  +----------------------------------------+ 
- | Rayquaza-Mega                          | 
+ | Rayquaza                               | 
  +----------------------------------------+ 
  | Raw count: 1                           | 
  | Avg. weight: 0.00015910859             | 
  | Viability Ceiling: 43                  | 
  +----------------------------------------+ 
  | Abilities                              | 
- | Delta Stream 100.000%                  | 
+ | Air Lock 100.000%                      | 
  +----------------------------------------+ 
  | Items                                  | 
  | Eject Button 100.000%                  | 
@@ -161,7 +161,7 @@
  | Ditto 100.000%                         | 
  | Greninja-Ash 100.000%                  | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Zoroark 100.000%                       | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
@@ -195,7 +195,7 @@
  | Ditto 100.000%                         | 
  | Greninja-Ash 100.000%                  | 
  | Meloetta 100.000%                      | 
- | Rayquaza-Mega 100.000%                 | 
+ | Rayquaza 100.000%                      | 
  | Shedinja 100.000%                      | 
  +----------------------------------------+ 
  | Checks and Counters                    | 
