@@ -8,27 +8,29 @@ import stringify from 'json-stringify-pretty-compact';
 import * as stats from '../index';
 import {genForFormat, newGenerations} from '../util';
 
-import * as OLD from './testdata/stats/2018-06.json';
-import * as NEW from './testdata/stats/2024-07.json';
+import * as OLD from './testdata/stats/2018.json';
+import * as NEW from './testdata/stats/2024.json';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 
-const TIERS: {[date: string]: {[tier: string]: string[]}} = {'2018-06': OLD, '2024-07': NEW };
+const TIERS: {[date: string]: {[tier: string]: string[]}} = {'2018': OLD, '2024': NEW };
 const MONTHS: {[date: string]: [string, string, string]} = {
-  '2018-06': [
+  '2018': [
     path.resolve(TESTDATA, 'stats', '2018-06'),
     path.resolve(TESTDATA, 'stats', '2018-05'),
     path.resolve(TESTDATA, 'stats', '2018-04'),
   ],
-  '2024-07': [
+  '2024': [
     path.resolve(TESTDATA, 'stats', '2024-07'),
     path.resolve(TESTDATA, 'stats', '2024-06'),
     path.resolve(TESTDATA, 'stats', '2024-05'),
   ],
 };
 const UPDATE: {[date: string]: string} = {
-  '2018-06': path.resolve(TESTDATA, 'stats', '2018-06.txt'),
-  '2024-07': path.resolve(TESTDATA, 'stats', '2024-07.txt'),
+  // https://www.smogon.com/forums/posts/7848813
+  '2018': path.resolve(TESTDATA, 'stats', '2018-06.txt'),
+  // https://www.smogon.com/forums/posts/10173519
+  '2024': path.resolve(TESTDATA, 'stats', '2024-07.txt'),
 };
 const CUTOFFS = [0, 1500, 1630, 1760];
 // TODO const TAGS = new Set(['monowater', 'monosteel'] as ID[]);
@@ -89,7 +91,7 @@ export async function process() {
   }
 
   const tiers: {[date: string]: string} = {};
-  for (const [date, num] of [['2018-06', 7], ['2024-07', 9]] as const) {
+  for (const [date, num] of [['2018', 7], ['2024', 9]] as const) {
     override(Dex, num, date);
     tiers[date] =
       await stats.Reports.tierUpdateReport(gens.get(7), MONTHS[date], (month, format) => {
