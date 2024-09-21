@@ -8,30 +8,19 @@ import stringify from 'json-stringify-pretty-compact';
 import * as stats from '../index';
 import {genForFormat, newGenerations} from '../util';
 
-import * as OLD from './testdata/stats/2018.json';
-import * as NEW from './testdata/stats/2024.json';
+import * as TIERS from './testdata/stats/tiers.json';
 
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 
-const TIERS: {[date: string]: {[tier: string]: string[]}} = {'2018': OLD, '2024': NEW };
-const MONTHS: {[date: string]: [string, string, string]} = {
-  '2018': [
-    path.resolve(TESTDATA, 'stats', '2018-06'),
-    path.resolve(TESTDATA, 'stats', '2018-05'),
-    path.resolve(TESTDATA, 'stats', '2018-04'),
-  ],
-  '2024': [
-    path.resolve(TESTDATA, 'stats', '2024-07'),
-    path.resolve(TESTDATA, 'stats', '2024-06'),
-    path.resolve(TESTDATA, 'stats', '2024-05'),
-  ],
-};
-const UPDATE: {[date: string]: string} = {
-  // https://www.smogon.com/forums/posts/7848813
-  '2018': path.resolve(TESTDATA, 'stats', '2018-06.txt'),
-  // https://www.smogon.com/forums/posts/10173519
-  '2024': path.resolve(TESTDATA, 'stats', '2024-07.txt'),
-};
+const MONTHS: [string, string, string] = [
+  path.resolve(TESTDATA, 'stats', '2024-07'),
+  path.resolve(TESTDATA, 'stats', '2024-06'),
+  path.resolve(TESTDATA, 'stats', '2024-05'),
+];
+
+// https://www.smogon.com/forums/posts/10173519
+const UPDATE = path.resolve(TESTDATA, 'stats', '2024-07.txt');
+
 const CUTOFFS = [0, 1500, 1630, 1760];
 // TODO const TAGS = new Set(['monowater', 'monosteel'] as ID[]);
 
@@ -90,35 +79,35 @@ export async function process() {
     formats.set(format, trs);
   }
 
-  const tiers: {[date: string]: string} = {};
-  for (const [date, num] of [['2018', 7], ['2024', 9]] as const) {
-    override(Dex, num, date);
-    tiers[date] =
-      await stats.Reports.tierUpdateReport(gens.get(7), MONTHS[date], (month, format) => {
-      const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
-      const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
-      return new Promise((resolve, reject) => {
-        fs.readFile(file, 'utf8', (err, data) => {
-          if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
-          resolve(data);
-        });
+  override(Dex);
+  const tiers =
+    await stats.Reports.tierUpdateReport(gens.get(7), MONTHS, (month, format) => {
+    const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
+    const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
+    return new Promise((resolve, reject) => {
+      fs.readFile(file, 'utf8', (err, data) => {
+        if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
+        resolve(data);
       });
-    }, 'singles', false);
-  }
+    });
+  }, 'singles', false);
+
   return {formats, tiers};
 }
 
-function override(d: typeof Dex, gen: Generation['num'], date: keyof typeof TIERS) {
-  const dex = d.forGen(gen);
+function override(d: typeof Dex) {
+  const dex = d.forGen(9);
   for (const tier in TIERS) {
     if (tier === 'default') continue;
-    for (const species of TIERS[date][tier] as string[]) {
-      (dex.species.get(species) as any).tier = tier;
+    for (const t in (TIERS as any)[tier]) {
+      for (const species of (TIERS as any)[tier][t]) {
+        (dex.species.get(species) as any)[tier] = t;
+      }
     }
   }
 }
 
-export function update(reports: {formats: Map<ID, TaggedReports>; tiers: {[date: string]: string}}) {
+export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}) {
   const dir = path.resolve(TESTDATA, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
@@ -141,13 +130,10 @@ export function update(reports: {formats: Map<ID, TaggedReports>; tiers: {[date:
     }
   }
 
-  for (const date in reports.tiers) {
-    fs.writeFileSync(UPDATE[date], reports.tiers[date]);
-  }
+  fs.writeFileSync(UPDATE, reports.tiers);
 }
-
 export function compare(
-  reports: {formats: Map<ID, TaggedReports>; tiers: {[date: string]: string}},
+  reports: {formats: Map<ID, TaggedReports>; tiers: string},
   cmp: CompareFn
 ) {
   const dir = path.resolve(TESTDATA, 'reports');
@@ -167,9 +153,7 @@ export function compare(
     }
   }
 
-  for (const date in reports.tiers) {
-    cmp(UPDATE[date], reports.tiers[date], fs.readFileSync(UPDATE[date], 'utf8'));
-  }
+  cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8'));
 }
 
 function createReports(
