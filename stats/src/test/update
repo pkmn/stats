@@ -6,5 +6,9 @@ try {
   if (err.code !== 'MODULE_NOT_FOUND=') throw err;
 }
 
+// Update golden files
 const integration = require('../../build/test/integration');
-(async () => integration.update(await integration.process()))(); // Update golden files
+(async () => integration.update(await integration.process()))().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

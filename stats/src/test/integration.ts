@@ -13,13 +13,18 @@ import * as TIERS from './testdata/stats/tiers.json';
 const TESTDATA = path.resolve(__dirname.replace('build', 'src'), 'testdata');
 
 const MONTHS: [string, string, string] = [
-  path.resolve(TESTDATA, 'stats', '2024-07'),
   path.resolve(TESTDATA, 'stats', '2024-06'),
   path.resolve(TESTDATA, 'stats', '2024-05'),
+  path.resolve(TESTDATA, 'stats', '2024-04'),
 ];
 
 // https://www.smogon.com/forums/posts/10173519
-const UPDATE = path.resolve(TESTDATA, 'stats', '2024-07.txt');
+const UPDATE = {
+  singles: path.resolve(TESTDATA, 'stats', 'update', 'singles.txt'),
+  doubles: path.resolve(TESTDATA, 'stats', 'update', 'doublesTier.txt'),
+  nationaldex: path.resolve(TESTDATA, 'stats', 'update', 'nationaldex.txt'),
+  littlecup: path.resolve(TESTDATA, 'stats', 'update', 'littlecup.txt'),
+};
 
 const CUTOFFS = [0, 1500, 1630, 1760];
 // TODO const TAGS = new Set(['monowater', 'monosteel'] as ID[]);
@@ -80,17 +85,19 @@ export async function process() {
   }
 
   override(Dex);
-  const tiers =
-    await stats.Reports.tierUpdateReport(gens.get(7), MONTHS, (month, format) => {
-    const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
-    const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
-    return new Promise((resolve, reject) => {
-      fs.readFile(file, 'utf8', (err, data) => {
-        if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
-        resolve(data);
+  const tiers: {[type: string]: string} = {};
+  for (const type of ['singles', 'doubles', 'nationaldex', 'littlecup'] as const) {
+    tiers[type] = await stats.Reports.tierUpdateReport(gens.get(9), MONTHS, (month, format) => {
+      const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
+      const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
+      return new Promise((resolve, reject) => {
+        fs.readFile(file, 'utf8', (err, data) => {
+          if (err) return err.code === 'ENOENT' ? resolve(undefined) : reject(err);
+          resolve([baseline, data]);
+        });
       });
-    });
-  }, 'singles', false);
+    }, type, true);
+  }
 
   return {formats, tiers};
 }
@@ -107,7 +114,10 @@ function override(d: typeof Dex) {
   }
 }
 
-export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}) {
+export function update(reports: {
+  formats: Map<ID, TaggedReports>;
+  tiers: {[type: string]: string};
+}) {
   const dir = path.resolve(TESTDATA, 'reports');
   rmrf(dir);
   fs.mkdirSync(dir);
@@ -130,10 +140,12 @@ export function update(reports: {formats: Map<ID, TaggedReports>; tiers: string}
     }
   }
 
-  fs.writeFileSync(UPDATE, reports.tiers);
+  for (const type in reports.tiers) {
+    fs.writeFileSync((UPDATE as any)[type], reports.tiers[type]);
+  }
 }
 export function compare(
-  reports: {formats: Map<ID, TaggedReports>; tiers: string},
+  reports: {formats: Map<ID, TaggedReports>; tiers: {[type: string]: string}},
   cmp: CompareFn
 ) {
   const dir = path.resolve(TESTDATA, 'reports');
@@ -153,7 +165,10 @@ export function compare(
     }
   }
 
-  cmp(UPDATE, reports.tiers, fs.readFileSync(UPDATE, 'utf8'));
+  for (const type in reports.tiers) {
+    const file = (UPDATE as any)[type];
+    cmp(file, reports.tiers[type], fs.readFileSync(file, 'utf8'));
+  }
 }
 
 function createReports(

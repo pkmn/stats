@@ -51,8 +51,6 @@ const TIERS = {
   littlecup: ['LC', 'LCBL'] as LittleCupTier[],
 };
 
-const WEIGHTS = [[24], [20, 4], [20, 3, 1]];
-
 const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 
 const MIN = [20, 0.5];
@@ -370,26 +368,28 @@ export const Reports = new class {
     return s;
   }
 
-  // TODO: Add support for Doubles and OM (other metagames)
   async tierUpdateReport(
     gen: Generation,
     months: [string] | [string, string] | [string, string, string],
-    read: (month: string, format: string) => Promise<string | undefined>,
+    read: (month: string, format: string) => Promise<[number, string] | undefined>,
     type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles',
     legacy = true,
   ) {
     gen = util.ignoreGen(gen, legacy);
 
+    const cutoffs: UsageTiers<number> |
+    DoublesUsageTiers<number> |
+    NationalDexUsageTiers<number> |
+    LittleCupUsageTiers<number> = usageTiers(type, () => 0);
     const pokemon: Map<ID,
     UsageTiers<number> |
     DoublesUsageTiers<number> |
     NationalDexUsageTiers<number> |
     LittleCupUsageTiers<number>
     > = new Map();
-    for (const [i, month] of months.entries()) {
-      const weight = WEIGHTS[months.length - 1][i];
+    for (const month of months) {
       for (const tier of USAGE_TIERS[type]) {
-        const reports: Array<Promise<[string, [Map<ID, number>, number] | undefined]>> = [];
+        const reports: Array<Promise<[string, [number, Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
           reports.push(maybeParseUsageReport(
             read(month, `gen${gen.num}${usageTierName(tier)}${suffix}`)
@@ -401,7 +401,7 @@ export const Reports = new class {
         let ntot = 0;
         for (const [suffix, report] of await Promise.all(reports)) {
           if (report) {
-            [u[suffix], n[suffix]] = report;
+            [(cutoffs as any)[tier], u[suffix], n[suffix]] = report;
             ntot += n[suffix];
           }
         }
@@ -409,11 +409,11 @@ export const Reports = new class {
           for (const [p, usage] of u[suffix].entries()) {
             let v = pokemon.get(p);
             if (!v) {
-              v = usageTiers(type, 0);
+              v = usageTiers(type, () => 0);
               pokemon.set(p, v);
             }
             if (p !== 'empty') {
-              (v as any)[tier] += (((weight * n[suffix]) / ntot) * usage) / 24;
+              (v as any)[tier] += (((n[suffix]) / ntot) * usage) / months.length;
             }
           }
         }
@@ -424,7 +424,7 @@ export const Reports = new class {
     UsageTiers<Array<[ID, number]>> |
     DoublesUsageTiers<Array<[ID, number]>> |
     NationalDexUsageTiers<Array<[ID, number]>> |
-    LittleCupUsageTiers<Array<[ID, number]>> = usageTiers(type, []);
+    LittleCupUsageTiers<Array<[ID, number]>> = usageTiers(type, () => []);
 
     for (const [species, usage] of pokemon.entries()) {
       for (const tier of USAGE_TIERS[type]) {
@@ -436,21 +436,19 @@ export const Reports = new class {
     for (const tier of USAGE_TIERS[type]) {
       const sorted = (tiers as any)[tier].sort((a: [string, number], b: [string, number]) =>
         b[1] - a[1] || a[0].localeCompare(b[0]));
-      s += makeTable(gen, sorted, tier, legacy);
+      s += makeTable(gen, sorted, tier, (cutoffs as any)[tier], legacy);
     }
     s += '\n';
 
-    const rise = [0.06696700846, 0.04515839608, 0.03406367107][months.length - 1];
-    const drop = [0.01717940145, 0.02284003156, 0.03406367107][months.length - 1];
+    const rise = 0.04515839608;
+    const drop = rise;
 
-    if (type === 'nationaldex' || type === 'littlecup') {
+    if (type === 'littlecup') {
       const bl = [];
       for (const [species, usage] of pokemon.entries()) {
-        if ((usage as any)[type === 'nationaldex' ? 'ND' : 'LC'] > drop) {
-          bl.push(species);
-        }
+        if ((usage as any)['LC'] > drop) bl.push(species);
       }
-      s += '[b]National Dex UU Banlist:[/b] ';
+      s += '[b]LC UU Banlist:[/b] ';
       s += bl.sort().map(p => gen.species.get(p)!.name).join(', ');
       return s;
     }
@@ -481,48 +479,33 @@ export const Reports = new class {
         s += `${species.name} moved from ${tier} to ${update}\n`;
       }
     }
+
     return s;
   }
 };
 
 const BL: {[tier in Tier]?: Set<string>} = {
-  UU: new Set([
-    'alakazam', 'azumarill', 'breloom', 'buzzwole', 'charizardmegay', 'conkeldurr', 'dianciemega',
-    'diggersby', 'dragonite', 'gallademega', 'gardevoirmega', 'gyarados', 'heracrossmega',
-    'hoopaunbound', 'jirachi', 'kyuremblack', 'latiasmega', 'latios', 'latiosmega', 'manaphy',
-    'ninetalesalola', 'porygonz', 'salamence', 'scolipede', 'staraptor', 'thundurus',
-    'thundurustherian', 'tornadustherian', 'venusaurmega', 'victini', 'volcarona', 'weavile',
-    'xurkitree',
-  ]),
+  UU: new Set(['espathra', 'baxcalibur', 'hydreigon']),
   RU: new Set([
-    'slowbromega', 'suicune', 'hawlucha', 'crawdaunt', 'lucario', 'heracross', 'venomoth',
-    'houndoommega', 'entei', 'sceptilemega', 'sharpedo', 'absolmega', 'zoroark', 'reuniclus',
-    'mienshao', 'durant', 'tornadus', 'kyurem', 'talonflame', 'darmanitan', 'meloetta',
+    'haxorus', 'lycanrocdusk', 'drednaw', 'toxtricity', 'flamigo', 'hawlucha', 'polteageist',
+    'oricoriopompom',
   ]),
   NU: new Set([
-    'yanmega', 'slurpuff', 'emboar', 'porygon2', 'noivern', 'moltres', 'ribombee', 'kingdra',
-    'exploud', 'necrozma', 'tyrantrum', 'cofagrigus', 'meloetta', 'barbaracle', 'bruxish',
-    'cameruptmega', 'venusaur', 'gigalith', 'hoopa',
+    'florges', 'indeedee', 'oricoriopompom', 'venomoth', 'goodra', 'cetitan', 'oricoriosensu',
+    'barraskewda',
   ]),
-  PU: new Set([
-    'vivillon', 'klinklang', 'hariyama', 'barbaracle', 'vanilluxe', 'medicham', 'passimian',
-    'magmortar', 'kingler', 'charizard', 'tauros', 'typhlosion', 'gallade', 'samurott', 'sawk',
-    'archeops', 'pyroar', 'aromatisse', 'minior', 'exeggutoralola',
-  ]),
-  ZU: new Set([
-    'carracosta', 'crabominable', 'exeggutor', 'gorebyss', 'jynx', 'musharna', 'raticatealola',
-    'raticatealolatotem', 'throh', 'turtonator', 'typenull', 'ursaring', 'victreebel', 'zangoose',
-  ]),
+  PU: new Set(['oricorio', 'oricoriopau', 'magneton', 'vivillon', 'sneaselhisui']),
+  ZU: new Set([]),
 };
 
 function usageTiers<T>(
-  type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: T
+  type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: () => T
 ): UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T> {
   switch (type) {
-    case 'singles': return {OU: t, UU: t, RU: t, NU: t, PU: t};
-    case 'doubles': return {DOU: t, DUU: t};
-    case 'nationaldex': return {ND: t};
-    default: return {LC: t};
+    case 'singles': return {OU: t(), UU: t(), RU: t(), NU: t(), PU: t()};
+    case 'doubles': return {DOU: t(), DUU: t()};
+    case 'nationaldex': return {ND: t()};
+    default: return {LC: t()};
   }
 }
 
@@ -776,10 +759,11 @@ function makeTable(
   gen: Generation,
   pokemon: Array<[ID, number]>,
   tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier,
+  cutoff: number,
   legacy: boolean,
 ) {
-  let s = `[HIDE=${tier}][CODE]\n`;
-  s += `Combined usage for ${tier}\n`;
+  let s = `[HIDE=${tier} (${cutoff} stats)][CODE]\n`;
+  s += `Combined usage for ${tier} (${cutoff} stats)\n`;
   s += ' + ---- + ------------------ + ------- + \n';
   s += ' | Rank | Pokemon            | Percent | \n';
   s += ' + ---- + ------------------ + ------- + \n';
@@ -796,12 +780,12 @@ function makeTable(
   return s;
 }
 
-async function maybeParseUsageReport(report: Promise<string | undefined>) {
+async function maybeParseUsageReport(report: Promise<[number, string] | undefined>) {
   const r = await report;
   return r ? parseUsageReport(r) : undefined;
 }
 
-function parseUsageReport(report: string): [Map<ID, number>, number] {
+function parseUsageReport([baseline, report]: [number, string]): [number, Map<ID, number>, number] {
   const usage: Map<ID, number> = new Map();
   const lines = report.split('\n');
   const battles = Number(lines[0].slice(16));
@@ -814,5 +798,5 @@ function parseUsageReport(report: string): [Map<ID, number>, number] {
     usage.set(toID(name), pct);
   }
 
-  return [usage, battles];
+  return [baseline, usage, battles];
 }
