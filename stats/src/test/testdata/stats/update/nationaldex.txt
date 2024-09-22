@@ -539,54 +539,10 @@ Combined usage for National Dex UU (1630 stats)
  + ---- + ------------------ + ------- + 
 [/CODE][/HIDE]
 
-Amoonguss moved from NDRU to NDUU
-Arcanine-Hisui moved from NDUU to NDRU
-Bisharp moved from NDRU to NDUU
-Blissey moved from NDOU to NDUU
-Ceruledge moved from NDUUBL to NDOU
-Chansey moved from NDRU to NDUU
-Cinderace moved from NDOU to NDUU
-Clefable moved from NDOU to NDUU
-Dondozo moved from NDOU to NDUU
-Donphan moved from NDUU to NDRU
-Enamorus moved from NDOU to NDUU
-Garchomp moved from NDUUBL to NDOU
-Goodra-Hisui moved from NDUU to NDRU
-Hawlucha moved from NDUU to NDRU
-Hippowdon moved from NDRU to NDUU
-Hydreigon moved from NDRUBL to NDUU
-Indeedee moved from NDUU to NDRU
-Iron Crown moved from NDUU to NDOU
-Iron Moth moved from NDOU to NDUU
-Kleavor moved from NDRU to NDUU
-Latios moved from NDUU to NDRU
-Lokix moved from NDUU to NDRU
-Magnezone moved from NDNU to NDUU
-Mamoswine moved from NDUU to NDRU
-Mandibuzz moved from NDUU to NDRU
-Meowscarada moved from NDOU to NDUU
-Metagross moved from NDUU to NDRU
-Moltres moved from NDRU to NDOU
-Ninetales-Alola moved from NDUU to NDRU
-Ogerpon moved from NDUU to NDRU
-Ogerpon-Cornerstone moved from NDUU to NDRU
-Pecharunt moved from NDUU to NDRU
-Pelipper moved from NDUUBL to NDOU
-Primarina moved from NDOU to NDUU
-Ribombee moved from NDOU to NDUU
-Sandy Shocks moved from NDUU to NDRU
+Buzzwole moved from NDRUBL to NDUU
+Dracozolt moved from NDUU to NDRU
+Haxorus moved from NDUU to NDRU
+Hoopa-Unbound moved from NDOU to NDUU
 Sinistcha moved from NDUU to NDRU
-Skarmory moved from NDOU to NDUU
-Slowbro moved from NDNU to NDUU
-Slowking moved from NDUU to NDRU
-Ting-Lu moved from NDOU to NDUU
-Tinkaton moved from NDUU to NDRU
-Torkoal moved from NDOU to NDUU
-Tornadus-Therian moved from NDUU to NDRU
-Toxapex moved from NDUU to NDOU
-Tyranitar moved from NDUU to NDRU
-Ursaluna moved from NDUU to NDOU
-Weavile moved from NDOU to NDUU
-Weezing-Galar moved from NDUU to NDRU
-Zapdos moved from NDUU to NDOU
-Zapdos-Galar moved from NDRU to NDUU
+Swampert-Mega moved from NDRU to NDOU
+Tyranitar-Mega moved from NDUU to NDOU

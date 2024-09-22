@@ -86,8 +86,7 @@ export async function process() {
 
   const gen = override(gens.get(9)); // NB: same as DEFAULT from newGenerations
   const tiers: {[type: string]: string} = {};
-  // for (const type of ['singles', 'doubles', 'nationaldex', 'littlecup'] as const) {
-  for (const type of ['doubles'] as const) {
+  for (const type of ['singles', 'doubles', 'nationaldex', 'littlecup'] as const) {
     tiers[type] = await stats.Reports.tierUpdateReport(gen, MONTHS, (month, format) => {
       const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
       const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
