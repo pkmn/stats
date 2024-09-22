@@ -84,10 +84,10 @@ export async function process() {
     formats.set(format, trs);
   }
 
-  override(Dex);
+  const gen = override(gens.get(9)); // NB: same as DEFAULT from newGenerations
   const tiers: {[type: string]: string} = {};
   for (const type of ['singles', 'doubles', 'nationaldex', 'littlecup'] as const) {
-    tiers[type] = await stats.Reports.tierUpdateReport(gens.get(9), MONTHS, (month, format) => {
+    tiers[type] = await stats.Reports.tierUpdateReport(gen, MONTHS, (month, format) => {
       const baseline = ['ou', 'doublesou'].includes(format.slice(4)) ? 1695 : 1630;
       const file = path.resolve(`${month}`, `${format}-${baseline}.txt`);
       return new Promise((resolve, reject) => {
@@ -102,16 +102,16 @@ export async function process() {
   return {formats, tiers};
 }
 
-function override(d: typeof Dex) {
-  const dex = d.forGen(9);
+function override(gen: Generation) {
   for (const tier in TIERS) {
     if (tier === 'default') continue;
     for (const t in (TIERS as any)[tier]) {
       for (const species of (TIERS as any)[tier][t]) {
-        (dex.species.get(species) as any)[tier] = t;
+        (gen.species.get(species) as any)[tier] = t;
       }
     }
   }
+  return gen;
 }
 
 export function update(reports: {

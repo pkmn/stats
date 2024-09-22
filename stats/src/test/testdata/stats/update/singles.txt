@@ -971,7 +971,7 @@ Cinccino moved from RU to NU
 Cobalion moved from RU to UU
 Comfey moved from RUBL to UU
 Copperajah moved from NU to PU
-Cresselia moved from NU to PU
+Cresselia moved from RU to NU
 Deoxys-Defense moved from RU to NU
 Goodra-Hisui moved from UU to RU
 Grafaiai moved from PU to ZU
@@ -979,11 +979,13 @@ Hoopa moved from ZU to PU
 Indeedee moved from UU to RU
 Iron Crown moved from UU to OU
 Krookodile moved from NU to RU
+Magnezone moved from NU to RU
 Moltres moved from RU to OU
 Noivern moved from NU to RU
 Raikou moved from NU to PU
 Reuniclus moved from NU to RU
-Ribombee moved from UU to RU
+Rhyperior moved from NU to UU
+Ribombee moved from OU to UU
 Serperior moved from OU to UU
 Slowbro moved from NU to RU
 Thundurus moved from NU to RU
