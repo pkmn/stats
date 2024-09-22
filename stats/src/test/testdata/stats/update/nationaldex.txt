@@ -1,5 +1,5 @@
-[HIDE=ND (1630 stats)][CODE]
-Combined usage for ND (1630 stats)
+[HIDE=National Dex OU (1630 stats)][CODE]
+Combined usage for National Dex OU (1630 stats)
  + ---- + ------------------ + ------- + 
  | Rank | Pokemon            | Percent | 
  + ---- + ------------------ + ------- + 
@@ -268,4 +268,325 @@ Combined usage for ND (1630 stats)
  | 263  | Tornadus           |  0.101% |
  + ---- + ------------------ + ------- + 
 [/CODE][/HIDE]
+[HIDE=National Dex UU (1630 stats)][CODE]
+Combined usage for National Dex UU (1630 stats)
+ + ---- + ------------------ + ------- + 
+ | Rank | Pokemon            | Percent | 
+ + ---- + ------------------ + ------- + 
+ | 1    | Rotom-Wash         | 26.299% |
+ | 2    | Ting-Lu            | 24.960% |
+ | 3    | Aegislash          | 23.138% |
+ | 4    | Skarmory           | 22.286% |
+ | 5    | Iron Moth          | 20.551% |
+ | 6    | Excadrill          | 19.186% |
+ | 7    | Zapdos-Galar       | 18.534% |
+ | 8    | Clefable           | 17.923% |
+ | 9    | Tyranitar-Mega     | 16.063% |
+ | 10   | Celesteela         | 15.543% |
+ | 11   | Venusaur-Mega      | 12.477% |
+ | 12   | Iron Boulder       | 11.519% |
+ | 13   | Greninja           | 10.221% |
+ | 14   | Keldeo             |  9.294% |
+ | 15   | Hippowdon          |  9.277% |
+ | 16   | Amoonguss          |  9.039% |
+ | 17   | Hydreigon          |  8.814% |
+ | 18   | Tapu Fini          |  8.620% |
+ | 19   | Victini            |  8.512% |
+ | 20   | Gardevoir-Mega     |  8.495% |
+ | 21   | Scizor             |  8.122% |
+ | 22   | Chansey            |  7.761% |
+ | 23   | Skeledirge         |  7.459% |
+ | 24   | Alakazam           |  7.405% |
+ | 25   | Magnezone          |  7.392% |
+ | 26   | Azumarill          |  7.368% |
+ | 27   | Slowbro            |  7.302% |
+ | 28   | Beedrill-Mega      |  7.110% |
+ | 29   | Sableye-Mega       |  6.874% |
+ | 30   | Iron Hands         |  6.747% |
+ | 31   | Hydrapple          |  6.713% |
+ | 32   | Bisharp            |  6.375% |
+ | 33   | Quaquaval          |  5.735% |
+ | 34   | Kleavor            |  5.581% |
+ | 35   | Latias-Mega        |  5.227% |
+ | 36   | Buzzwole           |  4.851% |
+ | 37   | Dracozolt          |  4.494% |
+ | 38   | Enamorus           |  4.295% |
+ | 39   | Aerodactyl-Mega    |  4.238% |
+ | 40   | Goodra-Hisui       |  4.226% |
+ | 41   | Blacephalon        |  4.059% |
+ | 42   | Sinistcha          |  3.982% |
+ | 43   | Quagsire           |  3.794% |
+ | 44   | Haxorus            |  3.291% |
+ | 45   | Iron Leaves        |  3.244% |
+ | 46   | Zoroark-Hisui      |  3.168% |
+ | 47   | Heracross-Mega     |  3.153% |
+ | 48   | Hawlucha           |  3.030% |
+ | 49   | Zeraora            |  3.022% |
+ | 50   | Slowking           |  2.984% |
+ | 51   | Ribombee           |  2.841% |
+ | 52   | Altaria-Mega       |  2.801% |
+ | 53   | Jirachi            |  2.720% |
+ | 54   | Mienshao           |  2.622% |
+ | 55   | Gastrodon          |  2.619% |
+ | 56   | Blissey            |  2.425% |
+ | 57   | Tyranitar          |  2.389% |
+ | 58   | Gallade-Mega       |  2.389% |
+ | 59   | Latias             |  2.372% |
+ | 60   | Salamence          |  2.341% |
+ | 61   | Mew                |  2.315% |
+ | 62   | Tapu Bulu          |  2.183% |
+ | 63   | Sceptile-Mega      |  2.100% |
+ | 64   | Mandibuzz          |  2.040% |
+ | 65   | Pecharunt          |  1.912% |
+ | 66   | Tangrowth          |  1.740% |
+ | 67   | Smeargle           |  1.727% |
+ | 68   | Lokix              |  1.649% |
+ | 69   | Empoleon           |  1.632% |
+ | 70   | Volcanion          |  1.571% |
+ | 71   | Arcanine-Hisui     |  1.558% |
+ | 72   | Golisopod          |  1.505% |
+ | 73   | Mamoswine          |  1.503% |
+ | 74   | Nidoking           |  1.383% |
+ | 75   | Galvantula         |  1.340% |
+ | 76   | Gengar             |  1.290% |
+ | 77   | Nihilego           |  1.246% |
+ | 78   | Rotom-Heat         |  1.246% |
+ | 79   | Ogerpon            |  1.239% |
+ | 80   | Porygon-Z          |  1.232% |
+ | 81   | Conkeldurr         |  1.231% |
+ | 82   | Shuckle            |  1.197% |
+ | 83   | Tentacruel         |  1.189% |
+ | 84   | Sandy Shocks       |  1.155% |
+ | 85   | Aggron-Mega        |  1.130% |
+ | 86   | Zygarde-10%        |  1.007% |
+ | 87   | Breloom            |  0.987% |
+ | 88   | Deoxys-Defense     |  0.976% |
+ | 89   | Armarouge          |  0.956% |
+ | 90   | Donphan            |  0.953% |
+ | 91   | Pidgeot-Mega       |  0.931% |
+ | 92   | Reuniclus          |  0.931% |
+ | 93   | Swampert-Mega      |  0.877% |
+ | 94   | Thundurus          |  0.869% |
+ | 95   | Diggersby          |  0.864% |
+ | 96   | Swampert           |  0.842% |
+ | 97   | Araquanid          |  0.837% |
+ | 98   | Arctozolt          |  0.831% |
+ | 99   | Indeedee           |  0.829% |
+ | 100  | Camerupt-Mega      |  0.827% |
+ | 101  | Mimikyu            |  0.815% |
+ | 102  | Cobalion           |  0.812% |
+ | 103  | Terrakion          |  0.804% |
+ | 104  | Forretress         |  0.803% |
+ | 105  | Pincurchin         |  0.749% |
+ | 106  | Darmanitan         |  0.742% |
+ | 107  | Ninetales-Alola    |  0.703% |
+ | 108  | Moltres-Galar      |  0.687% |
+ | 109  | Togekiss           |  0.657% |
+ | 110  | Abomasnow-Mega     |  0.643% |
+ | 111  | Zarude             |  0.631% |
+ | 112  | Glalie-Mega        |  0.621% |
+ | 113  | Fezandipiti        |  0.619% |
+ | 114  | Naclstack          |  0.618% |
+ | 115  | Sharpedo-Mega      |  0.607% |
+ | 116  | Whimsicott         |  0.606% |
+ | 117  | Xatu               |  0.599% |
+ | 118  | Audino-Mega        |  0.593% |
+ | 119  | Gorebyss           |  0.589% |
+ | 120  | Cacturne           |  0.586% |
+ | 121  | Gallade            |  0.585% |
+ | 122  | Umbreon            |  0.585% |
+ | 123  | Corsola-Galar      |  0.584% |
+ | 124  | Absol-Mega         |  0.583% |
+ | 125  | Revavroom          |  0.580% |
+ | 126  | Krookodile         |  0.570% |
+ | 127  | Cyclizar           |  0.560% |
+ | 128  | Crobat             |  0.552% |
+ | 129  | Hattrem            |  0.549% |
+ | 130  | Infernape          |  0.546% |
+ | 131  | Cloyster           |  0.541% |
+ | 132  | Marowak-Alola      |  0.537% |
+ | 133  | Espeon             |  0.535% |
+ | 134  | Manectric-Mega     |  0.530% |
+ | 135  | Tsareena           |  0.524% |
+ | 136  | Entei              |  0.511% |
+ | 137  | Bellossom          |  0.506% |
+ | 138  | Incineroar         |  0.502% |
+ | 139  | Gligar             |  0.502% |
+ | 140  | Primarina          |  0.501% |
+ | 141  | Cresselia          |  0.474% |
+ | 142  | Azelf              |  0.472% |
+ | 143  | Slowbro-Galar      |  0.458% |
+ | 144  | Grimmsnarl         |  0.454% |
+ | 145  | Pyukumuku          |  0.450% |
+ | 146  | Iron Jugulis       |  0.446% |
+ | 147  | Durant             |  0.442% |
+ | 148  | Tinkaton           |  0.442% |
+ | 149  | Hitmontop          |  0.440% |
+ | 150  | Scolipede          |  0.439% |
+ | 151  | Flygon             |  0.427% |
+ | 152  | Polteageist        |  0.408% |
+ | 153  | Milotic            |  0.398% |
+ | 154  | Decidueye          |  0.387% |
+ | 155  | Hoopa              |  0.378% |
+ | 156  | Muk-Alola          |  0.377% |
+ | 157  | Talonflame         |  0.372% |
+ | 158  | Steelix-Mega       |  0.365% |
+ | 159  | Stakataka          |  0.365% |
+ | 160  | Virizion           |  0.361% |
+ | 161  | Slowbro-Mega       |  0.361% |
+ | 162  | Klefki             |  0.359% |
+ | 163  | Tornadus           |  0.355% |
+ | 164  | Grafaiai           |  0.345% |
+ | 165  | Suicune            |  0.344% |
+ | 166  | Lilligant-Hisui    |  0.339% |
+ | 167  | Crawdaunt          |  0.337% |
+ | 168  | Pawmot             |  0.335% |
+ | 169  | Braviary-Hisui     |  0.333% |
+ | 170  | Eelektross         |  0.332% |
+ | 171  | Torterra           |  0.332% |
+ | 172  | Chandelure         |  0.328% |
+ | 173  | Ditto              |  0.322% |
+ | 174  | Decidueye-Hisui    |  0.318% |
+ | 175  | Weezing-Galar      |  0.313% |
+ | 176  | Metagross          |  0.313% |
+ | 177  | Porygon2           |  0.312% |
+ | 178  | Cradily            |  0.309% |
+ | 179  | Brambleghast       |  0.309% |
+ | 180  | Sylveon            |  0.305% |
+ | 181  | Dhelmise           |  0.303% |
+ | 182  | Bruxish            |  0.299% |
+ | 183  | Charizard          |  0.285% |
+ | 184  | Gigalith           |  0.279% |
+ | 185  | Seismitoad         |  0.277% |
+ | 186  | Exploud            |  0.275% |
+ | 187  | Raikou             |  0.266% |
+ | 188  | Chesnaught         |  0.266% |
+ | 189  | Rabsca             |  0.263% |
+ | 190  | Hitmonlee          |  0.262% |
+ | 191  | Raichu-Alola       |  0.262% |
+ | 192  | Okidogi            |  0.261% |
+ | 193  | Basculegion        |  0.252% |
+ | 194  | Shiftry            |  0.249% |
+ | 195  | Stoutland          |  0.249% |
+ | 196  | Ampharos           |  0.240% |
+ | 197  | Houndoom-Mega      |  0.237% |
+ | 198  | Vaporeon           |  0.235% |
+ | 199  | Necrozma           |  0.231% |
+ | 200  | Blastoise          |  0.230% |
+ | 201  | Audino             |  0.228% |
+ | 202  | Honchkrow          |  0.224% |
+ | 203  | Ampharos-Mega      |  0.214% |
+ | 204  | Slurpuff           |  0.209% |
+ | 205  | Comfey             |  0.207% |
+ | 206  | Exeggutor-Alola    |  0.206% |
+ | 207  | Cinccino           |  0.201% |
+ | 208  | Gardevoir          |  0.200% |
+ | 209  | Sigilyph           |  0.196% |
+ | 210  | Lucario            |  0.194% |
+ | 211  | Aggron             |  0.194% |
+ | 212  | Starmie            |  0.193% |
+ | 213  | Arctovish          |  0.192% |
+ | 214  | Archeops           |  0.187% |
+ | 215  | Feraligatr         |  0.187% |
+ | 216  | Tyrantrum          |  0.181% |
+ | 217  | Regirock           |  0.179% |
+ | 218  | Obstagoon          |  0.175% |
+ | 219  | Jolteon            |  0.174% |
+ | 220  | Arcanine           |  0.170% |
+ | 221  | Jellicent          |  0.170% |
+ | 222  | Kabutops           |  0.164% |
+ | 223  | Enamorus-Therian   |  0.163% |
+ | 224  | Vileplume          |  0.163% |
+ | 225  | Machamp            |  0.161% |
+ | 226  | Barbaracle         |  0.158% |
+ | 227  | Solrock            |  0.154% |
+ | 228  | Dusclops           |  0.149% |
+ | 229  | Munkidori          |  0.147% |
+ | 230  | Pangoro            |  0.146% |
+ | 231  | Lurantis           |  0.145% |
+ | 232  | Ninjask            |  0.145% |
+ | 233  | Toedscruel         |  0.145% |
+ | 234  | Scrafty            |  0.144% |
+ | 235  | Doublade           |  0.144% |
+ | 236  | Golem-Alola        |  0.144% |
+ | 237  | Turtonator         |  0.143% |
+ | 238  | Lycanroc-Dusk      |  0.139% |
+ | 239  | Electabuzz         |  0.134% |
+ | 240  | Ursaring           |  0.134% |
+ | 241  | Golurk             |  0.131% |
+ | 242  | Goodra             |  0.131% |
+ | 243  | Staraptor          |  0.130% |
+ | 244  | Minior             |  0.130% |
+ | 245  | Arboliva           |  0.128% |
+ | 246  | Regidrago          |  0.127% |
+ | 247  | Cofagrigus         |  0.125% |
+ | 248  | Silvally-Ice       |  0.124% |
+ | 249  | Florges            |  0.124% |
+ | 250  | Maushold           |  0.123% |
+ | 251  | Sandaconda         |  0.123% |
+ | 252  | Accelgor           |  0.121% |
+ | 253  | Vikavolt           |  0.121% |
+ | 254  | Houndoom           |  0.118% |
+ | 255  | Celebi             |  0.117% |
+ | 256  | Flareon            |  0.114% |
+ | 257  | Sableye            |  0.114% |
+ | 258  | Swellow            |  0.114% |
+ | 259  | Mr. Rime           |  0.112% |
+ | 260  | Rhyperior          |  0.108% |
+ | 261  | Drampa             |  0.108% |
+ | 262  | Druddigon          |  0.108% |
+ | 263  | Cetitan            |  0.105% |
+ + ---- + ------------------ + ------- + 
+[/CODE][/HIDE]
 
+Amoonguss moved from NDRU to NDUU
+Arcanine-Hisui moved from NDUU to NDRU
+Bisharp moved from NDRU to NDUU
+Blissey moved from NDOU to NDUU
+Ceruledge moved from NDUUBL to NDOU
+Chansey moved from NDRU to NDUU
+Cinderace moved from NDOU to NDUU
+Clefable moved from NDOU to NDUU
+Dondozo moved from NDOU to NDUU
+Donphan moved from NDUU to NDRU
+Enamorus moved from NDOU to NDUU
+Garchomp moved from NDUUBL to NDOU
+Goodra-Hisui moved from NDUU to NDRU
+Hawlucha moved from NDUU to NDRU
+Hippowdon moved from NDRU to NDUU
+Hydreigon moved from NDRUBL to NDUU
+Indeedee moved from NDUU to NDRU
+Iron Crown moved from NDUU to NDOU
+Iron Moth moved from NDOU to NDUU
+Kleavor moved from NDRU to NDUU
+Latios moved from NDUU to NDRU
+Lokix moved from NDUU to NDRU
+Magnezone moved from NDNU to NDUU
+Mamoswine moved from NDUU to NDRU
+Mandibuzz moved from NDUU to NDRU
+Meowscarada moved from NDOU to NDUU
+Metagross moved from NDUU to NDRU
+Moltres moved from NDRU to NDOU
+Ninetales-Alola moved from NDUU to NDRU
+Ogerpon moved from NDUU to NDRU
+Ogerpon-Cornerstone moved from NDUU to NDRU
+Pecharunt moved from NDUU to NDRU
+Pelipper moved from NDUUBL to NDOU
+Primarina moved from NDOU to NDUU
+Ribombee moved from NDOU to NDUU
+Sandy Shocks moved from NDUU to NDRU
+Sinistcha moved from NDUU to NDRU
+Skarmory moved from NDOU to NDUU
+Slowbro moved from NDNU to NDUU
+Slowking moved from NDUU to NDRU
+Ting-Lu moved from NDOU to NDUU
+Tinkaton moved from NDUU to NDRU
+Torkoal moved from NDOU to NDUU
+Tornadus-Therian moved from NDUU to NDRU
+Toxapex moved from NDUU to NDOU
+Tyranitar moved from NDUU to NDRU
+Ursaluna moved from NDUU to NDOU
+Weavile moved from NDOU to NDUU
+Weezing-Galar moved from NDUU to NDRU
+Zapdos moved from NDUU to NDOU
+Zapdos-Galar moved from NDRU to NDUU

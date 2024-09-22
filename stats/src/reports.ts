@@ -19,6 +19,8 @@ interface MovesetStatistics {
   'Checks and Counters': {[key: string]: util.EncounterStatistics};
 }
 
+type ReportType = 'singles' | 'doubles' | 'nationaldex' | 'littlecup';
+
 type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
 type Tier = UsageTier | 'Uber' | 'UUBL' | 'RUBL' | 'NUBL' | 'PUBL' | 'ZUBL' | 'ZU';
 interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T }
@@ -27,18 +29,24 @@ type DoublesUsageTier = 'DOU' | 'DUU';
 type DoublesTier = DoublesUsageTier | 'DUber' | 'DNU';
 interface DoublesUsageTiers<T> { DOU: T; DUU: T }
 
-type NationalDexUsageTier = 'ND';
-type NationalDexTier = NationalDexUsageTier | 'NDUU';
-interface NationalDexUsageTiers<T> { ND: T }
+type NationalDexUsageTier = 'OU' | 'UU';
+type NationalDexTier = NationalDexUsageTier | 'UUBL' | 'NU';
+interface NationalDexUsageTiers<T> { OU: T; UU: T }
 
 type LittleCupUsageTier = 'LC';
-type LittleCupTier = LittleCupUsageTier | 'LCUU';
+type LittleCupTier = LittleCupUsageTier | 'LC Uber' | 'LCUU';
 interface LittleCupUsageTiers<T> { LC: T }
+
+type CombinedTier = Tier | DoublesTier | NationalDexTier | LittleCupTier;
+type CombinedUsageTier =
+  UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier;
+type CombinedUsageTiers<T> =
+  UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T>;
 
 const USAGE_TIERS = {
   singles: ['OU', 'UU', 'RU', 'NU', 'PU'] as UsageTier[],
   doubles: ['DOU', 'DUU'] as DoublesUsageTier[],
-  nationaldex: ['ND'] as NationalDexUsageTier[],
+  nationaldex: ['OU', 'UU'] as NationalDexUsageTier[],
   littlecup: ['LC'] as LittleCupUsageTier[],
 };
 
@@ -47,8 +55,8 @@ const TIERS = {
     'Uber', 'OU', 'UUBL', 'UU', 'RUBL', 'RU', 'NUBL', 'NU', 'PUBL', 'PU', 'ZUBL', 'ZU',
   ] as Tier[],
   doubles: ['DUber', 'DOU', 'DUU', 'DNU'] as DoublesTier[],
-  nationaldex: ['ND', 'NDBL'] as NationalDexTier[],
-  littlecup: ['LC', 'LCBL'] as LittleCupTier[],
+  nationaldex: ['OU', 'UUBL', 'UU'] as NationalDexTier[],
+  littlecup: ['LC', 'LCBL', 'LCUU'] as LittleCupTier[],
 };
 
 const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
@@ -372,27 +380,19 @@ export const Reports = new class {
     gen: Generation,
     months: [string] | [string, string] | [string, string, string],
     read: (month: string, format: string) => Promise<[number, string] | undefined>,
-    type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles',
+    type: ReportType = 'singles',
     legacy = true,
   ) {
     gen = util.ignoreGen(gen, legacy);
 
-    const cutoffs: UsageTiers<number> |
-    DoublesUsageTiers<number> |
-    NationalDexUsageTiers<number> |
-    LittleCupUsageTiers<number> = usageTiers(type, () => 0);
-    const pokemon: Map<ID,
-    UsageTiers<number> |
-    DoublesUsageTiers<number> |
-    NationalDexUsageTiers<number> |
-    LittleCupUsageTiers<number>
-    > = new Map();
+    const cutoffs: CombinedUsageTiers<number> = usageTiers(type, () => 0);
+    const pokemon: Map<ID, CombinedUsageTiers<number>> = new Map();
     for (const month of months) {
       for (const tier of USAGE_TIERS[type]) {
         const reports: Array<Promise<[string, [number, Map<ID, number>, number] | undefined]>> = [];
         for (const suffix of SUFFIXES) {
           reports.push(maybeParseUsageReport(
-            read(month, `gen${gen.num}${usageTierName(tier)}${suffix}`)
+            read(month, `gen${gen.num}${usageTierName(type, tier)}${suffix}`)
           ).then(r => [suffix, r]));
         }
 
@@ -436,7 +436,7 @@ export const Reports = new class {
     for (const tier of USAGE_TIERS[type]) {
       const sorted = (tiers as any)[tier].sort((a: [string, number], b: [string, number]) =>
         b[1] - a[1] || a[0].localeCompare(b[0]));
-      s += makeTable(gen, sorted, tier, (cutoffs as any)[tier], legacy);
+      s += makeTable(gen, sorted, type, tier, (cutoffs as any)[tier], legacy);
     }
     s += '\n';
 
@@ -453,13 +453,7 @@ export const Reports = new class {
       return s;
     }
 
-    const {current, updated, NFE} = updateTiers(
-      gen,
-      pokemon as Map<ID, UsageTiers<number> | DoublesUsageTiers<number>>,
-      rise,
-      drop,
-      type === 'doubles'
-    );
+    const {current, updated, NFE} = updateTiers(gen, pokemon, rise, drop, type);
 
     const sorted = Array.from(current.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     for (const [id, tier] of sorted) {
@@ -476,7 +470,8 @@ export const Reports = new class {
             continue;
           }
         }
-        s += `${species.name} moved from ${tier} to ${update}\n`;
+        const prefix = type === 'nationaldex' ? 'ND' : '';
+        s += `${species.name} moved from ${prefix}${tier} to ${prefix}${update}\n`;
       }
     }
 
@@ -498,37 +493,32 @@ const BL: {[tier in Tier]?: Set<string>} = {
   ZU: new Set([]),
 };
 
-function usageTiers<T>(
-  type: 'singles' | 'doubles' | 'nationaldex' | 'littlecup' = 'singles', t: () => T
-): UsageTiers<T> | DoublesUsageTiers<T> | NationalDexUsageTiers<T> | LittleCupUsageTiers<T> {
+function usageTiers<T>(type: ReportType, t: () => T): CombinedUsageTiers<T> {
   switch (type) {
     case 'singles': return {OU: t(), UU: t(), RU: t(), NU: t(), PU: t()};
     case 'doubles': return {DOU: t(), DUU: t()};
-    case 'nationaldex': return {ND: t()};
+    case 'nationaldex': return {OU: t(), UU: t()};
     default: return {LC: t()};
   }
 }
 
-function usageTierName(
-  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier
-) {
-  switch (tier) {
-    case 'DOU': return 'doublesou';
-    case 'DUU': return 'doublesuu';
-    case 'ND': return 'nationaldex';
-    default: return toID(tier);
-  }
+function usageTierName(type: ReportType, tier: CombinedUsageTier) {
+  if (type === 'doubles' && tier === 'DOU') return 'doublesou';
+  if (type === 'doubles' && tier === 'DUU') return 'doublesuu';
+  if (type === 'nationaldex' && tier === 'OU') return 'nationaldex';
+  if (type === 'nationaldex' && tier === 'UU') return 'nationaldexuu';
+  return toID(tier);
 }
 
 function updateTiers(
   gen: Generation,
-  pokemon: Map<ID, UsageTiers<number> | DoublesUsageTiers<number>>,
+  pokemon: Map<ID, CombinedUsageTiers<number>>,
   rise: number,
   drop: number,
-  doubles: boolean,
+  type: ReportType,
 ) {
-  const current: Map<ID, Tier | DoublesTier> = new Map();
-  const updated: Map<ID, Tier | DoublesTier> = new Map();
+  const current: Map<ID, CombinedTier> = new Map();
+  const updated: Map<ID, CombinedTier> = new Map();
   const NFE = new Set<ID>();
 
   const compareArrays = (x: string[], y: string[]) => x.length === y.length &&
@@ -554,27 +544,35 @@ function updateTiers(
   }).flat());
 
   for (const species of gen.species) {
+    const doubles = type === 'doubles';
+    // let tier: string = (doubles
+    //   ? species.doublesTier : type === 'nationaldex'
+    //   ? species.natDexTier : undefined) ?? species.tier;
+    let tier: string = (doubles
+      ? species.doublesTier : type === 'nationaldex'
+        ? undefined : undefined) ?? species.tier;
+
     if (SKIP.has(species.id) ||
       species.isNonstandard ||
-      !species.tier ||
-      species.tier === 'Illegal' ||
-      species.tier === 'Unreleased') {
+      !tier ||
+      tier === 'Illegal' ||
+      tier === 'Unreleased') {
       continue;
     }
-    let tier: Tier | DoublesTier;
     if (doubles) {
-      let old = (species.tier || species.doublesTier) as string;
-      if (old[0] === '(') old = old.slice(1, -1);
-      if (['NFE', 'LC'].includes(old)) NFE.add(species.id);
-      tier = TIERS.doubles.includes(old as DoublesTier) ? (old as DoublesTier) : 'DUU';
+      if (tier[0] === '(') {
+        // old = old === '(DUU)') ? 'DNU' : old.slice(1, -1);
+        tier = 'DNU'; // BUG: is only true for (DUU)
+      }
+      if (['NFE', 'LC', 'LC Uber'].includes(tier)) NFE.add(species.id);
+      tier = TIERS.doubles.includes(tier as DoublesTier) ? (tier as DoublesTier) : 'DNU';
     } else {
-      let old = species.tier as string;
-      if (old[0] === '(' && old[1] !== 'P') old = old.slice(1, -1);
-      if (old[0] === '(' && old[1] === 'P') old = 'ZU';
-      if (['NFE', 'LC', 'LC Uber'].includes(old)) NFE.add(species.id);
-      tier = TIERS.singles.includes(old as Tier) ? (old as Tier) : 'ZU';
+      if (tier[0] === '(' && tier[1] !== 'P') tier = tier.slice(1, -1);
+      if (tier[0] === '(' && tier[1] === 'P') tier = 'ZU';
+      if (['NFE', 'LC', 'LC Uber'].includes(tier)) NFE.add(species.id);
+      tier = (TIERS[type] as string[]).includes(tier) ? tier : 'ZU';
     }
-    current.set(species.id, tier);
+    current.set(species.id, tier as CombinedTier);
 
     const uber = doubles ? 'DUber' : 'Uber';
     if (tier === uber) {
@@ -583,14 +581,14 @@ function updateTiers(
     }
     const update = pokemon.get(species.id);
     if (!update) {
-      updated.set(species.id, tier);
+      updated.set(species.id, tier as CombinedTier);
       continue;
     }
     if (updated.has(species.id)) continue;
 
     const riseAndDrop =
-      (r: UsageTier | DoublesUsageTier, d: Tier | DoublesTier, b?: Tier) =>
-        computeRiseAndDrop(species.id, update, updated, tier, rise, drop, {
+      (r: CombinedUsageTier, d: CombinedTier, b?: Tier | NationalDexTier) =>
+        computeRiseAndDrop(species.id, update, updated, tier as CombinedTier, rise, drop, {
           rise: r,
           drop: d,
           ban: b,
@@ -618,15 +616,15 @@ function updateTiers(
 
 function computeRiseAndDrop(
   species: ID,
-  update: UsageTiers<number> | DoublesUsageTiers<number>,
-  updated: Map<ID, Tier | DoublesTier>,
-  tier: Tier | DoublesTier,
+  update: CombinedUsageTiers<number>,
+  updated: Map<ID, CombinedTier>,
+  tier: CombinedTier,
   rise: number,
   drop: number,
   tiers: {
-    rise: UsageTier | DoublesUsageTier;
-    drop: Tier | DoublesTier;
-    ban?: Tier | DoublesTier;
+    rise: CombinedUsageTier;
+    drop: CombinedTier;
+    ban?: CombinedTier;
   }
 ) {
   if ((update as any)[tiers.rise] > rise) {
@@ -758,12 +756,15 @@ function forDetailed(cc: {[key: string]: util.EncounterStatistics}) {
 function makeTable(
   gen: Generation,
   pokemon: Array<[ID, number]>,
-  tier: UsageTier | DoublesUsageTier | NationalDexUsageTier | LittleCupUsageTier,
+  type: ReportType,
+  tier: CombinedUsageTier,
   cutoff: number,
   legacy: boolean,
 ) {
-  let s = `[HIDE=${tier} (${cutoff} stats)][CODE]\n`;
-  s += `Combined usage for ${tier} (${cutoff} stats)\n`;
+  const prefix = type === 'nationaldex' ? 'National Dex ' : '';
+  const title = `${prefix}${tier} (${cutoff} stats)`;
+  let s = `[HIDE=${title}][CODE]\n`;
+  s += `Combined usage for ${title}\n`;
   s += ' + ---- + ------------------ + ------- + \n';
   s += ' | Rank | Pokemon            | Percent | \n';
   s += ' + ---- + ------------------ + ------- + \n';
