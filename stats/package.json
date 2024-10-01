@@ -1,6 +1,6 @@
 {
   "name": "@pkmn/stats",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "Logic for processing usage stats from Pokémon Showdown battle simulator logs",
   "repository": "github:pkmn/stats",
   "license": "MIT",
@@ -16,10 +16,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.9.18"
+    "@pkmn/data": "^0.9.19"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.9.18",
+    "@pkmn/dex": "^0.9.19",
     "json-stringify-pretty-compact": "3.0.0"
   },
   "scripts": {
