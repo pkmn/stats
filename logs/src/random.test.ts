@@ -44,7 +44,7 @@ describe('Random', () => {
 
     r = new Random();
     a = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
-    delete a[9];
+    delete a[9]; // eslint-disable-line @typescript-eslint/no-array-delete
     expect(() => {
       for (let i = 0; i < 100; i++) {
         r.sample(a);

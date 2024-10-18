@@ -2,7 +2,6 @@ import {Generation, ID, Nature, PokemonSet, StatID, StatsTable} from '@pkmn/data
 
 import {Battle, Player, Pokemon} from './parser';
 import {Outcome} from './util';
-// eslint-disable-next-line no-duplicate-imports
 import * as util from './util';
 
 export interface TaggedStatistics {

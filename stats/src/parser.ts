@@ -2,7 +2,6 @@ import {Generation, ID, PokemonSet, StatID, toID} from '@pkmn/data';
 
 import {Classifier} from './classifier';
 import {Outcome} from './util';
-// eslint-disable-next-line no-duplicate-imports
 import * as util from './util';
 
 export interface Log {
@@ -170,7 +169,7 @@ export const Parser = new class {
           battle.matchups.push(...turnMatchups);
           break;
         }
-        case 'move':
+        case 'move': {
           if (line.length < 4) {
             throw new Error(`Could not parse line: '${rawLine}'`);
           }
@@ -182,6 +181,7 @@ export const Parser = new class {
             flags.uturn = true;
           }
           break;
+        }
         case '-enditem':
           if (rawLine.lastIndexOf('Red Card') > -1) {
             flags.roar = true;

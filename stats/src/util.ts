@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-loss-of-precision */
+/* eslint-disable no-loss-of-precision */
 import {Dex, Generation, Generations, ID, PokemonSet, Specie, toID} from '@pkmn/data';
 
 import * as aliases from './aliases.json';

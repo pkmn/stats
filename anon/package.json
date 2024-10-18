@@ -16,15 +16,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@pkmn/data": "^0.9.19",
-    "@pkmn/protocol": "^0.6.26"
+    "@pkmn/data": "^0.9.21",
+    "@pkmn/protocol": "^0.6.28"
   },
   "devDependencies": {
-    "@pkmn/dex": "^0.9.19"
+    "@pkmn/dex": "^0.9.21"
   },
   "scripts": {
-    "lint": "eslint --cache src --ext ts",
-    "fix": "eslint --fix src --ext ts",
+    "lint": "eslint --cache src",
+    "fix": "eslint --fix src",
     "compile": "tsc -p .",
     "build": "npm run compile && tsup src/index.ts",
     "test": "jest",
@@ -51,8 +51,5 @@
         "@babel/preset-typescript",
         ["@babel/preset-env", {"targets": {"node": "current"}}]
     ]
-  },
-  "eslintConfig": {
-    "extends": "@pkmn"
   }
 }
