@@ -338,7 +338,7 @@ function anonymize(
     case '-unboost':
     case '-setboost':
     case '-burst': {
-      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[1]) args[1] = anonymizePokemon(args[1], pokemonMap);
       return combine(args as string[]);
     }
 
