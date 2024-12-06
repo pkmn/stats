@@ -180,8 +180,9 @@ function anonymize(
       let v = kwArgs[k as keyof typeof kwArgs] as any;
 
       if (k === 'of') {
+        if (v === '') continue;
         v = anonymizePokemon(v as PokemonIdent, pokemonMap);
-      } else if (k === 'spread') {
+      } else if (k === 'spread' && v !== true) {
         // TODO: why do we anonymize this - [spread] is currently just hit slots, not idents?
         v = v.split(',').map((s: string | PokemonIdent) =>
           IDENT.test(s) ? anonymizePokemon(s as PokemonIdent, pokemonMap) : s).join(',');
@@ -326,6 +327,7 @@ function anonymize(
     case '-hitcount':
     case '-singlemove':
     case '-singleturn':
+    case '-terastallize':
     case '-mega':
     case '-start':
     case '-end':
