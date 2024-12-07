@@ -220,6 +220,7 @@ function anonymize(
     case 'chatmsg':
     case 'chatmsg-raw':
     case 'controlshtml':
+    case 'hidelines':
     case 'fieldhtml':
     case 'inactive':
     case 'inactiveoff':
@@ -259,6 +260,7 @@ function anonymize(
     case '-ohko':
     case '-center':
     case '-combine':
+    case '-swapsideconditions':
     case '-fieldactivate': {
       return combine(args);
     }
@@ -369,7 +371,7 @@ function anonymize(
     }
 
     case '-ability': {
-      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[1] !== '') args[1] = anonymizePokemon(args[1], pokemonMap);
       if (args[3] && IDENT.test(args[3])) {
         args[3] = anonymizePokemon(args[3] as PokemonIdent, pokemonMap);
       } else if (args[3]?.includes(':')) {
