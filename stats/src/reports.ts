@@ -488,17 +488,29 @@ const SKIP = new Set([
 ]);
 
 const BL: {[tier in Tier]?: Set<string>} = {
-  UU: new Set(['espathra', 'baxcalibur', 'hydreigon']),
+  UU: new Set([
+    'baxcalibur', 'blaziken', 'ceruledge', 'espathra', 'garchomp', 'garganacl',
+    'hoopaunbound', 'ironboulder', 'ironhands', 'kommoo', 'latias', 'moltresgalar',
+    'okidogi', 'pelipper', 'ursaluna',
+  ]),
   RU: new Set([
-    'haxorus', 'lycanrocdusk', 'drednaw', 'toxtricity', 'flamigo', 'hawlucha', 'polteageist',
-    'oricoriopompom',
+    'blastoise', 'comfey', 'enamorustherian', 'hawlucha', 'haxorus', 'hoopaunbound',
+    'hydreigon', 'ironjugulis', 'ironleaves', 'manaphy', 'moltresgalar', 'polteageist',
+    'thundurus', 'thundurustherian', 'yanmega', 'zarude',
   ]),
   NU: new Set([
-    'florges', 'indeedee', 'oricoriopompom', 'venomoth', 'goodra', 'cetitan', 'oricoriosensu',
-    'barraskewda',
+    'armarouge', 'cloyster', 'cresselia', 'deoxysdefense', 'feraligatr', 'gallade',
+    'gyarados', 'ironthorns', 'lilliganthisui', 'lucario', 'lycanrocdusk', 'mew',
+    'necrozma', 'oricoriopompom', 'regidrago', 'suicune',
   ]),
-  PU: new Set(['oricorio', 'oricoriopau', 'magneton', 'vivillon', 'sneaselhisui']),
-  ZU: new Set([]),
+  PU: new Set([
+    'drednaw', 'duraludon', 'flamigo', 'indeedee', 'inteleon', 'oricoriopompom',
+    'raikou', 'scyther',
+  ]),
+  ZU: new Set([
+    'alcremie', 'articunogalar', 'bruxish', 'delphox', 'dudunsparce', 'electrodehisui',
+    'emboar', 'hariyama', 'kingdra', 'tornadus', 'uxie',
+  ]),
 };
 
 function usageTiers<T>(type: ReportType, t: () => T): CombinedUsageTiers<T> {
