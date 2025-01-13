@@ -73,8 +73,6 @@ function isGzipped(buf: Buffer) {
 
 export function unpack(input: string, output: string) {
   return new Promise<void>((resolve, reject) => {
-    zip.unpack(input, output, err => {
-      err ? reject(err) : resolve();
-    });
+    zip.unpack(input, output, err => err ? reject(err) : resolve());
   });
 }

@@ -180,8 +180,9 @@ function anonymize(
       let v = kwArgs[k as keyof typeof kwArgs] as any;
 
       if (k === 'of') {
+        if (v === '') continue;
         v = anonymizePokemon(v as PokemonIdent, pokemonMap);
-      } else if (k === 'spread') {
+      } else if (k === 'spread' && v !== true) {
         // TODO: why do we anonymize this - [spread] is currently just hit slots, not idents?
         v = v.split(',').map((s: string | PokemonIdent) =>
           IDENT.test(s) ? anonymizePokemon(s as PokemonIdent, pokemonMap) : s).join(',');
@@ -219,6 +220,7 @@ function anonymize(
     case 'chatmsg':
     case 'chatmsg-raw':
     case 'controlshtml':
+    case 'hidelines':
     case 'fieldhtml':
     case 'inactive':
     case 'inactiveoff':
@@ -258,6 +260,7 @@ function anonymize(
     case '-ohko':
     case '-center':
     case '-combine':
+    case '-swapsideconditions':
     case '-fieldactivate': {
       return combine(args);
     }
@@ -326,6 +329,7 @@ function anonymize(
     case '-hitcount':
     case '-singlemove':
     case '-singleturn':
+    case '-terastallize':
     case '-mega':
     case '-start':
     case '-end':
@@ -338,7 +342,7 @@ function anonymize(
     case '-unboost':
     case '-setboost':
     case '-burst': {
-      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[1]) args[1] = anonymizePokemon(args[1], pokemonMap);
       return combine(args as string[]);
     }
 
@@ -367,7 +371,7 @@ function anonymize(
     }
 
     case '-ability': {
-      args[1] = anonymizePokemon(args[1], pokemonMap);
+      if (args[1] !== '') args[1] = anonymizePokemon(args[1], pokemonMap);
       if (args[3] && IDENT.test(args[3])) {
         args[3] = anonymizePokemon(args[3] as PokemonIdent, pokemonMap);
       } else if (args[3]?.includes(':')) {

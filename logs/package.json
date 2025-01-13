@@ -17,8 +17,8 @@
     "bthreads": "^0.5.1"
   },
   "scripts": {
-    "lint": "eslint --cache src --ext ts",
-    "fix": "eslint --fix src --ext ts",
+    "lint": "eslint --cache src",
+    "fix": "eslint --fix src",
     "compile": "tsc -p .",
     "build": "npm run compile && tsup src/index.ts",
     "test": "jest",
@@ -41,14 +41,5 @@
         "@babel/preset-typescript",
         ["@babel/preset-env", {"targets": {"node": "current"}}]
     ]
-  },
-  "eslintConfig": {
-    "extends": "@pkmn",
-    "overrides": [{
-      "files": ["src/storage.ts"],
-      "rules": {
-        "@typescript-eslint/require-await": "off"
-      }
-    }]
   }
 }
