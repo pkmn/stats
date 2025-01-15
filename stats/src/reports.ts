@@ -66,6 +66,32 @@ const SUFFIXES = ['', 'suspecttest', 'alpha', 'beta'];
 const MIN = [20, 0.5];
 
 export const Reports = new class {
+  BL: {[tier in Tier]?: Set<string>} = {
+    UU: new Set([
+      'baxcalibur', 'blaziken', 'ceruledge', 'espathra', 'garchomp', 'garganacl',
+      'hoopaunbound', 'ironboulder', 'ironhands', 'kommoo', 'latias', 'moltresgalar',
+      'okidogi', 'pelipper', 'ursaluna',
+    ]),
+    RU: new Set([
+      'blastoise', 'comfey', 'enamorustherian', 'hawlucha', 'haxorus', 'hoopaunbound',
+      'hydreigon', 'ironjugulis', 'ironleaves', 'manaphy', 'moltresgalar', 'polteageist',
+      'thundurus', 'thundurustherian', 'yanmega', 'zarude',
+    ]),
+    NU: new Set([
+      'armarouge', 'cloyster', 'cresselia', 'deoxysdefense', 'feraligatr', 'gallade',
+      'gyarados', 'ironthorns', 'lilliganthisui', 'lucario', 'lycanrocdusk', 'mew',
+      'necrozma', 'oricoriopompom', 'regidrago', 'suicune',
+    ]),
+    PU: new Set([
+      'drednaw', 'duraludon', 'flamigo', 'indeedee', 'inteleon', 'oricoriopompom',
+      'raikou', 'scyther',
+    ]),
+    ZU: new Set([
+      'alcremie', 'articunogalar', 'bruxish', 'delphox', 'dudunsparce', 'electrodehisui',
+      'emboar', 'hariyama', 'kingdra', 'tornadus', 'uxie',
+    ]),
+  };
+
   usageReport(gen: Generation, format: ID, stats: Statistics, legacy = true) {
     const sorted = Object.entries(stats.pokemon).filter(p => p[0] !== 'empty');
     if (['challengecup1v1', '1v1'].includes(format)) {
@@ -487,20 +513,6 @@ const SKIP = new Set([
   'pikachucosplay',
 ]);
 
-const BL: {[tier in Tier]?: Set<string>} = {
-  UU: new Set(['espathra', 'baxcalibur', 'hydreigon']),
-  RU: new Set([
-    'haxorus', 'lycanrocdusk', 'drednaw', 'toxtricity', 'flamigo', 'hawlucha', 'polteageist',
-    'oricoriopompom',
-  ]),
-  NU: new Set([
-    'florges', 'indeedee', 'oricoriopompom', 'venomoth', 'goodra', 'cetitan', 'oricoriosensu',
-    'barraskewda',
-  ]),
-  PU: new Set(['oricorio', 'oricoriopau', 'magneton', 'vivillon', 'sneaselhisui']),
-  ZU: new Set([]),
-};
-
 function usageTiers<T>(type: ReportType, t: () => T): CombinedUsageTiers<T> {
   switch (type) {
     case 'singles': return {OU: t(), UU: t(), RU: t(), NU: t(), PU: t()};
@@ -590,7 +602,7 @@ function updateTiers(
     if (!updated.has(species.id)) updated.set(species.id, doubles ? 'DNU' : 'ZU');
 
     const newTier = updated.get(species.id);
-    if (newTier && BL[newTier as Tier]?.has(species.id)) {
+    if (newTier && Reports.BL[newTier as Tier]?.has(species.id)) {
       updated.set(species.id, `${newTier}BL` as Tier);
     }
   }
