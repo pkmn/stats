@@ -111,6 +111,24 @@ function override(gen: Generation) {
       }
     }
   }
+
+  // The tiering data doesn't keep track of Pokémon that were banned by various
+  // tiers below their current one, so we need to also restore the banlist info
+  // that was present at the time of the test
+  stats.Reports.BL = {
+    UU: new Set(['espathra', 'baxcalibur', 'hydreigon']),
+    RU: new Set([
+      'haxorus', 'lycanrocdusk', 'drednaw', 'toxtricity', 'flamigo', 'hawlucha', 'polteageist',
+      'oricoriopompom',
+    ]),
+    NU: new Set([
+      'florges', 'indeedee', 'oricoriopompom', 'venomoth', 'goodra', 'cetitan', 'oricoriosensu',
+      'barraskewda',
+    ]),
+    PU: new Set(['oricorio', 'oricoriopau', 'magneton', 'vivillon', 'sneaselhisui']),
+    ZU: new Set([]),
+  };
+
   return gen;
 }
 
