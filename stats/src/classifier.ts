@@ -229,7 +229,7 @@ function tag(
       weather.sun += 2;
     } else if (pokemon.ability === 'sandstream') {
       weather.sand += 2;
-    } else if (pokemon.ability === 'snowarning') {
+    } else if (pokemon.ability === 'snowwarning') {
       weather.hail += 2;
     }
 
@@ -426,7 +426,7 @@ const LESSER_BOOSTING_ITEM = new Set([
 ]);
 
 const GREATER_BOOSTING_ITEM = new Set([
-  'firegem', 'watergem', 'electricgem', 'grassgem', 'icegem', 'fightinggem', 'posiongem',
+  'firegem', 'watergem', 'electricgem', 'grassgem', 'icegem', 'fightinggem', 'poisongem',
   'groundgem', 'flyinggem', 'psychicgem', 'buggem', 'rockgem', 'ghostgem', 'darkgem', 'steelgem',
   'normalgem', 'focussash', 'mentalherb', 'powerherb', 'whiteherb', 'absorbbulb', 'berserkgene',
   'cellbattery', 'focussash', 'airballoon', 'ejectbutton', 'shedshell', 'aguavberry',
