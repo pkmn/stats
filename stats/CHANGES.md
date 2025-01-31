@@ -51,7 +51,9 @@ quirks that have been corrected by `@pkmn/stats` unless "legacy" mode is opted i
   'setup' moves, 'dragon' Pokémon, battle formes etc which include several notable absences
   (Darmanitan-Zen and Meloetta-Piroutte are not considered formes, Kommo-o is not considered a
   'dragon') and have not been updated for Generation 8. `@pkmn/stats` instead computes these lists
-  programmatically from the data files to ensure they are comphrensive and up to date.
+  programmatically from the data files to ensure they are comprehensive and up to date.
+- Smogon-Usage-Stats groups `pursuit` with other trapping moves when computing `stalliness`, but
+  excludes it when tagging Pokémon as trappers. `@pkmn/stats` includes it.
 - `Nidoran-M` is displayed in reports as `NidoranM`, `Nidroran-F` as `NidoranF` and `Flabébé` as
   `Flabebe` in Smogon-Usage-Stats whereas these **names display** correctly in `@pkmn/stats`.
 - The **'`empty'`** internal placeholder value is filtered out of reports and stats update logic by
