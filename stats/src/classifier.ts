@@ -279,7 +279,8 @@ function tag(
       style.voltturn++;
     }
     if ((style.trappers < 3 && TRAPPING_ABILITIES.has(pokemon.ability)) ||
-      pokemon.moves.some((m: ID) => TRAPPING_MOVES.has(m))) {
+      (legacy ? pokemon.moves.some((m: ID) => ['block', 'meanlook', 'spiderweb'].includes(m))
+      : pokemon.moves.some((m: ID) => TRAPPING_MOVES.has(m)))) {
       style.trappers++;
     }
     if (style.dragons < 2 && legacy ? DRAGONS.has(pokemon.species)
