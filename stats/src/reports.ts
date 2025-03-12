@@ -70,7 +70,7 @@ export const Reports = new class {
     UU: new Set([
       'baxcalibur', 'blaziken', 'ceruledge', 'espathra', 'garchomp', 'garganacl',
       'hoopaunbound', 'ironboulder', 'ironhands', 'kommoo', 'latias', 'moltresgalar',
-      'okidogi', 'pelipper', 'ursaluna',
+      'okidogi', 'pelipper', 'quaquaval', 'ursaluna',
     ]),
     RU: new Set([
       'blastoise', 'comfey', 'enamorustherian', 'hawlucha', 'haxorus', 'hoopaunbound',
