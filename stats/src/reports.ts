@@ -70,25 +70,27 @@ export const Reports = new class {
     UU: new Set([
       'baxcalibur', 'blaziken', 'ceruledge', 'espathra', 'garchomp', 'garganacl',
       'hoopaunbound', 'ironboulder', 'ironhands', 'kommoo', 'latias', 'moltresgalar',
-      'okidogi', 'pelipper', 'quaquaval', 'ursaluna',
+      'okidogi', 'pelipper', 'polteageist', 'quaquaval',  'rillaboom', 'ursaluna',
     ]),
     RU: new Set([
       'blastoise', 'comfey', 'enamorustherian', 'hawlucha', 'haxorus', 'hoopaunbound',
-      'hydreigon', 'ironjugulis', 'ironleaves', 'manaphy', 'moltresgalar', 'polteageist',
-      'thundurus', 'thundurustherian', 'yanmega', 'zarude',
+      'hydreigon', 'ironjugulis', 'ironleaves', 'manaphy', 'moltresgalar',
+      'polteageist', 'oricoriopompom', 'thundurus', 'thundurustherian', 'yanmega',
+      'zarude', 'zoroarkhisui',
     ]),
     NU: new Set([
-      'armarouge', 'cloyster', 'cresselia', 'deoxysdefense', 'feraligatr', 'gallade',
-      'gyarados', 'ironthorns', 'lilliganthisui', 'lucario', 'lycanrocdusk', 'mew',
-      'necrozma', 'oricoriopompom', 'regidrago', 'suicune',
+      'armarouge', 'cetitan', 'cloyster', 'cresselia', 'deoxysdefense', 'feraligatr',
+      'gallade', 'gyarados', 'ironthorns', 'lilliganthisui', 'lucario', 'lycanrocdusk',
+      'mew', 'mienshao', 'necrozma', 'oricoriopompom', 'oricoriosensu', 'regidrago',
+      'suicune',
     ]),
     PU: new Set([
-      'drednaw', 'duraludon', 'flamigo', 'indeedee', 'inteleon', 'oricoriopompom',
-      'raikou', 'scyther',
+      'dragalge', 'drednaw', 'duraludon', 'flamigo', 'indeedee', 'inteleon',
+      'oricoriopompom', 'raikou', 'scyther', 'torterra',
     ]),
     ZU: new Set([
       'alcremie', 'articunogalar', 'bruxish', 'delphox', 'dudunsparce', 'electrodehisui',
-      'emboar', 'hariyama', 'kingdra', 'tornadus', 'uxie',
+      'emboar', 'hariyama', 'kingdra', 'oricoriosensu', 'tornadus', 'uxie',
     ]),
   };
 
