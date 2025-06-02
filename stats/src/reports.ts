@@ -69,8 +69,9 @@ export const Reports = new class {
   BL: {[tier in Tier]?: Set<string>} = {
     UU: new Set([
       'baxcalibur', 'blaziken', 'ceruledge', 'espathra', 'garchomp', 'garganacl',
-      'hoopaunbound', 'ironboulder', 'ironhands', 'kommoo', 'latias', 'moltresgalar',
-      'okidogi', 'pelipper', 'polteageist', 'quaquaval', 'rillaboom', 'ursaluna',
+      'hoopaunbound', 'ironboulder', 'ironhands', 'kommoo', 'latias', 'meowscarada',
+      'moltresgalar', 'okidogi', 'pelipper', 'polteageist', 'quaquaval', 'rillaboom',
+      'ursaluna',
     ]),
     RU: new Set([
       'blastoise', 'comfey', 'enamorustherian', 'hawlucha', 'haxorus', 'hoopaunbound',
@@ -81,8 +82,8 @@ export const Reports = new class {
     NU: new Set([
       'armarouge', 'cetitan', 'cloyster', 'cresselia', 'deoxysdefense', 'feraligatr',
       'gallade', 'gyarados', 'ironthorns', 'lilliganthisui', 'lucario', 'lycanrocdusk',
-      'mew', 'mienshao', 'necrozma', 'oricoriopompom', 'oricoriosensu', 'regidrago',
-      'suicune',
+      'mew', 'mienshao', 'necrozma', 'oricoriopompom', 'oricoriosensu', 'porygonz',
+      'regidrago', 'suicune',
     ]),
     PU: new Set([
       'dragalge', 'drednaw', 'duraludon', 'flamigo', 'indeedee', 'inteleon',
