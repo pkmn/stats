@@ -44,9 +44,9 @@ export interface UsageStatistics {
 }
 
 export type UniqueStatistics =
-  | {r: 0 | 1; w: number; g: number}
-  | {r: 0 | 1; w: number}
-  | {g: number};
+  | {r: 0 | 1; w: number; g: number} |
+  {r: 0 | 1; w: number} |
+  {g: number};
 
 export interface Usage {
   raw: number;

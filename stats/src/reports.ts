@@ -23,19 +23,19 @@ type ReportType = 'singles' | 'doubles' | 'nationaldex' | 'littlecup';
 
 type UsageTier = 'OU' | 'UU' | 'RU' | 'NU' | 'PU';
 type Tier = UsageTier | 'Uber' | 'UUBL' | 'RUBL' | 'NUBL' | 'PUBL' | 'ZUBL' | 'ZU';
-interface UsageTiers<T> { OU: T; UU: T; RU: T; NU: T; PU: T }
+interface UsageTiers<T> {OU: T; UU: T; RU: T; NU: T; PU: T}
 
 type DoublesUsageTier = 'DOU' | 'DUU';
 type DoublesTier = DoublesUsageTier | 'DUber' | 'DNU';
-interface DoublesUsageTiers<T> { DOU: T; DUU: T }
+interface DoublesUsageTiers<T> {DOU: T; DUU: T}
 
 type NationalDexUsageTier = 'OU' | 'UU';
 type NationalDexTier = NationalDexUsageTier | 'UUBL' | 'NU';
-interface NationalDexUsageTiers<T> { OU: T; UU: T }
+interface NationalDexUsageTiers<T> {OU: T; UU: T}
 
 type LittleCupUsageTier = 'LC';
 type LittleCupTier = LittleCupUsageTier | 'LC Uber' | 'LCUU';
-interface LittleCupUsageTiers<T> { LC: T }
+interface LittleCupUsageTiers<T> {LC: T}
 
 type CombinedTier = Tier | DoublesTier | NationalDexTier | LittleCupTier;
 type CombinedUsageTier =

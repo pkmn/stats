@@ -4,8 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "@pkmn/anon": "file:anon",
-    "@pkmn/data": "^0.9.35",
-    "@pkmn/dex": "^0.9.35",
+    "@pkmn/data": "^0.9.36",
+    "@pkmn/dex": "^0.9.36",
     "@pkmn/logs": "file:logs",
     "@pkmn/stats": "file:stats",
     "json-stringify-pretty-compact": "3.0.0",
@@ -14,21 +14,21 @@
   },
   "optionalDependencies": {
     "@pkmn/engine": "file:../engine",
-    "@pkmn/sets": "^5.1.2"
+    "@pkmn/sets": "^5.2.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-env": "^7.28.0",
     "@babel/preset-typescript": "^7.27.1",
-    "@pkmn/eslint-config": "^9.9.0",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.14",
-    "eslint": "^9.26.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jest": "^28.11.0",
-    "jest": "^29.7.0",
+    "@pkmn/eslint-config": "^9.11.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.32.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jest": "^29.0.1",
+    "jest": "^30.0.5",
     "subpkg": "^4.1.0",
-    "tsup": "^8.4.0",
-    "typescript-eslint": "^8.32.0",
+    "tsup": "^8.5.0",
+    "typescript-eslint": "^8.38.0",
     "typescript": "^5.8.3"
   },
   "subPackages": ["anon", "logs", "stats"],
