@@ -15,7 +15,7 @@ jobs:
       with:
         repository: pkmn/engine
         path: engine
-    - run: npm -C engine install --ignore-scripts
+    - run: npm -C engine install --ignore-scripts --force
     - run: npm -C engine run compile
-    - run: npm -C stats install --ignore-scripts
+    - run: npm -C stats install --ignore-scripts --force
     - run: npm -C stats run test
