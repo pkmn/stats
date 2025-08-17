@@ -76,14 +76,14 @@ export const Reports = new class {
     RU: new Set([
       'blastoise', 'comfey', 'enamorustherian', 'hawlucha', 'haxorus', 'hoopaunbound',
       'hydreigon', 'ironjugulis', 'ironleaves', 'manaphy', 'moltresgalar',
-      'polteageist', 'oricoriopompom', 'thundurus', 'thundurustherian', 'yanmega',
-      'zarude', 'zoroarkhisui',
+      'polteageist', 'ogerpon', 'oricoriopompom', 'salamence', 'serperior',
+      'thundurus', 'thundurustherian', 'yanmega', 'zarude', 'zoroarkhisui',
     ]),
     NU: new Set([
       'armarouge', 'cetitan', 'cloyster', 'cresselia', 'deoxysdefense', 'feraligatr',
       'gallade', 'gyarados', 'ironthorns', 'lilliganthisui', 'lucario', 'lycanrocdusk',
-      'mew', 'mienshao', 'necrozma', 'oricoriopompom', 'oricoriosensu', 'porygonz',
-      'regidrago', 'suicune',
+      'mew', 'mienshao', 'necrozma', 'oricoriopompom', 'oricoriosensu', 'politoed',
+      'porygonz', 'regidrago', 'suicune',
     ]),
     PU: new Set([
       'dragalge', 'drednaw', 'duraludon', 'flamigo', 'indeedee', 'inteleon',
@@ -91,7 +91,7 @@ export const Reports = new class {
     ]),
     ZU: new Set([
       'alcremie', 'articunogalar', 'bruxish', 'delphox', 'dudunsparce', 'electrodehisui',
-      'emboar', 'hariyama', 'kingdra', 'oricoriosensu', 'tornadus', 'uxie',
+      'emboar', 'hariyama', 'kingdra', 'oricoriosensu', 'porygon2', 'tornadus', 'uxie',
     ]),
   };
 
