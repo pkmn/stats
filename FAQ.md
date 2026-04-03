@@ -43,7 +43,7 @@ millions of files every month and the unique issues that causes.
 
 Even in the latter case, `@pkmn/stats` can be called the exact same way as the existing Smogon Usage
 Stats scripts where processing is driven by shell scripts which read logs in a `for` loop and
-make use of `parallel` to acheive some concurrency. Ultimately, there is expected to be at best
+make use of `parallel` to achieve some concurrency. Ultimately, there is expected to be at best
 minor speed improvements here from using `@pkmn/stats` by itself in this manner (which could
 possibly be improved by using a runtime optimized for start up like [Bun](https://bun.sh/) as
 opposed to Node), as most of the performance wins are expected to come from the unfinished
@@ -59,7 +59,7 @@ solution there.
 ## What is difficult about processing logs?
 
 It is not actually *that* difficult to write a logs processing solution for gigabytes of logs in
-~100-200 lines of code that utilizes `@pkmn/logs` + some `Workers`/ processes to acheive more than a
+~100-200 lines of code that utilizes `@pkmn/logs` + some `Workers`/ processes to achieve more than a
 10x speed up over the legacy Smogon Usage Stats scripts with similar overhead - the main challenges
 for `@pkmn/logs` are around being able to create a solution which can work just as well on a beefy
 dedicated stats processing server with plenty of resources to gain a 100x speedup or to be able to
