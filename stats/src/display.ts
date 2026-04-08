@@ -379,11 +379,11 @@ interface UsageReportRowData {
   realp: number;
 }
 
-function parseUsageReport(report: string) {
+export function parseUsageReport(report: string) {
   const usage: {[id: string]: UsageReportRowData} = {};
   const lines = report.split('\n');
-  const battles = Number(lines[0].slice(16));
-  const avg = Number(lines[1].slice(19));
+  const battles = Number(lines[0].split(': ')[1]);
+  const avg = Number(lines[1].split(': ')[1]);
 
   for (let i = 5; i < lines.length; i++) {
     const line = lines[i].split('|');
@@ -406,10 +406,10 @@ interface LeadsReportRowData {
   rawp: number;
 }
 
-function parseLeadsReport(report: string) {
+export function parseLeadsReport(report: string) {
   const usage: {[id: string]: LeadsReportRowData} = {};
   const lines = report.split('\n');
-  const total = Number(lines[0].slice(13));
+  const total = Number(lines[0].split(': ')[1]);
 
   for (let i = 4; i < lines.length; i++) {
     const line = lines[i].split('|');
