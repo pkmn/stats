@@ -1,4 +1,4 @@
-import {parseLeadsReport, parseUsageReport} from '../display';
+import {Display, parseLeadsReport, parseUsageReport} from '../display';
 
 // Old format: leading space on header lines, Real column has actual values.
 // New format (introduced 2026-03): no leading space, Real column is always 0.
@@ -86,5 +86,77 @@ describe('parseLeadsReport', () => {
       raw: 1,
       rawp: expect.closeTo(0.16667),
     });
+  });
+});
+
+const MOVESETS = [
+  ' +---+',
+  ' | Snorlax  |',
+  ' +---+',
+  ' | Raw count: 2  |',
+  ' | Avg. weight: 1.0  |',
+  ' +---+',
+  ' +---+',
+  ' +---+',
+  ' +---+',
+  ' +---+',
+  ' +---+',
+  ' +---+',
+  ' | Checks and Counters |',
+  ' | Tauros 1.0 (1.00±0.00) |',
+  ' |  (100.0% KOed / 0.0% switched out) |',
+].join('\n');
+
+const USAGE_REPORT = [
+  ' Total battles: 1',
+  ' Avg. weight/team: 1.0',
+  ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + ',
+  ' | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | ',
+  ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + ',
+  ' | 1    | Snorlax            | 100.0000% | 2      | 100.000%| 2      | 100.000%| ',
+].join('\n');
+
+const BASE_POKEMON = {
+  'Raw count': 2,
+  usage: 1.0,
+  'Viability Ceiling': [2, 89, 89, 89] as [number, number, number, number],
+  Abilities: {illuminate: 2},
+  Items: {nothing: 2},
+  'Tera Types': {nothing: 2},
+  Spreads: {'Serious:252/252/252/252/252/252': 2},
+  Moves: {bodyslam: 2},
+  Teammates: {},
+};
+
+const BASE_DETAILED = {
+  info: {
+    metagame: 'gen1ou', cutoff: 0, 'cutoff deviation': 0 as 0,
+    'team type': null, 'number of battles': 1,
+  },
+  data: {Snorlax: {...BASE_POKEMON, 'Checks and Counters': {} as any}},
+};
+
+// gen mock: all lookups return undefined so names fall back to their raw values
+const mockGen = {
+  species: {get: () => undefined},
+  abilities: {get: () => undefined},
+  items: {get: () => undefined},
+  moves: {get: () => undefined},
+} as any;
+
+// Checks and Counters format changed in 2026-03 from [n, p, d] arrays to {n, p, d} objects.
+// https://www.smogon.com/stats/2026-02/chaos/gen9ou-1825.json (old)
+// https://www.smogon.com/stats/2026-03/chaos/gen9ou-1825.json (new)
+describe('Display.fromReports — Checks and Counters format', () => {
+  test.each([
+    ['old: [n, p, d] array', {Tauros: [1, 1.0, 0.0]}],
+    ['new (2026-03): {n, p, d} object', {Tauros: {n: 1, p: 1.0, d: 0.0}}],
+  ] as const)('%s', (_, cnc) => {
+    const detailed = JSON.stringify({
+      ...BASE_DETAILED,
+      data: {Snorlax: {...BASE_POKEMON, 'Checks and Counters': cnc}},
+    });
+    const result = Display.fromReports(mockGen, USAGE_REPORT, MOVESETS, detailed);
+    expect(result.pokemon['Snorlax'].counters).toEqual({Tauros: [1, 1, 0]});
   });
 });

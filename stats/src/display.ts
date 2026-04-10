@@ -75,7 +75,8 @@ export interface DetailedMovesetStatistics {
   // n = sum(POKE1_KOED...DOUBLE_SWITCH)
   // p = POKE1_KOED + POKE1_SWITCHED_OUT / n
   // d = sqrt((p * (1 - p)) / n)
-  'Checks and Counters': {[pokemon: string]: [number, number, number]};
+  // Old format (pre-2026-03): [n, p, d] array. New format: {n, p, d} object.
+  'Checks and Counters': {[pokemon: string]: [number, number, number] | {n: number; p: number; d: number}};
 }
 
 // Corrections for Pokémon who have had their names changed over time by developers.
@@ -210,8 +211,9 @@ export const Display = new class {
       }
 
       const scored: {[name: string]: {score: number; val: [number, number, number]}} = {};
-      for (const [k, [n]] of Object.entries(p['Checks and Counters'])) {
+      for (const [k, v] of Object.entries(p['Checks and Counters'])) {
         if (!outcomes[k]) continue;
+        const n = Array.isArray(v) ? v[0] : v.n;
         const {koedn, switchedn} = outcomes[k];
         const q = R((koedn * n + switchedn * n) / n);
         const d = R(Math.sqrt((q * (1.0 - q)) / n));
