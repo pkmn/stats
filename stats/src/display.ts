@@ -75,7 +75,8 @@ export interface DetailedMovesetStatistics {
   // n = sum(POKE1_KOED...DOUBLE_SWITCH)
   // p = POKE1_KOED + POKE1_SWITCHED_OUT / n
   // d = sqrt((p * (1 - p)) / n)
-  'Checks and Counters': {[pokemon: string]: [number, number, number]};
+  // Old format (pre-2026-03): [n, p, d] array. New format: {n, p, d} object.
+  'Checks and Counters': {[pokemon: string]: [number, number, number] | {n: number; p: number; d: number}};
 }
 
 // Corrections for Pokémon who have had their names changed over time by developers.
@@ -210,8 +211,9 @@ export const Display = new class {
       }
 
       const scored: {[name: string]: {score: number; val: [number, number, number]}} = {};
-      for (const [k, [n]] of Object.entries(p['Checks and Counters'])) {
+      for (const [k, v] of Object.entries(p['Checks and Counters'])) {
         if (!outcomes[k]) continue;
+        const n = Array.isArray(v) ? v[0] : v.n;
         const {koedn, switchedn} = outcomes[k];
         const q = R((koedn * n + switchedn * n) / n);
         const d = R(Math.sqrt((q * (1.0 - q)) / n));
@@ -379,11 +381,11 @@ interface UsageReportRowData {
   realp: number;
 }
 
-function parseUsageReport(report: string) {
+export function parseUsageReport(report: string) {
   const usage: {[id: string]: UsageReportRowData} = {};
   const lines = report.split('\n');
-  const battles = Number(lines[0].slice(16));
-  const avg = Number(lines[1].slice(19));
+  const battles = Number(lines[0].split(': ')[1]);
+  const avg = Number(lines[1].split(': ')[1]);
 
   for (let i = 5; i < lines.length; i++) {
     const line = lines[i].split('|');
@@ -406,10 +408,10 @@ interface LeadsReportRowData {
   rawp: number;
 }
 
-function parseLeadsReport(report: string) {
+export function parseLeadsReport(report: string) {
   const usage: {[id: string]: LeadsReportRowData} = {};
   const lines = report.split('\n');
-  const total = Number(lines[0].slice(13));
+  const total = Number(lines[0].split(': ')[1]);
 
   for (let i = 4; i < lines.length; i++) {
     const line = lines[i].split('|');
