@@ -130,7 +130,7 @@ const BASE_POKEMON = {
 
 const BASE_DETAILED = {
   info: {
-    metagame: 'gen1ou', cutoff: 0, 'cutoff deviation': 0 as 0,
+    metagame: 'gen1ou', cutoff: 0, 'cutoff deviation': 0 as const,
     'team type': null, 'number of battles': 1,
   },
   data: {Snorlax: {...BASE_POKEMON, 'Checks and Counters': {} as any}},

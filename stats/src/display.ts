@@ -76,7 +76,9 @@ export interface DetailedMovesetStatistics {
   // p = POKE1_KOED + POKE1_SWITCHED_OUT / n
   // d = sqrt((p * (1 - p)) / n)
   // Old format (pre-2026-03): [n, p, d] array. New format: {n, p, d} object.
-  'Checks and Counters': {[pokemon: string]: [number, number, number] | {n: number; p: number; d: number}};
+  'Checks and Counters': {[pokemon: string]:
+    [number, number, number] | {n: number; p: number; d: number};
+  };
 }
 
 // Corrections for Pokémon who have had their names changed over time by developers.

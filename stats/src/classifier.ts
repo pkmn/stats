@@ -672,7 +672,7 @@ export function computeParalysisMoves(gen: Generation) {
   // Non-damaging moves that induce paralysis
   const paralysisMoves = moves.filter(m => m.status === 'par').map(m => m.id);
   // Attacking moves that are guaranteed to induce paralysis
-  const paralysisAttacks = moves.filter(m => m.secondary && m.secondary.status === 'par' &&
+  const paralysisAttacks = moves.filter(m => m.secondary?.status === 'par' &&
     m.secondary.chance === 100 && m.accuracy === 100).map(m => m.id);
 
   return new Set([...paralysisMoves, ...paralysisAttacks]);
@@ -688,9 +688,11 @@ export function computeConfusionMoves(gen: Generation) {
   // Non-damaging moves that induce confusion
   const confusionMoves = moves.filter(m => m.volatileStatus === 'confusion').map(m => m.id);
   // Attacking moves that are guaranteed to induce confusion
-  const confusionAttacks = moves.filter(m => m.secondary &&
-    m.secondary.volatileStatus === 'confusion' && m.secondary.chance === 100 &&
-    m.accuracy === 100).map(m => m.id);
+  const confusionAttacks = moves.filter(
+    m => m.secondary?.volatileStatus === 'confusion' &&
+    m.secondary.chance === 100 &&
+    m.accuracy === 100
+  ).map(m => m.id);
 
   return new Set([...confusionMoves, ...confusionAttacks,
     // Yawn is treated as a confusion move
@@ -708,7 +710,7 @@ export function computeSleepMoves(gen: Generation) {
   // Non-damaging moves that induce sleep
   const sleepMoves = moves.filter(m => m.status === 'slp').map(m => m.id);
   // Attacking moves that are guaranteed to induce sleep
-  const sleepAttacks = moves.filter(m => m.secondary && m.secondary.status === 'slp' &&
+  const sleepAttacks = moves.filter(m => m.secondary?.status === 'slp' &&
     m.secondary.chance === 100 && m.accuracy === 100).map(m => m.id);
 
   return new Set([...sleepMoves, ...sleepAttacks]);
@@ -746,7 +748,7 @@ export function computeLesserOffensiveMoves(gen: Generation) {
   // Moves that inflict damage to the user if they miss
   const crashDamage = moves.filter(m => m.hasCrashDamage).map(m => m.id);
   // Moves that lock the user into using the move for multiple turns
-  const lockedMove = moves.filter(m => m.self && m.self.volatileStatus === 'lockedmove')
+  const lockedMove = moves.filter(m => m.self?.volatileStatus === 'lockedmove')
     .map(m => m.id);
   // Moves that drop the user's defenses (but not their attack or speed)
   const dropDefenses = moves.filter(m => m.self?.boosts &&

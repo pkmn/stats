@@ -64,7 +64,7 @@ export async function rmrf(path: string) {
 }
 
 export function rmdir(path: string, options?: {recursive?: boolean}) {
-  return fs.rmdir(path, {maxRetries: 5, ...options});
+  return fs.rm(path, {maxRetries: 5, ...options});
 }
 
 function isGzipped(buf: Buffer) {
