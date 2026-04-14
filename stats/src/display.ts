@@ -86,7 +86,7 @@ const FIX: {[id: string]: string} = {
   mimikyutotembusted: 'mimikyubustedtotem',
 };
 
-const SPECIES = /\| (.*) [-+.0-9]+ \([-+.0-9]+±[-+.0-9]+\)/;
+const SPECIES = /\| (.*?) [-+.0-9]+ \([^)]+\)/;
 const OUTCOME = /\|\W+\(([-+.0-9]+)% KOed \/ ([-+.0-9]+)% switched out\)/;
 
 export const Display = new class {
@@ -428,32 +428,45 @@ export function parseLeadsReport(report: string) {
   return {total, usage};
 }
 
-function partialParseMovesetReport(report: string) {
+export function partialParseMovesetReport(report: string) {
   const movesets: {
     [name: string]: {
       weight: number;
       outcomes: {[species: string]: {koedn: number; switchedn: number}};
     };
   } = {};
-  let section = 0;
-  let i = 0;
   let species = '';
   let s = '';
+  let inCC = false;
+  let ccLine = 0;
+  let sectionLines = 0;
+  let prevSectionEmpty = false;
   for (const line of report.split('\n')) {
-    i++;
-    if (line.startsWith(' +')) {
-      section++;
-      i = 0;
+    // Old format (pre-2026-03): section separators start with ' +', new format starts with '+'
+    if (line.trimStart().startsWith('+')) {
+      prevSectionEmpty = sectionLines === 0;
+      inCC = false;
+      ccLine = 0;
+      sectionLines = 0;
       continue;
     }
-    if (section % 10 === 1) {
-      species = line.slice(3, line.indexOf('  '));
+    sectionLines++;
+    if (line.includes('Checks and Counters')) {
+      inCC = true;
+      ccLine = 0;
+      continue;
     }
-    if (section % 10 === 2 && i === 2) {
-      movesets[species] = {weight: Number(line.slice(17, line.indexOf(' ', 17))), outcomes: {}};
+    if (sectionLines === 1 && prevSectionEmpty) {
+      species = line.split('|')[1]?.trim() ?? '';
+      continue;
     }
-    if (section % 10 === 9 && i >= 2) {
-      if (i % 2 === 0) {
+    if (!movesets[species] && line.includes('Avg. weight')) {
+      movesets[species] = {weight: Number((/\d[\d.]*/.exec(line))?.[0]), outcomes: {}};
+      continue;
+    }
+    if (inCC) {
+      ccLine++;
+      if (ccLine % 2 === 1) {
         s = SPECIES.exec(line)![1];
       } else {
         const outcome = OUTCOME.exec(line)!;
@@ -468,16 +481,17 @@ function partialParseMovesetReport(report: string) {
   return movesets;
 }
 
-function parseMetagameReport(report: string) {
+export function parseMetagameReport(report: string) {
   const tags: {[tag: string]: number} = {};
   const lines = report.split('\n');
 
   let i = 0;
   for (; i < lines.length; i++) {
-    const d = lines[i].indexOf('.');
+    const line = lines[i].trimStart();
+    const d = line.indexOf('.');
     if (d < 0) break;
-    const tag = lines[i].slice(1, d);
-    const weight = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100;
+    const tag = line.slice(0, d);
+    const weight = Number(line.slice(line.search(/\d/), line.lastIndexOf('%'))) / 100;
     tags[tag] = weight;
   }
   i++;
