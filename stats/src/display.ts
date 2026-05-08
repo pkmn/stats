@@ -428,7 +428,7 @@ export function parseLeadsReport(report: string) {
   return {total, usage};
 }
 
-function partialParseMovesetReport(report: string) {
+export function partialParseMovesetReport(report: string) {
   const movesets: {
     [name: string]: {
       weight: number;
