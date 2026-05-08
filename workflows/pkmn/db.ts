@@ -42,8 +42,7 @@ const BinaryWorker =
       const size = rowsize(gen);
       return {
         gen,
-        // Unsafe hack to deal with @pkmn/engine possibly having a different @pkmn/data version
-        lookup: Lookup.get(gen as any),
+        lookup: Lookup.get(gen),
         canonicalize: Team.canonicalize,
         size,
         buf: Buffer.alloc(num * size),

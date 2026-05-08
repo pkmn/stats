@@ -99,7 +99,7 @@ const Team = new class {
 
   decode(gen: Generation, lookup: Binary.Lookup, buf: Buffer, offset = 0) {
     const team: Partial<PokemonSet>[] = [];
-    const N = Sizes[gen.num as keyof typeof Sizes];
+    const N = Sizes[gen.num];
 
     let byte = 0;
     switch (gen.num) {
@@ -181,7 +181,7 @@ const Log = new class {
       Write.u8(buf, Math.round(log[`${loser}rating`]!.rprd), offset + 16);
     }
 
-    const N = 6 * Sizes[gen.num as keyof typeof Sizes];
+    const N = 6 * Sizes[gen.num];
     Team.encode(gen, lookup, canonicalize(log[`${winner}team`], gen.dex), buf, offset + 17);
     Team.encode(gen, lookup, canonicalize(log[`${loser}team`], gen.dex), buf, offset + 17 + N);
 
@@ -191,7 +191,7 @@ const Log = new class {
   decode(gen: Generation, lookup: Binary.Lookup, buf: Buffer, offset = 0) {
     if (gen.num >= 3) throw new Error(`Unsupported gen ${gen.num}`); // TODO
 
-    const N = 6 * Sizes[gen.num as keyof typeof Sizes];
+    const N = 6 * Sizes[gen.num];
 
     const data: Binary.Data = {
       timestamp: BigInt(0),
@@ -272,7 +272,7 @@ const Stats = new class {
       }
     }
 
-    const N = 6 * Sizes[gen.num as keyof typeof Sizes];
+    const N = 6 * Sizes[gen.num];
     const row = 17 + 2 * N;
     if (db.length % row !== 0) {
       throw new Error(`Corrupted logs database of size ${db.length} (${row})`);

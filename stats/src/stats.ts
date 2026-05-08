@@ -339,7 +339,7 @@ function updateStats(
     p.teraTypes[set.teraType] = (t || 0) + weights.m;
 
     const nature =
-      gen.natures.get(!legacy && NEUTRAL.has(set.nature) ? 'hardy' as ID : set.nature)!;
+      gen.natures.get(!legacy && NEUTRAL.has(set.nature) ? 'hardy' : set.nature)!;
     const baseStats = util.getSpecies(gen, pokemon.species, legacy).baseStats;
     const spread = getSpread(gen, nature, baseStats, pokemon.set, legacy);
     const s = p.spreads[spread];

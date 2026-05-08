@@ -562,7 +562,7 @@ function updateTiers(
         tier = 'DNU'; // BUG: is only true for (DUU)
       }
       if (['NFE', 'LC', 'LC Uber'].includes(tier)) NFE.add(species.id);
-      tier = TIERS.doubles.includes(tier as DoublesTier) ? (tier as DoublesTier) : 'DNU';
+      tier = TIERS.doubles.includes(tier as DoublesTier) ? (tier) : 'DNU';
     } else {
       if (tier[0] === '(' && tier[1] !== 'P') tier = tier.slice(1, -1);
       if (tier[0] === '(' && tier[1] === 'P') tier = 'ZU';

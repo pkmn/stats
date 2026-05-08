@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@pkmn/data": "0.9.38",
-    "@pkmn/protocol": "^0.7.2"
+    "@pkmn/protocol": "^0.7.3"
   },
   "devDependencies": {
     "@pkmn/dex": "0.9.38"

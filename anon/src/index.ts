@@ -274,7 +274,7 @@ function anonymize(
       if (!args[2]) return line;
       args[2] = anonymizePlayer(args[2], playerMap);
       args[3] = '1' as Protocol.AvatarIdent;
-      args[4] = '' as Protocol.Num;
+      args[4] = '';
       return combine(args);
     }
 
