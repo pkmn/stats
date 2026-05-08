@@ -103,14 +103,14 @@ export const Reports = new class {
       sorted.sort((a, b) => b[1].usage.weighted - a[1].usage.weighted || a[0].localeCompare(b[0]));
     }
 
-    let s = ` Total battles: ${stats.battles}\n`;
+    let s = `Total battles: ${stats.battles}\n`;
     const avg = stats.battles
       ? util.roundStr(stats.usage.weighted / stats.battles / 12, 1e3)
       : '0.0';
-    s += ` Avg. weight/team: ${avg}\n`;
-    s += ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
-    s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n';
-    s += ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
+    s += `Avg. weight/team: ${avg}\n`;
+    s += '+ ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
+    s += '| Rank | Pokemon            | Usage %   | Raw    | %       | Real   | %       | \n';
+    s += '+ ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
 
     const total = {
       raw: Math.max(1.0, stats.usage.raw),
@@ -130,17 +130,17 @@ export const Reports = new class {
       const rawp = (((100 * usage.raw) / total.raw) * 6).toFixed(3).padStart(6);
       const real = usage.real.toFixed().padEnd(6);
       const realp = (((100 * usage.real) / total.real) * 6).toFixed(3).padStart(6);
-      s += ` | ${rank} | ${poke} | ${use}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
+      s += `| ${rank} | ${poke} | ${use}% | ${raw} | ${rawp}% | ${real} | ${realp}% | \n`;
     }
-    s += ' + ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
+    s += '+ ---- + ------------------ + --------- + ------ + ------- + ------ + ------- + \n';
     return s;
   }
 
   leadsReport(gen: Generation, stats: Statistics, legacy = true) {
-    let s = ` Total leads: ${stats.battles * 2}\n`;
-    s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
-    s += ' | Rank | Pokemon            | Usage %   | Raw    | %       | \n';
-    s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
+    let s = `Total leads: ${stats.battles * 2}\n`;
+    s += '+ ---- + ------------------ + --------- + ------ + ------- + \n';
+    s += '| Rank | Pokemon            | Usage %   | Raw    | %       | \n';
+    s += '+ ---- + ------------------ + --------- + ------ + ------- + \n';
 
     const total = {raw: 0, weighted: 0};
     total.raw = Math.max(1.0, stats.lead.raw);
@@ -164,10 +164,10 @@ export const Reports = new class {
       const use = ((100 * usage.weighted) / total.weighted).toFixed(5).padStart(8);
       const raw = usage.raw.toFixed().padEnd(6);
       const pct = ((100 * usage.raw) / total.raw).toFixed(3).padStart(6);
-      s += ` | ${rank} | ${poke} | ${use}% | ${raw} | ${pct}% | \n`;
+      s += `| ${rank} | ${poke} | ${use}% | ${raw} | ${pct}% | \n`;
     }
 
-    s += ' + ---- + ------------------ + --------- + ------ + ------- + \n';
+    s += '+ ---- + ------------------ + --------- + ------ + ------- + \n';
     return s;
   }
 
