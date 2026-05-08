@@ -369,8 +369,8 @@ export const Reports = new class {
     );
     let s = '';
     for (const [tag, weight] of tags) {
-      s += ` ${tag}`.padEnd(31, '.');
-      s += `${((100 * weight) / W).toFixed(5).padStart(8)}%\n`;
+      const dots = '.'.repeat(Math.max(0, 18 - tag.length));
+      s += `${tag}${dots}${(100.0 * weight / W * 6.0).toFixed(5)}%\n`;
     }
     s += '\n';
 
@@ -388,22 +388,22 @@ export const Reports = new class {
 
     if (blockSize <= 0) return s;
 
-    s += ` Stalliness (mean: ${mean.toFixed(3).padStart(6)})\n`;
+    s += `Stalliness (mean: ${mean.toFixed(3)})\n`;
     for (const h of histogram) {
-      let line = '     |';
+      let line = '    |';
       if (fmod(h[0], 2 * binSize) < binSize / 2) {
-        line = ' ';
+        line = '';
         if (h[0] > 0) {
           line += '+';
         } else if (h[0] === 0) {
           line += ' ';
         }
-        line += `${h[0].toFixed(1).padStart(3)}|`;
+        line += `${h[0].toFixed(1)}|`;
       }
-      s += line + '#'.repeat(Math.floor((h[1] + blockSize / 2) / blockSize)) + '\n';
+      s += line + '#'.repeat(Math.round(h[1] / blockSize)) + '\n';
     }
-    s += ' more negative = more offensive, more positive = more stall\n';
-    s += ` one # = ${((100.0 * blockSize) / total).toFixed(2).padStart(5)}%\n`;
+    s += 'more negative = more offensive, more positive = more stall\n';
+    s += `one # = ${((100.0 * blockSize) / total).toFixed(2)}%\n`;
     return s;
   }
 

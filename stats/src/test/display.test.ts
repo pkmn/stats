@@ -1,4 +1,4 @@
-import {Display, parseLeadsReport, parseUsageReport} from '../display';
+import {Display, parseLeadsReport, parseMetagameReport, parseUsageReport} from '../display';
 
 // Old format: leading space on header lines, Real column has actual values.
 // New format (introduced 2026-03): no leading space, Real column is always 0.
@@ -37,6 +37,41 @@ const NEW_LEADS = [
   '| Rank | Pokemon            | Usage %   | Raw    | %       |',
   '+ ---- + ------------------ + --------- + ------ + ------- +',
   '| 1    | Ogerpon            | 16.66667% | 1      | 16.667% |',
+].join('\n');
+
+const OLD_METAGAME = [
+  ' weatherless...................84.96715%',
+  ' offense.......................38.05594%',
+  ' balance.......................30.04767%',
+  ' hyperoffense..................13.71165%',
+  ' trickroom..................... 0.49318%',
+  '',
+  ' Stalliness (mean:  0.108)',
+  ' -1.0|##',
+  '     |###',
+  ' -0.5|####',
+  '     |#####',
+  '  0.0|######',
+  ' more negative = more offensive, more positive = more stall',
+  ' one # =  0.35%',
+].join('\n');
+
+const NEW_METAGAME = [
+  'weatherless.......88.37742%',
+  'offense...........36.34664%',
+  'balance...........36.40463%',
+  'hyperoffense......10.25606%',
+  'trickroom.........0.54911%',
+  '',
+  'Stalliness (mean: 0.189)',
+  '    |',
+  '-1.0|##',
+  '    |###',
+  '-0.5|####',
+  '    |#####',
+  ' 0.0|######',
+  'more negative = more offensive, more positive = more stall',
+  'one # = 0.42%',
 ].join('\n');
 
 describe('parseUsageReport', () => {
@@ -86,6 +121,26 @@ describe('parseLeadsReport', () => {
       raw: 1,
       rawp: expect.closeTo(0.16667),
     });
+  });
+});
+
+describe('parseMetagameReport', () => {
+  test('old format', () => {
+    const r = parseMetagameReport(OLD_METAGAME);
+    expect(Object.keys(r.tags))
+      .toEqual(['weatherless', 'offense', 'balance', 'hyperoffense', 'trickroom']);
+    expect(r.tags['weatherless']).toBeCloseTo(0.8496715);
+    expect(r.tags['offense']).toBeCloseTo(0.3805594);
+    expect(r.mean).toBeCloseTo(0.108);
+  });
+
+  test('new format', () => {
+    const r = parseMetagameReport(NEW_METAGAME);
+    expect(Object.keys(r.tags))
+      .toEqual(['weatherless', 'offense', 'balance', 'hyperoffense', 'trickroom']);
+    expect(r.tags['weatherless']).toBeCloseTo(0.8837742);
+    expect(r.tags['balance']).toBeCloseTo(0.3640463);
+    expect(r.mean).toBeCloseTo(0.189);
   });
 });
 
@@ -160,3 +215,4 @@ describe('Display.fromReports — Checks and Counters format', () => {
     expect(result.pokemon['Snorlax'].counters).toEqual({Tauros: [1, 1, 0]});
   });
 });
+

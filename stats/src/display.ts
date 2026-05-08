@@ -468,16 +468,17 @@ function partialParseMovesetReport(report: string) {
   return movesets;
 }
 
-function parseMetagameReport(report: string) {
+export function parseMetagameReport(report: string) {
   const tags: {[tag: string]: number} = {};
   const lines = report.split('\n');
 
   let i = 0;
   for (; i < lines.length; i++) {
-    const d = lines[i].indexOf('.');
+    const line = lines[i].trimStart();
+    const d = line.indexOf('.');
     if (d < 0) break;
-    const tag = lines[i].slice(1, d);
-    const weight = Number(lines[i].slice(lines[i].search(/\d/), lines[i].lastIndexOf('%'))) / 100;
+    const tag = line.slice(0, d);
+    const weight = Number(line.slice(line.search(/\d/), line.lastIndexOf('%'))) / 100;
     tags[tag] = weight;
   }
   i++;
