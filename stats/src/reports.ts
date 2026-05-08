@@ -744,9 +744,9 @@ function getTeammates(
 }
 
 function forDetailed(cc: {[key: string]: util.EncounterStatistics}) {
-  const obj: {[key: string]: [number, number, number]} = {};
+  const obj: {[key: string]: {n: number; p: number; d: number}} = {};
   for (const [k, v] of Object.entries(cc)) {
-    obj[k] = [round(v.n), round(v.p), round(v.d)];
+    obj[k] = {n: round(v.n), p: round(v.p), d: round(v.d)};
   }
   return obj;
 }
