@@ -186,8 +186,7 @@ describe('parseMetagameReport', () => {
   });
 });
 
-// FIXME
-describe.skip('partialParseMovesetReport', () => {
+describe('partialParseMovesetReport', () => {
   test('old format', () => {
     const r = partialParseMovesetReport(OLD_MOVESET);
     expect(Object.keys(r)).toEqual(['Snorlax']);

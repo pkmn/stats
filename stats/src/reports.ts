@@ -200,15 +200,13 @@ export const Reports = new class {
     gen = util.ignoreGen(gen, legacy);
     const WIDTH = 40;
 
-    const heading = (n: string) => ` | ${n}`.padEnd(WIDTH + 2) + '| \n';
-    const other = (t: number, f = 1) =>
-      ` | Other ${Math.abs(f * 100 * (1 - t))
-        .toFixed(3)
-        .padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
+    const padLine = (s: string) => s.padEnd(WIDTH + 1) + '|';
+    const heading = (n: string) => padLine(`| ${n}`) + '\n';
     const display = (n: string, w: number) =>
-      ` | ${n} ${(100 * w).toFixed(3).padStart(6)}%`.padEnd(WIDTH + 2) + '| \n';
-
-    const sep = ` +${'-'.repeat(WIDTH)}+ \n`;
+      padLine(`| ${n} ${(100 * w).toFixed(3)}%`) + '\n';
+    const other = (t: number, f = 1) =>
+      padLine(`| Other ${Math.abs(f * 100 * (1 - t)).toFixed(3)}%`) + '\n';
+    const sep = `+${'-'.repeat(WIDTH)}+\n`;
     let s = '';
     for (const [species, moveset] of movesetStats.entries()) {
       if (moveset.usage < 0.0001) break; // 1/100th of a percent
@@ -216,13 +214,13 @@ export const Reports = new class {
       const p = stats.pokemon[species];
 
       s += sep;
-      s += ` | ${util.displaySpecies(gen, species, legacy)}`.padEnd(WIDTH + 2) + '| \n';
+      s += padLine(`| ${util.displaySpecies(gen, species, legacy)}`) + '\n';
       s += sep;
-      s += ` | Raw count: ${moveset['Raw count']}`.padEnd(WIDTH + 2) + '| \n';
+      s += padLine(`| Raw count: ${moveset['Raw count']}`) + '\n';
       const avg = p.saved.count ? util.roundStr(p.saved.weight / p.saved.count, 1e12) : '---';
-      s += ` | Avg. weight: ${avg}`.padEnd(WIDTH + 2) + '| \n';
+      s += padLine(`| Avg. weight: ${avg}`) + '\n';
       const ceiling = Math.floor(moveset['Viability Ceiling'][1]);
-      s += ` | Viability Ceiling: ${ceiling}`.padEnd(WIDTH + 2) + '| \n';
+      s += padLine(`| Viability Ceiling: ${ceiling}`) + '\n';
       s += sep;
 
       let total = 0;
@@ -252,18 +250,6 @@ export const Reports = new class {
       }
       s += sep;
       total = 0;
-      s += heading('Tera Types');
-      for (const teraType of Object.keys(moveset['Tera Types'])) {
-        if (total > 0.95) {
-          s += other(total);
-          break;
-        }
-        const weight = moveset['Tera Types'][teraType] / p.raw.weight;
-        s += display(teraType[0].toUpperCase() + teraType.slice(1), weight);
-        total += weight;
-      }
-      s += sep;
-      total = 0;
       s += heading('Spreads');
       for (const [i, spread] of Object.keys(moveset['Spreads']).entries()) {
         if (total > 0.95 || i > 5) {
@@ -289,6 +275,21 @@ export const Reports = new class {
       }
       s += sep;
       total = 0;
+      const entries = Object.entries(moveset['Tera Types']);
+      if (!(entries.length === 1 && toID(entries[0][0]) === 'nothing')) {
+        s += heading('Tera Types');
+        for (const teraType of Object.keys(moveset['Tera Types'])) {
+          if (total > 0.95) {
+            s += other(total);
+            break;
+          }
+          const weight = moveset['Tera Types'][teraType] / p.raw.weight;
+          s += display(teraType[0].toUpperCase() + teraType.slice(1), weight);
+          total += weight;
+        }
+        s += sep;
+        total = 0;
+      }
       s += heading('Teammates');
       for (const [i, teammate] of Object.keys(moveset['Teammates']).entries()) {
         if (total > 0.95 || i > 10) break;
@@ -296,32 +297,35 @@ export const Reports = new class {
         if (w < 0.005 * p.raw.weight) break;
         const weight = w / p.raw.weight;
         const val = 100 * weight;
-        s += ` | ${teammate} ${val.toFixed(3).padStart(5)}%`.padEnd(WIDTH + 2) + '| \n';
+        s += padLine(`| ${teammate} ${val.toFixed(3)}%`) + '\n';
         total += weight / 5;
       }
       s += sep;
-      s += heading('Checks and Counters');
-      for (const [i, cc] of Object.keys(moveset['Checks and Counters']).entries()) {
-        if (i > 11) break;
-        const v = moveset['Checks and Counters'][cc];
-        if (v.score < min[1]) break;
+      if (Object.values(moveset['Checks and Counters']).some(entry =>
+        entry.p - 4.0 * entry.d >= 0.5)) {
+        s += heading('Checks and Counters');
+        for (const [i, cc] of Object.keys(moveset['Checks and Counters']).entries()) {
+          if (i > 11) break;
+          const v = moveset['Checks and Counters'][cc];
+          if (v.score < min[1]) break;
 
-        const score = (100 * v.score).toFixed(3).padStart(6);
-        const vp = (100 * v.p).toFixed(2).padStart(3);
-        const vd = (100 * v.d).toFixed(2).padStart(3);
-        let line = ` | ${cc} ${score} (${vp}\u00b1${vd})`.padEnd(WIDTH + 1) + ' |\n';
+          const score = (100 * v.score).toFixed(3);
+          const vp = (100 * v.p).toFixed(2);
+          const vd = (100 * v.d).toFixed(2);
+          let line = `| ${cc} ${score} (${vp}\u00b1${vd})`.padEnd(WIDTH + 1) + '|\n';
 
-        const ko = (100 * v.koed) / v.n;
-        const koed = ko.toFixed(1).padStart(2);
-        const sw = (100 * v.switched) / v.n;
-        const switched = sw.toFixed(1).padStart(2);
-        // FIXME: Remove the \t and pad properly base on the 2 different lines, not 1.
-        line += ` |\t (${koed}% KOed / ${switched}% switched out)`;
-        if (ko < 10) line += ' ';
-        if (sw < 10) line += ' ';
-        s += line.padEnd(WIDTH + 2) + '| \n';
+          const ko = (100 * v.koed) / v.n;
+          const koed = ko.toFixed(1);
+          const sw = (100 * v.switched) / v.n;
+          const switched = sw.toFixed(1);
+          // FIXME: Remove the \t and pad properly base on the 2 different lines, not 1.
+          line += `|\t(${koed}% KOed / ${switched}% switched out)`;
+          if (ko < 10) line += ' ';
+          if (sw < 10) line += ' ';
+          s += line + '\n';
+        }
+        s += sep;
       }
-      s += sep;
     }
 
     return s;

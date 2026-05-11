@@ -88,6 +88,7 @@ const FIX: {[id: string]: string} = {
 
 const SPECIES = /\| (.*) [-+.0-9]+ \([-+.0-9]+±[-+.0-9]+\)/;
 const OUTCOME = /\|\W+\(([-+.0-9]+)% KOed \/ ([-+.0-9]+)% switched out\)/;
+const WEIGHT = /\d[\d.]*/;
 
 export const Display = new class {
   fromStatistics(gen: Generation, format: ID, stats: Statistics, min = 20): DisplayStatistics {
@@ -435,25 +436,38 @@ export function partialParseMovesetReport(report: string) {
       outcomes: {[species: string]: {koedn: number; switchedn: number}};
     };
   } = {};
-  let section = 0;
-  let i = 0;
+
   let species = '';
   let s = '';
+  let inCC = false;
+  let ccLine = 0;
+  let sectionLines = 0;
+  let prevSectionEmpty = false;
   for (const line of report.split('\n')) {
-    i++;
-    if (line.startsWith(' +')) {
-      section++;
-      i = 0;
+    if (line.trimStart().startsWith('+')) {
+      prevSectionEmpty = sectionLines === 0;
+      inCC = false;
+      ccLine = 0;
+      sectionLines = 0;
       continue;
     }
-    if (section % 10 === 1) {
-      species = line.slice(3, line.indexOf('  '));
+    sectionLines++;
+    if (line.includes('Checks and Counters')) {
+      inCC = true;
+      ccLine = 0;
+      continue;
     }
-    if (section % 10 === 2 && i === 2) {
-      movesets[species] = {weight: Number(line.slice(17, line.indexOf(' ', 17))), outcomes: {}};
+    if (sectionLines === 1 && prevSectionEmpty) {
+      species = line.split('|')[1]?.trim() ?? '';
+      continue;
     }
-    if (section % 10 === 9 && i >= 2) {
-      if (i % 2 === 0) {
+    if (!movesets[species] && line.includes('Avg. weight')) {
+      movesets[species] = {weight: Number((WEIGHT.exec(line))?.[0]), outcomes: {}};
+      continue;
+    }
+    if (inCC) {
+      ccLine++;
+      if (ccLine % 2 === 1) {
         s = SPECIES.exec(line)![1];
       } else {
         const outcome = OUTCOME.exec(line)!;
